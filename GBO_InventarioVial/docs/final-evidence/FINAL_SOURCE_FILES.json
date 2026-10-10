@@ -1,0 +1,2302 @@
+{
+  ".gitignore": {
+    "sha256": "fab714bd4a7a0ef6d5085e34a6ca2ce850bbebd2d234b1f37daa49d8f3615b86",
+    "bytes": 419
+  },
+  "ACTUALIZACION_HUELLA_ESTABLE.md": {
+    "sha256": "1f9291b6f594ab8140228241777b157730171a6614e7fa45a01e9d370611f56e",
+    "bytes": 1392
+  },
+  "app/.gitignore": {
+    "sha256": "5c3174b74edc6f2b9e0743594b8bd3c7f31e4f4405758cc9872b3fe1de1d28b4",
+    "bytes": 6
+  },
+  "app/build.gradle.kts": {
+    "sha256": "6e32ad40e19a3f3d2a3e3aa71705b22206779d59f8cd4e2c9be1b967f8799efb",
+    "bytes": 5724
+  },
+  "app/proguard-rules.pro": {
+    "sha256": "25797478e033936604376ebd42db2382c3ef4d1554ce51070d7016e86e9aca16",
+    "bytes": 625
+  },
+  "app/release/mapping.txt": {
+    "sha256": "d52498e1511810ff21a88fef929415624106bb2777956d30c1593987c64a811c",
+    "bytes": 53464719
+  },
+  "app/release/output-metadata.json": {
+    "sha256": "f0d7cc1e02fc66db6c706462d19a1f04000fd5dd083c865eb82b3f4a26d8d397",
+    "bytes": 747
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/10.json": {
+    "sha256": "5b8f3995f6727fbab4cd18151d783026b1d44e649070b871394288f699a56c17",
+    "bytes": 80673
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/11.json": {
+    "sha256": "4284866e038d9b36db42044c844216d0ce87fb2664b64ac5a9b2a7093a18d950",
+    "bytes": 91151
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/12.json": {
+    "sha256": "f0316289f7802339116d812c987963c46ecf608d937ebd7a983e0af210a6d9e9",
+    "bytes": 105007
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/13.json": {
+    "sha256": "b7a94d2183233c55f81c9846d8eb829f2c4d71d5eab9fec047b9c90902b93a06",
+    "bytes": 105792
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/14.json": {
+    "sha256": "ade09b8682a41c3b7bf78a579e2acf991f75f27513661201b16999d9db345e2b",
+    "bytes": 106312
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/4.json": {
+    "sha256": "809199ef002bdb935b965d2c42e480f4d3a9c582cbf3aa5295f2e770ede61dcf",
+    "bytes": 44909
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/5.json": {
+    "sha256": "9e7e74127dad6a601781e5d29b68c5f85f782858a2794afee9eeeced25d8504e",
+    "bytes": 45809
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/6.json": {
+    "sha256": "de9e60169d33d26f1123253e780eb2cb930cd58f400fc6fd60a681ead5fdd108",
+    "bytes": 72921
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/7.json": {
+    "sha256": "9f7f2a7e7b4b57cc2fb026773673c83a4cf46fecae07e46e15632d1fcb1fcfe1",
+    "bytes": 75575
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/8.json": {
+    "sha256": "7e2cc1fac7c30afbe8318bc29f163c039baa2cf60dadd083581dd4dda434f0a4",
+    "bytes": 81883
+  },
+  "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/9.json": {
+    "sha256": "0e95d8e1543bc33d240e2cc7bcb01b5cd5321b661e6852c306c113672c19daaa",
+    "bytes": 80402
+  },
+  "app/src/androidTest/assets/inventory-v1.sql": {
+    "sha256": "2e7daf58b39515fa6e8ed02444f3bffe505f994b4eae65a8b46b8fd3328b00e1",
+    "bytes": 3986
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/EngineeringUxScreenTest.kt": {
+    "sha256": "d010bbf48c01e7d51be5ca611044cc3582eae73974a0a7b04fd68e6e485e4416",
+    "bytes": 7777
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/ExampleInstrumentedTest.kt": {
+    "sha256": "63bf1a452f9dc21e0977bb98dfd996a1750d48041dde8665d5d6551618c1143f",
+    "bytes": 706
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/InventoryMigrationTest.kt": {
+    "sha256": "1522497d7f13c9b8a54a3bee5817294c846777cfad2fdc4e0881c285a7ae673b",
+    "bytes": 6234
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/ScapAndroidExportTest.kt": {
+    "sha256": "4862600b199b769ead3b1ec8b29237f9a06ba525297bd08e6e2b3307b347a04c",
+    "bytes": 5211
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/ScapDriveDeviceTest.kt": {
+    "sha256": "f75c2d38c297e7d426d7d3b2afa4c7eb27e2fe0cbbffaf182f5eb88b9af29ec2",
+    "bytes": 3706
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/SicExportScreenTest.kt": {
+    "sha256": "afb09aea7e9ec4a16c15ac90d38aad536b26f38d345fbef0176139cf15836989",
+    "bytes": 1123
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/SurveyFormsScreenTest.kt": {
+    "sha256": "82b0012d82248448f9df4fb28396bb1cda32e555467bd9fedf7087474100c632",
+    "bytes": 3067
+  },
+  "app/src/androidTest/java/com/tuempresa/inventariovial/UserSecurityDeviceTest.kt": {
+    "sha256": "b22fd060fd6fa686155f88db82d4307a72df67b11090d3d31f460df6092c7ccb",
+    "bytes": 3677
+  },
+  "app/src/main/AndroidManifest.xml": {
+    "sha256": "2ffea6b9ff199b6f24bfa1e54002edb3cc017cf836e816fedeeae75511262484",
+    "bytes": 2451
+  },
+  "app/src/main/assets/allowed_devices.json": {
+    "sha256": "6f4d2512e89766693d028a0e6a5febb1e15c8a04e7aad7dcecc02ecbf1633e27",
+    "bytes": 21
+  },
+  "app/src/main/assets/pavement/catalogo_danos.json": {
+    "sha256": "da51d8c668b234b9ab7229d806911e9d515b638c47d91b0d09b8bbc4a6a7fa16",
+    "bytes": 107899
+  },
+  "app/src/main/assets/pavement/curvas/asfalto.json": {
+    "sha256": "80f648018ce14f7afdce4d845f4ee263727b3094c286c79d6ae8b8e8bfca8e31",
+    "bytes": 23150
+  },
+  "app/src/main/assets/pavement/curvas/no_pavimentado.json": {
+    "sha256": "3226768cc47397246d85f96af9640ebe8f2aef906886bbb901cb7345969fbf17",
+    "bytes": 9126
+  },
+  "app/src/main/assets/pavement/curvas/rigido.json": {
+    "sha256": "9d6ad90067d8323681d4e17a9478065fdee45cedbfa2a52b871d15f32e9ed2b5",
+    "bytes": 20061
+  },
+  "app/src/main/assets/project_routes.json": {
+    "sha256": "91a9f180e58470fb2339fe10d0c6f3b4e20484b273b89fa95f35ab5fc46976d7",
+    "bytes": 3006
+  },
+  "app/src/main/assets/road_reference.json": {
+    "sha256": "f010badf655987a9f576627d3a69e8d27f8eecf33427b03c5b85b0123e6b73e4",
+    "bytes": 6780348
+  },
+  "app/src/main/assets/scap_elements.json": {
+    "sha256": "c0f1dd80b6ac25eb37be2e6eb384de230b85dbc3e949b93665441a284a77ab73",
+    "bytes": 22905
+  },
+  "app/src/main/assets/scap_fields.json": {
+    "sha256": "d9798dcf54261f7c1703f7c292ff22a46e7a1c8b9d31c75080eba4776889c461",
+    "bytes": 36940
+  },
+  "app/src/main/assets/scap_modular_catalog.json": {
+    "sha256": "e3f5313e79f9ab5039509ba1e399e9ee0e61543ac04901fee1c114766ed37aca",
+    "bytes": 74331
+  },
+  "app/src/main/assets/scap_options.json": {
+    "sha256": "f8f1c01fa615ce8b80e562455a25f2c6f580f9b90f1977866d8e5074bb98538e",
+    "bytes": 10629
+  },
+  "app/src/main/assets/scap_slab_catalog.json": {
+    "sha256": "16d720b69b5f8a05f12e32f371dafa4f2ebb9db7331ec66f92a6c52f35a679d9",
+    "bytes": 72505
+  },
+  "app/src/main/ic_launcher-playstore.png": {
+    "sha256": "644a48da8061504e41cd64f6b61aff425f8cd7e504d0927f6296461cf4c65b6c",
+    "bytes": 179014
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/access/DeviceAccessManager.kt": {
+    "sha256": "d8d4ea492ea2d703970a5f3a2de6ee537e4dc5b0f600ab507d9894c59ebcef4a",
+    "bytes": 5049
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/access/DeviceFingerprint.kt": {
+    "sha256": "b6e2717b39dde955b10663677a2e35abce31e9984a167c53ade122802cf0c9e9",
+    "bytes": 950
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/ai/AiAnalyzer.kt": {
+    "sha256": "3b195f67a6306ee6ae53455f91113077fcf6afa2922c1fadf947b477d0f6bfca",
+    "bytes": 534
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/AdminUsersRepository.kt": {
+    "sha256": "e250281bf3242320ea564decd910cac903659810529c4f0d13ef2a742ce2a6fb",
+    "bytes": 3235
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/AdminUsersScreen.kt": {
+    "sha256": "14d43ecaf6b8897523edfcbea7c069ac6f084a396a93a05c69091b270b72d5ec",
+    "bytes": 10614
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/AuthGraph.kt": {
+    "sha256": "5595d1b2b138a6e775df1ef5b8c8c92deff773c82ebe6a3e0c27b22cc17d98ab",
+    "bytes": 4603
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/AuthRepository.kt": {
+    "sha256": "69a173b099931d7ba3956ba2b88eccab7c42df06bdae2d93cd58d369c90d865e",
+    "bytes": 4207
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/AuthSessionManager.kt": {
+    "sha256": "0c6cdef7b369fed4fc0178f9968611cf9c73ab0921690f22630743bad6471181",
+    "bytes": 1666
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/CredentialProtector.kt": {
+    "sha256": "b9b42081976e2fe7c96d27b7e1b55dd33d4e08a999d4ad5e9c64359c4ba3f354",
+    "bytes": 2132
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/LoginScreen.kt": {
+    "sha256": "eb4aa0a386290ec4266442067c77bf72b6dbe056c8a9e96e55c91932b2acdb24",
+    "bytes": 5930
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/PasswordHasher.kt": {
+    "sha256": "11517fb59f492b7529924d4ae2b6d6cb734db8f1ed590a5694693fc4da5aea09",
+    "bytes": 2023
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/UserDao.kt": {
+    "sha256": "3f2d4f1a092f6fc17de9510e4cca850e17776cad9c70a47ddd5910459c9464f8",
+    "bytes": 1590
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/UserEntities.kt": {
+    "sha256": "dd92508de730f56b65cb8cf3dc5c1e6cfd3c994e8c06ff9fab4d566300031ffb",
+    "bytes": 1532
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/UserServiceClient.kt": {
+    "sha256": "b22645d95bd84178b2e69a19891d75688272cde54fbaafa2ac4cb712a681b249",
+    "bytes": 7111
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/UserSyncRepository.kt": {
+    "sha256": "94b2124d70c8f44a2dd39d42f66d31359a2efe60fbda43848e1ecb09e8f5e52e",
+    "bytes": 4921
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/auth/UserSyncWorker.kt": {
+    "sha256": "d5e948a369f1f34a13f4e35a4862361a838dce265c15eb2babeb67d29839b2bf",
+    "bytes": 1644
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/camera/PhotoCaptureMetadata.kt": {
+    "sha256": "c351c4e06282c6cc42c5b346c682276478542757e3d09af1d9aa0baabb4f5531",
+    "bytes": 3518
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/camera/PhotoExif.kt": {
+    "sha256": "63ea0efe815f74c3d63cdef58714ed8514637bacbe289cae9ad3dc8bdecbcfd7",
+    "bytes": 3601
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/camera/PhotoStampService.kt": {
+    "sha256": "84dacc18a3ff376daa7e38fed25620a2d5123809fdee4cbbb1ba309beb31203a",
+    "bytes": 11067
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/camera/PhotoUtils.kt": {
+    "sha256": "786ffe6478af96eea7f8522f7535e58d37c8592579ef6853ea99c8c2177a0888",
+    "bytes": 3511
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/camera/RequiredWatermark.kt": {
+    "sha256": "b1a441a3b887322cb5e4860f8f43aff82a49572ad3033737503122500a1c69a9",
+    "bytes": 2040
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/catalog/EngineeringConditions.kt": {
+    "sha256": "d93164e88d607b95bb8d23050ef1e40363930ef35ba79c9a5acc36d2f7284863",
+    "bytes": 1079
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/catalog/SicCatalogRepository.kt": {
+    "sha256": "80ee7c8785c49395c48823d0f4fbc93ccaf5f8dd41fda2cafdf388998e10645f",
+    "bytes": 5291
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/CleanPhotoPolicy.kt": {
+    "sha256": "36b00a8c08d99c8659665c4f4bcef08cee17b5db0d92096376fe1f7b24cb7083",
+    "bytes": 818
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/CoreFieldTools.kt": {
+    "sha256": "b087a2efd035435ca8ae77b2fcd77d148777e0e92edd6bf5d15e4cb6ce70c1e0",
+    "bytes": 7206
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/DriveAdapters.kt": {
+    "sha256": "71aa7caa77ef508ada2638eb1a895e89c2c3a9f9675945d4dab5be5bd1a1103c",
+    "bytes": 5247
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/DriveAssetPathRouter.kt": {
+    "sha256": "367bb818bfb26a32aab64f66571eb4a0e3e2fdea91c12b277ec563991b356e12",
+    "bytes": 2352
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/DrivePaths.kt": {
+    "sha256": "b168caef48321c6155cec5bd469d2ecdd50488fd7debccfdd1be2175d74313f9",
+    "bytes": 2857
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/DriveSyncCenter.kt": {
+    "sha256": "33fb4e93cdb4601e4666d03a01480e3a0d3665d5c3e26ac098455c284300776a",
+    "bytes": 7353
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/FieldCameraActivity.kt": {
+    "sha256": "17663e2263ef7b514843779c40faea51fb291fa89940b2f56777ed4ba791ab03",
+    "bytes": 8011
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/FieldCommonUi.kt": {
+    "sha256": "09a91ad2cf9451bcb3fad9962cd9d450317b0d4352444631ee330b3847cfa741",
+    "bytes": 8915
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/GeneratedFileIndex.kt": {
+    "sha256": "8f0589489ef2ccee18d7ad37f0db928d6bbdaeb6b53399d29a23a2d1d7d06f32",
+    "bytes": 5773
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/InventoryDraftStore.kt": {
+    "sha256": "7fd5f9ddeb702c3d1e0bb895257b26c200d36a03f94a9d601fb3ce370b23af81",
+    "bytes": 7737
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/PhotoFilePicker.kt": {
+    "sha256": "630bd7ea3ea7cd0de1047245ed0f2a48d6a735cdc12819407248ef73c01c98b8",
+    "bytes": 1867
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/core/SyncOverview.kt": {
+    "sha256": "f0c55f239feb6e92d99180e35f3b1dd2f3da5de62ad58d483ec9af47c8313c79",
+    "bytes": 1520
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/dao/InventoryDao.kt": {
+    "sha256": "67e6ea07ccdca1dc4cc78352ba5c982fd894a8e79c72fd3fad451f996b1110ba",
+    "bytes": 14215
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/data/dao.kt": {
+    "sha256": "07f1c39bb48c5ae1dd56dccb53d1fe8c5e8d1d9075c6df45fecc2ad8e09c768e",
+    "bytes": 48
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/database/EngineeringMigration.kt": {
+    "sha256": "1970146311e79b4934981b07bad0fa7b9b5ce0c4d86a6836df895757fbc5394e",
+    "bytes": 1939
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryDatabase.kt": {
+    "sha256": "20f04a96d806ca04f1324efc95174e530ed45861a88c7add25943280c32aa453",
+    "bytes": 9789
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryMigrations.kt": {
+    "sha256": "6048705ebe6577c75007e924800066832ebc4e0a064a8a0ec98fe2f95077a522",
+    "bytes": 6477
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/database/RoundTwoMigration.kt": {
+    "sha256": "6fdbf39abd825c4fe1ebcdea4d45a5ad8606a42c2008ab9548731603a8d1706f",
+    "bytes": 2803
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/DeliveryBatchEntity.kt": {
+    "sha256": "a2192cd0bf8aa66b9389d2b5aeff62d4e628bed3c9a2db5d0391eeef1fbf0dd9",
+    "bytes": 445
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/FieldPrEntity.kt": {
+    "sha256": "99f25afa611dfe8d95c533484f4a2a5db6ec7644e4ed9ec4cda12f75e8a5d05b",
+    "bytes": 820
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/FieldSession.kt": {
+    "sha256": "d77038945ee51a25eddd9c7e345793ab4fff7222d54fd84ceb1cc3aeecc7f4a8",
+    "bytes": 531
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/InventoryRecordEntity.kt": {
+    "sha256": "485c59b00a52a4ee460472d4ee10bd9267f676cc82805d961d63d7ee6ed8c2cc",
+    "bytes": 3897
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/InventoryRecordForExport.kt": {
+    "sha256": "0101b76452b33dc832b0763ff475f386a98d1b92bdaaabb561856c6c0b7ebc62",
+    "bytes": 968
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/InventoryRecordWithPhotos.kt": {
+    "sha256": "e1fbbb31d5d8e5476b79ea1991de939966ffad825916cdf51ce91d1ca913e9e9",
+    "bytes": 778
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/InventorySnapshot.kt": {
+    "sha256": "1bfb79ae38d733902cda981564f9f3a3732e3974c6c5f57d4353ca06f412d7b3",
+    "bytes": 1217
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/PhotoEntity.kt": {
+    "sha256": "4985858a604e25b91557f590762b9236ff1c1af6f929368d20b09412cd40cec7",
+    "bytes": 1870
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic17AEntity.kt": {
+    "sha256": "f4a425dbd5efb501ae59be4da9c65d574e1a5a0455848f04ea0bb33861fac4fa",
+    "bytes": 2819
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic17BEntity.kt": {
+    "sha256": "104d2eadff05acafda168bcb87669289c098a7ac7491e0d600c69863a05c27f0",
+    "bytes": 3456
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic17Entity.kt": {
+    "sha256": "dbc3eb60f3c6812b477d191e06e8a6baad9344aeee779c65e631ba19117827a6",
+    "bytes": 981
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic18AEntity.kt": {
+    "sha256": "0844b51e2d12354eb00647d2df1007e2d4c55d9b15a92593bc86b243ee5d3441",
+    "bytes": 1791
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic18Entity.kt": {
+    "sha256": "7f70749b7143b6029ee2c50b846a949f87995aa0dcaaa688b009dfc0932c0210",
+    "bytes": 924
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic19Entity.kt": {
+    "sha256": "d29e2dbbe850bcbedd04f68c5989a7f3a4773b09f57d006b59fd0892166cd057",
+    "bytes": 736
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic20Entity.kt": {
+    "sha256": "8c6357cc4a65b759a3ac465cca33492d503243a8393dc6b03f18cc22d3f8ffe8",
+    "bytes": 763
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic21Entity.kt": {
+    "sha256": "d5e35ebee5fcd5038278addeab6e221fff85023f3db1c896a00583d1f289c1e5",
+    "bytes": 632
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic22Entity.kt": {
+    "sha256": "6bae57f0cd9d1991a301b67c3b37fdf6339fc1649902ece4465353c88e27259c",
+    "bytes": 1129
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic23Entity.kt": {
+    "sha256": "91fd799e903c784296c18cbce50789c7450d54c911964a7eacf146a8bb44a196",
+    "bytes": 526
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/data/entity/TrackPointEntity.kt": {
+    "sha256": "b16fb5fc0c93137c2b84b7f036033e3a19a3584a581dc635480162a41698f4ed",
+    "bytes": 670
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryMetadata.kt": {
+    "sha256": "36ed5dc6f9d28815ac84b57dfd92926d804778acc21ff4031d948f683d796580",
+    "bytes": 4891
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryPhotoNameBuilder.kt": {
+    "sha256": "afa1ed21c2f3745b26b6e8eb6017f20c6d94e866c52c8672d05f2b626c57df2d",
+    "bytes": 1529
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryReviewPanel.kt": {
+    "sha256": "cdc8b7953f4f63b643d97c36150b83b607a3c9b8af071fafdb4866e25bd3392c",
+    "bytes": 3815
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/delivery/DeliverySync.kt": {
+    "sha256": "9fa1c087bc343077adf5dc58bfa84b219ff8e5136033d8fedd71cf77c8678481",
+    "bytes": 7322
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/delivery/RouteDelivery.kt": {
+    "sha256": "85e9610b5c37807a8fceefb747fb4e21f29fae1e66de2f613d4365e54d5bb557",
+    "bytes": 9127
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DriveConfig.kt": {
+    "sha256": "bbdee977c5846ef38f3316260d6e43643740439d15acd0fdb726c4f3ebfac985",
+    "bytes": 187
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DriveFolderRouter.kt": {
+    "sha256": "19306f0168e37d2217b8a2e21e3f6c02d556fcc6cb1cab270e725689fe63aaaf",
+    "bytes": 1325
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DrivePathPlanner.kt": {
+    "sha256": "e20d2bdbbfb3ee272b3af286fc5db8125006aec88abef45fc16147029ba6c41f",
+    "bytes": 3118
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DriveStatusPanel.kt": {
+    "sha256": "66f04e871d1cd1403b1f5921f9505ea77d95cb4fbb225effa3a28f9ed82f4600",
+    "bytes": 1485
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DriveSync.kt": {
+    "sha256": "04de6d544fa1566d81c3790400a78cf3b17f7d050e58dfa68ec166f7316d3813",
+    "bytes": 2886
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DriveUploadPolicy.kt": {
+    "sha256": "4ce083753dcbc167bd8f4da7b9252a6a03eafaa7b7538e1eb3a37366fd2fc5ff",
+    "bytes": 2068
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/DriveUploadWorker.kt": {
+    "sha256": "f8ae3b8853f87f1f296a1cb13500f9608db531a6ba5bd7a88ca1f3f4892ac6f4",
+    "bytes": 23939
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/LocalSicExport.kt": {
+    "sha256": "2600601d0f8941684afb2bfb7f960f9e085a213c7eeff4233c0d8c2141c164d2",
+    "bytes": 5936
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/ObservationReport.kt": {
+    "sha256": "801612ee0b89a1332b3d7ff76e7bf722d3d7c496dc54f22c7d80469adbd2e4d7",
+    "bytes": 1764
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/Sic18AExporter.kt": {
+    "sha256": "e94d6ab1659d8ae8e7ffe879d64f70ef9632e992e6b58a2e57b3e7df90e03cff",
+    "bytes": 1704
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/SicExcelWriter.kt": {
+    "sha256": "41ca81f7f2a94165f8298c65f5511af04042cf2b18d776ac0fb7135a1a5f694e",
+    "bytes": 18630
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/SicExportFormat.kt": {
+    "sha256": "b7ca329c3d1060caf2ffa5e05eb0809edee2934315eb71eef5c3d05668e3dabe",
+    "bytes": 6377
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/SicExportUploader.kt": {
+    "sha256": "90b34f7994e9c8971505a3981dc8c2ef0f9d7af8d69632e3db26f0ba5b298fe5",
+    "bytes": 3409
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/export/SicWorkbookHeaderWriter.kt": {
+    "sha256": "7fa5727eb4cdec46d1c2cbec82878805658af8b2993d656f5d49c91d97c99507",
+    "bytes": 5658
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/CaptureSummary.kt": {
+    "sha256": "9a1fa42816e008eb5bd979de6b34bd72b1abc41deb11490725ededf57c5898b8",
+    "bytes": 5938
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/CaptureToolsUi.kt": {
+    "sha256": "195c516edda4a86ee269f1514e6521df30888ae4c588b56954c4a46a1a321e7c",
+    "bytes": 5440
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/ConditionSelector.kt": {
+    "sha256": "c41a884943ea77dfc532e16fc14bd872d3c2f53a4da2103da32db4686f94e44a",
+    "bytes": 1826
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/CulvertPhotos.kt": {
+    "sha256": "9427a4a645c42a667d3478b79cbbddd3f89379e167264adef9ad7f9913b932fc",
+    "bytes": 5784
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt": {
+    "sha256": "45fdff634dfdbcc97de5a133b568d25f0074927e41ad007d7198dbf75dabe40b",
+    "bytes": 3317
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/FieldController.kt": {
+    "sha256": "59b8696db2bcb1e85e666d981f1a1a36811191cd4a499ac845ad52578b562d96",
+    "bytes": 8284
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/FieldPrPanel.kt": {
+    "sha256": "53bf760076f1af29e851499036d7c9b96036ad1cf09e2e382bfa1f9833e24010",
+    "bytes": 3289
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/FieldSettings.kt": {
+    "sha256": "066d7739ea7d0080fcc6e1af6d94ef33c5eb63a9f4ee7906b9b81f8aa0faaadf",
+    "bytes": 1629
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt": {
+    "sha256": "ee5e4106f559b73b96c27f6213670fc3f3d5a6ac3eec00cf620a3a4396eb9f8c",
+    "bytes": 14504
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/InventoryPhotoGallery.kt": {
+    "sha256": "6f142f69abe66d2a22947e69b255a520adb3392cbf46fed2c6e20d67054671f2",
+    "bytes": 2436
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/LocationSuggestionPanel.kt": {
+    "sha256": "c03ff6494430fbd26e3bf79a8a125c48d74bf60f31b8715b694ec6d3d895b51c",
+    "bytes": 4151
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/ObservationReportButton.kt": {
+    "sha256": "7665377f410fdf28c825d4192ed0de2e190e20455b26d3206d16649f9110d81b",
+    "bytes": 1840
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/PhotoCategoryPolicy.kt": {
+    "sha256": "07ac294d69fc62972a32ec653d41df7f2776bab36d839a6e0acf00f60bb6f2b2",
+    "bytes": 1052
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/ProjectRouteFields.kt": {
+    "sha256": "1c2601448a900efa76a093b4b3812b1e7a05a91b0a7326626c6c086723e81d44",
+    "bytes": 603
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/PrSuggestionPanel.kt": {
+    "sha256": "787367460e3b2d2384119719db2a5766bb4037902b0a2caac6d0ffe09a96c9b5",
+    "bytes": 2093
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/Sic18AExportButton.kt": {
+    "sha256": "7063307526831d92dff49fb6a0d3da5e421c25a9735e15daef259c668eb036b5",
+    "bytes": 1782
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/SignalCodeFields.kt": {
+    "sha256": "1d97d839f1795fd0e1405f3b8fc3a34868b05e93224406df40824027841e39d0",
+    "bytes": 5570
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/SurveyHeader.kt": {
+    "sha256": "a224474c9da2c229be85b66a543798660087e33b9ead3baf01517b0c116cb9e7",
+    "bytes": 2151
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/field/SurveyPreferences.kt": {
+    "sha256": "dd8aacc863c542b2a01ee618a69d31f0ab4c0c79924cfd871858d05aeb0cf551",
+    "bytes": 7251
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/gis/KmlExporter.kt": {
+    "sha256": "611211dfdfa43873a28d66c6ac9554b6d67299130ff84c03ccfe3110c1fd075b",
+    "bytes": 13396
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/gis/KmlMapImages.kt": {
+    "sha256": "c3003cd4f831bee8404ee50af21cdd6ccd288f3e6d52025a2029966f5529d46a",
+    "bytes": 1848
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/gis/KmlPresentation.kt": {
+    "sha256": "b88ddda64bb8f6fe90521d1531eca0c7028ee94428d558422315ac897a6ddaa6",
+    "bytes": 1062
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/gis/LocalKmlExport.kt": {
+    "sha256": "4f79acddac33462678162ffdd9013cec224a1ef6740d4c75992aec84bef6425b",
+    "bytes": 2746
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/location/ExternalGnssProvider.kt": {
+    "sha256": "56eb48f6413e40822bb4523f419abfcbd709703d9eb62f3b5c83612a062e5981",
+    "bytes": 3210
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/location/GpsUtils.kt": {
+    "sha256": "74808df1fb6d0eb09b66c0837c93224248dd0532c38e030959f0845078fab400",
+    "bytes": 414
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/location/LocationProvider.kt": {
+    "sha256": "0c4719841957d1be837959054fb4e82d082d3704aae0dd063efe71bb556997e8",
+    "bytes": 881
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/location/TabletLocationProvider.kt": {
+    "sha256": "3c48124d16adc352e715b1dd9e947f5830623ec24e9aa30decaaedc4716aafc3",
+    "bytes": 1863
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt": {
+    "sha256": "4cc1e96454cfd17aa042e7ffdb36e2954fceb4298758912b73de3cf12786e775",
+    "bytes": 134498
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/CommonInventoryFormState.kt": {
+    "sha256": "ba24bc9fc98b2d88863b34e0966a8187c7add12e73fcbf14aba413074e4f45de",
+    "bytes": 1023
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/InventoryFormState.kt": {
+    "sha256": "a5a93749119c53b23d382b342303b5cc657cd958a7fda3998e88beb3bb26fb94",
+    "bytes": 739
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/InventorySaveRequest.kt": {
+    "sha256": "af441200493b184d7f04479dfc00543338620736ffc2ddf9145a6dfae89db479",
+    "bytes": 2254
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic17FormState.kt": {
+    "sha256": "13e3a9fe2a5850ac4a1d9b26dc997ad17d1ba20d72c4e256b9171e63f877b0f8",
+    "bytes": 1804
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic18FormState.kt": {
+    "sha256": "9447936a8f3910bf0dd4bdaa748afede8b47ff1f4d722bbf5a2bf23ae97a026d",
+    "bytes": 1305
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic19FormState.kt": {
+    "sha256": "e8913adbcee60fdae2fbc34026b6ceb8731935a5747f181e4b988cce31536c02",
+    "bytes": 1056
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic20FormState.kt": {
+    "sha256": "cc67331026edfc94704b8fe3de3b8af5b0d9795d610b3569d35d36c11edad02b",
+    "bytes": 1460
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic21FormState.kt": {
+    "sha256": "60cb3e517539bb5b33aedead4a0d97433575411360d1cb7bdc7e2ca8fe75b7ae",
+    "bytes": 836
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic22FormState.kt": {
+    "sha256": "4674a5943cb2262226dd49624de03cc4e01be27a1421f85c59b4dad9f1ec4875",
+    "bytes": 5188
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic23FormState.kt": {
+    "sha256": "4d6ab982f33e24701cf060f1ce3dd0de424a78be725976e40791212ecd30e3f8",
+    "bytes": 3964
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/RoadAssetType.kt": {
+    "sha256": "b8d96acaa475116852a1274f4a38304d981e8bc5f13766458849263619ce84d7",
+    "bytes": 950
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/model/SignalizationType.kt": {
+    "sha256": "3be7cfc04ca6e6dad89009df5525fc87e6b7739d80e4ee42966138033d9d837d",
+    "bytes": 725
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCalculation.kt": {
+    "sha256": "cbd1f314006064b9302f3bb3c964fb3d3ecda7f6728cd1da4674057a3611ba28",
+    "bytes": 9063
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDao.kt": {
+    "sha256": "b3d2bae9a06d395d80629a93163417ae8cac2ba33ad01186106c0ce04ece1a1e",
+    "bytes": 2234
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDrive.kt": {
+    "sha256": "f8efa5b617b2d4562f49918de803a7ec36006f0f8c634a691c39b53fac6f4208",
+    "bytes": 14099
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementExports.kt": {
+    "sha256": "8db99e7684705d7468a9a0f692abdaca6fcc50a01b3b13f48dd7be150177d83c",
+    "bytes": 17345
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementGeneratedFiles.kt": {
+    "sha256": "c26fa8e15e8b8bf31e3b1d87ac76a6aeb26447fe64d15fc1e2f7ba67de254ebc",
+    "bytes": 4903
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementHeader.kt": {
+    "sha256": "4917cee3c8c68ae38a60332d044cfd954ea2d98d01f875d0314e8bc3e808aff6",
+    "bytes": 5368
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementHistory.kt": {
+    "sha256": "ab65eb46e671f2029059213d32e704320d4fcb10701af84c36e3451d7071d5bf",
+    "bytes": 1158
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementMigration.kt": {
+    "sha256": "9dc51a649da14e0bbf21e4069a84f3bc12dff84ed7e1621ae6310b6d77bc7140",
+    "bytes": 1293
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementModels.kt": {
+    "sha256": "5c5deaf9d939f47b9300b93f4e661a7618c92be8d5da1d2380bfa26aa70bd123",
+    "bytes": 5695
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementMovement.kt": {
+    "sha256": "85b4c573ede531f19c309494be24e34e75c5e4f918d9e8581983629a144214a2",
+    "bytes": 817
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementPhotos.kt": {
+    "sha256": "a695c01885e2e0debbbbe9be375128dca3ceb3705403be07931fa9883fcb035e",
+    "bytes": 1825
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRepository.kt": {
+    "sha256": "2622f6ef48da8103d7867858dd95049419da986229449b8169c14f1fe8bdd98e",
+    "bytes": 7818
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRules.kt": {
+    "sha256": "361ee3a08d24b0be19529937cf27fefe9c18e735533a29ff7fe60b27e3026080",
+    "bytes": 6222
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementScale.kt": {
+    "sha256": "1b29c825abcdcd182f8b1d77166826f9698ae05dfd28ceb89b9c9c053cc9cfd9",
+    "bytes": 1999
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSection.kt": {
+    "sha256": "a539b4b8750dd5e777dffa83e348f15dac7a4d1e180dd9d747e38b53294d58ad",
+    "bytes": 3080
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSic.kt": {
+    "sha256": "9968e8da1629eb3a56c659f55b0957d613da2882cd9c4000c0e68467a7f583ef",
+    "bytes": 7132
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSketch.kt": {
+    "sha256": "f2ec943d1864d4a176f57bf711f30356ee6f3e8302baea32b2b8b52e8d7df73d",
+    "bytes": 4077
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSlabTotals.kt": {
+    "sha256": "e500ec3bebd5a3c786233e21d77b40164408cf2a48c2e2d5dd19a88ef2ce3cfa",
+    "bytes": 1161
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDamageTable.kt": {
+    "sha256": "9116cb634327aaa690149c5ca109e8c044d0f0ac6bbc4239c869879ce962d5d4",
+    "bytes": 3903
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDialogs.kt": {
+    "sha256": "d0056acffeaaf9fa8a07598b798bba5e81bea16a65500b5020649183f043d49b",
+    "bytes": 12294
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementOutputPanel.kt": {
+    "sha256": "4179681e3db7ee6b31d05f392f6be3c21a4dac8ccad5a414405ad74bcd809033",
+    "bytes": 6853
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementScheme.kt": {
+    "sha256": "229820c191b89be8d3fc770aeb44e0992854bcfecac2bd0d898a0b0f7e23088c",
+    "bytes": 14650
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementSicPanel.kt": {
+    "sha256": "a82c8fc8b8e3ca6a97e4b0ee932933da0ebf80ae2155cdca6ac67830bdf47d74",
+    "bytes": 5426
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementWorkspace.kt": {
+    "sha256": "055eb4b3852fd18bf07d92312d46f8bb5361b36c5b075142292b6c7af61f8528",
+    "bytes": 21584
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/RecordHistoryScreen.kt": {
+    "sha256": "2eef041ec79b19d6ae0575b52157762ae634518ed543abd0437087a680d54f51",
+    "bytes": 22047
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/repository/EngineeringEdits.kt": {
+    "sha256": "3f51555b222d4648741fd6f98e6f3b0fa2a4e86832afa3f51ee036b763cc47c4",
+    "bytes": 6578
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/repository/InventoryRepository.kt": {
+    "sha256": "203d3662cb85a14b97492089f8dfccdadd491c36dde6b96904630c1c757d64c6",
+    "bytes": 5252
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/AssetOrderScreen.kt": {
+    "sha256": "418eb2379a153442e3c14b0d7eb39ab3fe21ba2ea44a798cbb557b0c3b8826e5",
+    "bytes": 9183
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/AssetPresentationCatalog.kt": {
+    "sha256": "b3418201e17ecc320c26252c32f9dded7b942c2500ba51fa7a7bf552126aa7bb",
+    "bytes": 5017
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/ContractualPrInput.kt": {
+    "sha256": "4199c666a6450d769c55eb53801010609b63a35c2b652842dbd0bbe1f5cd68fc",
+    "bytes": 1238
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/FieldPrRepository.kt": {
+    "sha256": "9e23691b1232ac4aa72e9d6451c335e6d42c39560fc915f787ef05626d5f023b",
+    "bytes": 2465
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/KmzRouteImport.kt": {
+    "sha256": "867a86532de66dabaaf2e7b4ecaddcb201446c008d94a94c88e740e5924ad179",
+    "bytes": 9091
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/LiveRoadMap.kt": {
+    "sha256": "5fc5f9b2b7a0a2409cbbfe5ec46ceac3aac74a74bf4065b2fc9130af01f2908f",
+    "bytes": 14314
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/LocationSuggestionEngine.kt": {
+    "sha256": "061d4d7f1e98e0979a594d8d432a509f6ab6f5e11265ff2ec760bfc1fda82792",
+    "bytes": 5554
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/OrderedAsset.kt": {
+    "sha256": "47da7bafcc0b92a6fea8e01cbf84d3022f297d5ea6b6d8087668abd25501d15f",
+    "bytes": 2651
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/ProjectRouteCatalog.kt": {
+    "sha256": "dda689a5c1489b273923ee7b8c82286911c71d428776936ed99c4f79ddb0b104",
+    "bytes": 1498
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/PrSuggestionEngine.kt": {
+    "sha256": "a835ee2a68895fd97a62494d69eec37ad7759786bd51a11511743fd23ff8c5f8",
+    "bytes": 3998
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/RoadAxisPositioner.kt": {
+    "sha256": "e6c406885ae58b7982bebaade23f6f8e0e6f400275b7f283ebe487826a23ec4d",
+    "bytes": 1904
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/RoadAxisStorage.kt": {
+    "sha256": "f96733cef7547a7cdb38205dc085d9f6a5ffade335c8a61cba403aff2cd759ea",
+    "bytes": 1131
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/RoadReference.kt": {
+    "sha256": "009b470bd9fde1acac08c2bca33e8bc7fb3ecdec92ff5615cc8066712a6786ba",
+    "bytes": 9942
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/road/RoadReferenceRepository.kt": {
+    "sha256": "b5c057460900469aa4c54ca48d8c766fd2cda2e6477fb401e79849e0fb5f0255",
+    "bytes": 5405
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/calculator/ScapConditionCalculator.kt": {
+    "sha256": "9ab9c0fb421969a125023071f907f91b6f67ef8751c74b3ea7d6ca5bd89f20c2",
+    "bytes": 3642
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/catalog/ScapCatalog.kt": {
+    "sha256": "5729269e26d594f2a1c2dbee68d5864467b81a7b7b4b7b7dcb0ee2cdd9dc5056",
+    "bytes": 5223
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapDao.kt": {
+    "sha256": "b184f29ded0eb2110f4725205f03f272d1d56a184f3a44b25aa4ff680c706659",
+    "bytes": 5886
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapEntities.kt": {
+    "sha256": "aa7516f3cc9b1a56e163c08936c3165b7a8dc5c2fea3fa65e17d70a9099ca2f1",
+    "bytes": 5496
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapJointEntity.kt": {
+    "sha256": "c8fe0bef29035970bab9a2e7be9757bf5d013846bf2621ec198664c9ffb0430d",
+    "bytes": 469
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapMigration.kt": {
+    "sha256": "59b88d7953bdfab477fa77f7d9f8be8eeb4995753fd66f4618f968ec84c8e42f",
+    "bytes": 5917
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapRepository.kt": {
+    "sha256": "005c360bfc58a6f15ed339661a7acfd7f7ec918296332f043e217823848c2981",
+    "bytes": 25060
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/BridgeSicContract.kt": {
+    "sha256": "5e8e7a1bddecf2efe9d70f44344e919ff4deee27a2794ad70bd7b207ac187f96",
+    "bytes": 8247
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapAiAnalyzer.kt": {
+    "sha256": "dd02a3a17b45adab6fcf12bdceaaa2d9fdd9ff1f98cb2da5fc6de9ff2cbbcd5b",
+    "bytes": 1006
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapBridgeType.kt": {
+    "sha256": "fc3d8592696cefe9e7435a0f2c5b667ae6b9a7b77849f4df27923b18a903516e",
+    "bytes": 1722
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapCompleteness.kt": {
+    "sha256": "3ce088045a2f4ba1f7e63c1de454c285bd031d263faf0c94cb49c3e001f8f40c",
+    "bytes": 2503
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapFieldPolicy.kt": {
+    "sha256": "1560c5b763fc9e5ceebb41286fe6a0d8525bb587a168af7c48d6d7c55efb8ef6",
+    "bytes": 2856
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapPresentation.kt": {
+    "sha256": "fe9929cabb1757e4452f3ae580ec75ddad52253b83397fbf846d3b332b1f252a",
+    "bytes": 2630
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapSicSupplement.kt": {
+    "sha256": "ea8b2435eb29375faed622a2af8471a72ebfb927c3abb7f8c93619c05021447c",
+    "bytes": 2251
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapToSicMapper.kt": {
+    "sha256": "bb7eacc86459db5992802d9c5f121aaa224d420eb10f25c951466c95277f64db",
+    "bytes": 4200
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapValidation.kt": {
+    "sha256": "808c3b960cf3b3bd23ee3d8c1b9558e99bc35628a4fcb30a6594b063fa015e9f",
+    "bytes": 9007
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapCanonicalExporter.kt": {
+    "sha256": "922c5cfe0e5a7d67183c202597ea1604e8d90b043bbecd80b23b83d47431e5c6",
+    "bytes": 10949
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDelivery.kt": {
+    "sha256": "0b4f46b74f8ff1490001e603a8a614985fe0e856fb86cd1fcc819ed1da0c81b0",
+    "bytes": 12114
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDrivePayload.kt": {
+    "sha256": "e00d46b88e8045606e37a11aecba543f3e67299a733d8b5443076de8e898224a",
+    "bytes": 1380
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDriveSync.kt": {
+    "sha256": "8f17541c4f3a95306a7c7ab47b5df8597b0662e21b88df8a60c92211c4cb0c05",
+    "bytes": 13646
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapExcelExporter.kt": {
+    "sha256": "59cb962cc0e71202a4669bd63839879f134ef3a2d9bdb6a4b574dca3380d2717",
+    "bytes": 14510
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapHumanDelivery.kt": {
+    "sha256": "1bf20040e703c1fad1d38bc6095cd2ff7e9ee7c874635e2f66ed0b76b57022fe",
+    "bytes": 5578
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapImageOrientation.kt": {
+    "sha256": "91e9640226ada6d6f5d0849d7732282ee089656e4b6095a5e46100aec6f038bc",
+    "bytes": 1913
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapSicExporter.kt": {
+    "sha256": "cca91bd9131a9b5bd0506b0e1f58f3c0c289c4332b16b76fde0b029d59395f27",
+    "bytes": 3310
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapTemplateMedia.kt": {
+    "sha256": "d96736c740f044729734cda372db4d8891bec1613a99c9f631fd44a34beb40af",
+    "bytes": 9193
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/export/TemplateWorkbook.kt": {
+    "sha256": "b1acbf41841a7d9e6dba2bf35776eb42940a53c00e5ece2924a6579dd29a0130",
+    "bytes": 13407
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapBridgeSicPanel.kt": {
+    "sha256": "d0c8ad75683184328f9dc0586bbd0fff55c1626296bb24333953e4b8ec1be163",
+    "bytes": 11163
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapController.kt": {
+    "sha256": "ff98771d7ee02c2934c122348ca5efddb3cf577cc19c76c797dd13c8113a42cd",
+    "bytes": 4467
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapElements.kt": {
+    "sha256": "f3396738eae726106d4eb8a12c4966f2d5b3b3727b6e004d3708fb3ab0d0b3e9",
+    "bytes": 18753
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapEngineeringPanels.kt": {
+    "sha256": "51fead8bff60025d593f648448fee633a4d17b41ed90e4419c77032d8fb5f029",
+    "bytes": 4346
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapExportPanel.kt": {
+    "sha256": "74dbd89ff3afd4a617b73476f8ceed544c16937b2a8ec3b5ddb99fe983bf6d7f",
+    "bytes": 9577
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapForms.kt": {
+    "sha256": "0edc7136c00521e42cfec98c595827b9c7062069c81a010acf4081aa3ba0ac6d",
+    "bytes": 14993
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapMedia.kt": {
+    "sha256": "e05f5da0a35a26a16e2117538965d8e6455ef4a0e0b1481433497ef64090095e",
+    "bytes": 14277
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapSicSupplementPanel.kt": {
+    "sha256": "27d3675b0e687c2fe979bdc2010840685330f3bc202a34e61f93ad99432b8e94",
+    "bytes": 300
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapWorkspace.kt": {
+    "sha256": "e87b36167fa4d2ff202267c2d92ac1dce92dc5dbaa55cbf6059c9fc551c76f8e",
+    "bytes": 18909
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/server/ServerApi.kt": {
+    "sha256": "15e7d254e41ced485f9d3aeb48d4a68e0bb9d053e5fbe38a0aa342f365be2455",
+    "bytes": 2615
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/server/ServerPayload.kt": {
+    "sha256": "b543af772dd2b84b7f6502f99a520fcf6af68f21a4d079037d09d328706be686",
+    "bytes": 7038
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/server/ServerSyncWorker.kt": {
+    "sha256": "09795d10b64180e96b792289eb1d5676c561d2baa662b1279003e077deee5a55",
+    "bytes": 2550
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/Sic23Fields.kt": {
+    "sha256": "c12bddbe64268d87302a51abd6e3f1e586f56d4928aef2ee32a1b080474fc205",
+    "bytes": 2565
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/SicExportScreen.kt": {
+    "sha256": "d90ca65e99195f2db3859597cdf0c248d3e1f0946eabed7e8d44baf7baee4dc4",
+    "bytes": 9378
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/supplementary/Sic18AStatus.kt": {
+    "sha256": "1bc813cf9c1e9623a485b887cd4e3d2deafde3809092ca86896013ed527101ec",
+    "bytes": 885
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/supplementary/SupplementaryForms.kt": {
+    "sha256": "d3186c841df447394d0868fbdc294a09932272ca2b7ee6cb02b4bf12d2761b0a",
+    "bytes": 8755
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/tracking/TrackCalculator.kt": {
+    "sha256": "37af26e4212015f6aeb37ab53b4202f1532536558dadebf3a4b08e26b4282282",
+    "bytes": 3290
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/tracking/TrackCaptureService.kt": {
+    "sha256": "d8f8c57bf8845bce3bc7187ac7be2279b60b4f140918735b7a78fdb3caf043e0",
+    "bytes": 5592
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/TrafficSignCatalog.kt": {
+    "sha256": "cf97dbae657541eb5fea276ee4ed867408566e564ade13ee4c0c91f40c68f9ac",
+    "bytes": 13633
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/ui/theme/Color.kt": {
+    "sha256": "0c0e1c741cb6425db3ff122d5e2fafb1b8286e036aaa0ba5944828dd30e78943",
+    "bytes": 335
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/ui/theme/Theme.kt": {
+    "sha256": "f81b758f451055bcf7dda4ad56b00c956271bf3f9405f70f05829bb36a852e27",
+    "bytes": 1520
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/ui/theme/Type.kt": {
+    "sha256": "7e777a882d0c34ab644c7a8c5dc4de07120978dd7d958fbe9242e0bdd82bc04f",
+    "bytes": 1030
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/validation/CaptureValidation.kt": {
+    "sha256": "346e9add40113e50e417c5ed3f835e59f8c4ba9eec951da4c6f3eaf99748a7d9",
+    "bytes": 8979
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/validation/EndLocationPolicy.kt": {
+    "sha256": "91810bc488dbcf0153eceaa78e266546a5d3eb5bdc7affa6f37533b580684acf",
+    "bytes": 2669
+  },
+  "app/src/main/java/com/tuempresa/inventariovial/viewmodel/InventoryViewModel.kt": {
+    "sha256": "46254e0a32c7ecd702fec6f451062e8ea4ec3a6d87e563ff73ab95fbcf557dc6",
+    "bytes": 59032
+  },
+  "app/src/main/keepRules/rules.keep": {
+    "sha256": "9e920813dbf36db3bdcc279837aac74db4c80647585a84d3e3f0c23d700105f2",
+    "bytes": 429
+  },
+  "app/src/main/res/drawable/ic_launcher_background.xml": {
+    "sha256": "38381d0d0a64770d992c98e5b5e492555690af40e2fc6ee59e5a1c2a7c0fdcde",
+    "bytes": 5776
+  },
+  "app/src/main/res/drawable/ic_launcher_foreground.xml": {
+    "sha256": "6e3c1bb64d9bec079cf0030d867c58b064d2fb19ca6c5a691543c43134f64a2a",
+    "bytes": 1731
+  },
+  "app/src/main/res/drawable-nodpi/gbo_logo_watermark.png": {
+    "sha256": "4f126a163787bf58f00ec5a7e226d120ab924f37bd6ae539015fff0645dda0dc",
+    "bytes": 1185721
+  },
+  "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml": {
+    "sha256": "ae7ebffe6b56372f159075bac34892be83c441c9d144fff5497b5936644f2fab",
+    "bytes": 338
+  },
+  "app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml": {
+    "sha256": "ae7ebffe6b56372f159075bac34892be83c441c9d144fff5497b5936644f2fab",
+    "bytes": 338
+  },
+  "app/src/main/res/mipmap-hdpi/ic_launcher.webp": {
+    "sha256": "2a7d288a534005c12462e5a0a40588141b7d765689a8fa4f06b2914441011fa7",
+    "bytes": 2546
+  },
+  "app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp": {
+    "sha256": "5d5c2c2446d8c9bd4d023e212f19e1bf3bd05c0bd4e847140b881f540a22e030",
+    "bytes": 5930
+  },
+  "app/src/main/res/mipmap-hdpi/ic_launcher_round.webp": {
+    "sha256": "fd4a17e1cb5a17f5ec94c23a6cd8046aaf1bbeda92d960d3efaf0d4592db665a",
+    "bytes": 4426
+  },
+  "app/src/main/res/mipmap-mdpi/ic_launcher.webp": {
+    "sha256": "e3a3a0d3f54a155de885bf766559f8a6c25beae88153a2bc0a5b87ffdc38415c",
+    "bytes": 1456
+  },
+  "app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp": {
+    "sha256": "de9cd0f564ad1235bb35597e0d720a53497fa978a7341acb5edd7316df08f5e1",
+    "bytes": 3178
+  },
+  "app/src/main/res/mipmap-mdpi/ic_launcher_round.webp": {
+    "sha256": "6760c3073060866c3460bc599932b48cdcebf1e41ea883cf1b33bddebd264d16",
+    "bytes": 2544
+  },
+  "app/src/main/res/mipmap-xhdpi/ic_launcher.webp": {
+    "sha256": "a554f309428c1a2bf30e6662a002c852f4474e4f98261f4f0c6afb5332681bd0",
+    "bytes": 3856
+  },
+  "app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp": {
+    "sha256": "dda581ab150c9beb6af8367919fca0a8a6cd602d465d25dd2a4fb04b90f086c9",
+    "bytes": 9098
+  },
+  "app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp": {
+    "sha256": "b2bc4c9a6a50408dcef578b968b22148c5a4b9eccb398327c7a608a857b0d071",
+    "bytes": 6576
+  },
+  "app/src/main/res/mipmap-xxhdpi/ic_launcher.webp": {
+    "sha256": "5f0ab825297ee2200d654194f674b292b266b0b98e28acf94d2d35f36013fbd6",
+    "bytes": 7176
+  },
+  "app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp": {
+    "sha256": "ec87e0c06e301334621c78cd1db5628a57094d5a4dba447e4a5b2592f1aa4a50",
+    "bytes": 18508
+  },
+  "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp": {
+    "sha256": "7c597db5c0e28e8400adb812f335d3f1772fe0186843f4130ab157a6a9af90c3",
+    "bytes": 11688
+  },
+  "app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp": {
+    "sha256": "51f62f3991ba4200782b24db8cfd7f725110a31f09476a062a0d63221fafed3a",
+    "bytes": 11592
+  },
+  "app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp": {
+    "sha256": "cc9bd9cc52aad42636e003f65d14dede7ee1cfe954c65c23b36cac0a94c1b55b",
+    "bytes": 31810
+  },
+  "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp": {
+    "sha256": "7119aa23cac56ddb532a6ae4f5703b92d760aa3f7467a705055c5c27a7409182",
+    "bytes": 18390
+  },
+  "app/src/main/res/values/colors.xml": {
+    "sha256": "31e0230ab2d96fa128a11705e85e590f3462745dc3c04bc851bc724a445921c1",
+    "bytes": 387
+  },
+  "app/src/main/res/values/ic_launcher_background.xml": {
+    "sha256": "1cab1aa686b81505433a474a3408f56d39a3dff8f1ff66c16d866a8fa4b806be",
+    "bytes": 123
+  },
+  "app/src/main/res/values/strings.xml": {
+    "sha256": "765dde6af915f347beb6388a889d3e157df398eab708c69e0bca8c9288765853",
+    "bytes": 78
+  },
+  "app/src/main/res/values/themes.xml": {
+    "sha256": "c15e41e50a4441f6ed3cf7d8b20fe624ab3c897ce41cb29260caba599cf30f98",
+    "bytes": 160
+  },
+  "app/src/main/res/xml/backup_rules.xml": {
+    "sha256": "0ab45416f23d407d71d81740f3a9c840f3fcdce15e03da81f9ceb40d19dc11ae",
+    "bytes": 299
+  },
+  "app/src/main/res/xml/data_extraction_rules.xml": {
+    "sha256": "df9c414b813fc52e9e467def44533de5b3849d02ed29ce0fb4403f42582e1536",
+    "bytes": 645
+  },
+  "app/src/main/res/xml/file_paths.xml": {
+    "sha256": "ab9d98f2b00ae68c8112c46196b8a99500ac7e22372a430884ea09818e8266e7",
+    "bytes": 692
+  },
+  "app/src/main/res/xml/network_security_config.xml": {
+    "sha256": "7d8536bee8a65f5da72178a7bbb62ddcf587df53db57259aeeaea5bfe375e35d",
+    "bytes": 238
+  },
+  "app/src/main/resources/sic_header/image1.png": {
+    "sha256": "f1d72a5817a5dfbbca2cb335dc07626bd1fd8155f5f69fe82f9df2fdda326d85",
+    "bytes": 59824
+  },
+  "app/src/main/resources/sic_header/image2.jpeg": {
+    "sha256": "6e1c92f9fa1d50deb26c04b07c6b443eddeea2a0cc469a13846b3fe1f391b117",
+    "bytes": 12602
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/AssetOrderingTest.kt": {
+    "sha256": "f7995689bfc3c35c1657ebae7d09330f44c65b60279e15997ab161cbeb9179df",
+    "bytes": 8643
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/BridgeSicFlowTest.kt": {
+    "sha256": "c5d92e66228a0abd39bb909259031305b7f60750603b7bd46fc36301279ec24c",
+    "bytes": 14112
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/BridgeSicUiTest.kt": {
+    "sha256": "664159b5a0ecb40377fec8bdb078f51fd11064c6774ee3dcc20e1477a7f31e22",
+    "bytes": 5411
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/CleanPhotoPolicyTest.kt": {
+    "sha256": "a37f1760c1126930a0d40740ee30e30c67b4125638432b3cfcf09b9e1b008910",
+    "bytes": 1099
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/DriveAssetPathRouterTest.kt": {
+    "sha256": "9bde8f32e09c29b6086fa903fc9a16a99a396bfe3dbd3cbaef09281069f1a63c",
+    "bytes": 1842
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/FieldCameraCatalogTest.kt": {
+    "sha256": "388b43572bdd2579a5c4c39c502fcd2326d627c035fb7a83b300dba28a06525c",
+    "bytes": 638
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/GeneratedFileIndexTest.kt": {
+    "sha256": "33494a9fc2590fea140f1478880a32f7e56d150ccdb329d57a84fcfbaaa5c03a",
+    "bytes": 1405
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/InventoryDraftStoreTest.kt": {
+    "sha256": "6b643fa174a14e8cc66ba89def3603818a2c5d217f091a99316ea8a4f2c96db6",
+    "bytes": 3503
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/KmzGeometryStoreTest.kt": {
+    "sha256": "0d4cfa9e1cb7a3b6792a09603af47ff99aa35b2f0bbaa235c8661a8339abc173",
+    "bytes": 1365
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/KmzRouteParserTest.kt": {
+    "sha256": "76123ee9998ade6a9d3b6f4d6c6b6f849d7834d8cacdb605dff0c515977b9c91",
+    "bytes": 1586
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/core/SyncOverviewTest.kt": {
+    "sha256": "757eaf89237c47c33ab4c715927c54ac660d9d98175047510ee227db9434c907",
+    "bytes": 989
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/CorporateWatermarkTest.kt": {
+    "sha256": "b2afd7efd79a757a264cfb049502d6387427c6a97772329c89d8b0d14457c63f",
+    "bytes": 8586
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/DeliveryMetadataTest.kt": {
+    "sha256": "bf89f6890927b3fd59e4419ca9b14e66168d00bf7c095a33834e073ba0e0a4bc",
+    "bytes": 5079
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/DeliverySyncTest.kt": {
+    "sha256": "f1b8065b161e33c6edaa344b9829c750e63982b7f5c971fb8017fe6eaacf5e35",
+    "bytes": 6474
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/DeviceFingerprintTest.kt": {
+    "sha256": "a76d3e9d0aa9fa2c3e6a4dfeefe32b788521e3934ba20a1f75901666924856df",
+    "bytes": 921
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/Engineering2DataTest.kt": {
+    "sha256": "24c5c1ee88317791b1a967590adb2ce0627a6ce74cd2c8fb0ed7fe61c12a5a08",
+    "bytes": 10928
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/Engineering2ScreenTest.kt": {
+    "sha256": "48def1ed8afc4c34bc4db37d23da4e868178084d3275fd8e8df236d71993a1f3",
+    "bytes": 7145
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/EngineeringDecisionsTest.kt": {
+    "sha256": "8df0804f4ac6c5b9ffe37db3d6a6beff86722dd35d2d89364771ab3decda714e",
+    "bytes": 6001
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/EngineeringUxTest.kt": {
+    "sha256": "a3d1190335b232be1fe3a05ede845e7123374bfea6e9249183b6fde090652701",
+    "bytes": 18168
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ExampleUnitTest.kt": {
+    "sha256": "b10965ca31e773adf6782e1d0e574fd1ea90d702a55c7bbd8f045585aaeae0d6",
+    "bytes": 368
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/FieldLifecycleTest.kt": {
+    "sha256": "dc9ba1df8d05061d08388df666840e177ab68ff1e2498fa3e9cc2e0f2b2e5211",
+    "bytes": 5733
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/FieldReadinessTest.kt": {
+    "sha256": "5bfabd07bcae95b42122967ba0d5a2e61fd141affdf04350273402582cd9736a",
+    "bytes": 7977
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/FieldTestFixtures.kt": {
+    "sha256": "ff7b1cedb229986655ed47036611b7ae1298ccf90a322fc28955e01a62030af9",
+    "bytes": 1206
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/IntegratedMigration12To14Test.kt": {
+    "sha256": "46bbd5080bf8cb07eb879ffa3ae5f4b8fff41cf8e13d1bb463396b8c67bf5868",
+    "bytes": 4786
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/InventoryRoomMigrationTest.kt": {
+    "sha256": "2ff631844d3ddee6ebe6a10c33825b14b9c9fb299f60b4f2b05ac8a42c56d96c",
+    "bytes": 7058
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/LocationSuggestionScreenTest.kt": {
+    "sha256": "8f80dadb3b9fa9f6b1d711c06c8240028e205e95a9dd107a9da8340dbebd9db8",
+    "bytes": 3551
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/LocationSuggestionTest.kt": {
+    "sha256": "f3f0e62aa42ca4797bdaf5780103412ffd29f02edcac63f0a9925128519e8407",
+    "bytes": 4683
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ParallelBInventoryPolicyTest.kt": {
+    "sha256": "79f11f8b60f12a30549e2aa9628b5abdece200325b8c0c6259a9bf46cf753029",
+    "bytes": 9016
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ParallelBMigrationTest.kt": {
+    "sha256": "5df218625d98118d9530901e3d9964ae7ddc195e49a5a968c3e2eab8323e36aa",
+    "bytes": 2213
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ParallelBScapCaptureTest.kt": {
+    "sha256": "8e3c9a318462703ef7206d05fe2d823240aa5f3ab5929292bb84e2eaab472ebf",
+    "bytes": 12020
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ParallelBSicHeaderTest.kt": {
+    "sha256": "9efb0d2146cbd19d8a5c38152ce2b07fcdd52e49aa9e48b355e4a2e987f25241",
+    "bytes": 1536
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ParallelBSignalStorageTest.kt": {
+    "sha256": "c45d259598d931f7aca14a0b2a16d9316f92342b028bab340fa8d66d45aa28f8",
+    "bytes": 2451
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PavementModuleTest.kt": {
+    "sha256": "f0c4a79fd5df16812eec2b1dd304ade84a63f2bb5efbbf4948ffff0972c19d3c",
+    "bytes": 14997
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PavementParallelCTest.kt": {
+    "sha256": "4a3739d12bb2d68dd64e57b8c4bd578f1b6aceb363094fd1bb637f111a75ff07",
+    "bytes": 21368
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PavementParallelCUiTest.kt": {
+    "sha256": "e3714bf2e847ca2805523b9c14c133a556c2ff595dedcafbbd6ed05551972b10",
+    "bytes": 2474
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PavementReportTest.kt": {
+    "sha256": "1de9ffc7f170d3407c6287c32502823900d1c6fae2ade62226513c7b57ef452c",
+    "bytes": 1976
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PavementTouchTest.kt": {
+    "sha256": "9ceb80c53ed6076a1feff18db99129e646fbfbf21a9bd60885376c9324529b17",
+    "bytes": 5929
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PhotoStampServiceTest.kt": {
+    "sha256": "4936a6a6f9ccdb997f4d89940c6ee27b0dd0d961940d9081d002d518f287cf5d",
+    "bytes": 2978
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ProjectRoutesTest.kt": {
+    "sha256": "7431956b34297dd2b9ac41cd788a58a8eecc3564fbfe2e71d3326a3c3dc626c8",
+    "bytes": 4096
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PrSuggestionScreenTest.kt": {
+    "sha256": "d7f98b9e3dd97c883e656aab9da4269b66462f7876aedcfd0e8dde72f9d27696",
+    "bytes": 3522
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PrSuggestionStorageTest.kt": {
+    "sha256": "5af98a7582f5aa54f6c1a532538a27965d0c6657ddcab0bffb50b6603b3524d2",
+    "bytes": 7578
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/PrSuggestionTest.kt": {
+    "sha256": "6bc6ede8989cd7887d9453f2b00af3945916cfb03aa54d2209b2fda3b9577048",
+    "bytes": 7288
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/RoadAxisStorageTest.kt": {
+    "sha256": "ad5be98eae443e92c581f2fe377f9f8eead721158429373c4bee8638b0a23193",
+    "bytes": 8962
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/RoadMatcherTest.kt": {
+    "sha256": "6339c849255a454d819a7d2836fafc70a34b616cd1f37a40c8c9dfc26357932f",
+    "bytes": 3270
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/RoadPositionTest.kt": {
+    "sha256": "1ec198c622af30b276e6fefc8f689dfe213311e4a805263959e5d6ecf2f46b98",
+    "bytes": 3137
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/RoadReferenceDeliveryTest.kt": {
+    "sha256": "7a8d7c0d1b39ae80d1da691c321d44d0f400177fe3d621498059ea348ec94ff7",
+    "bytes": 12235
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/RoundTwoStorageTest.kt": {
+    "sha256": "bc77c0b047d178303e1eff92fa296374302fed1df3988278ae3d48f1b381e4c4",
+    "bytes": 5773
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/RouteDeliveryTest.kt": {
+    "sha256": "cd0ab0b2c7038e107b8cdcbce32398dde57b5ff9c49e70f7cd336ee8fae15985",
+    "bytes": 11890
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapCalculationTest.kt": {
+    "sha256": "5967f048ab9b658b7a60197b755c8ebbe827c1943804f8eca12e9db7aa9bfde2",
+    "bytes": 6651
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapCanonicalExportTest.kt": {
+    "sha256": "5c37690c8641e0e23dd4dadcf0e52d7e2c0546f987dcebe8ba87ca1b011905e6",
+    "bytes": 12288
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapDriveTest.kt": {
+    "sha256": "0078a936c9b4b946efd645014dcffe1078abfe27353178e0da9dcb9705e17f93",
+    "bytes": 9154
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapExportTest.kt": {
+    "sha256": "ff42f520f27d000316acda614717909637e26cb612ed09a7be1944f3245d47c0",
+    "bytes": 13355
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapFullExportTest.kt": {
+    "sha256": "82bf56a5815a71e3d10057fe2d0dea1a49826a362d3b350261cdd6b99ebe230c",
+    "bytes": 16804
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapHumanDeliveryTest.kt": {
+    "sha256": "9a2bedc286ff9930e491f674c5d12c8ea2a56ad2b2cd08f1d16af78659e77e95",
+    "bytes": 9453
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ScapStorageTest.kt": {
+    "sha256": "2deee924d011660792b8366dbafab7992123d2194675388875d0788098f371dd",
+    "bytes": 14771
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/Sic23Test.kt": {
+    "sha256": "720bb3d2bb9f66a949567b031030d579aa47b53cc3d45060d4aa4479abe9bbfb",
+    "bytes": 3064
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/SicExcelWriterTest.kt": {
+    "sha256": "c895181e970f994a6c436b134508035c8d1deda61c3d480cfd3c140d1625ea65",
+    "bytes": 8350
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/SurveyCorrectionsTest.kt": {
+    "sha256": "ef0745a3365cbd796005390162d2bf49562da0ca8348bc481a0800e5d67d8730",
+    "bytes": 4883
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/SurveyStorageTest.kt": {
+    "sha256": "c82122e05d05c97e4cacb7d7616e718329ecede979c0e8ce645735ec9cb85ca2",
+    "bytes": 4359
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/TabletUxDataTest.kt": {
+    "sha256": "431f6257b556f43052bbbebc05c13fba329c40b14272abb03339e15e15fffce0",
+    "bytes": 9597
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/TabletUxUiTest.kt": {
+    "sha256": "8bfcda1f22e356307eab519ecd6d19209e82412b7f2017f3688a2695144a7afd",
+    "bytes": 5606
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/TrackAndKmlTest.kt": {
+    "sha256": "174223e5d471d647cd39213697260c101fcaadb2a9cb4ca4dc30f71cc4413e17",
+    "bytes": 5646
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/UserAuthenticationTest.kt": {
+    "sha256": "c53bd9b965abecc4e7f52a971624b593ca81fdb41ac71410876b7e9968a60838",
+    "bytes": 17215
+  },
+  "app/src/test/java/com/tuempresa/inventariovial/ValidationAndServerTest.kt": {
+    "sha256": "2ee3e251ed1b53497e0c4fc2f163aee4af4009ae3d0a296f11d88dec5d88eeed",
+    "bytes": 4464
+  },
+  "app/src/test/resources/scap_agua_blanca.json": {
+    "sha256": "5cbbc26d39781ca6f4947d60fbeea2583763fadff6062d6442173e59479ea26b",
+    "bytes": 4234
+  },
+  "backend/user-service/appsscript.json": {
+    "sha256": "02a3dca7559f1c5574121d6205106a25e222747588c4ce8b76d98e8b144d86db",
+    "bytes": 290
+  },
+  "backend/user-service/Audit.gs": {
+    "sha256": "e872f1c0ffa58f6ad1b5e8467e38a2bf819e86eda1e4344532fe74b8d1e45952",
+    "bytes": 809
+  },
+  "backend/user-service/Auth.gs": {
+    "sha256": "030bcc84d75ec18af568193c175d43048011d0854200132da609e8e7576a3e92",
+    "bytes": 2129
+  },
+  "backend/user-service/Code.gs": {
+    "sha256": "870ff06a04b5077040338c73dff0b9171358dabd84cc4a4d003dbeae114fcd93",
+    "bytes": 6254
+  },
+  "backend/user-service/Crypto.gs": {
+    "sha256": "49c3efc1f2813c738cd12e14d02d5eeb6859bdc5db43982ec34657d83df86894",
+    "bytes": 43292
+  },
+  "backend/user-service/README.md": {
+    "sha256": "929375065ba1252f6512c2745f83e5ed2561f6273b0b141c55fe76731092c58c",
+    "bytes": 14109
+  },
+  "backend/user-service/Security.gs": {
+    "sha256": "202213dfc2ce1a94462373abe83ccb5b438b2c32e734ffbd0f5176822bacf07c",
+    "bytes": 4605
+  },
+  "backend/user-service/tests/service.test.cjs": {
+    "sha256": "9bfd0123e0c5ea663c1e843cca132e8714364f0f304445f404b36e2e8d5d66be",
+    "bytes": 15890
+  },
+  "backend/user-service/tools/provision.cjs": {
+    "sha256": "60d49cea68f12dd4edd829242c86591a4ed997df46d8d3c6decaa9d06cc6b70a",
+    "bytes": 2827
+  },
+  "backend/user-service/Users.gs": {
+    "sha256": "1ac1cd6495c1c1fa44052ea8f27018f8dec2ddd0182bb089005e825bd86fdf0d",
+    "bytes": 4365
+  },
+  "backend/user-service/vendor/LICENSE": {
+    "sha256": "32d23b93ec2f9d9541190b88b757ac3156c37ae2d084fd5f0694547880a3ea6f",
+    "bytes": 1191
+  },
+  "backend/user-service/vendor/README.md": {
+    "sha256": "2aaa873085556175fc1f5775128b23a760ba6e46db74d7e34ad5c2c379c44e6e",
+    "bytes": 993
+  },
+  "build.gradle.kts": {
+    "sha256": "e880745ee2746267059b8859c6028182f90c495d4b4b5cdfcf8acda9b23b4d5b",
+    "bytes": 222
+  },
+  "DEVICE_ID_STABLE_FIX.md": {
+    "sha256": "e191c2a95b9e2f50f4c9183dc11c0299b7e2c13f8bf0b945ed6bab05598287f5",
+    "bytes": 1120
+  },
+  "DEVICE_ID_STABLE_FIX_V2.md": {
+    "sha256": "50eb0bf48dbd18a983057a2d502837e528080338f784bedc3ad6390f124f9531",
+    "bytes": 1229
+  },
+  "DISTRIBUCION_INGENIEROS.md": {
+    "sha256": "f6b17b0cfbf3d084666858f9edd5dadc3d939ded31ad075d8ef3691a61c3d734",
+    "bytes": 2728
+  },
+  "docs/ARCHITECTURE_REVIEW.md": {
+    "sha256": "b4c3852b66a7b32b13ade7ce9747b93b5c2a416f727556ccee021f5f3bdc051f",
+    "bytes": 3456
+  },
+  "docs/ARCHIVOS_REVISION_UX.md": {
+    "sha256": "ee7a43d32a51d06b5b935a873c3b5ea1d9ae022fcc3ec7e68126f05fdb51731b",
+    "bytes": 4376
+  },
+  "docs/ARCHIVOS_RONDA_3.md": {
+    "sha256": "c9e51ad93f5df09c9d75bb744b0678991127fdc5712d7ade29c31c0fc68fac13",
+    "bytes": 5667
+  },
+  "docs/CHECKLIST_TABLET_UX.md": {
+    "sha256": "2220c34038a3a9e1feb5be7b95698bfe04f0581374e23588b1b9a3314fba348d",
+    "bytes": 5003
+  },
+  "docs/correccion-usuarios/PRUEBAS_Y_LIMITACIONES.txt": {
+    "sha256": "1b587ca3e323722fb1aeb94e3945bf44a1e0c01437ee6c72641feaf8d40cb4d3",
+    "bytes": 1238
+  },
+  "docs/CORRECCIONES_TABLET_2026-10-07.md": {
+    "sha256": "17058262f38b52816f39cd681cc99d3f33c0c4701d6b646a23876b474cc9b014",
+    "bytes": 15694
+  },
+  "docs/DRIVE_SCAP_CONTRACT.md": {
+    "sha256": "b07e8ec430ba4cce0484eb01dc3296d373f2bff2f3ef0ead95380c42b03befa7",
+    "bytes": 4952
+  },
+  "docs/DRIVE_V2_SERVER.patch": {
+    "sha256": "c740fc779bff58d2709758528fc343e1263b8bf49c407f5af9c5258eda2e5871",
+    "bytes": 16125
+  },
+  "docs/DRIVE_V2_SERVER_CHANGE_REQUIRED.md": {
+    "sha256": "eabc1c850aa4eaa47f67047c0a3029d4b49dd9db15158f6769f31970ad8cea4c",
+    "bytes": 9398
+  },
+  "docs/ENGINEERING_CHANGED_FILES.md": {
+    "sha256": "8049a9fb40d81f92cffdbe1f9a9b46762523ace35be08abcc6d23f8a8c68348d",
+    "bytes": 5320
+  },
+  "docs/ENGINEERING_RELEASE.md": {
+    "sha256": "3d2ac88d7e220ed3df3d00b62291d239b0bb8aeebc90c4c5734636ebed89eae5",
+    "bytes": 10979
+  },
+  "docs/ENTREGA_ORDEN_GEOMETRICO.md": {
+    "sha256": "b1437c93013c3e176df85f9f8b36ddcc48c860f311c69a7b0666ef65993f3f64",
+    "bytes": 13461
+  },
+  "docs/ENTREGA_PR_Y_KMZ_COMPATIBLE.md": {
+    "sha256": "c3cd3240488b5ae34b9c1f234b7aee30597fa6867ecb8472f48c69f28404c43d",
+    "bytes": 5862
+  },
+  "docs/ENTREGA_RONDA_2.md": {
+    "sha256": "2b4ee24cf8b2c8f060cdb4c89b202bee9d177a0f842ccadbd14513401ffa38b7",
+    "bytes": 23716
+  },
+  "docs/FIELD_CHANGED_FILES.md": {
+    "sha256": "c50597e2c6d8fa7414590b7564ee1a109ac8f117b1a0233557dc9b3e4094ce98",
+    "bytes": 6136
+  },
+  "docs/FIELD_DELIVERY_2026_09_27.md": {
+    "sha256": "7e361aa2015ba2ddca5a38b4905b1e8dc3f745af7e6d0fadcfe1abb40c82d3c4",
+    "bytes": 9082
+  },
+  "docs/FIELD_READINESS.md": {
+    "sha256": "84531b6690e8dfbb3811a717f345d3738332ac26a66da75f94a6db6f0dd846a1",
+    "bytes": 5742
+  },
+  "docs/final-evidence/APK_CONTENT_CHECK.json": {
+    "sha256": "aab07721e3413e6def951b459052810d7e65c9b9a9a0355ec26d0d735dccce33",
+    "bytes": 1557
+  },
+  "docs/final-evidence/final-apk-signature.log": {
+    "sha256": "fb997d2f009484dc69106745f585f3ecef96f6b314eaaeac7ebdae19b56344c3",
+    "bytes": 1430
+  },
+  "docs/final-evidence/final-assemble.log": {
+    "sha256": "78521f1bc429a6c1bfd07bab0ea343e18431ee90a3a3493e207f0b43be6e87b2",
+    "bytes": 2834
+  },
+  "docs/final-evidence/final-drive-tests.log": {
+    "sha256": "e732ebfd4bd232d3ed1ae07114ab53663252dc5859696797d1d86ea85ce9876d",
+    "bytes": 3855
+  },
+  "docs/final-evidence/final-tests.log": {
+    "sha256": "014b35dbb98b884daec1e9cb54de7aabc4ed7395fe3f4afb783ada50746a4b95",
+    "bytes": 6807
+  },
+  "docs/final-evidence/final-user-service-tests.log": {
+    "sha256": "37edf244f09ad40b19bb91c103372f634bf0cae4e4702aff2220ebf781206834",
+    "bytes": 1280
+  },
+  "docs/final-evidence/FINAL_CHANGED_FILES.json": {
+    "sha256": "e88e5a1acf19e00fc7b0b0bb3826fe9c20006cafce1e2faf5c5349289da8d2be",
+    "bytes": 20642
+  },
+  "docs/final-evidence/SIGNATURE_CHECK.json": {
+    "sha256": "12febd3c2f30f24b72d28ddf4e66abe3d829e6c59557d483f89b339cc68d9299",
+    "bytes": 259
+  },
+  "docs/final-evidence/SOURCE_AUDIT.json": {
+    "sha256": "65bb85d6146f1d1de8cfc0db8ebcf659be0cf02d159144f372841512c6559d1c",
+    "bytes": 925
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.AssetOrderingTest.xml": {
+    "sha256": "f30cb9c5a6c8dd672f972095f3857d6c8f75c66731e31ccd12c6822417b32dcf",
+    "bytes": 1590
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.BridgeSicFlowTest.xml": {
+    "sha256": "63e507e82ee529e6e3aa2bbb925f3294a357360aa254399ea7d9418f56c58161",
+    "bytes": 1143
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.BridgeSicUiTest.xml": {
+    "sha256": "a3a8e60f35874a2e4c2e7d75b6335b373ea2304ed541765d6ac5451b88984077",
+    "bytes": 648
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.CleanPhotoPolicyTest.xml": {
+    "sha256": "bcaffd20b212755041785349e3293621ab13eb554ee52d07f419165428048f6c",
+    "bytes": 505
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.DriveAssetPathRouterTest.xml": {
+    "sha256": "99c43b3df809e84f798086b03337f7239dd27ccf548536ab5d76d2d09320a6b2",
+    "bytes": 899
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.FieldCameraCatalogTest.xml": {
+    "sha256": "11404841e96ece67d4f3dc27172ec8626e4012613dd28c1d7e6e067fbe8d23dc",
+    "bytes": 500
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.GeneratedFileIndexTest.xml": {
+    "sha256": "98704d1b0eefb8fdc51d8985a0caefb68eb2d3c192f187a032af5090eafbb910",
+    "bytes": 503
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.InventoryDraftStoreTest.xml": {
+    "sha256": "23a377cf64eb4f528aab1e1f719d7f6abfdfd6b570c30cb3d0c28a37781c5166",
+    "bytes": 537
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.KmzGeometryStoreTest.xml": {
+    "sha256": "e18e8cf998b40edc17c48250715ad9a72e833ab79cb0b6aa1f876ff3ee602dca",
+    "bytes": 558
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.KmzRouteParserTest.xml": {
+    "sha256": "d8bde667a701c4b0553b70e1ee08e70225bc9420911898b94e49c76a30ab9b80",
+    "bytes": 837
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.core.SyncOverviewTest.xml": {
+    "sha256": "e8ef99d9fe8db0ab5f2efa38069fc356f8d6d931d14ab756962f63b0185f61da",
+    "bytes": 610
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.CorporateWatermarkTest.xml": {
+    "sha256": "40e1a5a08bfce680ff127cd433294ef21d420a7400f87d783e0b83a5c7af100b",
+    "bytes": 1444
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.DeliveryMetadataTest.xml": {
+    "sha256": "1fd8dd6ed459e774ba4ae51d1d847bcb61500de609b2d09acd479aa0f4ebca31",
+    "bytes": 975
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.DeliverySyncTest.xml": {
+    "sha256": "0905cf5b71be53cdd813c5286e387acd49e5e5c20da334e82904cad83c9da595",
+    "bytes": 905
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.DeviceFingerprintTest.xml": {
+    "sha256": "8faca96adeff2e480eeec168881b92fba66f0105cacd84dbd5b0a66d17a949c6",
+    "bytes": 785
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.Engineering2DataTest.xml": {
+    "sha256": "d2a042f7a3a4364f3e1a74a634211b84035a54f06c47148aa9693a4450abf55d",
+    "bytes": 4295
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.Engineering2ScreenTest.xml": {
+    "sha256": "2f32232f547b90e5dcba7069fb9efcca8f4d378abb0b2115b3b09687eeac3c78",
+    "bytes": 9453
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.EngineeringDecisionsTest.xml": {
+    "sha256": "423dc0eadf070c06017f90086968f148eca39a30cdda4df1b6bab9f66346e444",
+    "bytes": 1446
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.EngineeringUxTest.xml": {
+    "sha256": "02192b55c295184d94db8b1b8d8711cff4135a2ca2b2b8839398d238c6539e2a",
+    "bytes": 8519
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ExampleUnitTest.xml": {
+    "sha256": "f9711f3e33ad7df21faf23bd5312bf7e80fcddf89f373914f4c457059b975dca",
+    "bytes": 442
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.FieldLifecycleTest.xml": {
+    "sha256": "009b61f21553d1233080293841653e40e6a867b87bc8c7ee3bd03797b95bc07f",
+    "bytes": 634
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.FieldReadinessTest.xml": {
+    "sha256": "cf6c47e42e9773ec88cbd1c35226453a31be662aee768ad0dd50b8db40fc22c4",
+    "bytes": 1133
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.IntegratedMigration12To14Test.xml": {
+    "sha256": "d0f36e41c65994b45346b4f82e179d86cb1cb84a1ca04582a5e33a57a302c125",
+    "bytes": 507
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.InventoryRoomMigrationTest.xml": {
+    "sha256": "3744ca2631e005b4f42e1cc73e7f703c5ca078f2a73410a2ddc7ea458f56dfb7",
+    "bytes": 6785
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.LocationSuggestionScreenTest.xml": {
+    "sha256": "de2523fa68354f891cd875621eb033f49b5864ae307f33af32512c35e564b49c",
+    "bytes": 665
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.LocationSuggestionTest.xml": {
+    "sha256": "f03c9bf0a5e37dc1cb8f5d7831ac2845e0249f9c7beca3dbd29e7dde759406db",
+    "bytes": 1118
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ParallelBInventoryPolicyTest.xml": {
+    "sha256": "86adecbb08d574a58e9036a2b3a5c146266b7717a004db0632d1fa3aaf3b0c99",
+    "bytes": 2284
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ParallelBMigrationTest.xml": {
+    "sha256": "80c7be77da848cb077dd043fb95fa4d96a512dab2d3ddf5e937763ae9e2af728",
+    "bytes": 494
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ParallelBScapCaptureTest.xml": {
+    "sha256": "3ad6b6676909be757163a303e86dcdfc33f9c78cea2207716feb045566563b50",
+    "bytes": 1481
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ParallelBSicHeaderTest.xml": {
+    "sha256": "af23ad41a69a07eb33ac1fb528cba8b6f955bff330f976c48da6edd1bd2823f5",
+    "bytes": 509
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ParallelBSignalStorageTest.xml": {
+    "sha256": "1897e2d5f7f5cea22c92e94fea956000e4638928f35f7f8f7ff63b4bb877e48d",
+    "bytes": 507
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PavementModuleTest.xml": {
+    "sha256": "a3163a3d3d4ac4818a60f32160bc909e0002365dcc6a3eae7c7514e1beefcfde",
+    "bytes": 3050
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PavementParallelCTest.xml": {
+    "sha256": "2363ed87471ab2b655d9215437282fec9cc5e653dff029ad31bb7109b520a495",
+    "bytes": 4718
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PavementParallelCUiTest.xml": {
+    "sha256": "4a733cdf378dbfa45358ffb78b683477d389513385b042bca87c74e0e1116c45",
+    "bytes": 654
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PavementReportTest.xml": {
+    "sha256": "7ef2d821c04d32be4a5dfd15c5d0c9886f6901ac544fe8fb1ed9b36370c10d1a",
+    "bytes": 474
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PavementTouchTest.xml": {
+    "sha256": "152b800aa833b9de4aecfb53eea47f937879fb802d1f0e973a0cfa7a199161da",
+    "bytes": 1005
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PhotoStampServiceTest.xml": {
+    "sha256": "bc5cd5992df1cdc4fcff3ce5aad4c29b7ebd7d7be7797077cff2528e8e6230bc",
+    "bytes": 647
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ProjectRoutesTest.xml": {
+    "sha256": "1500eb3bdafacae5c35614d4d97416c7b9e9df394a57b78b103584034bec7139",
+    "bytes": 663
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PrSuggestionScreenTest.xml": {
+    "sha256": "e4c355c34ce49881277c23a7d07f349eb837c217187101a07be6475c4bd14a95",
+    "bytes": 820
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PrSuggestionStorageTest.xml": {
+    "sha256": "d6929345af54f40836833d735dda5ce17c5381a2a4f65b4f488a83a21af7dd76",
+    "bytes": 6808
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.PrSuggestionTest.xml": {
+    "sha256": "ad970ccae236a45dc98fbae02adf89ed28c596c794d50d7204c6682143bc2302",
+    "bytes": 1854
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.RoadAxisStorageTest.xml": {
+    "sha256": "8d711eb40600df915827c9c68eae1437fb6ee03d902d12c9b1afab39382e01d2",
+    "bytes": 6790
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.RoadMatcherTest.xml": {
+    "sha256": "a05d7fd9fef6eaf93a9b7f4b392f58ccd25a3c574e5fda5697352db491dc2286",
+    "bytes": 1034
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.RoadPositionTest.xml": {
+    "sha256": "a374310b9926cff5436d9b081f67746027da0e658ecb975abdbde291ce7bd48e",
+    "bytes": 1179
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.RoadReferenceDeliveryTest.xml": {
+    "sha256": "3dec8146157b92e8fe12b72d793d9f0ab1a8e1d57ee8cb8bd671c601f5400efc",
+    "bytes": 6010
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.RoundTwoStorageTest.xml": {
+    "sha256": "371507ac5a3016b91cea7e875b7d48191e4f2b0fe736fb1db8e596c128ecbbba",
+    "bytes": 5510
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.RouteDeliveryTest.xml": {
+    "sha256": "d2a91a3c939bb6fa8e12febb6ccb38e9f5c966004c3ec0aaad05b84ef81755d8",
+    "bytes": 986
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapCalculationTest.xml": {
+    "sha256": "4665c81210cb9d4d2cb164ec6906282d51d67701a606934192fbdfba87325ddf",
+    "bytes": 1405
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapCanonicalExportTest.xml": {
+    "sha256": "0951afebe6208c9934fc5a1519451f4a837edf0cbdaaf0575d6fa4cab26ecc5b",
+    "bytes": 1191
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapDriveTest.xml": {
+    "sha256": "251cfc71d0dbea7b69bc3d655183c4603465e9f6fcc33dac34a32484120d5e11",
+    "bytes": 1099
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapExportTest.xml": {
+    "sha256": "2dd953ec084d9325c37101624285ce3b5aacab5fd9116131730bb993f3ed0caa",
+    "bytes": 3985
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapFullExportTest.xml": {
+    "sha256": "eec31e5ac06fda747b49d1f3792e31917f8adba3bc8f44ae147de1c84da98d96",
+    "bytes": 3795
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapHumanDeliveryTest.xml": {
+    "sha256": "9957b51bf11581460f52357beb510c776090a2b085b36b5355a07c6c168dfd28",
+    "bytes": 870
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ScapStorageTest.xml": {
+    "sha256": "bed036a68df048ac5e1344f7db66b4fa98bda900808bb55d494de55d4dee191c",
+    "bytes": 7348
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.Sic23Test.xml": {
+    "sha256": "ad3edef7da7d535542215d75fd5b1c78657ecc1659da72fb4d3149f08ee17fb8",
+    "bytes": 965
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.SicExcelWriterTest.xml": {
+    "sha256": "438aac8562e11cbffb6d8ce170cf8ecec0728dc9aa2e73a5fbdbb3a242752452",
+    "bytes": 1118
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.SurveyCorrectionsTest.xml": {
+    "sha256": "35fe242b6b9d0b202420a749dd06de63fa0f660b2361e37b2df964b180231891",
+    "bytes": 1450
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.SurveyStorageTest.xml": {
+    "sha256": "9c7ea7b856d9cb1cd877afa33cc859dec3dad275ed81f128852fff4b8055363b",
+    "bytes": 6573
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.TabletUxDataTest.xml": {
+    "sha256": "89e555b3c4b3b27cbb9a5ce7354392a3371acab63ba3f385b96537023abc1c3a",
+    "bytes": 1546
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.TabletUxUiTest.xml": {
+    "sha256": "97deaf7d20de0b73b694d0ea66f07aa877ba777d3f1743dd12a4ef0ae27485d2",
+    "bytes": 900
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.TrackAndKmlTest.xml": {
+    "sha256": "e60db8f7799859d6c8feedc4dffeb2cdcf4d4654a3c70acc22a77b7de9437dd2",
+    "bytes": 1478
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.UserAuthenticationTest.xml": {
+    "sha256": "301ca8ddac1a9c276169d2f522e9e244d8948998a850feefb116a5838495c57c",
+    "bytes": 13022
+  },
+  "docs/final-evidence/test-results/TEST-com.tuempresa.inventariovial.ValidationAndServerTest.xml": {
+    "sha256": "8181604bf497cbd574627624c317f816197841b7ef6aa1cada04ebc197a04bce",
+    "bytes": 1117
+  },
+  "docs/final-evidence/TEST_RESULTS.json": {
+    "sha256": "b2641fad6de41a350464f8145e6deac10b9926521a6ef6473cdd05bbafbfbd08",
+    "bytes": 5197
+  },
+  "docs/FINAL_INTEGRATION_REPORT.md": {
+    "sha256": "378daf02f4651ed5b761b095208f6c4187969de2c8ad9114a41635ab9ae07e39",
+    "bytes": 15606
+  },
+  "docs/FINAL_MERGE_PLAN.md": {
+    "sha256": "6f1522dffd46d21fc0dc2a2c9871fdae9cfcb08a02d7c00980e9df7dcaf87fdd",
+    "bytes": 147176
+  },
+  "docs/FINAL_PAVIMENTOS_CHANGED_FILES.md": {
+    "sha256": "ef1e0c2431a0a8eca0f6d1b261f9bb9c854ca7ba06bb7c52bccd0f2f3ad7bb71",
+    "bytes": 3492
+  },
+  "docs/FINAL_PAVIMENTOS_DEPLOY.md": {
+    "sha256": "c58226a3eb3fce171ade24e40029ef2c482f84fa127986f09c70edf2964abe73",
+    "bytes": 1792
+  },
+  "docs/FINAL_TABLET_CHECKLIST.md": {
+    "sha256": "d5ac709cc41a63cc17a59f82794e3dbeb7e9fb7e224fb793a6f22315507f0124",
+    "bytes": 7054
+  },
+  "docs/Formato_para_programa_1.xlsx": {
+    "sha256": "fd061208a45ed42b80a6f1f1351e87f4df453cff80f62cfd12b9fed3fb02ec21",
+    "bytes": 12642
+  },
+  "docs/INTEGRATION_GIT_STATUS.txt": {
+    "sha256": "9fcd5f82183c96021f0928687fc2a786925c93f0ede7531da6730b166ccf0bde",
+    "bytes": 5436
+  },
+  "docs/INTEGRATION_SCAP_PLAN.json": {
+    "sha256": "a5ce5390708595ed016aeeee1b6d0185d81b2673d0bd920b6068c57da3bd19a5",
+    "bytes": 109481
+  },
+  "docs/INTEGRATION_SCAP_PLAN.md": {
+    "sha256": "942cac54c7a54f4d89bd2317c34dd17dcff94d18a1586d72ad2710f1e54fab11",
+    "bytes": 19898
+  },
+  "docs/INTEGRATION_SCAP_RESULT.md": {
+    "sha256": "15d3d7afbcd338eb6746caa7344dbba8a64c578332b908dc1e22253076376b57",
+    "bytes": 22768
+  },
+  "docs/INVENTORY_LOCATION_MODE_MATRIX.json": {
+    "sha256": "0146717bf50212646b0c1bcd259e1ba731d0ca793c5a01513e8d4160a1caffce",
+    "bytes": 2806
+  },
+  "docs/Manual_PCI_URCI.pdf": {
+    "sha256": "a83c5efa2d5a045f0f0c2e197783ccff5b1b6c4248da3f2a8f39e3022ca9394d",
+    "bytes": 19669262
+  },
+  "docs/MARCA_AGUA_OBLIGATORIA.md": {
+    "sha256": "12b624ad95304ffa1a10108906ea8e70eee49f603c8b80a09180fd23997660bc",
+    "bytes": 1517
+  },
+  "docs/PARALLEL_A_INTEGRATION.md": {
+    "sha256": "79f5c397f8c2a92a4a81a06f1de56d6dbf60a8884e8757ad9cad405c25679355",
+    "bytes": 6580
+  },
+  "docs/PARALLEL_A_REPORT.md": {
+    "sha256": "7e06f6099e837a1f6cd631055c49d71156604041472329072dcb3cd03ee0c92c",
+    "bytes": 9858
+  },
+  "docs/PARALLEL_A_TEST_RESULTS.txt": {
+    "sha256": "8f29fbf54846ca30da55edd043bdb6b8afe8997c71a63783aaf82c19837045b3",
+    "bytes": 1421
+  },
+  "docs/PARALLEL_B_BASELINE.json": {
+    "sha256": "56455329145bedc20254e4a4649bbe1a1d9f6c190ba190e7558f66127c89d202",
+    "bytes": 2720
+  },
+  "docs/PARALLEL_B_CHANGES.diff": {
+    "sha256": "2cb2ad01464e7f15609be9e3497f12200145ee62335d73afa6d404dda9fc28c1",
+    "bytes": 458238
+  },
+  "docs/PARALLEL_B_EXPORT_VERIFICATION.json": {
+    "sha256": "c49b5ae0c8dee8a79b734209a55ef7c352460964b63b7e604559a17d3317582c",
+    "bytes": 2029
+  },
+  "docs/PARALLEL_B_FILES.json": {
+    "sha256": "797a7214809c6c2432e528ea6f7b46ab7b31e9cf4db32ac5a7d866763c1594fb",
+    "bytes": 11158
+  },
+  "docs/PARALLEL_B_INTEGRATION.md": {
+    "sha256": "da8ecd57bb0bcd407e99c71b2aa3abbe464eded59b6779a22fcb60d1c5a4061e",
+    "bytes": 6180
+  },
+  "docs/PARALLEL_B_REPORT.md": {
+    "sha256": "18efcb3ca04c7a1d5998d3d36531f0091514d88e8f880c3fee68bfd65bc6045e",
+    "bytes": 7752
+  },
+  "docs/PARALLEL_B_SCAP_CAPTURE.md": {
+    "sha256": "1fa5b301f95dfe03d0f8f0536acc6d1e065bae5134dc4dfc38328c05897b91b0",
+    "bytes": 6916
+  },
+  "docs/PARALLEL_B_VALIDATION.json": {
+    "sha256": "eb003183a9b527ba963b6d95006b947b330c86217b8b46fb74670ce826491ee8",
+    "bytes": 2755
+  },
+  "docs/PARALLEL_C_INTEGRATION.md": {
+    "sha256": "f6a70312c30c530869f431d4fc0a5e49d91b40e3a5d6fb31364f82fd90258e9e",
+    "bytes": 7481
+  },
+  "docs/PARALLEL_C_REPORT.md": {
+    "sha256": "358b2ce3a596432e35d2b9062237c85192d50a2600b4dabdea365141c612806f",
+    "bytes": 8030
+  },
+  "docs/PAVEMENT_GENERATED_FILES.json": {
+    "sha256": "d414fab8e8978420f6cc6e49ddf96bd3bd3575e012537728bd29ec751ee9f1b6",
+    "bytes": 2837
+  },
+  "docs/PAVEMENT_MANUAL_MAPPING.md": {
+    "sha256": "22d1177b8cf1149d59cf293ec3e3cc3f82c195759f68a17ed970ad317137a38a",
+    "bytes": 8906
+  },
+  "docs/pavimentos/CONTINUACION.md": {
+    "sha256": "415b1dd1959a4ff1c4fac628a0f325b4d4609c41d30a0dc6db3eef3c76ff7988",
+    "bytes": 8196
+  },
+  "docs/pavimentos/etapa0/boceto.html": {
+    "sha256": "30ce8adb999a6a445be4e2f8326d8eb416f183a41288ab3c41192772e8614eda",
+    "bytes": 14527
+  },
+  "docs/pavimentos/etapa0/catalogo_danos.json": {
+    "sha256": "da51d8c668b234b9ab7229d806911e9d515b638c47d91b0d09b8bbc4a6a7fa16",
+    "bytes": 107899
+  },
+  "docs/pavimentos/etapa0/catalogos/asfalto/catalogo_danos.json": {
+    "sha256": "a482614bbd84b38711a2eb3cf49ae73e2ed6422e781fe86933fe4d808829c49e",
+    "bytes": 45781
+  },
+  "docs/pavimentos/etapa0/catalogos/no_pavimentado/catalogo_danos.json": {
+    "sha256": "0ac0445935fb9486b12441df191e042b0fb4682ad61826eada34c929eae8e302",
+    "bytes": 18106
+  },
+  "docs/pavimentos/etapa0/catalogos/rigido/catalogo_danos.json": {
+    "sha256": "621706ae012e23657489d694c5189d19e6e3c89e898b1c0ec4bbff70324e64ca",
+    "bytes": 44955
+  },
+  "docs/pavimentos/etapa0/curvas/asfalto.json": {
+    "sha256": "80f648018ce14f7afdce4d845f4ee263727b3094c286c79d6ae8b8e8bfca8e31",
+    "bytes": 23150
+  },
+  "docs/pavimentos/etapa0/curvas/no_pavimentado.json": {
+    "sha256": "3226768cc47397246d85f96af9640ebe8f2aef906886bbb901cb7345969fbf17",
+    "bytes": 9126
+  },
+  "docs/pavimentos/etapa0/curvas/rigido.json": {
+    "sha256": "9d6ad90067d8323681d4e17a9478065fdee45cedbfa2a52b871d15f32e9ed2b5",
+    "bytes": 20061
+  },
+  "docs/pavimentos/etapa0/LEEME.txt": {
+    "sha256": "1f9014c05741c669bc403fa272f0b19ebe051b7bf5176d9be4886f3d4e0f3d0c",
+    "bytes": 1336
+  },
+  "docs/pavimentos/etapa0/manifest.json": {
+    "sha256": "fd581143f2f436e70b0c528a4bf891dfc365b87cb93c7817da5a8401a6d85830",
+    "bytes": 633
+  },
+  "docs/pavimentos/etapa0/Propuesta_integracion.md": {
+    "sha256": "bdc8777fd91b730b69de512c4bec219f1c2d7c8129d34e5d2ec54a1a48b075d1",
+    "bytes": 25396
+  },
+  "docs/pavimentos/etapa0/Validacion_etapa0.json": {
+    "sha256": "c8ca3c3dbbfe7912aecf71eec2781feb8c9b9e0b500f429c82a22eb45f92bf9e",
+    "bytes": 1115
+  },
+  "docs/pavimentos/ETAPA1.md": {
+    "sha256": "d6d072f27330ce0b9223b0746cf7ff8d90c440c5fc0016a8161cb76789793dfb",
+    "bytes": 2147
+  },
+  "docs/PAVIMENTOS_REGLA_FOTOS_2026-10-06.md": {
+    "sha256": "b310377cb12ccec6862d8551c4ca1295a5f178d2ce0ee3b81bbc5a0b6298ca52",
+    "bytes": 5735
+  },
+  "docs/PAVIMENTOS_TDR_DRIVE.md": {
+    "sha256": "76723cf7832c70b5f2fd3f97b0b17bfb05a58072c0900f716a4e4c2dc1f1f7d6",
+    "bytes": 4028
+  },
+  "docs/PHOTO_CATEGORY_POLICY_INVENTORY.json": {
+    "sha256": "83a6aa95e0533070652e6e74e8cbd5fc1524aa1f647586c79460068f58c9b114",
+    "bytes": 1777
+  },
+  "docs/PRESERVACION_BASE.json": {
+    "sha256": "a3fc259f9e8541d572b2ffefe7fe7a23905bd709017f277d047fdfcb0c1cea4a",
+    "bytes": 2326
+  },
+  "docs/PUENTES_SIC_FLUJO_2026-10-06.md": {
+    "sha256": "491d3b1adca1a5cf5ca824ed81de325582eda53299c83e07d7f42a31f76df4ae",
+    "bytes": 18805
+  },
+  "docs/reference/FICHA SCAP - GBO modelo - LOSA.xlsx": {
+    "sha256": "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57",
+    "bytes": 4186343
+  },
+  "docs/reference/FICHA SCAP - GBO modelo - MODULAR.xlsx": {
+    "sha256": "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89",
+    "bytes": 4188045
+  },
+  "docs/reference/GBO_Fallas_Pavimentos.html": {
+    "sha256": "f34a1ad56d17206ea9759c940d5827115061bfa0d26557b3ca3ce41180b317ef",
+    "bytes": 273664
+  },
+  "docs/reference/pavement/SIC-14.png": {
+    "sha256": "434e3fc20ed9f5515421514c6a31b753bd0870b08ef4b9cdc8b9b7001161868d",
+    "bytes": 129470
+  },
+  "docs/reference/pavement/SIC-14A.png": {
+    "sha256": "8b7df03f600a9e425862cc840a2dcf3ca6816b8653917f59d8eb30ff4a24c3f1",
+    "bytes": 123830
+  },
+  "docs/reference/pavement/SIC-15.png": {
+    "sha256": "00a5fd81f5d551667e3e26cd4ceba67ecab36f294e6079718ee25b51a333a0b1",
+    "bytes": 130090
+  },
+  "docs/reference/pavement/SIC-15A.png": {
+    "sha256": "6c529de8ac69d6b3ede1ec34b9e1560e0272b7145d4c8a3e0988c63580c7afd4",
+    "bytes": 120779
+  },
+  "docs/reference/pavement/SIC-16.png": {
+    "sha256": "32f9f7e0e5fdc617d721c4d75cfd3290e7ce4ecb0896c32141680f2cb698a891",
+    "bytes": 104813
+  },
+  "docs/reference/pavement/SIC-16A.png": {
+    "sha256": "09dc4c6870bb2ce2dab36ea92ccbd9aa08dd3168f11444fae4434cce33ff8435",
+    "bytes": 141412
+  },
+  "docs/reference/SCAP_EXTRACTION.json": {
+    "sha256": "67573344562d77cf685fd5bb1f4cf0ca34546dce1311daae0b0787cf30335168",
+    "bytes": 5525
+  },
+  "docs/reference/SCAP_PUENTE_AGUA_BLANCA.xlsx": {
+    "sha256": "1df9f651722d06d6cd886c9be3edf565df7aae8b6fca10097011f48b12430b13",
+    "bytes": 4258380
+  },
+  "docs/reference/SIC17_MO-104.xlsx": {
+    "sha256": "28309d60c57df357396af4db93bb3d5da408934b9fa59ab464833948cd3cbb09",
+    "bytes": 99850
+  },
+  "docs/REVISION_INGENIERIA_PUENTES_2.md": {
+    "sha256": "b346d49d87ba3179a4483f085bec188c8325df765d802655067ab072e495f693",
+    "bytes": 15096
+  },
+  "docs/REVISION_INGENIERIA_UX.md": {
+    "sha256": "9e6270e57388914a2d839900c2b91e5d207ccfa914ecb66053ce5e0a4e4eca18",
+    "bytes": 12089
+  },
+  "docs/ROAD_REFERENCE_FORMAT.md": {
+    "sha256": "44883f64100c18ae42fe0524cfc6e26e34c3e89deefa40cb64036ee52a061155",
+    "bytes": 2856
+  },
+  "docs/SCAP_ANDROID_EXPORT_FIX.md": {
+    "sha256": "38f36ac814e8db0cbf40cdd4f9a6f5bcc345837ce144a768c100d610f2d9f844",
+    "bytes": 4231
+  },
+  "docs/SCAP_ARCHITECTURE_REVIEW.md": {
+    "sha256": "aa9051b5e0fc10f4795ba3582db3721819e8840293dd6419e8a2bbbc0436ab72",
+    "bytes": 1719
+  },
+  "docs/SCAP_CALCULATION.md": {
+    "sha256": "fb506b7f00d82d7de33255dcf0499bf6fcc93e7a491bcd566f8325d79e3d460d",
+    "bytes": 3382
+  },
+  "docs/SCAP_EXCEL_VALIDATION.json": {
+    "sha256": "faefbe06adbf91845b0670e0a56af5862ed6b8b234c93bb70817d817b40c4915",
+    "bytes": 375
+  },
+  "docs/SCAP_EXPORT_CONTRACT.md": {
+    "sha256": "84859f64b5d622c5437ac523cfd13f6119fc6945af4318b06f3ce5f81272c86f",
+    "bytes": 6374
+  },
+  "docs/SCAP_FULL_EXPORT_VERIFICATION.md": {
+    "sha256": "2fc0a82bcf93f4bf4e59b652672577f8b8b876c31d50d19d8135fcb36a878603",
+    "bytes": 39790
+  },
+  "docs/SCAP_IMPLEMENTATION.md": {
+    "sha256": "0a7c52caa0bad21537896c97f9db657e7de1fa9e1a572e168842370de520bdb9",
+    "bytes": 10574
+  },
+  "docs/SCAP_LOSA_FIELD_MAP.json": {
+    "sha256": "f20196f04f046b8e12fcbd915bb3564473e5409a5f431cde56e1cfc1c0840c0d",
+    "bytes": 1016566
+  },
+  "docs/SCAP_MODULAR_FIELD_MAP.json": {
+    "sha256": "b167ee005e4be77fe7d2ce3534999fb7be55ec626fd3d7dff32b9d0abff33e6c",
+    "bytes": 1014212
+  },
+  "docs/SCAP_PENDING_CLIENT_DECISIONS.md": {
+    "sha256": "79932ef38d362f46fc01b44162721e245bc2ab5eaca92f516cca360552375e36",
+    "bytes": 5596
+  },
+  "docs/SCAP_TO_SIC_MAPPING.md": {
+    "sha256": "75b9ac163f99f2c157c7308e1bfbcfaed1fdc96372d1deab6916d2916012d3bb",
+    "bytes": 3086
+  },
+  "docs/SCAP_VERIFICATION.json": {
+    "sha256": "8d303eb8e42c87ca60168f2764bc420d5f8a0a0241844bd023c11c4fd9c0080e",
+    "bytes": 14082
+  },
+  "docs/SECURITY_REVIEW.md": {
+    "sha256": "419b1d27b88018b17acaca9f21768e3e2bb752bb9b59b71de0c36218e05f9eeb",
+    "bytes": 9992
+  },
+  "docs/SERVER_API_CONTRACT.md": {
+    "sha256": "1d1ea255fb7695aa302aeef93bcebadf2cab0657d62398cf951f98f202f82876",
+    "bytes": 5979
+  },
+  "docs/SIC14A_PENDING_DECISION.md": {
+    "sha256": "0d0d4d4a7fabfc90483e2064d5d064d4bf8f3d522647ea746baa2c3552f6579f",
+    "bytes": 898
+  },
+  "docs/SIC_WORKBOOK_HEADER_MAP.json": {
+    "sha256": "f59aaa6bfbb9d5dc2182e16407c2d86ca1fb960abef2c03acae006c0f261f3fb",
+    "bytes": 18480
+  },
+  "docs/USER_AUTH_IMPLEMENTATION.md": {
+    "sha256": "ba442387bdc51b9b398785190b2e6ef193913236f014d06c399f2540d2a139bb",
+    "bytes": 12240
+  },
+  "docs/VALIDACION_ENTREGA.md": {
+    "sha256": "8c2f79007d35302022e3a2655ef85ce0203deadcf365ba5911fe199e9b516a65",
+    "bytes": 4283
+  },
+  "drive.local.properties.example": {
+    "sha256": "10f96d1b8512b68ac2f7a09c09295ef955f01748098b889c1e4f5efbf967eb80",
+    "bytes": 38
+  },
+  "EXPORTACION_SIC.md": {
+    "sha256": "9a7084185f3805b8d6685e0f8c8d347149405fd5c04db8271f0c0c442f7eb285",
+    "bytes": 4725
+  },
+  "google-apps-script/Code.gs": {
+    "sha256": "9613ae854b515d35409d45fa31a8a4c7e640fbcd2d0e2dbaeef7d6cb2ab05772",
+    "bytes": 45730
+  },
+  "google-apps-script/Code.test.cjs": {
+    "sha256": "39afe6cab6aa42f8e84a8ba0466c79b535cc91b68e2c6d2177c9cb871439151f",
+    "bytes": 33329
+  },
+  "google-apps-script/README.md": {
+    "sha256": "8085be448ae4680a21e65fc9ac5229d8161a1ce75bef500fac023e9d1362cc4a",
+    "bytes": 2948
+  },
+  "gradle/gradle-daemon-jvm.properties": {
+    "sha256": "0c1930722202bec01874360fcb8f1272c84cba9fd8f4a99c86858af1671fe39e",
+    "bytes": 1150
+  },
+  "gradle/libs.versions.toml": {
+    "sha256": "bc5eded0927cf08b0c88e3410c2c16a188a4307c9b9db9bb8a4d6373b6fcb1b5",
+    "bytes": 1863
+  },
+  "gradle/wrapper/gradle-wrapper.jar": {
+    "sha256": "76805e32c009c0cf0dd5d206bddc9fb22ea42e84db904b764f3047de095493f3",
+    "bytes": 45457
+  },
+  "gradle/wrapper/gradle-wrapper.properties": {
+    "sha256": "b78efe5798e78666a30180c92b9fb0860a0bd0e26503b67b4938d3d06724218d",
+    "bytes": 384
+  },
+  "gradle.properties": {
+    "sha256": "b47db4ee69642206bf25e184bb8bc25b984c0df0441647ea07ec74a75bee1fd9",
+    "bytes": 1274
+  },
+  "gradlew": {
+    "sha256": "8cd81d7a40a14119b8e9e64647e02822b3511e9e4a536ab92c88daa3b0e170bc",
+    "bytes": 8979
+  },
+  "gradlew.bat": {
+    "sha256": "1d297e00bd21de3ace22b4d7f2de1f9dfa858883d66bbf7c1ccbecccec8f4f3b",
+    "bytes": 2937
+  },
+  "HOTFIX_2026-10-05_ORDEN_SENALES.md": {
+    "sha256": "0a81e793136de70c168b2f1aa0774d3c15b7842c79bb0b4db7fa101492894552",
+    "bytes": 2266
+  },
+  "HOTFIX_V2_2026-10-05_MAPA_CRASH.md": {
+    "sha256": "78dc2fa53a65e5e2d4102249ea794bfbcc3f62ea90a564b7527c621b91f018a6",
+    "bytes": 1523
+  },
+  "HOTFIX_V2_VALIDATION_2026-10-05.json": {
+    "sha256": "5549a7825c079fb6072f9dc3bc6eada2061f80846f9f76f08663ec3b8fda5878",
+    "bytes": 586
+  },
+  "HOTFIX_V3_2026-10-05_COMPILE_MAPA.md": {
+    "sha256": "82e875529ea0c2e35575b9fbaa5fe73df4a43978a056a6ccf917947dec5c3dcd",
+    "bytes": 1173
+  },
+  "HOTFIX_VALIDATION_2026-10-05.json": {
+    "sha256": "259d6b139268f651c54e0260b3ab29aed203c905397f09eca99a5f2d3d467bee",
+    "bytes": 997
+  },
+  "INTEGRACION_FINAL_2026-09-28.md": {
+    "sha256": "5a0bc340feda1e85521da649a42b9d49fddce0520ca057768dcd111570351eb8",
+    "bytes": 6096
+  },
+  "INTEGRACION_SEPTIEMBRE_2026.md": {
+    "sha256": "f4ad70d4653809ad20f91a9157975ad508b182971ed0ca085f4d55a069ab6727",
+    "bytes": 8886
+  },
+  "INTEGRACION_ZIP.md": {
+    "sha256": "aefab3f199e7d9648a75a91e27cd3f3af22a90db4fa0cf40a15d3b20dd66592d",
+    "bytes": 2023
+  },
+  "LEEME_INTEGRADO_FINAL.md": {
+    "sha256": "29f8d415da1d90381f9a105e5452219f842c4d0e45efb3bb04f9b7f3ab298b0b",
+    "bytes": 1949
+  },
+  "README_FINAL_INGENIEROS.txt": {
+    "sha256": "dbbc81eda763a03618c08faa1b53a822fd022b8ee6908d66e53b622351f33c99",
+    "bytes": 696
+  },
+  "README_FINAL_PAVIMENTOS.txt": {
+    "sha256": "9290b6231dd9b939054b5cf3fa7783d4dc0fe9931e57338190ab0bd36354a23c",
+    "bytes": 1306
+  },
+  "server.local.properties.example": {
+    "sha256": "efde1dbaac6f19a9d76e8c3c07323158c21e13e22204d7a52ad78c58ba491445",
+    "bytes": 249
+  },
+  "settings.gradle.kts": {
+    "sha256": "d9109a65aca7aba6cea45d591df1df792e79eb56a3b94c3b485ebc253e812227",
+    "bytes": 651
+  },
+  "SIC23.md": {
+    "sha256": "0040747a87599effbd833089741c09ba3af2afdb8303934563498cdc8da6155d",
+    "bytes": 2706
+  },
+  "tools/extract_parallel_b_capture_catalog.ps1": {
+    "sha256": "c4646fae295b7e6156adc0d30e9da17b72f40e752dac54f4dd6532008170c658",
+    "bytes": 5593
+  },
+  "tools/extract_parallel_b_templates.py": {
+    "sha256": "04f1e443dcd0651411486fc978f236be21f4ae7e5e1ac83c8efaafeefb8d9e04",
+    "bytes": 3041
+  },
+  "tools/extract_scap_catalog.py": {
+    "sha256": "d3f07fea83d9ce2dc06377540b521ef8ec0f8b9fa4ba2bc35f59029db98b7a61",
+    "bytes": 6341
+  },
+  "tools/final_integration_validation.py": {
+    "sha256": "ae23ae41e85cfcb41f87337d807f711e04b5fe56f7fefc2ab15f765f2aa229fc",
+    "bytes": 7126
+  },
+  "tools/generate_scap_export_maps.py": {
+    "sha256": "013800c678f5c6f7fc15748b1369d58eb9fba65c3bd96ab388d2c053399d295c",
+    "bytes": 1151
+  },
+  "tools/import_engineering_routes.py": {
+    "sha256": "361d0ad185da8ff43d25788690f0138429cd8577d02a0bb414605dc5dd6ea445",
+    "bytes": 3216
+  },
+  "tools/package_field_delivery.py": {
+    "sha256": "f7cb2a57787fd2a6b65217e931f77733100b4521ae144265aeb2a36142753c52",
+    "bytes": 8219
+  },
+  "tools/package_final_integration.py": {
+    "sha256": "375ab69675061f5afc14aaa74f718d0345eb6ec455e7eef7ac25810f5e1b59d5",
+    "bytes": 4240
+  },
+  "tools/package_parallel_b.py": {
+    "sha256": "5314f316d56cf6c7c94830a98023e3e7fe3aebda7c0b65ff8e2b3c94dcac0f94",
+    "bytes": 4356
+  },
+  "tools/report_engineering_changes.py": {
+    "sha256": "71c6bb4f2eb01f10d2da5e98ff8444f6c25a145606594c13f58d23cff471c14a",
+    "bytes": 2970
+  },
+  "tools/scap_field_map.json": {
+    "sha256": "ce625142a3125ffcab073f418b8696a01aa9f392abd171f0592ea4ba7be0eabc",
+    "bytes": 26922
+  },
+  "tools/scap_modular_field_map.json": {
+    "sha256": "adffab49a6d1017a783149aa2cfd7bcd6e3c753cc080ac5a9b59d8ba3aea8be8",
+    "bytes": 35756
+  },
+  "tools/scap_slab_field_map.json": {
+    "sha256": "0af7dc57a1c0dc7be336b83cc767b7a0c3be3942be571f17b0e7a8baa1c5462f",
+    "bytes": 35126
+  },
+  "tools/verify_excel_export.ps1": {
+    "sha256": "d888c4419c927dc0a2317e611d7f07203ddf0a7a7c7c4fbe4b3572c3ca93126b",
+    "bytes": 3687
+  },
+  "tools/verify_parallel_b_exports.py": {
+    "sha256": "08e747f30db3cdb613affea32bb84df95f7261362c3a59223cdc8721c60303bd",
+    "bytes": 2337
+  }
+}

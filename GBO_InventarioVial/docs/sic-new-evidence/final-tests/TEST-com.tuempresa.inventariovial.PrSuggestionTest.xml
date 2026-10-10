@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PrSuggestionTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:54:20.229Z" hostname="JULIAN" time="0.015">
+  <properties/>
+  <testcase name="roadbedSpecificCatalogsAreNotMergedEvenWithSharedEje" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.006"/>
+  <testcase name="previousPrAt12650Is0010Plus2650AndKeepsContractualRoadbed" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.001"/>
+  <testcase name="noCatalogNoPreviousPrOrUnknownRoadbedNeverInventsAPr" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.001"/>
+  <testcase name="badOrMissingFixProducesNoSuggestionAndDoesNotChangeRecord" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.0"/>
+  <testcase name="validatesPrCoordinatesAndChainageAgainstAxisBeforeUsingCatalog" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.001"/>
+  <testcase name="exactPrBoundaryAndReversedGeometryUseIncreasingReferenceDirection" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.001"/>
+  <testcase name="suggestionDoesNotApplyItselfAndStartAndEndRequireSeparateConfirmations" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.001"/>
+  <testcase name="previousPrCannotComeFromAnotherReferenceSegment" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.001"/>
+  <testcase name="contractualMeasureUsesCatalogEvenForSurveyRecordsAndOffsetsAbove1000" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.003"/>
+  <testcase name="nativeRoadbedsTakePrecedenceOverSharedEjeAndNearbyCarriageway" classname="com.tuempresa.inventariovial.PrSuggestionTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

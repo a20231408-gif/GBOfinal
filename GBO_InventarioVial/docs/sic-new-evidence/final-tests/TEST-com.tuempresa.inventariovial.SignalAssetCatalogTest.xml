@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SignalAssetCatalogTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:55:06.891Z" hostname="JULIAN" time="1.081">
+  <properties/>
+  <testcase name="manualAndUnidentifiedNeverReceiveCatalogImage" classname="com.tuempresa.inventariovial.SignalAssetCatalogTest" time="0.102"/>
+  <testcase name="traceabilityUsesPrintedPagesCropsAndSameCodeName" classname="com.tuempresa.inventariovial.SignalAssetCatalogTest" time="0.057"/>
+  <testcase name="everyVerifiedGraphicExistsDecodesHasRealCodeAndUniqueHash" classname="com.tuempresa.inventariovial.SignalAssetCatalogTest" time="0.384"/>
+  <testcase name="searchCodeNameAndPrefixRetainCorrectSignals" classname="com.tuempresa.inventariovial.SignalAssetCatalogTest" time="0.058"/>
+  <testcase name="repeatedScrollingDecodesOnlyBoundedThumbnailsAndEvictsCache" classname="com.tuempresa.inventariovial.SignalAssetCatalogTest" time="0.472"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

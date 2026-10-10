@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.TrackAndKmlTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:50:50.030Z" hostname="JULIAN" time="0.033">
+  <properties/>
+  <testcase name="sic20ClassIdentifiesLinearStructuresEvenWithSharedAssetSelector" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.014"/>
+  <testcase name="pointAssetsRemainPointsAndLinearUsesTrackThenEndpoints" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.004"/>
+  <testcase name="resumedTrackDoesNotInventConnectingLengthOrKmlSegment" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.008"/>
+  <testcase name="kmlIsValidXmlHasNamespaceEscapesTextAndCoordinatesAreLongitudeFirst" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.002"/>
+  <testcase name="polylineLengthFollowsCurveRatherThanChord" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.001"/>
+  <testcase name="lengthPrefersOfficialChainagesAndSupportsDecreasingTrack" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.0"/>
+  <testcase name="kmzContainsValidDocKml" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.002"/>
+  <testcase name="noiseStaleFutureAndImpossibleJumpsAreRejected" classname="com.tuempresa.inventariovial.TrackAndKmlTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

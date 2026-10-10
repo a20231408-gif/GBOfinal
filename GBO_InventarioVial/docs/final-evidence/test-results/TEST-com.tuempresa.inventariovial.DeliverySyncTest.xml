@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.DeliverySyncTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-08T06:57:10.046Z" hostname="ANTHONYZA" time="0.187">
+  <properties/>
+  <testcase name="unsupportedServerAndTamperedFileAreBlockedBeforePosting" classname="com.tuempresa.inventariovial.DeliverySyncTest" time="0.063"/>
+  <testcase name="lostResponseRetriesIdenticalSnapshotWithoutDuplicatingOrChangingIds" classname="com.tuempresa.inventariovial.DeliverySyncTest" time="0.051"/>
+  <testcase name="wrongReceiptNeverMarksPhotoSynced" classname="com.tuempresa.inventariovial.DeliverySyncTest" time="0.038"/>
+  <testcase name="annulledRecordIsBlockedBeforeAnyUpload" classname="com.tuempresa.inventariovial.DeliverySyncTest" time="0.031"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

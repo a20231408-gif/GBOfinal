@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.TabletUxUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-08T06:57:27.829Z" hostname="ANTHONYZA" time="2.259">
+  <properties/>
+  <testcase name="historicCardContinuesExactIdAndClosedCardUsesView" classname="com.tuempresa.inventariovial.TabletUxUiTest" time="0.062"/>
+  <testcase name="tableHasOneRowPerDamageAndSelectionKeepsRealId" classname="com.tuempresa.inventariovial.TabletUxUiTest" time="0.089"/>
+  <testcase name="verticalFormUsesElementLocationAndDoesNotRenderEndBlock" classname="com.tuempresa.inventariovial.TabletUxUiTest" time="0.331"/>
+  <testcase name="twoPhotosPreviewCloseRemovalPreserveOtherAndForm" classname="com.tuempresa.inventariovial.TabletUxUiTest" time="1.765"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

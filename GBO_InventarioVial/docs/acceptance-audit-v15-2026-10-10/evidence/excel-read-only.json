@@ -1,0 +1,10 @@
+{
+  "available_for_verified_recalculation": false,
+  "attempts": [
+    {"environment": "sandbox", "errorType": "UnauthorizedAccessException"},
+    {"environment": "approved read-only escalation", "errorType": "RPC_E_CALL_REJECTED", "code": "0x80010001"}
+  ],
+  "saved_workbooks": false,
+  "recalculation_confirmed": false,
+  "physical_excel_acceptance": "NO PROBADO"
+}

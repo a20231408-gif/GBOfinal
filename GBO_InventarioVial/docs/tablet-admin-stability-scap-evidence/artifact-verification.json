@@ -1,0 +1,102 @@
+{
+  "status": "VERIFIED_SOURCE_AND_DEBUG_VALIDATION",
+  "versionCode": 14,
+  "roomVersion": 15,
+  "migrationAdded": false,
+  "signingPolicyPreserved": true,
+  "apkIdentity": {
+    "filename": "GBO_InventarioVial_TABLET_ADMIN_STABILITY_SCAP_DEBUG_v14.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\output\\tablet-admin-stability-scap\\GBO_InventarioVial_TABLET_ADMIN_STABILITY_SCAP_DEBUG_v14.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 14,
+    "versionName": "1.4.0-sic-production",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v1": false,
+      "v2": true,
+      "v4": false,
+      "v3.1": false,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 39731249,
+    "apkSha256": "4096a50a53966ca7c9011d2013923789891e518610f089dd26c2d0fa504b8b92",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  "templates": {
+    "LOSA": "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57",
+    "MODULAR": "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89"
+  },
+  "signalAssets": 207,
+  "knownLocalSecretsAbsent": true,
+  "serverMasterKeyAbsentFromDex": true,
+  "privateConfigurationExcluded": true,
+  "tests": {
+    "total": 380,
+    "passed": 365,
+    "failed": 15,
+    "newFailures": [],
+    "missingBaselineCases": [],
+    "addedCases": [
+      "com.tuempresa.inventariovial.ScapPendingNavigationTest#tappingRealPendingButtonsReachesIdentificationSupportTwoGlobalPhotoAndMetrado",
+      "com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest#diagnosticIsBoundedAndNeverSerializesExceptionMessagesPathsCoordinatesOrSecrets",
+      "com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest#engineerRequiresExplicitHintAndScopedTokenExpiresWithoutNormalLogoutAndCannotInvokeUserActions",
+      "com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest#invalidScopeNeverAuthorizesAndBackgroundLockInvalidatesAdministration",
+      "com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest#unknownExitIsReportedHonestlyAndKnownReasonsRemainDistinct",
+      "com.tuempresa.inventariovial.TabletScapIterationTest#bothContractsSeedAllUnsetElementsAndTwoSupportsAndRetainManualAndHiddenValuesAfterReopen",
+      "com.tuempresa.inventariovial.TabletScapIterationTest#incompleteExportsPreserveSourceGeometryAndBlanksAndSupportThreeAndCustomGlobalDescription",
+      "com.tuempresa.inventariovial.TabletScapIterationTest#missingValuesRequireUploadConfirmationWhileMalformedValuesBlockAndAckDoesNotFreezeDraft",
+      "com.tuempresa.inventariovial.TabletScapIterationTest#nullRatingsCalculateExactlyAsExplicitZerosAndAllBlankNeverInventsClassification",
+      "com.tuempresa.inventariovial.TabletScapIterationTest#photoDefaultsCoverEverySourceCaptionAndEditableRecordsExportAspectRatioAndOriginalJpegUnchanged"
+    ]
+  },
+  "baseline": {
+    "total": 370,
+    "passed": 355,
+    "failed": 15
+  },
+  "nodeScenarios": 41,
+  "nodeFailures": 0,
+  "nativeScreenshots": {
+    "pending_A.png": {
+      "sha256": "b989665c5edbf916732167b4db84d40c0e4c4e9490c378727b3ce74817e91444",
+      "width": 800,
+      "height": 1200
+    },
+    "pending_C5.png": {
+      "sha256": "b31b82ac6f1170e8f90188787a78409358e48242f3b96b313323b42365862889",
+      "width": 800,
+      "height": 1200
+    },
+    "pending_F1.png": {
+      "sha256": "eb962d2082f252479f0727897d605b7640655d1868601b92a04a3eb5c4307a7d",
+      "width": 800,
+      "height": 1200
+    },
+    "pending_F2.png": {
+      "sha256": "0fcd42d9ba5cbeee7ea3f4f6a46fd9dd7be6f35ec20cdde9dc35ae4d087026ab",
+      "width": 800,
+      "height": 1200
+    },
+    "pending_G1.png": {
+      "sha256": "bdd6b506274de5dc82126ba60262e518715e123c2362e60360f3414940c005d1",
+      "width": 800,
+      "height": 1200
+    }
+  },
+  "physicalTabletValidation": "PENDING_USER",
+  "serverDeployment": "PENDING_OWNER"
+}

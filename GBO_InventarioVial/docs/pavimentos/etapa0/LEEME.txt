@@ -1,0 +1,13 @@
+GBO — Entrega 0, propuesta de Inspección de pavimentos
+
+Contenido del paquete: docs/ con las dos referencias originales de la conversación y docs/pavimentos/etapa0 con revisión del repositorio, modelo, catálogos, curvas vacías, boceto y verificación.
+
+Esta entrega no es una app nueva ni contiene un módulo ejecutable. No modifica archivos de app/, Gradle, login ni base de datos. Se espera confirmación para la etapa 1.
+
+Abrir primero docs/pavimentos/etapa0/Propuesta_integracion.md. El modelo está en la sección 3. Abrir boceto.html para cambiar la superficie y seleccionar daños ilustrativos; los botones de guardado están deshabilitados porque es una propuesta.
+
+El catálogo consolidado y sus tres particiones contienen los mismos 46 daños. No mantenerlos como cuatro fuentes editables independientes: las particiones se generan desde el consolidado.
+
+Los JSON de curvas no contienen puntos deducibles ni valores de corrección. Las constantes globales documentadas del manual están identificadas en el catálogo como referencias aún no activadas en el motor.
+
+El ZIP original no incluía el manual PCI/URCI ni el formato Excel nombrados en el pedido. Se recuperaron los adjuntos de esta conversación y se incluyeron bajo los nombres solicitados. Las huellas de fuente se registran en manifest.json.

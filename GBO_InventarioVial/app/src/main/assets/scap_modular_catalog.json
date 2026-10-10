@@ -1,0 +1,3100 @@
+{
+  "type": "MODULAR",
+  "elements": [
+    {
+      "name": "Losa de concreto armado (Refuerzo longitudinal)",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C5:G5",
+      "code": "101",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Losa de concreto pretensado (Pretensado Longitudinal)",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C6:G6",
+      "code": "102",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Losa de Concreto Simple",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C7:G7",
+      "code": "103",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Losa de concreto armado (Refuerzo Transversal)",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C8:G8",
+      "code": "104",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Losa de concreto pretensado (Pretensado Transversal)",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C9:G9",
+      "code": "105",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Plancha Metálica Corrugada",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C10:G10",
+      "code": "106",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m2"
+    },
+    {
+      "name": "Tablero de Madera",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C11:G11",
+      "code": "107",
+      "group": "SUPERESTRUCTURA",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Viga Principales concreto armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C12:G12",
+      "code": "110",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Vigas Secundarias de concreto armado",
+      "importanceFactor": 0.8,
+      "source": "AUXILIAR!C13:G13",
+      "code": "111",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Vigas Principales de concreto pretensado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C14:G14",
+      "code": "112",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Vigas Secundarias de concreto Pretensado",
+      "importanceFactor": 0.8,
+      "source": "AUXILIAR!C15:G15",
+      "code": "113",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Vigas Principales de Acero Estructural",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C16:G16",
+      "code": "114",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Vigas Secundarias de Acero",
+      "importanceFactor": 0.8,
+      "source": "AUXILIAR!C17:G17",
+      "code": "115",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Vigas de Madera",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C18:G18",
+      "code": "116",
+      "group": "SUPERESTRUCTURA",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Arriostres de Acero",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C19:G19",
+      "code": "117",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Columnas de concreto armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C20:G20",
+      "code": "131",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Columnas de concreto pretensado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C21:G21",
+      "code": "132",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Columna de acero estructural",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C22:G22",
+      "code": "133",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Muros de Concreto Armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C23:G23",
+      "code": "134",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Muros de Concreto Simple",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C24:G24",
+      "code": "135",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Tirante de Concreto Pretensado en pórticos",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C25:G25",
+      "code": "136",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Arriostres de Acero",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C26:G26",
+      "code": "137",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Arco de concreto armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C27:G27",
+      "code": "145",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Arco de acero estructural",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C28:G28",
+      "code": "146",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Arriostres de Acero",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C29:G29",
+      "code": "147",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Bridas superior e inferior, Montantes y Diagonales de Acero",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C30:G30",
+      "code": "160",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Vigas Transversales y Largueros de Acero",
+      "importanceFactor": 0.8,
+      "source": "AUXILIAR!C31:G31",
+      "code": "161",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Arriostres de Acero",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C32:G32",
+      "code": "162",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Estructura Metálica Bailey",
+      "importanceFactor": 1,
+      "source": "G.- CONDICION ESTADISTICA!A14:F14",
+      "code": "168",
+      "group": "SUPERESTRUCTURA",
+      "unit": "und"
+    },
+    {
+      "name": "Cables Principales de Acero",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C34:G34",
+      "code": "180",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Barras de Anclaje en puentes colgantes",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C35:G35",
+      "code": "181",
+      "group": "SUPERESTRUCTURA",
+      "unit": "und."
+    },
+    {
+      "name": "Torres de Acero",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C36:G36",
+      "code": "182",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Péndolas de Acero con Sockets",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C37:G37",
+      "code": "183",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Accesorios (Sillas de Montar, Montura de Péndolas) en ptes colgantes",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C38:G38",
+      "code": "184",
+      "group": "SUPERESTRUCTURA",
+      "unit": "und."
+    },
+    {
+      "name": "Vigas de Rigidez",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C39:G39",
+      "code": "185",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Arriostres de Acero",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C40:G40",
+      "code": "186",
+      "group": "SUPERESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Losa de Concreto Simple",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C41:G41",
+      "code": "190",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Losa de concreto armado (Refuerzo longitudinal)",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C42:G42",
+      "code": "191",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Muros de Concreto Simple",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C43:G43",
+      "code": "192",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Muros de Concreto Armado Alcantarilla",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C44:G44",
+      "code": "193",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Relleno",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C45:G45",
+      "code": "195",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Plancha Metálica Corrugada (TMC)",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C46:G46",
+      "code": "196",
+      "group": "SUPERESTRUCTURA",
+      "unit": "m2"
+    },
+    {
+      "name": "Elevación Cuerpo del Estribo de Concreto Simple",
+      "importanceFactor": 1,
+      "source": "G.- CONDICION ESTADISTICA!A15:F15",
+      "code": "201",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación Cuerpo del Estribo de Concreto Armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C48:G48",
+      "code": "202",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación Cuerpo del Estribo Madera",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C49:G49",
+      "code": "203",
+      "group": "SUBESTRUCTURA",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Elevación Alas del Estribo Concreto Simple",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C50:G50",
+      "code": "204",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación Alas del Estribo de Concreto Armado",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C51:G51",
+      "code": "205",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación Alas del Estribo Madera",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C52:G52",
+      "code": "206",
+      "group": "SUBESTRUCTURA",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Elevación Cuerpo del Estribo de Mampostería de Piedra",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C53:G53",
+      "code": "207",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación Alas del Estribo Mampostería de Piedra",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C54:G54",
+      "code": "208",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Zapata de Concreto Simple",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C55:G55",
+      "code": "215",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Zapata de Concreto armado para Estribos",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C56:G56",
+      "code": "216",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Zapata de Mampostería de Piedra",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C57:G57",
+      "code": "217",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Caisson de Concreto Simple",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C58:G58",
+      "code": "220",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Caisson de Concreto Armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C59:G59",
+      "code": "221",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Pilotes de Concreto Armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C60:G60",
+      "code": "230",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Pilotes de Acero Estructural",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C61:G61",
+      "code": "231",
+      "group": "SUBESTRUCTURA",
+      "unit": "kg"
+    },
+    {
+      "name": "Pilotes de Madera",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C62:G62",
+      "code": "232",
+      "group": "SUBESTRUCTURA",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Elevación de Pilares Concreto Simple",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C63:G63",
+      "code": "240",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación de Pilares Concreto Armado",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C64:G64",
+      "code": "241",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Elevación de Pilares de Madera",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C65:G65",
+      "code": "242",
+      "group": "SUBESTRUCTURA",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Elevación de Pilares de Manposteria de Piedra",
+      "importanceFactor": 1,
+      "source": "AUXILIAR!C66:G66",
+      "code": "243",
+      "group": "SUBESTRUCTURA",
+      "unit": "m3"
+    },
+    {
+      "name": "Capa Asfalto",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C67:G67",
+      "code": "301",
+      "group": "DETALLES",
+      "unit": "m2"
+    },
+    {
+      "name": "Capa Concreto Pobre",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C68:G68",
+      "code": "302",
+      "group": "DETALLES",
+      "unit": "m2"
+    },
+    {
+      "name": "Tablones de Madera",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C69:G69",
+      "code": "303",
+      "group": "DETALLES",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Vereda Concreto",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C70:G70",
+      "code": "311",
+      "group": "DETALLES",
+      "unit": "m2"
+    },
+    {
+      "name": "Vereda Acero",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C71:G71",
+      "code": "312",
+      "group": "DETALLES",
+      "unit": "kg"
+    },
+    {
+      "name": "Vereda de Madera",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C72:G72",
+      "code": "313",
+      "group": "DETALLES",
+      "unit": "ft.2"
+    },
+    {
+      "name": "Apoyo fijo Neopreno",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C73:G73",
+      "code": "321",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo deslizante de neopreno",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C74:G74",
+      "code": "322",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo Deslizante Acero",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C75:G75",
+      "code": "323",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo articulado de acero",
+      "importanceFactor": 0.4,
+      "source": "G.- CONDICION ESTADISTICA!A16:F16",
+      "code": "324",
+      "group": "DETALLES",
+      "unit": "und"
+    },
+    {
+      "name": "Apoyo Roller Acero",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C77:G77",
+      "code": "325",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo Rocker Acero",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C78:G78",
+      "code": "326",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo articulado Concreto",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C79:G79",
+      "code": "327",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo Rocker de Concreto",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C80:G80",
+      "code": "328",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Apoyo Eslabón y Pin (Vigas Gerber)",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C81:G81",
+      "code": "329",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Planchas Deslizantes",
+      "importanceFactor": 0.4,
+      "source": "G.- CONDICION ESTADISTICA!A17:F17",
+      "code": "341",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Tipo Peine",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C83:G83",
+      "code": "342",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Tipo Compresible / Expandible Celular",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C84:G84",
+      "code": "343",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Junta de Expansión, Tipo Compresible / Expandible Sólido",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C85:G85",
+      "code": "344",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Barandas de Madera",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C86:G86",
+      "code": "351",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Barandas de Concreto",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C87:G87",
+      "code": "352",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Barandas de Acero",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C88:G88",
+      "code": "353",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Parapeto de Concreto Armado",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C89:G89",
+      "code": "354",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Guardavías",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C90:G90",
+      "code": "355",
+      "group": "DETALLES",
+      "unit": "ml"
+    },
+    {
+      "name": "Tuberías Metálicas",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C91:G91",
+      "code": "371",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Tuberías PVC",
+      "importanceFactor": 0.4,
+      "source": "AUXILIAR!C92:G92",
+      "code": "372",
+      "group": "DETALLES",
+      "unit": "und."
+    },
+    {
+      "name": "Márgenes del río",
+      "importanceFactor": 0.6,
+      "source": "G.- CONDICION ESTADISTICA!A18:F18",
+      "code": "401",
+      "group": "CAUCE",
+      "unit": "ml"
+    },
+    {
+      "name": "Lecho del río",
+      "importanceFactor": 0.6,
+      "source": "G.- CONDICION ESTADISTICA!A19:F19",
+      "code": "402",
+      "group": "CAUCE",
+      "unit": "ml"
+    },
+    {
+      "name": "Barrajes",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C95:G95",
+      "code": "403",
+      "group": "CAUCE",
+      "unit": "m2"
+    },
+    {
+      "name": "Dique",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C96:G96",
+      "code": "404",
+      "group": "CAUCE",
+      "unit": "ml"
+    },
+    {
+      "name": "Proteccion contra socavacion",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C97:G97",
+      "code": "405",
+      "group": "CAUCE",
+      "unit": "ml"
+    },
+    {
+      "name": "Enrocado",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C98:G98",
+      "code": "406",
+      "group": "CAUCE",
+      "unit": "ml"
+    },
+    {
+      "name": "Gaviones",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C99:G99",
+      "code": "407",
+      "group": "CAUCE",
+      "unit": "m3"
+    },
+    {
+      "name": "Muro de Concreto Simple.",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C100:G100",
+      "code": "410",
+      "group": "CAUCE",
+      "unit": "m3"
+    },
+    {
+      "name": "Muro de Concreto Armado – Cauce",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C101:G101",
+      "code": "411",
+      "group": "CAUCE",
+      "unit": "m3"
+    },
+    {
+      "name": "Solado Concreto Simple",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C102:G102",
+      "code": "412",
+      "group": "CAUCE",
+      "unit": "m3"
+    },
+    {
+      "name": "Solado Concreto",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C103:G103",
+      "code": "413",
+      "group": "CAUCE",
+      "unit": "m3"
+    },
+    {
+      "name": "Señalización",
+      "importanceFactor": 0.2,
+      "source": "G.- CONDICION ESTADISTICA!A20:F20",
+      "code": "501",
+      "group": "ACCESOS",
+      "unit": "und"
+    },
+    {
+      "name": "Terraplen",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C105:G105",
+      "code": "502",
+      "group": "ACCESOS",
+      "unit": "m3"
+    },
+    {
+      "name": "Muro de Concreto Simple – Accesos",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C106:G106",
+      "code": "503",
+      "group": "ACCESOS",
+      "unit": "m3"
+    },
+    {
+      "name": "Muro de Concreto Armado en accesos",
+      "importanceFactor": 0.6,
+      "source": "G.- CONDICION ESTADISTICA!A21:F21",
+      "code": "504",
+      "group": "ACCESOS",
+      "unit": "m3"
+    },
+    {
+      "name": "Zapata de Concreto Simple en muros de contención",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C108:G108",
+      "code": "505",
+      "group": "ACCESOS",
+      "unit": "m3"
+    },
+    {
+      "name": "Zapata de Concreto armado",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C109:G109",
+      "code": "506",
+      "group": "ACCESOS",
+      "unit": "m3"
+    },
+    {
+      "name": "Muro de Concreto Armado en accesos",
+      "importanceFactor": 0.6,
+      "source": "AUXILIAR!C110:G110",
+      "code": "510",
+      "group": "ACCESOS",
+      "unit": "m3"
+    },
+    {
+      "name": "Pavimento/Afirmado",
+      "importanceFactor": 0.2,
+      "source": "G.- CONDICION ESTADISTICA!A22:F22",
+      "code": "511",
+      "group": "ACCESOS",
+      "unit": "m2"
+    },
+    {
+      "name": "Cunetas de Concreto",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C112:G112",
+      "code": "520",
+      "group": "ACCESOS",
+      "unit": "ml"
+    },
+    {
+      "name": "Cunetas de Tierra",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C113:G113",
+      "code": "521",
+      "group": "ACCESOS",
+      "unit": "ml"
+    },
+    {
+      "name": "Alcantarilla de concreto",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C114:G114",
+      "code": "525",
+      "group": "ACCESOS",
+      "unit": "ml"
+    },
+    {
+      "name": "Alcantarilla de Plancha Corrugada TMC",
+      "importanceFactor": 0.2,
+      "source": "AUXILIAR!C115:G115",
+      "code": "526",
+      "group": "ACCESOS",
+      "unit": "ml"
+    },
+    {
+      "name": "Visibilidad",
+      "importanceFactor": 0.2,
+      "source": "G.- CONDICION ESTADISTICA!A23:F23",
+      "code": "530",
+      "group": "ACCESOS",
+      "unit": "ml"
+    }
+  ],
+  "typesByCategory": {
+    "ARTESANALES": {
+      "options": [
+        "Vigas de Troncos de Arboles",
+        "Arcos/Porticos de Mamposteria de piedra",
+        "Arco de Concreto Simple",
+        "Losa de Concreto Reforzado con rieles de FFCC",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!P135:P139"
+    },
+    "DEFINITIVO": {
+      "options": [
+        "Losa",
+        "Losa con Vigas",
+        "Portico",
+        "Arco",
+        "Reticulado",
+        "Colgante",
+        "Atirantado"
+      ],
+      "source": "A-D.- FICHA!E135:E141"
+    },
+    "PROVISIONALES": {
+      "options": [
+        "Modular",
+        "Tipo Yawata",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!H135:H137"
+    },
+    "ALCANTARILLA": {
+      "options": [
+        "Marco",
+        "Circular/Ovalada",
+        "Arco",
+        "Portico",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!L135:L139"
+    }
+  },
+  "sourceSha256": "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89",
+  "fields": [
+    {
+      "key": "bridgeName",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "H10",
+      "valueCell": "J10",
+      "kind": "TEXT",
+      "label": "Nombre",
+      "source": "A-D.- FICHA!J10"
+    },
+    {
+      "key": "bridgeCode",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "H12",
+      "valueCell": "J12",
+      "kind": "TEXT",
+      "label": "Código",
+      "source": "A-D.- FICHA!J12"
+    },
+    {
+      "key": "altitudeM",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "C14",
+      "valueCell": "E14",
+      "kind": "DECIMAL",
+      "label": "Altitud",
+      "source": "A-D.- FICHA!E14"
+    },
+    {
+      "key": "latitude",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "C16",
+      "valueCell": "E16",
+      "kind": "LATITUDE",
+      "label": "Latitud",
+      "source": "A-D.- FICHA!E16"
+    },
+    {
+      "key": "longitude",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "C18",
+      "valueCell": "E18",
+      "kind": "LONGITUDE",
+      "label": "Longitud",
+      "source": "A-D.- FICHA!E18"
+    },
+    {
+      "key": "politicalDepartment",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "H14",
+      "valueCell": "J14",
+      "kind": "TEXT",
+      "label": "Dpto. Político",
+      "source": "A-D.- FICHA!J14"
+    },
+    {
+      "key": "roadDepartment",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "H16",
+      "valueCell": "J16",
+      "kind": "TEXT",
+      "label": "Dpto. Vial",
+      "source": "A-D.- FICHA!J16"
+    },
+    {
+      "key": "province",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "H18",
+      "valueCell": "J18",
+      "kind": "TEXT",
+      "label": "Provincia",
+      "source": "A-D.- FICHA!J18"
+    },
+    {
+      "key": "district",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "H20",
+      "valueCell": "J20",
+      "kind": "TEXT",
+      "label": "Distrito",
+      "source": "A-D.- FICHA!J20"
+    },
+    {
+      "key": "nearbyTown",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "N14",
+      "valueCell": "P14",
+      "kind": "TEXT",
+      "label": "Poblado mas cercano",
+      "source": "A-D.- FICHA!P14"
+    },
+    {
+      "key": "route",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "N16",
+      "valueCell": "P16",
+      "kind": "TEXT",
+      "label": "Ruta",
+      "source": "A-D.- FICHA!P16"
+    },
+    {
+      "key": "progressive",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "N18",
+      "valueCell": "P18",
+      "kind": "CHAINAGE",
+      "label": "Kilometraje",
+      "source": "A-D.- FICHA!P18"
+    },
+    {
+      "key": "routeType",
+      "section": "A",
+      "owner": "inspection",
+      "labelCell": "N20",
+      "valueCell": "P20",
+      "kind": "CATALOG",
+      "catalog": "routeType",
+      "label": "Tipo de Ruta",
+      "source": "A-D.- FICHA!P20"
+    },
+    {
+      "key": "over",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C28",
+      "valueCell": "E28",
+      "kind": "CATALOG",
+      "catalog": "over",
+      "label": "Puente sobre",
+      "source": "A-D.- FICHA!E28"
+    },
+    {
+      "key": "singularityName",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C30",
+      "valueCell": "E30",
+      "kind": "TEXT",
+      "label": "Nombre",
+      "source": "A-D.- FICHA!E30"
+    },
+    {
+      "key": "totalLengthM",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C32",
+      "valueCell": "E32",
+      "kind": "DECIMAL",
+      "label": "Longitud Total",
+      "source": "A-D.- FICHA!E32"
+    },
+    {
+      "key": "lanes",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C34",
+      "valueCell": "E34",
+      "kind": "INTEGER",
+      "label": "Num de vías de tránsito",
+      "source": "A-D.- FICHA!E34"
+    },
+    {
+      "key": "roadwayWidthM",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C36",
+      "valueCell": "E36",
+      "kind": "DECIMAL",
+      "label": "Ancho de Calzada",
+      "source": "A-D.- FICHA!E36"
+    },
+    {
+      "key": "designLoad",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C38",
+      "valueCell": "E38",
+      "kind": "TEXT",
+      "label": "Sobrecarga de Diseño",
+      "source": "A-D.- FICHA!E38"
+    },
+    {
+      "key": "sidewalkWidthM",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C40",
+      "valueCell": "E40",
+      "kind": "NUMERIC_OR_SOURCE_STATUS",
+      "label": "Ancho de Vereda",
+      "source": "A-D.- FICHA!E40",
+      "numericKind": "DECIMAL",
+      "catalog": "sidewalkWidthMBinspectionObservedStatus"
+    },
+    {
+      "key": "upperClearanceM",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C42",
+      "valueCell": "E42",
+      "kind": "DECIMAL",
+      "label": "Altura Libre Superior",
+      "source": "A-D.- FICHA!E42"
+    },
+    {
+      "key": "lowerClearanceM",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "C44",
+      "valueCell": "E44",
+      "kind": "DECIMAL",
+      "label": "Altura Libre Inferior",
+      "source": "A-D.- FICHA!E44"
+    },
+    {
+      "key": "projectNumber",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J28",
+      "valueCell": "N28",
+      "kind": "TEXT",
+      "label": "Número de Proyecto",
+      "source": "A-D.- FICHA!N28"
+    },
+    {
+      "key": "constructionYear",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J30",
+      "valueCell": "N30",
+      "kind": "NUMERIC_OR_SOURCE_STATUS",
+      "label": "Año de Construcción",
+      "source": "A-D.- FICHA!N30",
+      "numericKind": "YEAR",
+      "catalog": "constructionYearBinspectionObservedStatus"
+    },
+    {
+      "key": "lastInspection",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J32",
+      "valueCell": "N32",
+      "kind": "DATE",
+      "label": "Última Inspección",
+      "source": "A-D.- FICHA!N32"
+    },
+    {
+      "key": "lastWork",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J34",
+      "valueCell": "N34",
+      "kind": "TEXT",
+      "label": "Último Trabajo",
+      "source": "A-D.- FICHA!N34"
+    },
+    {
+      "key": "service",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J36",
+      "valueCell": "N36",
+      "kind": "CATALOG",
+      "catalog": "service",
+      "label": "Tipo de Servicio",
+      "source": "A-D.- FICHA!N36"
+    },
+    {
+      "key": "traffic",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J38",
+      "valueCell": "N38",
+      "kind": "NUMERIC_OR_SOURCE_STATUS",
+      "label": "Flujo de Tráfico",
+      "source": "A-D.- FICHA!N38",
+      "numericKind": "INTEGER",
+      "catalog": "trafficBinspectionObservedStatus"
+    },
+    {
+      "key": "trafficYear",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J40",
+      "valueCell": "N40",
+      "kind": "YEAR",
+      "label": "Año",
+      "source": "A-D.- FICHA!N40"
+    },
+    {
+      "key": "truckBusPercent",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J42",
+      "valueCell": "N42",
+      "kind": "NUMERIC_OR_SOURCE_STATUS",
+      "label": "% Camiones y Buses",
+      "source": "A-D.- FICHA!N42",
+      "numericKind": "PERCENT",
+      "catalog": "truckBusPercentBinspectionObservedStatus"
+    },
+    {
+      "key": "alignment",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J44",
+      "valueCell": "N44",
+      "kind": "CATALOG",
+      "catalog": "alignment",
+      "label": "Alineamiento",
+      "source": "A-D.- FICHA!N44"
+    },
+    {
+      "key": "environment",
+      "section": "B",
+      "owner": "inspection",
+      "labelCell": "J46",
+      "valueCell": "N46",
+      "kind": "CATALOG",
+      "catalog": "environment",
+      "label": "Condiciones Ambientales",
+      "source": "A-D.- FICHA!N46"
+    },
+    {
+      "key": "spanArrangement",
+      "section": "C1",
+      "owner": "inspection",
+      "labelCell": "C65",
+      "valueCell": "E65",
+      "kind": "CATALOG",
+      "catalog": "spans",
+      "label": "Tramos",
+      "source": "A-D.- FICHA!E65"
+    },
+    {
+      "key": "totalLengthM",
+      "section": "C1",
+      "owner": "inspection",
+      "labelCell": "C67",
+      "valueCell": "E67",
+      "kind": "DECIMAL",
+      "label": "Longitud Total",
+      "source": "A-D.- FICHA!E67"
+    },
+    {
+      "key": "mainSpanM",
+      "section": "C1",
+      "owner": "inspection",
+      "labelCell": "C69",
+      "valueCell": "E69",
+      "kind": "DECIMAL",
+      "label": "Luz Principal",
+      "source": "A-D.- FICHA!E69"
+    },
+    {
+      "key": "lengthM",
+      "section": "C2",
+      "owner": "span",
+      "labelCell": "H63",
+      "valueCell": "J63",
+      "kind": "DECIMAL",
+      "label": "Longitud del tramo (m)",
+      "source": "A-D.- FICHA!J63"
+    },
+    {
+      "key": "category",
+      "section": "C2",
+      "owner": "span",
+      "labelCell": "C77",
+      "valueCell": "E77",
+      "kind": "CATALOG",
+      "catalog": "category",
+      "label": "Categoría",
+      "source": "A-D.- FICHA!E77"
+    },
+    {
+      "key": "type",
+      "section": "C2",
+      "owner": "span",
+      "labelCell": "C79",
+      "valueCell": "E79",
+      "kind": "DEPENDENT",
+      "label": "Tipo   ",
+      "source": "A-D.- FICHA!E79"
+    },
+    {
+      "key": "secondaryCharacteristic",
+      "section": "C2",
+      "owner": "span",
+      "labelCell": "C81",
+      "valueCell": "E81",
+      "kind": "TEXT",
+      "label": "Caract. Secundaria",
+      "source": "A-D.- FICHA!E81"
+    },
+    {
+      "key": "edgeCondition",
+      "section": "C2",
+      "owner": "span",
+      "labelCell": "C83",
+      "valueCell": "E83",
+      "kind": "CATALOG",
+      "catalog": "edge",
+      "label": "Condición  de borde",
+      "source": "A-D.- FICHA!E83"
+    },
+    {
+      "key": "predominantMaterial",
+      "section": "C2",
+      "owner": "span",
+      "labelCell": "C85",
+      "valueCell": "E85",
+      "kind": "CATALOG",
+      "catalog": "predominant",
+      "label": "Material Predom",
+      "source": "A-D.- FICHA!E85"
+    },
+    {
+      "key": "slabMaterial",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "C99",
+      "valueCell": "E99",
+      "kind": "CATALOG",
+      "catalog": "slabMaterial",
+      "label": "LOSA · Material",
+      "source": "A-D.- FICHA!E99"
+    },
+    {
+      "key": "slabThicknessM",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "C101",
+      "valueCell": "E101",
+      "kind": "NUMERIC_OR_SOURCE_STATUS",
+      "label": "LOSA · Espesor (m)",
+      "source": "A-D.- FICHA!E101",
+      "numericKind": "DECIMAL",
+      "catalog": "slabThicknessMC3spanObservedStatus"
+    },
+    {
+      "key": "wearingSurface",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "C103",
+      "valueCell": "E103",
+      "kind": "CATALOG",
+      "catalog": "wearingSurface",
+      "label": "Superficie de Desgaste",
+      "source": "A-D.- FICHA!E103"
+    },
+    {
+      "key": "wearingThicknessM",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "C105",
+      "valueCell": "E105",
+      "kind": "DECIMAL",
+      "label": "Espesor de Sup.desgaste",
+      "source": "A-D.- FICHA!E105"
+    },
+    {
+      "key": "beamType",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "H99",
+      "valueCell": "J99",
+      "kind": "CATALOG",
+      "catalog": "beamType",
+      "label": "VIGAS · Tipo",
+      "source": "A-D.- FICHA!J99"
+    },
+    {
+      "key": "beamCount",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "H101",
+      "valueCell": "J101",
+      "kind": "INTEGER",
+      "label": "Nº de Vigas",
+      "source": "A-D.- FICHA!J101"
+    },
+    {
+      "key": "beamMaterial",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "H103",
+      "valueCell": "J103",
+      "kind": "CATALOG",
+      "catalog": "beamMaterial",
+      "label": "VIGAS · Material",
+      "source": "A-D.- FICHA!J103"
+    },
+    {
+      "key": "beamShape",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "H105",
+      "valueCell": "J105",
+      "kind": "CATALOG",
+      "catalog": "beamShape",
+      "label": "VIGAS · Forma",
+      "source": "A-D.- FICHA!J105"
+    },
+    {
+      "key": "beamDepth",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "H107",
+      "valueCell": "J107",
+      "kind": "DIMENSION_RANGE",
+      "label": "VIGAS · Peralte (m; admite intervalo)",
+      "source": "A-D.- FICHA!J107"
+    },
+    {
+      "key": "beamSpacingM",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "N105",
+      "valueCell": "P105",
+      "kind": "DECIMAL",
+      "label": "Separación/ejes",
+      "source": "A-D.- FICHA!P105"
+    },
+    {
+      "key": "beamBaseWidthM",
+      "section": "C3",
+      "owner": "span",
+      "labelCell": "N107",
+      "valueCell": "P107",
+      "kind": "DECIMAL",
+      "label": "Ancho-Base",
+      "source": "A-D.- FICHA!P107"
+    },
+    {
+      "key": "elevationType",
+      "section": "C4",
+      "owner": "abutment",
+      "labelCell": "H121",
+      "valueCell": "J121",
+      "kind": "CATALOG",
+      "catalog": "abutmentElevation",
+      "label": "Elevación · Tipo",
+      "source": "A-D.- FICHA!J121"
+    },
+    {
+      "key": "elevationMaterial",
+      "section": "C4",
+      "owner": "abutment",
+      "labelCell": "H123",
+      "valueCell": "J123",
+      "kind": "CATALOG",
+      "catalog": "abutmentMaterial",
+      "label": "Elevación · Material",
+      "source": "A-D.- FICHA!J123"
+    },
+    {
+      "key": "foundationType",
+      "section": "C4",
+      "owner": "abutment",
+      "labelCell": "H125",
+      "valueCell": "J125",
+      "kind": "CATALOG",
+      "catalog": "abutmentFoundation",
+      "label": "Cimentación · Tipo",
+      "source": "A-D.- FICHA!J125"
+    },
+    {
+      "key": "foundationMaterial",
+      "section": "C4",
+      "owner": "abutment",
+      "labelCell": "H127",
+      "valueCell": "J127",
+      "kind": "CATALOG",
+      "catalog": "foundationMaterial",
+      "label": "Cimentación · Material",
+      "source": "A-D.- FICHA!J127"
+    },
+    {
+      "key": "elevationType",
+      "section": "C4",
+      "owner": "pier",
+      "labelCell": "H121",
+      "valueCell": "G176",
+      "kind": "CATALOG",
+      "catalog": "pierElevation",
+      "label": "Elevación · Tipo",
+      "source": "A-D.- FICHA!G176"
+    },
+    {
+      "key": "elevationMaterial",
+      "section": "C4",
+      "owner": "pier",
+      "labelCell": "H123",
+      "valueCell": "G178",
+      "kind": "CATALOG",
+      "catalog": "pierMaterial",
+      "label": "Elevación · Material",
+      "source": "A-D.- FICHA!G178"
+    },
+    {
+      "key": "foundationType",
+      "section": "C4",
+      "owner": "pier",
+      "labelCell": "H125",
+      "valueCell": "G182",
+      "kind": "CATALOG",
+      "catalog": "pierFoundation",
+      "label": "Cimentación · Tipo",
+      "source": "A-D.- FICHA!G182"
+    },
+    {
+      "key": "foundationMaterial",
+      "section": "C4",
+      "owner": "pier",
+      "labelCell": "H127",
+      "valueCell": "G184",
+      "kind": "CATALOG",
+      "catalog": "pierFoundationMaterial",
+      "label": "Cimentación · Material",
+      "source": "A-D.- FICHA!G184"
+    },
+    {
+      "key": "elevationType",
+      "section": "C4",
+      "owner": "anchor",
+      "labelCell": "H121",
+      "valueCell": "G192",
+      "kind": "CATALOG",
+      "catalog": "anchorElevation",
+      "label": "Elevación · Tipo",
+      "source": "A-D.- FICHA!G192"
+    },
+    {
+      "key": "elevationMaterial",
+      "section": "C4",
+      "owner": "anchor",
+      "labelCell": "H123",
+      "valueCell": "G194",
+      "kind": "CATALOG",
+      "catalog": "anchorMaterial",
+      "label": "Elevación · Material",
+      "source": "A-D.- FICHA!G194"
+    },
+    {
+      "key": "foundationType",
+      "section": "C4",
+      "owner": "anchor",
+      "labelCell": "H125",
+      "valueCell": "G198",
+      "kind": "CATALOG",
+      "catalog": "anchorFoundation",
+      "label": "Cimentación · Tipo",
+      "source": "A-D.- FICHA!G198"
+    },
+    {
+      "key": "foundationMaterial",
+      "section": "C4",
+      "owner": "anchor",
+      "labelCell": "H127",
+      "valueCell": "G200",
+      "kind": "CATALOG",
+      "catalog": "anchorFoundationMaterial",
+      "label": "Cimentación · Material",
+      "source": "A-D.- FICHA!G200"
+    },
+    {
+      "key": "railingType",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "C230",
+      "valueCell": "E230",
+      "kind": "CATALOG",
+      "catalog": "railingType",
+      "label": "BARANDAS · Tipo",
+      "source": "A-D.- FICHA!E230"
+    },
+    {
+      "key": "railingMaterial",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "C232",
+      "valueCell": "E232",
+      "kind": "CATALOG",
+      "catalog": "railingMaterial",
+      "label": "BARANDAS · Material",
+      "visibleWhen": "railingType!=No hay",
+      "source": "A-D.- FICHA!E232"
+    },
+    {
+      "key": "railingSecondary",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "C234",
+      "valueCell": "E234",
+      "kind": "CATALOG",
+      "catalog": "railingSecondary",
+      "label": "BARANDAS · Característica secundaria",
+      "visibleWhen": "railingType!=No hay",
+      "source": "A-D.- FICHA!E234"
+    },
+    {
+      "key": "sidewalkWidthM",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "J230",
+      "valueCell": "N230",
+      "kind": "DECIMAL",
+      "label": "VEREDAS · Ancho (m)",
+      "source": "A-D.- FICHA!N230"
+    },
+    {
+      "key": "curbHeightM",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "J232",
+      "valueCell": "N232",
+      "kind": "DECIMAL",
+      "label": "Altura Sardinel",
+      "source": "A-D.- FICHA!N232"
+    },
+    {
+      "key": "sidewalkMaterial",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "J234",
+      "valueCell": "N234",
+      "kind": "CATALOG",
+      "catalog": "sidewalkMaterial",
+      "label": "VEREDAS · Material",
+      "source": "A-D.- FICHA!N234"
+    },
+    {
+      "key": "jointType",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "E250",
+      "valueCell": "H250",
+      "kind": "CATALOG",
+      "catalog": "jointType",
+      "label": "JUNTAS · Tipo",
+      "source": "A-D.- FICHA!H250"
+    },
+    {
+      "key": "jointMaterial",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "E252",
+      "valueCell": "H252",
+      "kind": "CATALOG",
+      "catalog": "jointMaterial",
+      "label": "JUNTAS · Material",
+      "source": "A-D.- FICHA!H252"
+    },
+    {
+      "key": "drainType",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "E256",
+      "valueCell": "H256",
+      "kind": "CATALOG",
+      "catalog": "drainType",
+      "label": "DRENAJE · Tipo",
+      "source": "A-D.- FICHA!H256"
+    },
+    {
+      "key": "drainMaterial",
+      "section": "C5",
+      "owner": "inspection",
+      "labelCell": "E258",
+      "valueCell": "H258",
+      "kind": "CATALOG",
+      "catalog": "drainMaterial",
+      "label": "DRENAJE · Material",
+      "visibleWhen": "drainType!=No tiene",
+      "source": "A-D.- FICHA!H258"
+    },
+    {
+      "key": "type",
+      "section": "C5",
+      "owner": "bearing",
+      "labelCell": "E240",
+      "valueCell": "H240",
+      "kind": "CATALOG",
+      "catalog": "bearingType",
+      "label": "Tipo",
+      "source": "A-D.- FICHA!H240"
+    },
+    {
+      "key": "material",
+      "section": "C5",
+      "owner": "bearing",
+      "labelCell": "E242",
+      "valueCell": "H242",
+      "kind": "CATALOG",
+      "catalog": "bearingMaterial",
+      "label": "Material",
+      "source": "A-D.- FICHA!H242"
+    },
+    {
+      "key": "location",
+      "section": "C5",
+      "owner": "bearing",
+      "labelCell": "E244",
+      "valueCell": "H244",
+      "kind": "TEXT",
+      "label": "Ubicación",
+      "source": "A-D.- FICHA!H244"
+    },
+    {
+      "key": "number",
+      "section": "C5",
+      "owner": "bearing",
+      "labelCell": "E246",
+      "valueCell": "H246",
+      "kind": "INTEGER",
+      "label": "Número",
+      "source": "A-D.- FICHA!H246"
+    },
+    {
+      "key": "transitionLengthM",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C269",
+      "valueCell": "G269",
+      "kind": "DECIMAL",
+      "label": "Longitud de Transición",
+      "source": "A-D.- FICHA!G269"
+    },
+    {
+      "key": "alignment",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C271",
+      "valueCell": "G271",
+      "kind": "CATALOG",
+      "catalog": "accessAlignment",
+      "label": "Alineamiento respecto al puente",
+      "source": "A-D.- FICHA!G271"
+    },
+    {
+      "key": "alignmentDetail",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C271",
+      "valueCell": "H271",
+      "kind": "TEXT",
+      "label": "Complemento del alineamiento",
+      "visibleWhen": "alignment=Curva a",
+      "source": "A-D.- FICHA!H271"
+    },
+    {
+      "key": "roadwayWidthM",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C273",
+      "valueCell": "G273",
+      "kind": "DECIMAL",
+      "label": "Ancho de Calzada",
+      "source": "A-D.- FICHA!G273"
+    },
+    {
+      "key": "shoulderWidthM",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C275",
+      "valueCell": "G275",
+      "kind": "NUMERIC_OR_SOURCE_STATUS",
+      "label": "Ancho Total de Bermas",
+      "source": "A-D.- FICHA!G275",
+      "numericKind": "DECIMAL",
+      "catalog": "shoulderWidthMC6accessObservedStatus"
+    },
+    {
+      "key": "steepSlope",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C277",
+      "valueCell": "G277",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Pendiente Alta",
+      "source": "A-D.- FICHA!G277"
+    },
+    {
+      "key": "visibility",
+      "section": "C6",
+      "owner": "access",
+      "labelCell": "C279",
+      "valueCell": "G279",
+      "kind": "CATALOG",
+      "catalog": "visibility",
+      "label": "Visibilidad",
+      "source": "A-D.- FICHA!G279"
+    },
+    {
+      "key": "informative",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C308",
+      "valueCell": "G308",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Señal Informativa",
+      "source": "A-D.- FICHA!G308"
+    },
+    {
+      "key": "informativeDetail",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C308",
+      "valueCell": "H308",
+      "kind": "CATALOG",
+      "catalog": "informative",
+      "label": "Detalle de señalización",
+      "visibleWhen": "informative=Si",
+      "source": "A-D.- FICHA!H308"
+    },
+    {
+      "key": "preventive",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C310",
+      "valueCell": "G310",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Señal Preventiva",
+      "source": "A-D.- FICHA!G310"
+    },
+    {
+      "key": "preventiveDetail",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C310",
+      "valueCell": "H310",
+      "kind": "CATALOG",
+      "catalog": "preventive",
+      "label": "Detalle de señalización",
+      "visibleWhen": "preventive=Si",
+      "source": "A-D.- FICHA!H310"
+    },
+    {
+      "key": "regulatory",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C312",
+      "valueCell": "G312",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Señal Reglamentaria",
+      "source": "A-D.- FICHA!G312"
+    },
+    {
+      "key": "regulatoryDetail",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C312",
+      "valueCell": "H312",
+      "kind": "CATALOG",
+      "catalog": "regulatory",
+      "label": "Detalle de señalización",
+      "visibleWhen": "regulatory=Si",
+      "source": "A-D.- FICHA!H312"
+    },
+    {
+      "key": "horizontal",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C314",
+      "valueCell": "G314",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Señalización Horizontal",
+      "source": "A-D.- FICHA!G314"
+    },
+    {
+      "key": "horizontalDetail",
+      "section": "C7",
+      "owner": "access",
+      "labelCell": "C314",
+      "valueCell": "H314",
+      "kind": "CATALOG",
+      "catalog": "horizontal",
+      "label": "Detalle de señalización",
+      "visibleWhen": "horizontal=Si",
+      "source": "A-D.- FICHA!H314"
+    },
+    {
+      "key": "designLoad",
+      "section": "C8",
+      "owner": "inspection",
+      "labelCell": "C323",
+      "valueCell": "E323",
+      "kind": "TEXT",
+      "label": "Carga de Diseño",
+      "source": "A-D.- FICHA!E323"
+    },
+    {
+      "key": "currentMaxLoad",
+      "section": "C8",
+      "owner": "inspection",
+      "labelCell": "H323",
+      "valueCell": "L323",
+      "kind": "TEXT",
+      "label": "Carga Máxima Actual",
+      "source": "A-D.- FICHA!L323"
+    },
+    {
+      "key": "futureLoad",
+      "section": "C8",
+      "owner": "inspection",
+      "labelCell": "C325",
+      "valueCell": "E325",
+      "kind": "TEXT",
+      "label": "Carga en el Futuro",
+      "source": "A-D.- FICHA!E325"
+    },
+    {
+      "key": "overstress",
+      "section": "C8",
+      "owner": "inspection",
+      "labelCell": "H325",
+      "valueCell": "L325",
+      "kind": "TEXT",
+      "label": "Sobreesfuerzo",
+      "source": "A-D.- FICHA!L325"
+    },
+    {
+      "key": "loadSignage",
+      "section": "C8",
+      "owner": "inspection",
+      "labelCell": "C327",
+      "valueCell": "E327",
+      "kind": "CHOICE_TEXT",
+      "catalog": "loadSignage",
+      "label": "Señalización de Carga",
+      "source": "A-D.- FICHA!E327"
+    },
+    {
+      "key": "alternateRoute",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C336",
+      "valueCell": "E336",
+      "kind": "TEXT",
+      "label": "Tipo: Otras Rutas",
+      "source": "A-D.- FICHA!E336"
+    },
+    {
+      "key": "fordExists",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C338",
+      "valueCell": "E338",
+      "kind": "APPLICABILITY",
+      "label": "Vado",
+      "source": "A-D.- FICHA!E338"
+    },
+    {
+      "key": "fordDistanceM",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C340",
+      "valueCell": "G340",
+      "kind": "DECIMAL",
+      "visibleWhen": "fordExists=Si",
+      "label": "Dist de Puente",
+      "source": "A-D.- FICHA!G340"
+    },
+    {
+      "key": "fordPeriod",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C342",
+      "valueCell": "G342",
+      "kind": "TEXT",
+      "visibleWhen": "fordExists=Si",
+      "label": "Período de Funcionamiento",
+      "source": "A-D.- FICHA!G342"
+    },
+    {
+      "key": "fordMinDepthM",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C344",
+      "valueCell": "G344",
+      "kind": "DECIMAL",
+      "visibleWhen": "fordExists=Si",
+      "label": "Profund de Aguas Mínimas",
+      "source": "A-D.- FICHA!G344"
+    },
+    {
+      "key": "fordSoil",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C346",
+      "valueCell": "G346",
+      "kind": "CATALOG",
+      "catalog": "fordSoil",
+      "visibleWhen": "fordExists=Si",
+      "label": "Naturaleza del Suelo",
+      "source": "A-D.- FICHA!G346"
+    },
+    {
+      "key": "existingDetour",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C348",
+      "valueCell": "G348",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Variante Existente",
+      "source": "A-D.- FICHA!G348"
+    },
+    {
+      "key": "detourNeeded",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "C350",
+      "valueCell": "G350",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Necesidad de Construirlo",
+      "source": "A-D.- FICHA!G350"
+    },
+    {
+      "key": "parallelExists",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "J338",
+      "valueCell": "L338",
+      "kind": "APPLICABILITY",
+      "label": "Puente paralelo",
+      "source": "A-D.- FICHA!L338"
+    },
+    {
+      "key": "parallelPossibility",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "J340",
+      "valueCell": "N340",
+      "kind": "CATALOG",
+      "catalog": "parallelPossibility",
+      "label": "Posibilidad a Construir",
+      "source": "A-D.- FICHA!N340"
+    },
+    {
+      "key": "parallelLengthM",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "J342",
+      "valueCell": "L342",
+      "kind": "DECIMAL",
+      "visibleWhen": "parallelExists=Si",
+      "label": "Longitud Total",
+      "source": "A-D.- FICHA!L342"
+    },
+    {
+      "key": "parallelSubstructure",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "J344",
+      "valueCell": "L344",
+      "kind": "CATALOG",
+      "catalog": "parallelSubstructure",
+      "visibleWhen": "parallelExists=Si",
+      "label": "Substructura",
+      "source": "A-D.- FICHA!L344"
+    },
+    {
+      "key": "parallelType",
+      "section": "C9",
+      "owner": "inspection",
+      "labelCell": "J346",
+      "valueCell": "L346",
+      "kind": "CATALOG",
+      "catalog": "abutmentElevation",
+      "visibleWhen": "parallelExists=Si",
+      "label": "Tipo",
+      "source": "A-D.- FICHA!L346"
+    },
+    {
+      "key": "roadCondition",
+      "section": "C10",
+      "owner": "inspection",
+      "labelCell": "H358",
+      "valueCell": "L358",
+      "kind": "CATALOG",
+      "catalog": "roadCondition",
+      "label": "Cond.Carretera",
+      "source": "A-D.- FICHA!L358"
+    },
+    {
+      "key": "soil",
+      "section": "D1",
+      "owner": "abutment",
+      "labelCell": "C393",
+      "valueCell": "E393",
+      "kind": "CATALOG",
+      "catalog": "foundationSoil",
+      "label": "Material / naturaleza del suelo",
+      "source": "A-D.- FICHA!E393"
+    },
+    {
+      "key": "soil",
+      "section": "D1",
+      "owner": "pier",
+      "labelCell": "C393",
+      "valueCell": "E393",
+      "kind": "CATALOG",
+      "catalog": "foundationSoil",
+      "label": "Material / naturaleza del suelo",
+      "source": "A-D.- FICHA!E393"
+    },
+    {
+      "key": "soilComments",
+      "section": "D1",
+      "owner": "inspection",
+      "labelCell": "C395",
+      "valueCell": "E395",
+      "kind": "TEXT",
+      "label": "Comentarios",
+      "source": "A-D.- FICHA!E395"
+    },
+    {
+      "key": "maxWaterM",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "C404",
+      "valueCell": "E404",
+      "kind": "DECIMAL",
+      "label": "Aguas Máximas",
+      "source": "A-D.- FICHA!E404"
+    },
+    {
+      "key": "maxWaterPeriod",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "J404",
+      "valueCell": "N404",
+      "kind": "TEXT",
+      "label": "Periodo de Aguas Maximas",
+      "source": "A-D.- FICHA!N404"
+    },
+    {
+      "key": "minWaterM",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "C406",
+      "valueCell": "E406",
+      "kind": "DECIMAL",
+      "label": "Aguas Mínimas",
+      "source": "A-D.- FICHA!E406"
+    },
+    {
+      "key": "dryPeriod",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "J406",
+      "valueCell": "N406",
+      "kind": "TEXT",
+      "label": "Período de Estiaje",
+      "source": "A-D.- FICHA!N406"
+    },
+    {
+      "key": "extraordinaryWaterM",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "C408",
+      "valueCell": "E408",
+      "kind": "DECIMAL",
+      "label": "Aguas Extraordinarias",
+      "source": "A-D.- FICHA!E408"
+    },
+    {
+      "key": "returnFrequency",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "J408",
+      "valueCell": "N408",
+      "kind": "TEXT",
+      "label": "Frecuencia de Retorno",
+      "source": "A-D.- FICHA!N408"
+    },
+    {
+      "key": "lowerClearanceM",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "C412",
+      "valueCell": "E412",
+      "kind": "DECIMAL",
+      "label": "Galibo determinado en Campo",
+      "source": "A-D.- FICHA!E412"
+    },
+    {
+      "key": "fieldClearanceDate",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "J412",
+      "valueCell": "N412",
+      "kind": "DATE",
+      "label": "Fecha (dd/mm/aa)",
+      "source": "A-D.- FICHA!N412"
+    },
+    {
+      "key": "planClearanceM",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "C414",
+      "valueCell": "E414",
+      "kind": "DECIMAL",
+      "label": "Galibo obtenido del Plano",
+      "source": "A-D.- FICHA!E414"
+    },
+    {
+      "key": "maxWaterClearanceM",
+      "section": "D2",
+      "owner": "inspection",
+      "labelCell": "C416",
+      "valueCell": "E416",
+      "kind": "DECIMAL",
+      "label": "Galibo Aguas Máximas",
+      "source": "A-D.- FICHA!E416"
+    },
+    {
+      "key": "acceptableLength",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "C425",
+      "valueCell": "E425",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Longitud Aceptable",
+      "source": "A-D.- FICHA!E425"
+    },
+    {
+      "key": "requiredLengthM",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "H425",
+      "valueCell": "L425",
+      "kind": "DECIMAL",
+      "visibleWhen": "acceptableLength=No",
+      "label": "Longitud Requerida",
+      "source": "A-D.- FICHA!L425"
+    },
+    {
+      "key": "acceptableHeight",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "C427",
+      "valueCell": "E427",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Altura Aceptable",
+      "source": "A-D.- FICHA!E427"
+    },
+    {
+      "key": "additionalHeightM",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "H427",
+      "valueCell": "L427",
+      "kind": "DECIMAL",
+      "visibleWhen": "acceptableHeight=No",
+      "label": "Altura Adicional Requerida",
+      "source": "A-D.- FICHA!L427"
+    },
+    {
+      "key": "channelingNeeded",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "C429",
+      "valueCell": "E429",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Necesita Encauzamiento",
+      "source": "A-D.- FICHA!E429"
+    },
+    {
+      "key": "channelingLengthM",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "H429",
+      "valueCell": "L429",
+      "kind": "DECIMAL",
+      "visibleWhen": "channelingNeeded=Si",
+      "label": "Longitud de Encauzamiento",
+      "source": "A-D.- FICHA!L429"
+    },
+    {
+      "key": "scour",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "C431",
+      "valueCell": "E431",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Socavación del Cauce",
+      "source": "A-D.- FICHA!E431"
+    },
+    {
+      "key": "scourDepthM",
+      "section": "D3",
+      "owner": "inspection",
+      "labelCell": "H431",
+      "valueCell": "L431",
+      "kind": "DECIMAL",
+      "visibleWhen": "scour=Si",
+      "label": "Profundidad de Socavación",
+      "source": "A-D.- FICHA!L431"
+    },
+    {
+      "key": "profileReference",
+      "section": "D4",
+      "owner": "inspection",
+      "labelCell": "C450",
+      "valueCell": "N450",
+      "kind": "TEXT",
+      "label": "Pto fijo",
+      "source": "A-D.- FICHA!N450"
+    },
+    {
+      "key": "scourProtection",
+      "section": "D4",
+      "owner": "inspection",
+      "labelCell": "C478",
+      "valueCell": "G478",
+      "kind": "CATALOG",
+      "catalog": "yesNo",
+      "label": "Protección Contra Socavación",
+      "source": "A-D.- FICHA!G478"
+    },
+    {
+      "key": "scourProtectionType",
+      "section": "D4",
+      "owner": "inspection",
+      "labelCell": "J478",
+      "valueCell": "L478",
+      "kind": "TEXT",
+      "visibleWhen": "scourProtection=Si",
+      "label": "Tipo",
+      "source": "A-D.- FICHA!L478"
+    },
+    {
+      "key": "distanceM",
+      "section": "D4",
+      "owner": "profile",
+      "labelCell": "C460",
+      "valueCell": "C462",
+      "kind": "DECIMAL",
+      "label": "Distancia desde un Punto Fijo",
+      "source": "A-D.- FICHA!C462"
+    },
+    {
+      "key": "downstreamM",
+      "section": "D4",
+      "owner": "profile",
+      "labelCell": "G460",
+      "valueCell": "G462",
+      "kind": "SIGNED_DECIMAL",
+      "label": "Aguas Abajo",
+      "source": "A-D.- FICHA!G462"
+    },
+    {
+      "key": "upstreamM",
+      "section": "D4",
+      "owner": "profile",
+      "labelCell": "J460",
+      "valueCell": "J462",
+      "kind": "SIGNED_DECIMAL",
+      "label": "Aguas Arriba",
+      "source": "A-D.- FICHA!J462"
+    },
+    {
+      "key": "axisM",
+      "section": "D4",
+      "owner": "profile",
+      "labelCell": "N460",
+      "valueCell": "N462",
+      "kind": "SIGNED_DECIMAL",
+      "label": "eje",
+      "source": "A-D.- FICHA!N462"
+    }
+  ],
+  "defaultElements": [
+    "168",
+    "201",
+    "324",
+    "341",
+    "401",
+    "402",
+    "501",
+    "510",
+    "511",
+    "530"
+  ],
+  "header": "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+  "catalogs": {
+    "fordSoil": {
+      "options": [
+        "Roca",
+        "Conglomerado",
+        "Piedra",
+        "Arena",
+        "Arcilla",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!N376:N381"
+    },
+    "predominant": {
+      "options": [
+        "Concreto armado",
+        "Concreto Pretensado",
+        "Acero Estructural",
+        "Cables de Acero",
+        "Planchas de Acero Corrugado",
+        "Madera",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!G145:G151"
+    },
+    "category": {
+      "options": [
+        "DEFINITIVO",
+        "PROVISIONALES",
+        "ALCANTARILLA",
+        "ARTESANALES"
+      ],
+      "source": "A-D.- FICHA!C137:C140"
+    },
+    "pierElevation": {
+      "options": [
+        "Columna Capitel",
+        "Columna Tarjeta",
+        "Portico",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!C206:C209"
+    },
+    "edge": {
+      "options": [
+        "Simp. Apoyado",
+        "Continuo",
+        "Gerber",
+        "Articulado",
+        "Empotrado",
+        "Sob. El terreno",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!C145:C151"
+    },
+    "environment": {
+      "options": [
+        "Severo",
+        "Moderado",
+        "Benigno"
+      ],
+      "source": "A-D.- FICHA!N50:N52"
+    },
+    "sidewalkWidthMBinspectionObservedStatus": {
+      "observedValue": true,
+      "options": [
+        "N/A"
+      ],
+      "source": "A-D.- FICHA!E40 (valor observado; no lista de validación)"
+    },
+    "drainType": {
+      "options": [
+        "Tubo",
+        "Canaleta",
+        "Otros",
+        "No tiene"
+      ],
+      "source": "A-D.- FICHA!I291:I294"
+    },
+    "units": {
+      "options": [
+        "m3",
+        "m2",
+        "ft.2",
+        "kg",
+        "und.",
+        "ml",
+        "und"
+      ],
+      "source": "AUXILIAR!E5:E116 y G.- CONDICION ESTADISTICA!E14:E44"
+    },
+    "beamType": {
+      "options": [
+        "No aplicable",
+        "Viga Longitudinal",
+        "Viga Transversal",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!E154:E157"
+    },
+    "foundationMaterial": {
+      "options": [
+        "Concreto Simple",
+        "Concreto Armado",
+        "Acero",
+        "Madera",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!N162:N166"
+    },
+    "sidewalkMaterial": {
+      "options": [
+        "Concreto",
+        "Acero",
+        "Madera"
+      ],
+      "source": "A-D.- FICHA!J283:J285"
+    },
+    "bearingType": {
+      "options": [
+        "Articulado Fijo",
+        "Deslizante",
+        "Roller",
+        "Rocker",
+        "Eslabon y pin",
+        "No hay"
+      ],
+      "source": "A-D.- FICHA!N283:N288"
+    },
+    "anchorFoundationMaterial": {
+      "options": [
+        "Concreto Simple",
+        "Concreto Armado"
+      ],
+      "source": "A-D.- FICHA!P216:P217"
+    },
+    "railingType": {
+      "options": [
+        "Postes y pasamanos",
+        "Parapeto",
+        "Guardavias",
+        "No hay"
+      ],
+      "source": "A-D.- FICHA!C283:C286"
+    },
+    "parallelPossibility": {
+      "options": [
+        "Si",
+        "No",
+        "Existe otro puente paralelo"
+      ],
+      "source": "A-D.- FICHA!N365:N367"
+    },
+    "spans": {
+      "options": [
+        "Iguales",
+        "Desiguales"
+      ],
+      "source": "A-D.- FICHA!C134:C135"
+    },
+    "slabMaterial": {
+      "options": [
+        "Concreto Armado",
+        "Concreto Pretensado",
+        "Plancha Metálica",
+        "Madera",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!J145:J149"
+    },
+    "preventive": {
+      "options": [
+        "Cartel Rombo Amarillo-Curvas",
+        "Cartel Rombo Amarillo-Intersecciones",
+        "Cartel Rombo Amarillo-Pendientes Altas"
+      ],
+      "source": "A-D.- FICHA!G363:G365"
+    },
+    "trafficBinspectionObservedStatus": {
+      "observedValue": true,
+      "options": [
+        "SIN DATOS"
+      ],
+      "source": "A-D.- FICHA!N38 (valor observado; no lista de validación)"
+    },
+    "loadSignage": {
+      "options": [],
+      "source": "A-D.- FICHA!E327"
+    },
+    "alignment": {
+      "options": [
+        "Recto",
+        "Curvo",
+        "Esviado"
+      ],
+      "source": "A-D.- FICHA!G50:G52"
+    },
+    "foundationSoil": {
+      "options": [
+        "Roca",
+        "Conglomerado",
+        "Piedra",
+        "Arena",
+        "Arcilla",
+        "Aluvional",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!H435:H441"
+    },
+    "horizontal": {
+      "options": [
+        "Marcas en la Calzada"
+      ],
+      "source": "A-D.- FICHA!G373:G373"
+    },
+    "visibility": {
+      "options": [
+        "Buena",
+        "Regular",
+        "Mala"
+      ],
+      "source": "A-D.- FICHA!C297:C299"
+    },
+    "slabThicknessMC3spanObservedStatus": {
+      "observedValue": true,
+      "options": [
+        "5 pulg"
+      ],
+      "source": "A-D.- FICHA!E101 (valor observado; no lista de validación)"
+    },
+    "abutmentElevation": {
+      "options": [
+        "Gravedad",
+        "Cantilever",
+        "Portico",
+        "Cajon",
+        "Otros",
+        "Sin datos"
+      ],
+      "source": "A-D.- FICHA!C162:C167"
+    },
+    "importanceFactors": {
+      "options": [
+        "0.2",
+        "0.4",
+        "0.6",
+        "0.8",
+        "1"
+      ],
+      "source": "AUXILIAR!F5:F116"
+    },
+    "accessAlignment": {
+      "options": [
+        "Paralelo",
+        "Perpendicular",
+        "Inclinado",
+        "Curva a"
+      ],
+      "source": "A-D.- FICHA!R291:R294"
+    },
+    "routeType": {
+      "options": [
+        "Nacional",
+        "Departamental",
+        "Vecinal"
+      ],
+      "source": "A-D.- FICHA!R52:R54"
+    },
+    "anchorMaterial": {
+      "options": [
+        "Concreto Simple",
+        "Concreto Armado"
+      ],
+      "source": "A-D.- FICHA!G216:G217"
+    },
+    "jointType": {
+      "options": [
+        "Vacio",
+        "Planchas Deslizantes",
+        "Tipo Peine",
+        "Tipo Comprensible/Expansible"
+      ],
+      "source": "A-D.- FICHA!C291:C294"
+    },
+    "railingSecondary": {
+      "options": [
+        "1 pasamano",
+        "2 pasamanos",
+        "3 pasamanos",
+        "New Jersey",
+        "Parapeto con 1 pasamano"
+      ],
+      "source": "A-D.- FICHA!U283:U288"
+    },
+    "yesNo": {
+      "options": [
+        "Si",
+        "No"
+      ],
+      "source": "A-D.- FICHA!G297:G298"
+    },
+    "beamShape": {
+      "options": [
+        "Rectangular",
+        "I",
+        "Cajón",
+        "Reticulada"
+      ],
+      "source": "A-D.- FICHA!L154:L157"
+    },
+    "over": {
+      "options": [
+        "Río",
+        "Quebrada Seca",
+        "Quebrada",
+        "Canal",
+        "Carretera",
+        "FFCC",
+        "Valle (Viaducto Elevado)",
+        "Zona Urbana (Viaducto elevado)"
+      ],
+      "source": "A-D.- FICHA!C50:C57"
+    },
+    "pierFoundation": {
+      "options": [
+        "Zapata",
+        "Caisson",
+        "Pilotes",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!L206:L209"
+    },
+    "constructionYearBinspectionObservedStatus": {
+      "observedValue": true,
+      "options": [
+        "Sin Informacion"
+      ],
+      "source": "A-D.- FICHA!N30 (valor observado; no lista de validación)"
+    },
+    "drainMaterial": {
+      "options": [
+        "Acero",
+        "Concreto",
+        "PVC",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!M291:M294"
+    },
+    "parallelSubstructure": {
+      "options": [
+        "Similar al existente",
+        "Diferente"
+      ],
+      "source": "A-D.- FICHA!G376:G377"
+    },
+    "beamMaterial": {
+      "options": [
+        "Concreto Armado",
+        "Concreto Pretensado",
+        "Metálico",
+        "Madera",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!H154:H158"
+    },
+    "regulatory": {
+      "options": [
+        "Cartel rectangular negro-rojo (Ceda el paso)",
+        "Cartel rectangular negro-rojo (No adelantar)",
+        "Cartel rectangular negro-rojo (Velocidad Máxima)"
+      ],
+      "source": "A-D.- FICHA!G368:G370"
+    },
+    "railingMaterial": {
+      "options": [
+        "Concreto",
+        "Acero",
+        "Madera",
+        "Mixto"
+      ],
+      "source": "A-D.- FICHA!G283:G286"
+    },
+    "shoulderWidthMC6accessObservedStatus": {
+      "observedValue": true,
+      "options": [
+        "N/A"
+      ],
+      "source": "A-D.- FICHA!G275 (valor observado; no lista de validación)"
+    },
+    "wearingSurface": {
+      "options": [
+        "Asfalto",
+        "Concreto (Vaciado con Losa)",
+        "Concreto Pobre",
+        "Madera",
+        "Metálica"
+      ],
+      "source": "A-D.- FICHA!N145:N149"
+    },
+    "truckBusPercentBinspectionObservedStatus": {
+      "observedValue": true,
+      "options": [
+        "SIN DATOS"
+      ],
+      "source": "A-D.- FICHA!N42 (valor observado; no lista de validación)"
+    },
+    "anchorElevation": {
+      "options": [
+        "Macizo",
+        "Hueco",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!C216:C218"
+    },
+    "abutmentMaterial": {
+      "options": [
+        "Concreto Simple",
+        "Concreto Armado",
+        "Mampostería de Piedra",
+        "Madera"
+      ],
+      "source": "A-D.- FICHA!G162:G165"
+    },
+    "roadCondition": {
+      "options": [
+        "Buena",
+        "Regular",
+        "Mala",
+        "Muy mala"
+      ],
+      "source": "A-D.- FICHA!J376:J379"
+    },
+    "bearingMaterial": {
+      "options": [
+        "Acero",
+        "Elastomero",
+        "Concreto",
+        "Flexcel"
+      ],
+      "source": "A-D.- FICHA!R283:R286"
+    },
+    "abutmentFoundation": {
+      "options": [
+        "Zapata",
+        "Caisson",
+        "Pilotes",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!J162:J165"
+    },
+    "service": {
+      "options": [
+        "Irrestricto",
+        "Solo Automoviles",
+        "Solo Camiones",
+        "Camiones hasta Cierta Carga",
+        "Fuera de Servicio"
+      ],
+      "source": "A-D.- FICHA!J50:J54"
+    },
+    "anchorFoundation": {
+      "options": [
+        "Zapata",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!L216:L217"
+    },
+    "pierFoundationMaterial": {
+      "options": [
+        "Concreto Simple",
+        "Concreto Armado",
+        "Acero",
+        "Madera"
+      ],
+      "source": "A-D.- FICHA!P206:P209"
+    },
+    "informative": {
+      "options": [
+        "Cartel del Puente"
+      ],
+      "source": "A-D.- FICHA!G361:G361"
+    },
+    "pierMaterial": {
+      "options": [
+        "Concreto Simple",
+        "Concreto Armado",
+        "Acero",
+        "Madera",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!G206:G210"
+    },
+    "jointMaterial": {
+      "options": [
+        "Metálico",
+        "Jebe",
+        "Mastic Epoxico",
+        "Otros"
+      ],
+      "source": "A-D.- FICHA!F291:F294"
+    }
+  },
+  "source": "FICHA SCAP - GBO modelo - MODULAR.xlsx",
+  "canonicalElements": [
+    {
+      "stableId": "MODULAR:F1:22",
+      "templateCode": "168",
+      "exportCode": "168",
+      "defaultName": "Estructura Metálica Bailey",
+      "globalRow": 22,
+      "statisticalRow": 14,
+      "group": "SUPERESTRUCTURA",
+      "unit": "und",
+      "importanceFactor": 1
+    },
+    {
+      "stableId": "MODULAR:F1:24",
+      "templateCode": "201",
+      "exportCode": "201",
+      "defaultName": "Elevación Cuerpo del Estribo de Concreto Simple",
+      "globalRow": 24,
+      "statisticalRow": 15,
+      "group": "SUBESTRUCTURA",
+      "unit": "m3",
+      "importanceFactor": 1
+    },
+    {
+      "stableId": "MODULAR:F1:27",
+      "templateCode": "324",
+      "exportCode": "324",
+      "defaultName": "Apoyo articulado de acero",
+      "globalRow": 27,
+      "statisticalRow": 16,
+      "group": "DETALLES",
+      "unit": "und",
+      "importanceFactor": 0.4
+    },
+    {
+      "stableId": "MODULAR:F1:28",
+      "templateCode": "341",
+      "exportCode": "341",
+      "defaultName": "Planchas Deslizantes",
+      "globalRow": 28,
+      "statisticalRow": 17,
+      "group": "DETALLES",
+      "unit": "ml",
+      "importanceFactor": 0.4
+    },
+    {
+      "stableId": "MODULAR:F1:30",
+      "templateCode": "401",
+      "exportCode": "401",
+      "defaultName": "Márgenes del río",
+      "globalRow": 30,
+      "statisticalRow": 18,
+      "group": "CAUCE",
+      "unit": "ml",
+      "importanceFactor": 0.6
+    },
+    {
+      "stableId": "MODULAR:F1:31",
+      "templateCode": "402",
+      "exportCode": "402",
+      "defaultName": "Lecho del río",
+      "globalRow": 31,
+      "statisticalRow": 19,
+      "group": "CAUCE",
+      "unit": "ml",
+      "importanceFactor": 0.6
+    },
+    {
+      "stableId": "MODULAR:F1:34",
+      "templateCode": "501",
+      "exportCode": "501",
+      "defaultName": "Señalización",
+      "globalRow": 34,
+      "statisticalRow": 20,
+      "group": "ACCESOS",
+      "unit": "und",
+      "importanceFactor": 0.2
+    },
+    {
+      "stableId": "MODULAR:F1:35",
+      "templateCode": "510",
+      "exportCode": "504",
+      "defaultName": "Muro de Concreto Armado en accesos",
+      "globalRow": 35,
+      "statisticalRow": 21,
+      "group": "ACCESOS",
+      "unit": "m3",
+      "importanceFactor": 0.6
+    },
+    {
+      "stableId": "MODULAR:F1:36",
+      "templateCode": "511",
+      "exportCode": "511",
+      "defaultName": "Pavimento/Afirmado",
+      "globalRow": 36,
+      "statisticalRow": 22,
+      "group": "ACCESOS",
+      "unit": "m2",
+      "importanceFactor": 0.2
+    },
+    {
+      "stableId": "MODULAR:F1:37",
+      "templateCode": "530",
+      "exportCode": "530",
+      "defaultName": "Visibilidad",
+      "globalRow": 37,
+      "statisticalRow": 23,
+      "group": "ACCESOS",
+      "unit": "ml",
+      "importanceFactor": 0.2
+    }
+  ],
+  "photoNames": [
+    "ACCESO IZQUIERDO",
+    "AFIRMADO ACCESO IZQUIERDO",
+    "ACCESO DERECHO",
+    "AFIRMADO ACCESO DERECHO",
+    "SUPERFICIE DE RODARURA",
+    "AGUAS ARRIBA",
+    "AGUAS ABAJO",
+    "ALA IZQUIERDA AGUAS ARRIBA",
+    "ALA DERECHA AGUAS ARRIBA",
+    "ALA IZQUIERDA AGUAS ABAJO",
+    "ALA DERECHA AGUAS ABAJO",
+    "PANTALLA DE ESTRIBO IZQUIERDO",
+    "PANTALLA DE ESTRIBO DERECHO",
+    "FISURA PANTALLA DE ESTRIBO DERECHO",
+    "VIGA LONGITUDINAL AGUAS ARRIBA",
+    "VIGA LONGITUDINAL AGUAS ABAJO",
+    "VIGAS TRANSVERSALES",
+    "FISURA EN VIGA TRANSVERSAL",
+    "LOSA - CARA INFERIOR",
+    "FONDO DE LOSA - MOHO",
+    "VEREDA AGUAS ARRIBA",
+    "VEREDA AGUAS ARRIBA - FRACTURA",
+    "VEREDA AGUAS ABAJO",
+    "BARANDA AGUAS ARRIBA",
+    "TRAMO DE BARANDA AGUAS ARRIBA",
+    "BARANDAS AGUAS ABAJO",
+    "TRAMO DE BARANDA AGUAS ABAJO",
+    "TUBERIA DE DRENAJE AGUAS ARRIBA-ABAJO",
+    "CAUCE AGUAS ARRIBA",
+    "CAUCE AGUAS ABAJO",
+    "SEÑAL INFORMATIVA DEL ACCESO IZQUIERDO"
+  ]
+}

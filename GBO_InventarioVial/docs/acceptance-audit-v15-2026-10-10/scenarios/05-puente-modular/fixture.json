@@ -1,0 +1,18 @@
+{
+  "inspection": "ScapInspectionEntity(id=12345678-1234-1234-1234-123456789011, roadRecordId=audit-road-MODULAR, bridgeName=AUDITORIA MODULAR, bridgeCode=P-NEW, createdAt=0, updatedAt=0, createdBy=Inspector, deviceId=device, status=DRAFT, syncStatus=PENDING, latitude=-12.0, longitude=-77.0, gpsAccuracyM=null, gpsTimestamp=null, locationSource=MANUAL)",
+  "values": {
+    "bridgeType": "MODULAR",
+    "lastInspection": "07\/10\/2026",
+    "latitude": "-12.75",
+    "longitude": "-77.5",
+    "progressive": "42+125.50",
+    "route": "PE-28H",
+    "totalLengthM": "18.4"
+  },
+  "completion": "INCOMPLETE",
+  "bundleVersion": 7,
+  "reviewErrors": [],
+  "synthetic": true,
+  "physicalTablet": "NO PROBADO",
+  "realUpload": "NO PROBADO"
+}

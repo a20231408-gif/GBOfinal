@@ -1,0 +1,47 @@
+{
+  "recordId": "audit-SIC-08",
+  "shortCode": "FAJ-1",
+  "displayName": "FAJA 1",
+  "assetFamily": "CALZADA_FAJAS",
+  "sicCode": "SIC-08",
+  "sibCode": "SIB-02",
+  "routeCode": "PE-22A",
+  "roadbedCode": "CD",
+  "location": {
+    "confirmedRoute": "PE-22A",
+    "confirmedPr": "0005",
+    "confirmedDistance": 12.5,
+    "locationSource": "CONTRACTUAL_PR_ONLY",
+    "routeSource": "MANUAL",
+    "confirmedEndPr": "0006",
+    "confirmedEndDistance": 20,
+    "endLocationSource": "MANUAL"
+  },
+  "suggestion": {
+    "suggestedRoute": null,
+    "suggestedPr": null,
+    "suggestedDistance": null,
+    "suggestedEndPr": null,
+    "suggestedEndDistance": null,
+    "routeMatchAmbiguous": false,
+    "routeMatchConfidence": null,
+    "routeMatchDistanceM": null
+  },
+  "geometricLocation": {
+    "axisMeasureM": null,
+    "distanceToRoadAxisM": null,
+    "projectedLatitude": null,
+    "projectedLongitude": null,
+    "matchedSegmentId": null,
+    "endAxisMeasureM": null,
+    "endProjectedLatitude": null,
+    "endProjectedLongitude": null
+  },
+  "recordLocation": {
+    "latitude": 0,
+    "longitude": 0,
+    "altitude": null,
+    "accuracy": null
+  },
+  "photos": []
+}

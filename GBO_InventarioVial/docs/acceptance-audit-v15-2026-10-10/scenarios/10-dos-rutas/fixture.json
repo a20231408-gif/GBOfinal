@@ -1,0 +1,10 @@
+{
+  "routes": [
+    "PE-22A",
+    "PE-3N"
+  ],
+  "route2Rows": 1,
+  "synthetic": true,
+  "physicalTablet": "NO PROBADO",
+  "realUpload": "NO PROBADO"
+}

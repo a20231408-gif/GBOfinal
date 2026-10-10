@@ -1,0 +1,796 @@
+[
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/core/DrivePaths.kt",
+    "sha256": "b168caef48321c6155cec5bd469d2ecdd50488fd7debccfdd1be2175d74313f9",
+    "lines": [
+      {
+        "line": 22,
+        "text": "        \"CULVERT_PANORAMIC\" -> PhotoCategory.PANORAMICA"
+      },
+      {
+        "line": 23,
+        "text": "        \"CULVERT_INLET\" -> PhotoCategory.ENTRADA"
+      },
+      {
+        "line": 24,
+        "text": "        \"CULVERT_OUTLET\" -> PhotoCategory.SALIDA"
+      },
+      {
+        "line": 44,
+        "text": "        return DriveAssetPathRouter.path(AssetPathRequest(s.ruta,\"PAVIMENTOS\","
+      },
+      {
+        "line": 45,
+        "text": "            element(context,s.ruta,\"PAVIMENTOS/$surface\".replace('/','_'),\"MUESTRA\",s.id),category?.let(::PhotoCategory),pavementSurface=surface))"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/core/DriveAssetPathRouter.kt",
+    "sha256": "367bb818bfb26a32aab64f66571eb4a0e3e2fdea91c12b277ec563991b356e12",
+    "lines": [
+      {
+        "line": 19,
+        "text": "        val GENERAL = PhotoCategory(\"GENERAL\")"
+      },
+      {
+        "line": 20,
+        "text": "        val PANORAMICA = PhotoCategory(\"PANORAMICA\")"
+      },
+      {
+        "line": 21,
+        "text": "        val ENTRADA = PhotoCategory(\"ENTRADA\")"
+      },
+      {
+        "line": 22,
+        "text": "        val SALIDA = PhotoCategory(\"SALIDA\")"
+      },
+      {
+        "line": 24,
+        "text": "        fun fromStored(value: String?): PhotoCategory = PhotoCategory(value?.takeIf { it.isNotBlank() } ?: \"GENERAL\")"
+      },
+      {
+        "line": 55,
+        "text": "        category ?: PhotoCategory.GENERAL, pavementSurface = pavementSurface))"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/core/CleanPhotoPolicy.kt",
+    "sha256": "36b00a8c08d99c8659665c4f4bcef08cee17b5db0d92096376fe1f7b24cb7083",
+    "lines": []
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/delivery/DeliverySync.kt",
+    "sha256": "9fa1c087bc343077adf5dc58bfa84b219ff8e5136033d8fedd71cf77c8678481",
+    "lines": [
+      {
+        "line": 38,
+        "text": "        if(batch.status==\"SYNCED\") return@withContext ListenableWorker.Result.success()"
+      },
+      {
+        "line": 39,
+        "text": "        if(batch.status !in setOf(\"QUEUED\",\"ERROR\",\"UPLOADING\")) return@withContext ListenableWorker.Result.failure()"
+      },
+      {
+        "line": 48,
+        "text": "            require(manifest.getString(\"deliveryId\") == id && manifest.getString(\"fingerprint\") == batch.fingerprint)"
+      },
+      {
+        "line": 52,
+        "text": "                require(RouteDelivery.fingerprint(records,DeliveryNamingPolicy.valueOf(batch.namingPolicy))==batch.fingerprint) {"
+      },
+      {
+        "line": 68,
+        "text": "                    .put(\"deliveryId\", id).put(\"fingerprint\", batch.fingerprint)"
+      },
+      {
+        "line": 85,
+        "text": "            dao.deliveryStatus(id, \"SYNCED\", null)"
+      },
+      {
+        "line": 100,
+        "text": "    private val client = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(120, TimeUnit.SECONDS).writeTimeout(120, TimeUnit.SECONDS).build()"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/delivery/RouteDelivery.kt",
+    "sha256": "5e0760824b7af358a24ad58ba1aa55e01a385f582ca8d07b34d6274d480e68cc",
+    "lines": [
+      {
+        "line": 40,
+        "text": "        val identity = fingerprint(snapshots, policy)"
+      },
+      {
+        "line": 43,
+        "text": "            require(previous.fingerprint == identity) { \"La ruta ya tiene una entrega iniciada con otro contenido. Se conserva intacta; acuerda una nueva versión de entrega antes de sincronizar capturas posteriores.\" }"
+      },
+      {
+        "line": 63,
+        "text": "                    .put(\"logicalPath\", com.tuempresa.inventariovial.core.DrivePaths.inventory(context, folder, photo.photoCategory ?: \"GENERAL\"))"
+      },
+      {
+        "line": 64,
+        "text": "                    .put(\"pathVersion\", 2).put(\"photoPolicy\", \"ORIGINAL_CLEAN\")"
+      },
+      {
+        "line": 73,
+        "text": "                \"pathVersion\" to 2, \"logicalPath\" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context, folder)))"
+      },
+      {
+        "line": 86,
+        "text": "                \"mimeType\" to SicExcelWriter.XLSX_MIME,\"pathVersion\" to 2,"
+      },
+      {
+        "line": 87,
+        "text": "                \"logicalPath\" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))"
+      },
+      {
+        "line": 89,
+        "text": "            val supplementary=records.filter {SicExportFormat.SIC18A.appliesTo(it) && it.sic18?.let {detail->"
+      },
+      {
+        "line": 93,
+        "text": "                extra.outputStream().use {SicExcelWriter.write(it,supplementary,SicExportFormat.SIC18A,heading)}"
+      },
+      {
+        "line": 95,
+        "text": "                    \"sicCode\" to \"SIC-18A\",\"elementFolder\" to folder.asset.folderName,\"fileName\" to \"SIC-18A.xlsx\","
+      },
+      {
+        "line": 96,
+        "text": "                    \"mimeType\" to SicExcelWriter.XLSX_MIME,\"pathVersion\" to 2,"
+      },
+      {
+        "line": 97,
+        "text": "                    \"logicalPath\" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))"
+      },
+      {
+        "line": 100,
+        "text": "            val widths=exports.filter {it.record.sicCode==\"SIC-09\" && it.sicExtension?.sourceRecordId==record.id}"
+      },
+      {
+        "line": 101,
+        "text": "            if(record.sicCode==\"SIC-08\" && widths.isNotEmpty()) {"
+      },
+      {
+        "line": 104,
+        "text": "                    extra.outputStream().use {SicExcelWriter.write(it,listOf(width),SicExportFormat.SIC09,heading)}"
+      },
+      {
+        "line": 106,
+        "text": "                        \"sicCode\" to \"SIC-09\",\"elementFolder\" to folder.asset.folderName,"
+      },
+      {
+        "line": 107,
+        "text": "                        \"fileName\" to if(widths.size==1) \"SIC-09.xlsx\" else \"SIC-09_${width.record.id}.xlsx\","
+      },
+      {
+        "line": 108,
+        "text": "                        \"mimeType\" to SicExcelWriter.XLSX_MIME,\"pathVersion\" to 2,"
+      },
+      {
+        "line": 109,
+        "text": "                        \"logicalPath\" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))"
+      },
+      {
+        "line": 113,
+        "text": "        check(fingerprint(snapshots(route), policy) == identity) { \"El inventario cambió mientras se preparaba. Vuelve a preparar la entrega.\" }"
+      },
+      {
+        "line": 115,
+        "text": "        manifest.writeText(json(\"deliveryId\" to id, \"routeCode\" to route, \"fingerprint\" to identity, \"files\" to entries).toString())"
+      },
+      {
+        "line": 123,
+        "text": "            val category=folder.asset.item.photos.single { it.id==p.photoId }.photoCategory ?: \"GENERAL\""
+      },
+      {
+        "line": 131,
+        "text": "            \"La nomenclatura no cumple el límite de 20 caracteres. Selecciona FOLDER_COMPACT y vuelve a preparar.\""
+      },
+      {
+        "line": 135,
+        "text": "            check(fingerprint(snapshots(batch.routeCode), DeliveryNamingPolicy.valueOf(batch.namingPolicy)) == batch.fingerprint) {"
+      },
+      {
+        "line": 139,
+        "text": "            dao.deliveryStatus(batch.id, \"QUEUED\", null)"
+      },
+      {
+        "line": 151,
+        "text": "        fun row(s: InventorySnapshot) = InventoryRecordWithPhotos(s.record, s.photos.filter { it.scapInspectionId == null }, s.sic23, s.sic18, s.sic20, s.sic19, s.sic18a, s.sicExtension)"
+      },
+      {
+        "line": 152,
+        "text": "        fun fingerprint(snapshots: List<InventorySnapshot>, policy: DeliveryNamingPolicy): String = sha256((policy.name + snapshots.sortedBy { it.record.id }.joinToString {"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryPhotoNameBuilder.kt",
+    "sha256": "afa1ed21c2f3745b26b6e8eb6017f20c6d94e866c52c8672d05f2b626c57df2d",
+    "lines": [
+      {
+        "line": 10,
+        "text": "    const val MAX_LENGTH = 20"
+      },
+      {
+        "line": 13,
+        "text": "        name.length > MAX_LENGTH -> \"$name tiene ${name.length} caracteres; supera el límite de 20. Usa FOLDER_COMPACT.\""
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/field/PhotoCategoryPolicy.kt",
+    "sha256": "07ac294d69fc62972a32ec653d41df7f2776bab36d839a6e0acf00f60bb6f2b2",
+    "lines": [
+      {
+        "line": 5,
+        "text": "    const val GENERAL = \"GENERAL\""
+      },
+      {
+        "line": 7,
+        "text": "    private val general = listOf(Category(GENERAL, \"General\", GENERAL))"
+      },
+      {
+        "line": 8,
+        "text": "    val culvert = listOf(Category(\"CULVERT_PANORAMIC\", \"Panorámica\", \"PANORAMICA\"),"
+      },
+      {
+        "line": 9,
+        "text": "        Category(\"CULVERT_INLET\", \"Entrada\", \"ENTRADA\"), Category(\"CULVERT_OUTLET\", \"Salida\", \"SALIDA\"))"
+      },
+      {
+        "line": 12,
+        "text": "        if (sicCode == \"SIC-18\" || assetType in setOf(\"CULVERT\", \"ALCANTARILLA\")) culvert else general"
+      },
+      {
+        "line": 14,
+        "text": "    /** Null / historic metadata falls back to GENERAL; never infer from a filename. */"
+      },
+      {
+        "line": 16,
+        "text": "        categories(sicCode,assetType).firstOrNull {it.key == stored || it.contractualName == stored}?.key ?: GENERAL"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDrive.kt",
+    "sha256": "f8efa5b617b2d4562f49918de803a7ec36006f0f8c634a691c39b53fac6f4208",
+    "lines": [
+      {
+        "line": 103,
+        "text": "                        com.tuempresa.inventariovial.core.PhotoCategory.GENERAL,\"{}\"))"
+      },
+      {
+        "line": 130,
+        "text": "            .readTimeout(120, TimeUnit.SECONDS)"
+      },
+      {
+        "line": 131,
+        "text": "            .writeTimeout(120, TimeUnit.SECONDS)"
+      },
+      {
+        "line": 146,
+        "text": "                .put(\"protocol\", 1).put(\"pathVersion\",2)"
+      },
+      {
+        "line": 147,
+        "text": "                .put(\"logicalPath\",com.tuempresa.inventariovial.core.DrivePaths.pavement(context,sample,if(item.category==\"PHOTO\") \"GENERAL\" else null))"
+      },
+      {
+        "line": 148,
+        "text": "                .put(\"photoPolicy\",\"ORIGINAL_CLEAN\")"
+      },
+      {
+        "line": 173,
+        "text": "            if(response.optInt(\"pathVersion\")==2) require(response.optString(\"logicalPath\")==payload.getString(\"logicalPath\") && response.optString(\"sampleId\")==sample.id && response.optString(\"revision\")==revision) { \"ACK de otra muestra o revisión.\" }"
+      },
+      {
+        "line": 175,
+        "text": "            pathV2Confirmed=pathV2Confirmed && response.optInt(\"pathVersion\")==2 && response.optString(\"logicalPath\")==payload.getString(\"logicalPath\")"
+      },
+      {
+        "line": 185,
+        "text": "        com.tuempresa.inventariovial.core.DriveReceiptStore.sample(context,sample,\"SYNCED\")"
+      },
+      {
+        "line": 209,
+        "text": "        .put(\"photoPolicy\",\"ORIGINAL_CLEAN\")"
+      },
+      {
+        "line": 212,
+        "text": "                put(JSONObject().put(\"photoId\",photo.id).put(\"damageId\",damageId).put(\"capturedAt\",photo.createdAt).put(\"category\",\"GENERAL\"))"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementModels.kt",
+    "sha256": "5c5deaf9d939f47b9300b93f4e661a7618c92be8d5da1d2380bfa26aa70bd123",
+    "lines": [
+      {
+        "line": 26,
+        "text": "        16 to \"Desplazamiento\", 17 to \"Grieta parabólica\", 18 to \"Hinchamiento\", 19 to \"Desprendimiento de agregado\", 20 to \"Meteorización\""
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCalculation.kt",
+    "sha256": "cbd1f314006064b9302f3bb3c964fb3d3ecda7f6728cd1da4674057a3611ba28",
+    "lines": []
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSic.kt",
+    "sha256": "9968e8da1629eb3a56c659f55b0957d613da2882cd9c4000c0e68467a7f583ef",
+    "lines": [
+      {
+        "line": 7,
+        "text": "    SIC14(\"SIC-14\", \"ASPHALT\", \"Formato SIC-14, imagen adjunta 1\", listOf(\"Piel de cocodrilo\",\"Fisuras longitudinales\",\"Deformación\",\"Ahuellamiento visco-elástico\",\"Reparaciones o bacheo\",\"Desprendimiento\",\"Huecos\",\"Fisuras transversales\",\"Exudación\",\"Daño de berma pavimentada\",\"Daño de berma no pavimentada\"),7),"
+      },
+      {
+        "line": 8,
+        "text": "    SIC14A(\"SIC-14A\", \"ASPHALT\", \"Formato SIC-14a, imagen adjunta 2\", listOf(\"Piel de cocodrilo\",\"Exudación\",\"Agrietamiento en bloque\",\"Abultamiento y hundimientos\",\"Corrugación\",\"Depresión\",\"Grieta de borde\",\"Grieta de reflexión de junta\",\"Desnivel carril / berma\",\"Grietas longitudinales y transversales\",\"Parcheo\",\"Pulimiento de agregados\",\"Huecos\",\"Cruce de vía férrea\",\"Ahuellamiento\",\"Desplazamiento\",\"Grieta parabólica (slippage)\",\"Hinchamiento\",\"Desprendimiento de agregados\",\"Daño de berma pavimentada\",\"Daño de berma no pavimentada\"),13),"
+      },
+      {
+        "line": 9,
+        "text": "    SIC15(\"SIC-15\", \"RIGID\", \"Formato SIC-15, imagen adjunta 3\", listOf(\"Desnivel entre losas\",\"Fisuras longitudinales\",\"Fisuras transversales\",\"Fisuras de esquina\",\"Fisuras oblicuas\",\"Reparaciones o bacheo\",\"Despostillamiento de juntas\",\"Desprendimiento\",\"Huecos\",\"Tratamiento superficial\",\"Daño de berma pavimentada\",\"Daño de berma no pavimentada\"),9),"
+      },
+      {
+        "line": 10,
+        "text": "    SIC16(\"SIC-16\", \"UNSURFACED\", \"Formato SIC-16, imagen adjunta 5\", listOf(\"Deformación\",\"Erosión\",\"Huecos\",\"Encalaminento\",\"Lodozal\",\"Cruce de agua\"),3)"
+      },
+      {
+        "line": 25,
+        "text": "        PavementSicFormat.SIC14 -> mapOf(1 to 1, 2 to 9, 11 to 5, 13 to 7, 15 to 4, 19 to 6)[code]"
+      },
+      {
+        "line": 26,
+        "text": "        PavementSicFormat.SIC14A -> code.takeIf { it in 1..19 }"
+      },
+      {
+        "line": 27,
+        "text": "        PavementSicFormat.SIC15 -> mapOf(22 to 4, 25 to 1, 29 to 6, 30 to 6, 39 to 7)[code]"
+      },
+      {
+        "line": 28,
+        "text": "        PavementSicFormat.SIC16 -> if(code==85)3 else null"
+      },
+      {
+        "line": 61,
+        "text": "            val faja=if(format==PavementSicFormat.SIC16)2 else code(\"faja\",1..Int.MAX_VALUE)"
+      },
+      {
+        "line": 76,
+        "text": "            if(format==PavementSicFormat.SIC14A && rows.any{it.values[7] in listOf(7,13)})add(\"Plantilla SIC-14A contradictoria: densidad indica 07; huecos está en 13. Confirmar regla contractual.\")"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldFormats.kt",
+    "sha256": "9b36333819fde894a19ee474f2856a722f5677ce89b402d2d490903ed2cf14b5",
+    "lines": [
+      {
+        "line": 19,
+        "text": "    SIC08(\"SIC-08\",\"FAJAS DE LAS CALZADAS\",\"CALZADA_FAJAS\"),"
+      },
+      {
+        "line": 20,
+        "text": "    SIC09(\"SIC-09\",\"ANCHO DE LAS FAJAS\",\"CALZADA_FAJAS\"),"
+      },
+      {
+        "line": 21,
+        "text": "    SIC13(\"SIC-13\",\"PUNTOS CRÍTICOS\",\"PUNTOS_CRITICOS\"),"
+      },
+      {
+        "line": 22,
+        "text": "    SIC34(\"SIC-34\",\"ACCIDENTES DE TRÁNSITO\",\"ACCIDENTES\"),"
+      },
+      {
+        "line": 23,
+        "text": "    SIC18A(\"SIC-18A\",\"ALCANTARILLAS — CONDICIÓN MALA\",\"ALCANTARILLAS\");"
+      },
+      {
+        "line": 25,
+        "text": "    val hasFaja get() = this in setOf(SIC08,SIC09,SIC34)"
+      },
+      {
+        "line": 26,
+        "text": "    val hasEnd get() = this!=SIC18A"
+      },
+      {
+        "line": 33,
+        "text": "            SIC08 -> listOf(SicField(\"typeCode\",\"Tipo\",options=fajaTypes),SicField(\"directionCode\",\"Sentido del tránsito\",options=directions))"
+      },
+      {
+        "line": 34,
+        "text": "            SIC09 -> listOf(SicField(\"usefulWidthM\",\"Ancho útil (m)\",CellKind.DECIMAL),SicField(\"totalWidthM\",\"Ancho total (m)\",CellKind.DECIMAL))"
+      },
+      {
+        "line": 35,
+        "text": "            SIC13 -> listOf(SicField(\"sideCode\",\"Lado\",options=sides),SicField(\"classCode\",\"Clase\",options=criticalClasses))"
+      },
+      {
+        "line": 36,
+        "text": "            SIC34 -> listOf(SicField(\"typeCode\",\"Tipo\",options=accidentTypes),SicField(\"levelCode\",\"Nivel\",options=levels),SicField(\"description\",\"Descripción\",required=false))"
+      },
+      {
+        "line": 37,
+        "text": "            SIC18A -> SupplementaryForms.fields(SupplementaryFormat.SIC18A).map { f ->"
+      },
+      {
+        "line": 63,
+        "text": "            FieldOption(\"17D\",\"Zonas de Riesgo Probable\",\"Puentes, pontones u otras estructuras por colapsar. Tabla III.13: Riesgo Elevado; formato SIC-13: Riesgo Probable.\")"
+      },
+      {
+        "line": 85,
+        "text": "            if(f.key==\"typeCode\" && v==ACCIDENT_TYPE_SOURCE_CONFLICT && format==SicFieldFormat.SIC34) {"
+      },
+      {
+        "line": 88,
+        "text": "            val options=if(format==SicFieldFormat.SIC18A && f.key==\"typeCode\" && text(\"classCode\")==\"07\") (1..4).map {FieldOption(\"$it\",\"\")} else f.options"
+      },
+      {
+        "line": 98,
+        "text": "        if(format==SicFieldFormat.SIC09) {"
+      },
+      {
+        "line": 102,
+        "text": "        if(format==SicFieldFormat.SIC18A && sourceRecordId.isNullOrBlank()) issue(\"Alcantarilla\",\"Selecciona una alcantarilla SIC-18\")"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/export/SicExportFormat.kt",
+    "sha256": "17cc6a26dd958d79f4da18805a55569614868368f52e6fec3c2983562d678733",
+    "lines": [
+      {
+        "line": 13,
+        "text": "/** Orden oficial del Manual IV-2014/2015, inventario calificado. */"
+      },
+      {
+        "line": 15,
+        "text": "    SIC17(\"SIC-17\", \"PUENTES Y PONTONES\"),"
+      },
+      {
+        "line": 16,
+        "text": "    SIC18(\"SIC-18\", \"ALCANTARILLAS\"),"
+      },
+      {
+        "line": 17,
+        "text": "    SIC19(\"SIC-19\", \"CUNETAS, CANALES, BAJADAS DE AGUA Y ZANJAS DE DRENAJE\"),"
+      },
+      {
+        "line": 18,
+        "text": "    SIC20(\"SIC-20\", \"BADENES, TÚNELES Y MUROS\"),"
+      },
+      {
+        "line": 19,
+        "text": "    SIC21(\"SIC-21\", \"SEGURIDAD Y SEÑALIZACIÓN HORIZONTAL\"),"
+      },
+      {
+        "line": 20,
+        "text": "    SIC22(\"SIC-22\", \"SEÑALIZACIÓN VERTICAL\"),"
+      },
+      {
+        "line": 21,
+        "text": "    SIC23(\"SIC-23\", \"DERECHO DE VÍA\"),"
+      },
+      {
+        "line": 22,
+        "text": "    SIC08(\"SIC-08\", \"FAJAS DE LAS CALZADAS\"),"
+      },
+      {
+        "line": 23,
+        "text": "    SIC09(\"SIC-09\", \"ANCHO DE LAS FAJAS\"),"
+      },
+      {
+        "line": 24,
+        "text": "    SIC13(\"SIC-13\", \"PUNTOS CRÍTICOS\"),"
+      },
+      {
+        "line": 25,
+        "text": "    SIC34(\"SIC-34\", \"ACCIDENTES DE TRÁNSITO\"),"
+      },
+      {
+        "line": 26,
+        "text": "    SIC18A(\"SIC-18A\", \"ALCANTARILLAS — CONDICIÓN MALA\");"
+      },
+      {
+        "line": 29,
+        "text": "    val recordCode get() = if(this==SIC18A) \"SIC-18\" else code"
+      },
+      {
+        "line": 32,
+        "text": "        item.record.sicCode==recordCode && (this!=SIC18A ||"
+      },
+      {
+        "line": 36,
+        "text": "    val hasEndLocationColumns get() = this !in setOf(SIC18, SIC22, SIC18A)"
+      },
+      {
+        "line": 45,
+        "text": "        val side = if (this in listOf(SIC17, SIC18)) emptyList() else listOf(text(\"Lado\", 9.0))"
+      },
+      {
+        "line": 49,
+        "text": "            SIC17 -> listOf(text(\"Código del puente\", 22.0), text(\"Inventariado\"),"
+      },
+      {
+        "line": 54,
+        "text": "            SIC18 -> listOf(SicColumn(\"Ojos / Vanos\", CellKind.INTEGER), text(\"Sección transversal\", 16.0),"
+      },
+      {
+        "line": 56,
+        "text": "            SIC19 -> listOf(text(\"Sección transversal\", 16.0)) + conditions + date"
+      },
+      {
+        "line": 57,
+        "text": "            SIC20 -> listOf(number(\"Dimensión 1 (m)\"), number(\"Dimensión 2 (m)\")) + conditions + date"
+      },
+      {
+        "line": 58,
+        "text": "            SIC21 -> listOf(text(\"Material\"), text(\"Condición\"), date)"
+      },
+      {
+        "line": 59,
+        "text": "            SIC22 -> listOf(text(\"Material\"), text(\"Código de señal\", 18.0),"
+      },
+      {
+        "line": 60,
+        "text": "                text(\"Número del poste kilométrico\", 20.0), text(\"Condición\"), date)"
+      },
+      {
+        "line": 61,
+        "text": "            SIC23 -> listOf(number(\"Ancho (m)\"), text(\"Descripción\", 45.0), date)"
+      },
+      {
+        "line": 70,
+        "text": "            if(this==SIC18A) {"
+      },
+      {
+        "line": 71,
+        "text": "                require(item.sicExtension?.status.let {it==null || it==\"COMPLETE\"}) {\"SIC-18A: completa el borrador antes de exportar\"}"
+      },
+      {
+        "line": 72,
+        "text": "                val d=requireNotNull(item.sic18a) {\"SIC-18A: falta completar\"}"
+      },
+      {
+        "line": 95,
+        "text": "            (if (this in listOf(SIC17, SIC18)) emptyList() else listOf(r.sideCode))"
+      },
+      {
+        "line": 97,
+        "text": "            SIC17 -> detail(item.sic17).let { d -> listOf(cls(d.classCode), d.typeCode, d.bridgeCode,"
+      },
+      {
+        "line": 101,
+        "text": "            SIC18 -> detail(item.sic18).let { d -> listOf(cls(d.classCode), d.typeCode, d.spans,"
+      },
+      {
+        "line": 103,
+        "text": "            SIC19 -> detail(item.sic19).let { d -> listOf(cls(d.classCode), d.typeCode, d.crossSectionCode,"
+      },
+      {
+        "line": 105,
+        "text": "            SIC20 -> detail(item.sic20).let { d -> listOf(cls(d.classCode), d.typeCode, d.dimension1M,"
+      },
+      {
+        "line": 107,
+        "text": "            SIC21 -> detail(item.sic21).let { d -> listOf(cls(d.classCode), d.typeCode, if(d.classCode in setOf(\"18\",\"20\")) null else d.materialCode, d.conditionCode, date) }"
+      },
+      {
+        "line": 108,
+        "text": "            SIC22 -> detail(item.sic22).let { d -> listOf(cls(d.classCode), d.typeCode, d.materialCode,"
+      },
+      {
+        "line": 111,
+        "text": "            SIC23 -> detail(item.sic23).let { d -> listOf(cls(d.classCode),"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDelivery.kt",
+    "sha256": "0ac514924d36804034eb7b4037eb4ac7c42fac053e57452a23a518daa572b79f",
+    "lines": [
+      {
+        "line": 25,
+        "text": "    const val SCAP_BUNDLE_VERSION = 7"
+      },
+      {
+        "line": 62,
+        "text": "        val target = File(directory, \"${s.inspection.updatedAt}_bundle$SCAP_BUNDLE_VERSION$layoutSuffix.zip\")"
+      },
+      {
+        "line": 69,
+        "text": "        val partial = File(directory, \"${s.inspection.updatedAt}_bundle$SCAP_BUNDLE_VERSION$layoutSuffix.partial\")"
+      },
+      {
+        "line": 128,
+        "text": "                    .put(\"scapBundleVersion\", SCAP_BUNDLE_VERSION).put(\"photoPolicy\", \"ORIGINAL_CLEAN\")"
+      },
+      {
+        "line": 135,
+        "text": "                layout?.let {manifest.put(\"delivery\", it.json()).put(\"pathVersion\",2).put(\"logicalPath\",com.tuempresa.inventariovial.core.DrivePaths.bridge(context,s))}"
+      },
+      {
+        "line": 142,
+        "text": "                \"bundleVersion=$SCAP_BUNDLE_VERSION protocol=${if(layout==null)1 else 2} xlsxBytes=$workbookBytes \" +"
+      },
+      {
+        "line": 178,
+        "text": "        val maxLongSide = if (photo) 1600 else 1200"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDriveSync.kt",
+    "sha256": "e31241d487deee1c50ff64dd4451b676f42774605d443b52517acc99ab0803cc",
+    "lines": [
+      {
+        "line": 57,
+        "text": "            db.scapDao().syncState(inspection.id, inspection.updatedAt, \"QUEUED\")"
+      },
+      {
+        "line": 70,
+        "text": "    fun validAck(json: JSONObject, s: ScapInspectionSnapshot, hash: String, expectedLogicalPath:String?=s.values(\"delivery\")[\"logicalPath\"]): Boolean {"
+      },
+      {
+        "line": 80,
+        "text": "            (layout == null || ((if(json.optInt(\"pathVersion\")==2) expectedLogicalPath!=null && json.optString(\"logicalPath\")==expectedLogicalPath && json.optString(\"path\")==expectedLogicalPath else json.optString(\"path\") == layout.path) && json.optString(\"bridgeFolderId\").isNotBlank())) &&"
+      },
+      {
+        "line": 92,
+        "text": "    suspend fun acknowledge(db: InventoryDatabase, s: ScapInspectionSnapshot, ack: JSONObject, hash: String, expectedLogicalPath:String?=s.values(\"delivery\")[\"logicalPath\"]): Boolean {"
+      },
+      {
+        "line": 97,
+        "text": "            if (db.scapDao().syncState(i.id, i.updatedAt, \"SYNCED\") != 1) false else {"
+      },
+      {
+        "line": 121,
+        "text": "        if (snapshot.inspection.syncStatus == \"SYNCED\") return@withContext Result.success()"
+      },
+      {
+        "line": 140,
+        "text": "            val logicalPath=if(layout!=null) com.tuempresa.inventariovial.core.DrivePaths.bridge(applicationContext,snapshot) else null"
+      },
+      {
+        "line": 141,
+        "text": "            val ackValid = ScapDriveSync.validAck(response, snapshot, hash,logicalPath)"
+      },
+      {
+        "line": 154,
+        "text": "                state(if (retry) \"QUEUED\" else \"ERROR\", if (retry) \"Drive ocupado; se reintentará automáticamente.\" else"
+      },
+      {
+        "line": 158,
+        "text": "            val current = ScapDriveSync.acknowledge(db, snapshot, response, hash,logicalPath)"
+      },
+      {
+        "line": 162,
+        "text": "                state(\"SYNCED\")"
+      },
+      {
+        "line": 163,
+        "text": "                if (BuildConfig.DEBUG) Log.d(\"ScapDrive\", \"syncStatus=SYNCED revision=$revision protocol=${if(layout==null)1 else 2}\")"
+      },
+      {
+        "line": 172,
+        "text": "            state(\"QUEUED\", \"Conexión interrumpida; se reintentará automáticamente.\"); Result.retry()"
+      },
+      {
+        "line": 182,
+        "text": "        .readTimeout(360, TimeUnit.SECONDS).writeTimeout(360, TimeUnit.SECONDS).callTimeout(420, TimeUnit.SECONDS).build()"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapExcelExporter.kt",
+    "sha256": "59cb962cc0e71202a4669bd63839879f134ef3a2d9bdb6a4b574dca3380d2717",
+    "lines": [
+      {
+        "line": 103,
+        "text": "        var nextRow=520"
+      },
+      {
+        "line": 199,
+        "text": "            w.set(4,\"B41\",\"OBSERVACIONES GENERALES\")"
+      },
+      {
+        "line": 212,
+        "text": "        internal val groupRows=linkedMapOf(\"SUPERESTRUCTURA\" to listOf(14,15,16),\"SUBESTRUCTURA\" to listOf(19,20),\"DETALLES\" to listOf(23,24,25,26),\"CAUCE\" to listOf(29,30),\"ACCESOS\" to listOf(33,34,35))"
+      }
+    ]
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapCanonicalExporter.kt",
+    "sha256": "5f1ee55c74d342d567b53edb7adf04a9bb27a49bf752e97b8517b1cc5dd006bc",
+    "lines": []
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapBridgeType.kt",
+    "sha256": "bd2d62d3c6154504bd4f9a645ae69616d8ce37a409f2b30e335ace74335a4802",
+    "lines": []
+  },
+  {
+    "file": "app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryDatabase.kt",
+    "sha256": "58d2cd7632a0d343e916a69cc0ec0f76e540e67244045ac3dca45e8ce614c1d1",
+    "lines": [
+      {
+        "line": 18,
+        "text": "import com.tuempresa.inventariovial.data.entity.Sic20Entity"
+      },
+      {
+        "line": 39,
+        "text": "        Sic20Entity::class,"
+      },
+      {
+        "line": 52,
+        "text": "    version = 15,"
+      },
+      {
+        "line": 70,
+        "text": "        val MIGRATION_14_15 = object : Migration(14,15) {"
+      },
+      {
+        "line": 83,
+        "text": "        val MIGRATION_13_14 = com.tuempresa.inventariovial.pavement.PavementMigration.MIGRATION_13_14"
+      },
+      {
+        "line": 85,
+        "text": "        val MIGRATION_12_13 = object : Migration(12, 13) {"
+      },
+      {
+        "line": 93,
+        "text": "        val MIGRATION_11_12 = object : Migration(11, 12) {"
+      },
+      {
+        "line": 130,
+        "text": "        val MIGRATION_10_11 = RoundTwoMigration.MIGRATION_10_11"
+      },
+      {
+        "line": 131,
+        "text": "        val MIGRATION_9_10 = object : Migration(9, 10) {"
+      },
+      {
+        "line": 136,
+        "text": "        val MIGRATION_8_9 = object : Migration(8, 9) {"
+      },
+      {
+        "line": 145,
+        "text": "        val MIGRATION_7_8 = InventoryMigrations.MIGRATION_7_8"
+      },
+      {
+        "line": 146,
+        "text": "        val MIGRATION_6_7 = EngineeringMigration.MIGRATION_6_7"
+      },
+      {
+        "line": 147,
+        "text": "        val MIGRATION_5_6 = ScapMigration.MIGRATION_5_6"
+      },
+      {
+        "line": 148,
+        "text": "        val MIGRATION_4_5 = InventoryMigrations.MIGRATION_4_5"
+      },
+      {
+        "line": 149,
+        "text": "        val MIGRATION_3_4 = InventoryMigrations.MIGRATION_3_4"
+      },
+      {
+        "line": 150,
+        "text": "        val MIGRATION_2_3 = object : Migration(2, 3) {"
+      },
+      {
+        "line": 160,
+        "text": "        val MIGRATION_1_2 = object : Migration(1, 2) {"
+      },
+      {
+        "line": 187,
+        "text": "                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)"
+      }
+    ]
+  }
+]

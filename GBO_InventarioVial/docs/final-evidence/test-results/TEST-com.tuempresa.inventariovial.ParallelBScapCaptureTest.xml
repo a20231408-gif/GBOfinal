@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ParallelBScapCaptureTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-08T06:57:16.312Z" hostname="ANTHONYZA" time="0.396">
+  <properties/>
+  <testcase name="selectionCreatesDifferentCaptureModelsAndPersistsType" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.057"/>
+  <testcase name="canonicalCatalogContainsEverySourceOptionAndGUnitsFactors" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.073"/>
+  <testcase name="finalizationValidatesPresentGAndDoesNotInventMandatoryGnssOrMedia" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.087"/>
+  <testcase name="incompleteDraftAndRawTextSurviveDatabaseReopen" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.069"/>
+  <testcase name="observedNumericLiteralsRemainExactAndNumericValidationRemainsBounded" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.021"/>
+  <testcase name="manualGPreservesContractualMetradoUnitFactorAndFlagsMissingCondition" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.048"/>
+  <testcase name="canonicalManualCoordinatesAreReusedForSic17AWithoutGnssRequirement" classname="com.tuempresa.inventariovial.ParallelBScapCaptureTest" time="0.038"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

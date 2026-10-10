@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SicExcelWriterTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:50:18.567Z" hostname="JULIAN" time="0.404">
+  <properties/>
+  <testcase name="officialFieldsAndNotApplicableValuesAreNotLostOrInvented" classname="com.tuempresa.inventariovial.SicExcelWriterTest" time="0.081"/>
+  <testcase name="invalidOrIncompleteDataFailsInsteadOfProducingASuccessfulExport" classname="com.tuempresa.inventariovial.SicExcelWriterTest" time="0.004"/>
+  <testcase name="allSevenFormatsProduceReadablePackagesWithOfficialColumns" classname="com.tuempresa.inventariovial.SicExcelWriterTest" time="0.15"/>
+  <testcase name="allZipContainsOnlyNonemptyFormatsAndPreservesRouteOrdering" classname="com.tuempresa.inventariovial.SicExcelWriterTest" time="0.154"/>
+  <testcase name="arbitraryTextCannotBecomeFormulasOrBreakXmlAndSheetNamesStayUnique" classname="com.tuempresa.inventariovial.SicExcelWriterTest" time="0.015"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,45 @@
+{
+  "apk": "C:\\Users\\antho\\Downloads\\GBO_FIX\\output\\final-delivery\\GBO_InventarioVial_INTEGRADO_DEBUG.apk",
+  "sha256": "0c995d51fb082552301f3331de7527fbb5e0ef9280164ab91573e1bc86452a61",
+  "sizeBytes": 31863665,
+  "dexFiles": [
+    "classes.dex",
+    "classes10.dex",
+    "classes11.dex",
+    "classes12.dex",
+    "classes13.dex",
+    "classes14.dex",
+    "classes15.dex",
+    "classes16.dex",
+    "classes17.dex",
+    "classes18.dex",
+    "classes2.dex",
+    "classes3.dex",
+    "classes4.dex",
+    "classes5.dex",
+    "classes6.dex",
+    "classes7.dex",
+    "classes8.dex",
+    "classes9.dex"
+  ],
+  "classDefinitions": 23172,
+  "moduleClassDefinitions": {
+    "core": 171,
+    "scap": 758,
+    "pavement": 387
+  },
+  "requiredClasses": [
+    "Lcom/tuempresa/inventariovial/core/InventoryDraftStore;",
+    "Lcom/tuempresa/inventariovial/core/DrivePaths;",
+    "Lcom/tuempresa/inventariovial/core/FieldCameraActivity;",
+    "Lcom/tuempresa/inventariovial/core/PavementSyncWorker;",
+    "Lcom/tuempresa/inventariovial/core/GeneratedFileIndex;",
+    "Lcom/tuempresa/inventariovial/pavement/PavementMigration;",
+    "Lcom/tuempresa/inventariovial/pavement/PavementDriveUploader;",
+    "Lcom/tuempresa/inventariovial/data/database/InventoryDatabase_Impl;"
+  ],
+  "canonicalTemplates": {
+    "assets/scap_modular_template.xlsx": "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89",
+    "assets/scap_slab_template.xlsx": "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57"
+  }
+}

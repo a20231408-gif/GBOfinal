@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ScapCalculationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:34:13.797Z" hostname="JULIAN" time="0.097">
+  <properties/>
+  <testcase name="undefinedWorkbookCasesNeverPublishFabricatedGlobalValues" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.005"/>
+  <testcase name="dimensionalCountsDatesAndConditionalInputsFollowFieldSemantics" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.044"/>
+  <testcase name="corruptedDuplicateOrMixedCatalogSourcesFailLoading" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.021"/>
+  <testcase name="acceptsOnlySixFiniteBoundedPercentagesSummingTo100WithinTolerance" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.0"/>
+  <testcase name="aguaBlancaReproducesEveryElementAndGlobalConditionFromWorkbook" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.016"/>
+  <testcase name="catalogsContain112UniqueOfficialElementsAndDependentTypes" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.009"/>
+  <testcase name="classificationUsesUnroundedM12Thresholds" classname="com.tuempresa.inventariovial.ScapCalculationTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,379 @@
+{
+  "version": "0.1.0-propuesta",
+  "estado": "PENDIENTE_CONFIRMACION",
+  "fuente": {
+    "archivo": "docs/Manual_PCI_URCI.pdf",
+    "titulo": "Índice de Condición del Pavimento",
+    "autor": "L. R. Vásquez Varela",
+    "edicion": "2002–2024",
+    "sha256": "a83c5efa2d5a045f0f0c2e197783ccff5b1b6c4248da3f2a8f39e3022ca9394d"
+  },
+  "notas": [
+    "No contiene puntos inventados de curvas.",
+    "Severidades resumidas para interfaz; texto_fuente conserva el apartado extraído del PDF, incluyendo posibles pies de figura.",
+    "Fuera de alcance: adoquines 101–111; el identificador de superficie permite añadir otra familia."
+  ],
+  "superficie": "no_pavimentado",
+  "danos": [
+    {
+      "codigo": 81,
+      "superficie": "no_pavimentado",
+      "nombre": "Sección transversal inadecuada",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 225,
+        "pagina_fin": 226
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Pequeñas cantidades/evidencia de agua empozada, o superficie plana sin pendientes transversales."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Cantidades moderadas/evidencia de agua empozada, o superficie con forma de tazón."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Grandes cantidades/evidencia de agua empozada, o depresiones profundas."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Se observan pequeñas cantidades de agua empozada o hay evidencia de agua empozada en \nla superficie de la vía; o bien, la superficie es completamente plana sin pendientes transversales \nM: Se observan cantidades moderadas de agua empozada o hay evidencia de agua empozada \nen la superficie de la vía; o bien, la superficie tiene forma de tazón \nH: Se observan grandes cantidades de agua empozada o hay evidencia de agua empozada en \nla superficie de la vía; o bien, la superficie presenta depresiones profundas",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "La sección transversal inadecuada se mide en metros lineales por unidad de inspección.  La \nsección transversal va desde el quiebre exterior de la berma de un lado hasta el quiebre exterior \nde la berma del lado opuesto. En una unidad de inspección pueden presentarse diferente s \nniveles de severidad. Por ejemplo, puede haber 18 metros con severidad media y 12 metros con \nseveridad alta. La máxima longitud no debe superar la longitud de la unidad de inspección. \n81 \n \n226 \n \n \nShahin, M. Y. (2005) \nFigura 5-148. Sección transversal inadecuada en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_LONGITUD",
+          "texto": "Cantidad total ≤ largo de la muestra.",
+          "pagina": 225
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 82,
+      "superficie": "no_pavimentado",
+      "nombre": "Drenaje lateral inadecuado",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 227,
+        "pagina_fin": 228
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Pequeñas cantidades/evidencia de agua empozada en cunetas, o vegetación/detritos excesivos."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Agua empozada moderada, vegetación/detritos excesivos, o erosión de cunetas hacia berma/calzada."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Grandes cantidades de agua empozada, agua que cruza o circula sobre la vía, vegetación/detritos excesivos o erosión hacia berma/calzada. Comparar condición completa; no clasificar por una sola palabra."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Se observan pequeñas cantidades de agua empozada o hay evidencia de agua empozada en \nlas cunetas; o bien, hay crecimiento excesivo de vegetación o acumulación de detritos en l as \ncunetas \nM: Se observan cantidades moderadas de agua empozada o hay evidencia de agua empozada \nen las cunetas; o bien, hay crecimiento excesivo de vegetación o acumulación de detritos en las \ncunetas; o hay erosión de las cunetas hacia la berma o la calzada \nH: Se observan grandes cantidades de agua empozada o hay evidencia de agua empozada en \nlas cunetas; o bien, el agua corre a través o sobre la vía; o hay crecimiento excesivo de vegetación \no acumulación de detritos en las cunetas; o hay erosión de las cunetas hacia la berma o la calzada",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Los problemas de drenaje se miden en metros lineales por sección paralela al eje. La máxima \nlongitud es dos veces la longitud de la unidad de inspección (dos cunetas para la longitud total \nde la unidad de inspección). Por ejemplo, una unidad de inspección puede tener 40 m con  \nseveridad baja y 12 m con severidad alta. \n82 \n \n228 \n \n \nShahin, M. Y. (2005) \n \nLuis Carlos Vásquez Torres, 2020 \nFigura 5-149. Drenaje lateral inadecuado en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "DOS_CUNETAS",
+          "texto": "Cantidad total ≤ 2 × largo de la muestra.",
+          "pagina": 227
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 83,
+      "superficie": "no_pavimentado",
+      "nombre": "Corrugaciones",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 229,
+        "pagina_fin": 230
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Profundidad <25 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Profundidad de 25 a 75 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Profundidad >75 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Las corrugaciones tienen menos de 25.0 mm de profundidad \nM: Las corrugaciones tienen entre 25.0 mm y 75.0 mm de profundidad \nH: Las corrugaciones tienen más de 75.0 mm de profundidad",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Las corrugaciones se miden en metros cuadrados de área por unidad de inspección. La cantidad \nno puede exceder el área total de la unidad de inspección. Por ejemplo, una unidad de inspección \npuede tener 22 m² con severidad media y 5 m² con severidad alta. \n83 \n \n230 \n \n \nShahin, M. Y. (2005) \nFigura 5-150. Corrugaciones en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 84,
+      "superficie": "no_pavimentado",
+      "nombre": "Polvo",
+      "unidad": null,
+      "geometria": "GLOBAL",
+      "modo_densidad": "NO_APLICA",
+      "fuente": {
+        "pagina_inicio": 231,
+        "pagina_fin": 232
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Polvo fino que no obstruye la visibilidad."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Nube moderadamente espesa que puede obstruir parcialmente la visibilidad y hacer desacelerar el tránsito."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Nube muy espesa que puede obstruir fuertemente la visibilidad y hacer desacelerar considerablemente o detener el tránsito."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El tránsito normal produce un polvo fino que no obstruye la visibilidad \nM: El tránsito normal produce una nube moderadamente espesa que puede obstruir \nparcialmente la visibilidad y causar que el tránsito desacelere \nH: El tránsito normal produce una nube muy espesa que puede obstruir fuertemente la visibilidad \ny causar que el tránsito desacelere considerablemente o se detenga",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se conduce un vehículo a 40 kilómetros por hora y se observa la nube de polvo. El polvo se mide \ncomo de severidad baja, media o alta para la unidad de inspección. \n84 \n \n232 \n \n \nShahin, M. Y. (2005) \nFigura 5-151. Polvo en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "GLOBAL_UNICO",
+          "texto": "Una evaluación activa por muestra, sin geometría ni densidad.",
+          "pagina": 275
+        }
+      ],
+      "pendientes": [],
+      "vd_global_referencia": {
+        "B": 2,
+        "M": 5,
+        "A": 15,
+        "pagina": 275,
+        "estado": "TRANSCRIPCION_EXPLICITA_NO_CURVA",
+        "usar_en_motor": "pendiente_confirmacion_etapa_2"
+      }
+    },
+    {
+      "codigo": 85,
+      "superficie": "no_pavimentado",
+      "nombre": "Huecos",
+      "unidad": "Un.",
+      "geometria": "CIRCULO",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 233,
+        "pagina_fin": 234
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Combinaciones B del Cuadro 5-16 según profundidad máxima y diámetro promedio; consultar matriz adjunta."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Combinaciones M del Cuadro 5-16; consultar matriz adjunta."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Combinaciones A del Cuadro 5-16; consultar matriz adjunta."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "Los niveles de severidad de los huecos se basan en su diámetro y profundidad de acuerdo con \nel cuadro 5-16. \nCuadro 5-16. Niveles de severidad para huecos en vías no pavimentadas \nProfundidad \nmáxima (mm) \nDiámetro promedio \nMenor que 0.30 m 0.30 a 0.60 m 0.60 a 0.90 m Más de 0.90 m \n13.0 a 50.0 L L M M \n51.0 a 100.0 L M H H \nMás de 100.0 M H H H \nSi el hueco tiene más de 0.90 m de diámetro, se calcula su área en metros cuadrados y se divide \nentre 0.65 m² para encontrar el número equivalente de huecos.",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-16",
+          "pagina": 233,
+          "filas": [
+            "13,0 a 50,0 mm",
+            "51,0 a 100,0 mm",
+            "Más de 100,0 mm"
+          ],
+          "columnas": [
+            "Menor que 0,30 m",
+            "0,30 a 0,60 m",
+            "0,60 a 0,90 m",
+            "Más de 0,90 m"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B",
+              "M",
+              "M"
+            ],
+            [
+              "B",
+              "M",
+              "A",
+              "A"
+            ],
+            [
+              "M",
+              "A",
+              "A",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Los huecos se miden contando el número de ellos que son de severidad baja, media y alta en la \nunidad de inspección y registrándolos de forma separada. Por ejemplo, puede haber 14 huecos \nde severidad media y 8 huecos de severidad baja. \n85 \n \n234 \n \n \nShahin, M. Y. (2005) \nFigura 5-152. Huecos en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "HUECO_EQUIVALENTE",
+          "texto": "Una ocurrencia física por registro. Diámetro mayor que 0.9 m: cantidad técnica equivalente = área medida / 0.65 m². No sustituir área medida por círculo ideal sin confirmación.",
+          "pagina": 233
+        }
+      ],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 86,
+      "superficie": "no_pavimentado",
+      "nombre": "Huellas",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 235,
+        "pagina_fin": 236
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Profundidad <25 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Profundidad de 25 a 75 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Profundidad >75 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Las huellas tienen menos de 25.0 mm de profundidad \nM: Las huellas tienen entre de 25.0 mm y 75.0 mm de profundidad \nH: Las huellas tienen más de 75.0 mm de profundidad",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Las huellas se miden en metros cuadrados de área de la unidad de inspección. Por ejemplo, una \nunidad de inspección puede tener 7 m² de severidad alta y 23 m² de severidad media. \n \n86 \n \n236 \n \n \nShahin, M. Y. (2005) \nFigura 5-153. Huellas en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 87,
+      "superficie": "no_pavimentado",
+      "nombre": "Agregado suelto",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 237,
+        "pagina_fin": 238
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Agregado suelto sobre la vía o cordón de espesor <50 mm en berma/zonas menos transitadas."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Cordón de espesor entre 50 y 100 mm; usualmente abundantes finos en la calzada."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Cordón de espesor >100 mm en berma/zonas menos transitadas."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Se observa agregado suelto en la superficie de la vía, o un cordón de agregado (< 50.0 mm de \nespesor) en la berma o en las áreas menos transitadas \nM: Se observa un cordón moderado de agregado (50.0 mm a 100.0 mm de espesor) en la berma \no en las áreas menos transitadas. Usualmente, se encuentra una gran cantidad de partículas finas \nde suelo en la superficie de la calzada \nH: Se observa un gran cordón de agregado (más de 100.0 mm de espesor) en la berma o en la s \náreas menos transitadas",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El agregado suelto se mide en metros lineales y paralelo al eje de la unidad de inspección. Cada \ncordón se mide por separado. Por ejemplo, si una unidad de inspección de 30 metros de largo \ntiene tres cordones de agregado suelto de severidad media – uno en cada lado y el otro en el \ncentro de la vía – el reporte será de 90 metros de agregado suelto de severidad media. \n87 \n \n238 \n \n \nShahin, M. Y. (2005) \nFigura 5-154. Agregado suelto en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "CORDONES",
+          "texto": "Cada cordón se mide por separado y paralelo al eje; no limitar a un solo largo de muestra.",
+          "pagina": 237
+        }
+      ],
+      "pendientes": []
+    }
+  ]
+}

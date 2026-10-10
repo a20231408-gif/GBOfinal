@@ -1,0 +1,38 @@
+{
+  "protected": {
+    "app/src/main/java/com/tuempresa/inventariovial/auth": {
+      "exactA": true,
+      "files": 13
+    },
+    "backend/user-service": {
+      "exactA": true,
+      "files": 12
+    }
+  },
+  "wrapperExactB": {
+    "gradlew": true,
+    "gradlew.bat": true,
+    "gradle/wrapper/gradle-wrapper.jar": true,
+    "gradle/wrapper/gradle-wrapper.properties": true
+  },
+  "canonicalReferencesExactB": true,
+  "roomVersion": 14,
+  "schemaIdentityHash": "fb0120953696504136b269514f8f4330",
+  "registeredMigrations": [
+    "MIGRATION_1_2",
+    "MIGRATION_2_3",
+    "MIGRATION_3_4",
+    "MIGRATION_4_5",
+    "MIGRATION_5_6",
+    "MIGRATION_6_7",
+    "MIGRATION_7_8",
+    "MIGRATION_8_9",
+    "MIGRATION_9_10",
+    "MIGRATION_10_11",
+    "MIGRATION_11_12",
+    "MIGRATION_12_13",
+    "MIGRATION_13_14"
+  ],
+  "noDestructiveMigration": true,
+  "validationCredentialsOmitted": true
+}

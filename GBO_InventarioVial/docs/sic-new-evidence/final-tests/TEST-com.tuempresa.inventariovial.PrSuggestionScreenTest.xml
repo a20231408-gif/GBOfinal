@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PrSuggestionScreenTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:54:19.747Z" hostname="JULIAN" time="0.477">
+  <properties/>
+  <testcase name="emptyCatalogKeepsManualUiAndCannotConfirmAnInventedPr" classname="com.tuempresa.inventariovial.PrSuggestionScreenTest" time="0.134"/>
+  <testcase name="displayedSuggestionDoesNotReplaceManualInputUntilButtonIsPressed" classname="com.tuempresa.inventariovial.PrSuggestionScreenTest" time="0.177"/>
+  <testcase name="changingRoadbedDiscardsOldSuggestionWithoutChangingManualData" classname="com.tuempresa.inventariovial.PrSuggestionScreenTest" time="0.157"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

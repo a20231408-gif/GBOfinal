@@ -1,0 +1,8 @@
+{
+  "verified": true,
+  "debugOnly": true,
+  "certificateSha256": "19f97236f4c4d75bba92ec72dfae2ab9a6d78b159e47e293acf92ed0e7f116b4",
+  "matchesExistingDebugKeystore": true,
+  "existingAliasCreationDate": "2026-09-24",
+  "newKeystoreCreated": false
+}

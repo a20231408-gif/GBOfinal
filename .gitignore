@@ -1,0 +1,34 @@
+
+# Android / Gradle
+.gradle/
+**/build/
+.idea/
+*.iml
+local.properties
+.cxx/
+.externalNativeBuild/
+
+# Credenciales y configuración privada
+server.local.properties
+drive.local.properties
+keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+.env
+.env.*
+credentials.json
+
+# APK y paquetes generados
+*.apk
+*.aab
+
+# Archivos temporales
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+

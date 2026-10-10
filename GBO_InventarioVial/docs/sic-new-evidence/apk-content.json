@@ -1,0 +1,20 @@
+{
+  "sha256": "522023f89f48f459aee66a74132aa4c57c62a28882ac9ac5eeee706ec40eabbb",
+  "bytes": 39434241,
+  "verifiedAssets": 207,
+  "requiredClasses": [
+    "Lcom/tuempresa/inventariovial/sic/SicFieldRepository;",
+    "Lcom/tuempresa/inventariovial/sic/SicFieldFormat;",
+    "Lcom/tuempresa/inventariovial/sic/SicDeliveryStatus;",
+    "Lcom/tuempresa/inventariovial/field/SignalAssetCatalog;",
+    "Lcom/tuempresa/inventariovial/core/InventoryDraftStore;",
+    "Lcom/tuempresa/inventariovial/core/DrivePaths;",
+    "Lcom/tuempresa/inventariovial/core/GeneratedFileIndex;",
+    "Lcom/tuempresa/inventariovial/data/database/InventoryDatabase_Impl;",
+    "Lcom/tuempresa/inventariovial/auth/AuthSessionManager;",
+    "Lcom/tuempresa/inventariovial/pavement/PavementMigration;"
+  ],
+  "canonicalScapTemplatesUnchanged": true,
+  "noRuntimePdf": true,
+  "localCredentialsOmitted": true
+}

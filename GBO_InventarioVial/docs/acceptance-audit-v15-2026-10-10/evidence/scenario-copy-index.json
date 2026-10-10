@@ -1,0 +1,8 @@
+{
+  "generated_by": "AcceptanceDeliveryAuditTest Kotlin production exporters",
+  "inspection_by": "acceptance_inspect.py using openpyxl/Pillow/PDFium/ZIP/XML",
+  "remote_writes": false,
+  "scenarios": 10,
+  "format_rows": 24,
+  "photo_type_rows": 19
+}

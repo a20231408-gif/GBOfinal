@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.BridgeSicFlowTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:47:10.665Z" hostname="JULIAN" time="33.035">
+  <properties/>
+  <testcase name="dynamicWarningsRejectInvalidNumbersAndDoNotBlameOperatorForUnresolvedCapacity" classname="com.tuempresa.inventariovial.BridgeSicFlowTest" time="27.219"/>
+  <testcase name="allDefinedSupplementaryFieldsReopenAndExportRealCodesAndValues" classname="com.tuempresa.inventariovial.BridgeSicFlowTest" time="4.539"/>
+  <testcase name="contractualLocationIsInheritedAndNeverReplacedByScapEdits" classname="com.tuempresa.inventariovial.BridgeSicFlowTest" time="0.212"/>
+  <testcase name="overridesKeepSourceRestoreScapAndNeverInferStructuresOrLanes" classname="com.tuempresa.inventariovial.BridgeSicFlowTest" time="0.261"/>
+  <testcase name="publishedVersion11MigrationKeepsHistoricalBridgeLocationPhotosAndSupplements" classname="com.tuempresa.inventariovial.BridgeSicFlowTest" time="0.325"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

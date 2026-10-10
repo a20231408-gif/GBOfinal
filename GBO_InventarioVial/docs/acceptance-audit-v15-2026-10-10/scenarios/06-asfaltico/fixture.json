@@ -1,0 +1,37 @@
+{
+  "sample": "PavementSampleEntity(id=audit-ASPHALT, tramo=TRAMO_AUDITORIA, ruta=PE-22A, muestra=1, carril=Derecho, calzada=CD, prInicial=001+000, prFinal=001+046, anchoM=5.0, largoM=46.0, surface=ASPHALT, fecha=2026-10-10, inspectorUserId=AUDITORIA, inspectorNombre=Auditor sintético, status=CLOSED, createdAt=1791655565423, updatedAt=1791655565423, slabRows=10, slabColumns=2, laneWidthM=5.0, calculationSnapshot={\"index\":null,\"rating\":null,\"pending\":[\"Falta curva asfalto:1:M (sin digitalizar\\\/validar).\"],\"totals\":[{\"code\":1,\"severity\":\"M\",\"quantity\":10,\"density\":4.3478260869565215,\"vd\":null}],\"iterations\":[]}, slabWidthM=2.5, slabLengthM=4.6, sicDataJson=null)",
+  "damage": "PavementDamageEntity(id=damage-audit-ASPHALT, sampleId=audit-ASPHALT, correlativo=1, surface=ASPHALT, code=1, name=Piel de cocodrilo, severity=M, geometry=AREA, x1=1.0, y1=10.0, x2=3.0, y2=15.0, diameterM=null, widthM=2.0, lengthM=5.0, areaM2=10.0, quantity=null, crackWidthMm=2.0, observation=AUDITORIA SINTETICA, createdAt=1791655565424, slabs=1,2, inspectorUserId=, inspectorName=, depthMm=null)",
+  "calculation": {
+    "index": null,
+    "rating": null,
+    "pending": [
+      "Falta curva asfalto:1:M (sin digitalizar\/validar)."
+    ],
+    "totals": [
+      {
+        "code": 1,
+        "severity": "M",
+        "quantity": 10,
+        "density": 4.3478260869565215,
+        "vd": null
+      }
+    ],
+    "iterations": []
+  },
+  "pdfException": "IllegalStateException",
+  "sic": [
+    {
+      "format": "SIC-14",
+      "complete": true,
+      "missing": 0
+    },
+    {
+      "format": "SIC-14A",
+      "complete": true,
+      "missing": 0
+    }
+  ],
+  "synthetic": true,
+  "physicalTablet": "NO PROBADO",
+  "realUpload": "NO PROBADO"
+}

@@ -1,0 +1,173 @@
+[
+  {
+    "type": "Puente",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/PUENTES/PUENTE_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Alcantarilla",
+    "categories": "PANORAMICA/ENTRADA/SALIDA; repetibles",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/ALCANTARILLAS/ALCANTARILLA_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Cuneta",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/CUNETAS/CUNETA_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Badén",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/BADENES/BADEN_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Túnel",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/TUNEL_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Muro",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/MURO_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Señalización vertical",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/SENALIZACION_VERTICAL/SEÑALIZACION VERTICAL_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Canal",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/CANAL_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Bajada de agua",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/BAJADA DE AGUA_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Zanja de drenaje",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/ZANJA DE DRENAJE_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Señalización horizontal",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/SENALIZACION_HORIZONTAL/SEÑALIZACION HORIZONTAL_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Derecho de vía",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/DERECHO DE VIA_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Calzada y fajas",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/CALZADA_FAJAS/FAJA_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Puntos críticos",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/PUNTOS_CRITICOS/PUNTO CRITICO_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Accidentes",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/ACCIDENTES/ACCIDENTE_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "Otros/no clasificados",
+    "categories": "GENERAL; repetible",
+    "names": "NNN_FNN.jpg",
+    "length": "10–11+; ≤20 exigido al encolar",
+    "metadata": "FotoEntity+DeliveryMetadata; EXIF conservado si existe",
+    "folder": "RUTA/OTROS/ELEMENTO_NNN/CATEGORIA",
+    "status": "NO PROBADO; PNG→JPG FAIL demostrado"
+  },
+  {
+    "type": "SCAP LOSA/MODULAR F.2",
+    "categories": "31 nombres únicos de32 captions originales, editable; repetibles",
+    "names": "Humano NNN_FNN.jpg; v1 UUID.jpg",
+    "length": "Humano≤20; UUID usual40, alcance límite por confirmar",
+    "metadata": "UUID/elementCode/fecha/GPS/origen/description en manifest; captions/foto",
+    "folder": "V2 puente individual; v1 fotos bajo inspección",
+    "status": "NO PROBADO cámara/subida; JPEG de ZIP inspeccionado"
+  },
+  {
+    "type": "SCAP histórico",
+    "categories": "9 primarias RIGHT_SIDE/LEFT_SIDE/UPSTREAM/DOWNSTREAM/ROAD_DECK/INFORMATIVE_SIGN/RAILINGS_SIDEWALKS_PIPES/DEFECT/BRIDGE_ELEMENT; adicionales",
+    "names": "Humano compacto o UUID.jpg",
+    "length": "Según flujo",
+    "metadata": "PhotoEntity/manifest; sin inferir categorías por nombre",
+    "folder": "Puente revisado/legacy separado",
+    "status": "NO PROBADO"
+  },
+  {
+    "type": "Pavimentos 3 superficies",
+    "categories": "GENERAL, asociado al UUID del daño",
+    "names": "NNN_DNNN.jpg",
+    "length": "12 caracteres usuales;≤20",
+    "metadata": "UUID foto/daño, createdAt/categoría JSON; no GPS propio en modelo",
+    "folder": "RUTA/PAVIMENTOS/SUPERFICIE/MUESTRA_NNN/GENERAL",
+    "status": "NO PROBADO; copia PNG sin conversión por diseño"
+  }
+]

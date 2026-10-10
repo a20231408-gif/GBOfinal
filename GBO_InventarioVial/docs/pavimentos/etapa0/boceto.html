@@ -1,0 +1,137 @@
+<div id="gbo-pavement-preview" aria-label="Boceto del módulo de inspección de pavimentos">
+<style>
+#gbo-pavement-preview{font:15px/1.45 Arial,sans-serif;color:#18293d;background:#f0f3f8;border-radius:20px;padding:18px;box-sizing:border-box}
+#gbo-pavement-preview *{box-sizing:border-box}
+#gbo-pavement-preview .g-header{background:#163f7b;color:#fff;border-radius:20px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+#gbo-pavement-preview h2{font-size:25px;margin:3px 0;font-weight:600}
+#gbo-pavement-preview h3{font-size:18px;margin:0 0 12px}
+#gbo-pavement-preview p{margin:0}
+#gbo-pavement-preview .g-sub{font-size:13px;color:#4e5e71}
+#gbo-pavement-preview .g-header .g-sub{color:#e0e9f8}
+#gbo-pavement-preview .g-note{padding:12px 3px;color:#805900}
+#gbo-pavement-preview .g-surface-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+#gbo-pavement-preview button{font:inherit;border:1px solid #738298;border-radius:12px;min-height:52px;padding:10px 15px;background:#fff;color:#163f7b}
+#gbo-pavement-preview button[aria-pressed=true],#gbo-pavement-preview .g-primary{background:#163f7b;color:#fff;border-color:#163f7b}
+#gbo-pavement-preview button:disabled{opacity:.55}
+#gbo-pavement-preview .g-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
+#gbo-pavement-preview .g-panel{min-width:0;background:#fff;border:1px solid #d5dde8;border-radius:16px;padding:16px}
+#gbo-pavement-preview .g-title-row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+#gbo-pavement-preview .g-scheme{width:100%;height:450px;display:block;touch-action:pan-y;background:#f8fafc;border-radius:12px;margin:12px 0}
+#gbo-pavement-preview .g-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:10px 0 16px}
+#gbo-pavement-preview label{display:block;font-size:13px;color:#4e5e71;min-width:0}
+#gbo-pavement-preview input,#gbo-pavement-preview select,#gbo-pavement-preview textarea{display:block;width:100%;font:16px Arial,sans-serif;color:#18293d;border:1px solid #738298;background:#fff;border-radius:10px;min-height:48px;padding:11px 9px;margin-top:5px}
+#gbo-pavement-preview input[readonly]{background:#f7f9fc}
+#gbo-pavement-preview input[type=range]{border:0;padding:0;min-height:30px}
+#gbo-pavement-preview .g-full{grid-column:1/-1}
+#gbo-pavement-preview .g-unit{background:#e0e9f8;color:#123362;padding:7px 10px;border-radius:10px}
+#gbo-pavement-preview .g-summary{margin-top:16px}
+#gbo-pavement-preview details{border-bottom:1px solid #d5dde8;padding-bottom:12px;margin-bottom:16px}
+#gbo-pavement-preview summary{padding:12px 0;color:#163f7b;min-height:48px}
+#gbo-pavement-preview .g-table-wrap{overflow:auto}
+#gbo-pavement-preview table{width:100%;border-collapse:collapse;font-size:14px}
+#gbo-pavement-preview th,#gbo-pavement-preview td{text-align:left;border-bottom:1px solid #d5dde8;padding:12px 9px}
+#gbo-pavement-preview td button{min-height:44px;padding:6px 10px}
+#gbo-pavement-preview .g-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+#gbo-pavement-preview .g-message{background:#fff5dd;color:#674600;border-radius:12px;padding:14px;margin-top:14px}
+#gbo-pavement-preview .g-home-card{display:flex;gap:16px;align-items:center;margin:12px 0;padding:16px;background:#fff;border-radius:16px;border:1px solid #d5dde8}
+#gbo-pavement-preview .g-plus{background:#e0e9f8;color:#163f7b;border-radius:12px;padding:8px 18px;font-size:24px}
+#gbo-pavement-preview .g-home-card strong{color:#163f7b}
+#gbo-pavement-preview .g-footer{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:16px}
+@media(max-width:740px){#gbo-pavement-preview .g-layout{grid-template-columns:1fr}#gbo-pavement-preview{padding:10px}#gbo-pavement-preview .g-header{padding:16px}#gbo-pavement-preview h2{font-size:22px}}
+@media(max-width:380px){#gbo-pavement-preview .g-fields{grid-template-columns:1fr}#gbo-pavement-preview .g-scheme{height:390px}}
+</style>
+<header class="g-header"><div><div class="g-sub">GBO · INGENIERÍA EN CAMPO</div><h2>Inspección de pavimentos</h2><p class="g-sub">Inicio / Condición del pavimento / Muestra</p></div><span>Acceso con la sesión actual</span></header>
+<div class="g-note">Boceto de revisión · Datos ilustrativos · No guarda inspecciones</div>
+<div class="g-home-card"><span class="g-plus" aria-hidden="true">+</span><div><strong>Nueva opción en el Inicio existente</strong><p class="g-sub">Inspección de pavimentos · PCI / URCI</p></div></div>
+<div class="g-surface-tabs" aria-label="Superficie del boceto"><button type="button" data-surface="asfalto" aria-pressed="true">Asfáltico · PCI</button><button type="button" data-surface="rigido" aria-pressed="false">Rígido · PCI</button><button type="button" data-surface="no_pavimentado" aria-pressed="false">No pavimentado · URCI</button></div>
+<div class="g-layout">
+ <section class="g-panel"><div class="g-title-row"><h3>Esquema de la muestra</h3><span class="g-unit" id="g-extent"></span></div>
+ <svg class="g-scheme" id="g-scheme" role="img" aria-label="Esquema de muestra a escala con daños numerados"></svg>
+ <div class="g-fields"><label>Ampliación del boceto<input id="g-zoom" type="range" min="1" max="2" step="0.1" value="1"></label><label id="g-grid-label">Cuadrícula<input value="1 m" readonly></label></div>
+ <p class="g-sub">Origen inferior izquierdo. Selecciona una fila para resaltar el daño. Los gestos de dibujo y desplazamiento se implementarán en la etapa 1.</p>
+ <div class="g-message" id="g-global"></div>
+ </section>
+ <section class="g-panel"><h3>Datos de inspección</h3><p class="g-sub">Muestra 1 · Usuario de la sesión</p><details><summary>Tramo, progresivas y dimensiones</summary>
+ <div class="g-fields">
+ <label>Tramo / Ruta<input value="Ejemplo de distribución" readonly></label><label>Muestra<input value="1" readonly></label>
+ <label class="g-full">Inspeccionado por<input value="Usuario de la sesión · solo lectura" readonly></label>
+ <label>Carril<input value="Por seleccionar" readonly></label><label>Calzada<input value="Catálogo existente" readonly></label>
+ <label>Progresiva inicial<input value="PR + distancia" readonly></label><label>Progresiva final<input value="PR + distancia" readonly></label>
+ <label>Ancho muestra (m)<input id="g-width" readonly></label><label>Largo muestra (m)<input id="g-length" readonly></label>
+ <label>Fecha<input value="Fecha de inspección" readonly></label><label id="g-count-label">Área muestra<input id="g-count" readonly></label>
+ </div></details>
+ <h3>Daño seleccionado</h3><label>Daño del catálogo<select id="g-damage"></select></label>
+ <div class="g-fields"><label>Severidad<input id="g-severity" readonly></label><label>Medida<input id="g-measure" readonly></label><label id="g-x1-label">x1 (m)<input id="g-x1" readonly></label><label id="g-y1-label">y1 (m)<input id="g-y1" readonly></label><label>x2 (m)<input id="g-x2" readonly></label><label>y2 (m)<input id="g-y2" readonly></label><label id="g-detail-label">Diámetro (m)<input id="g-detail" readonly></label><label>Fotos<input value="0 adjuntas" readonly></label></div>
+ <label>Observación<textarea readonly rows="2">Ejemplo visual de la ficha; sin datos de una inspección real.</textarea></label>
+<div class="g-summary"><h3>Fallas encontradas en campo</h3><div class="g-table-wrap"><table><thead><tr><th>Registro</th><th>Daño</th><th>Severidad</th><th>Cantidad</th><th>Selección</th></tr></thead><tbody id="g-rows"></tbody></table></div>
+<div class="g-actions"><button type="button" disabled>Modificar</button><button type="button" class="g-primary" disabled>Aceptar</button><button type="button" disabled>Foto</button><button type="button" disabled>Mover</button><button type="button" disabled>Eliminar</button></div>
+<div class="g-footer"><div id="g-calculation" role="status" aria-live="polite"></div><button type="button" class="g-primary" disabled>Cierre y cálculo</button></div>
+</div></section></div>
+<script>
+(()=>{
+ const root=document.getElementById('gbo-pavement-preview');
+ const q=id=>root.querySelector('#'+id);
+ const datasets={
+  asfalto:{w:7,h:30,unit:'210 m²',grid:'1 m',index:'PCI',items:[
+   {id:'10-#1',code:10,name:'Grietas longitudinales y transversales',s:'B · Baja',kind:'line',a:[1,5],b:[1,17],measure:'12 m',detail:'5',detailLabel:'Ancho de fisura (mm)'},
+   {id:'13-#2',code:13,name:'Huecos',s:'M · Media',kind:'circle',a:[4.5,8],diameter:.35,measure:'1 Un.',detail:'.35',detailLabel:'Diámetro (m)'},
+   {id:'1-#3',code:1,name:'Piel de cocodrilo',s:'M · Media',kind:'area',a:[3,20],b:[5,24],measure:'8 m²',detail:'—',detailLabel:'Ancho de fisura (mm)'}]},
+  rigido:{w:17.5,h:14,unit:'20 losas · 5 × 4',grid:'5 columnas × 4 filas',index:'PCI',items:[
+   {id:'21-#1',code:21,name:'Rotura por pandeo en junta',s:'M · Media',kind:'slabs',slabs:[7,8],measure:'2 losas',detail:'7, 8',detailLabel:'Losas afectadas'},
+   {id:'26-#2',code:26,name:'Daño del sello de junta',s:'B · Baja',kind:'global',measure:'Global',detail:'—',detailLabel:'Geometría'}]},
+  no_pavimentado:{w:7,h:30,unit:'210 m²',grid:'1 m',index:'URCI',items:[
+   {id:'82-#1',code:82,name:'Drenaje lateral inadecuado',s:'M · Media',kind:'line',a:[0,5],b:[0,25],measure:'20 m',detail:'—',detailLabel:'Ancho de fisura (mm)'},
+   {id:'85-#2',code:85,name:'Huecos',s:'M · Media',kind:'circle',a:[4.5,8],diameter:.5,measure:'1 Un.',detail:'.50',detailLabel:'Diámetro (m)'},
+   {id:'84-#3',code:84,name:'Polvo',s:'B · Baja',kind:'global',measure:'Global',detail:'—',detailLabel:'Geometría'}]}
+ };
+ let surface='asfalto',selected=1;
+ function replaceLabel(id,text){const e=q(id);e.firstChild.textContent=text;}
+ function draw(){
+  const d=datasets[surface],svg=q('g-scheme'),width=svg.clientWidth||400,height=svg.clientHeight||450;
+  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+  const scale=Math.min((width-95)/d.w,(height-80)/d.h)*Number(q('g-zoom').value),ox=(width-d.w*scale)/2+12,oy=height-45;
+  const x=v=>ox+v*scale,y=v=>oy-v*scale;
+  let content=`<title>Esquema ilustrativo ${surface}</title><desc>X corresponde al ancho, Y al largo. El origen es inferior izquierdo. Daños numerados y correlativos independientes.</desc><defs><clipPath id="g-clip"><rect x="24" y="8" width="${width-32}" height="${height-38}"/></clipPath></defs><g clip-path="url(#g-clip)"><rect x="${x(0)}" y="${y(d.h)}" width="${d.w*scale}" height="${d.h*scale}" fill="#e8edf4" stroke="#738298"/>`;
+  const stepX=surface==='rigido'?d.w/5:1,stepY=surface==='rigido'?d.h/4:1;
+  for(let v=0;v<=d.w+.001;v+=stepX)content+=`<line x1="${x(v)}" y1="${y(0)}" x2="${x(v)}" y2="${y(d.h)}" stroke="#bbc6d5"/>`;
+  for(let v=0;v<=d.h+.001;v+=stepY)content+=`<line x1="${x(0)}" y1="${y(v)}" x2="${x(d.w)}" y2="${y(v)}" stroke="#bbc6d5"/>`;
+  if(surface==='rigido')for(let n=1;n<=20;n++){
+   const c=(n-1)%5,r=Math.floor((n-1)/5),active=d.items[selected].slabs?.includes(n);
+   if(active)content+=`<rect x="${x(c*stepX)}" y="${y((r+1)*stepY)}" width="${stepX*scale}" height="${stepY*scale}" fill="#e0e9f8" stroke="#163f7b" stroke-width="2"/>`;
+   content+=`<text x="${x((c+.5)*stepX)}" y="${y((r+.5)*stepY)}" text-anchor="middle" fill="#18293d" font-size="14">${n}</text>`;
+  }
+  d.items.forEach((v,i)=>{
+   const color=i===selected?'#bd1235':'#163f7b';
+   if(v.kind==='line')content+=`<line x1="${x(v.a[0])}" y1="${y(v.a[1])}" x2="${x(v.b[0])}" y2="${y(v.b[1])}" stroke="${color}" stroke-width="4"/>`;
+   if(v.kind==='area')content+=`<rect x="${x(v.a[0])}" y="${y(v.b[1])}" width="${(v.b[0]-v.a[0])*scale}" height="${(v.b[1]-v.a[1])*scale}" fill="${color}" fill-opacity=".16" stroke="${color}" stroke-width="2"/>`;
+   if(v.kind==='circle')content+=`<circle cx="${x(v.a[0])}" cy="${y(v.a[1])}" r="${v.diameter*scale/2}" fill="${color}" stroke="${color}"/>`;
+   if(v.a)content+=`<text x="${x(v.a[0])+8}" y="${y(v.a[1])-8}" font-size="14" fill="${color}">${v.id}</text>`;
+  });
+  content+='</g>';
+  content+=`<text x="${Math.max(20,ox)}" y="${height-13}" font-size="13" fill="#163f7b">0,0 → x / ancho (m)</text><text x="12" y="24" font-size="13" fill="#163f7b">↑ y / largo (m)</text>`;
+  if(surface==='rigido'&&d.items[selected].kind==='slabs')content+=`<text x="${width/2}" y="35" text-anchor="middle" fill="#bd1235" font-size="14">${d.items[selected].id} · losas 7 y 8</text>`;
+  svg.innerHTML=content;
+ }
+ function render(){
+  const d=datasets[surface],v=d.items[selected];
+  root.querySelectorAll('[data-surface]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.surface===surface?'true':'false'));
+  q('g-width').value=d.w;q('g-length').value=d.h;q('g-count').value=d.unit;q('g-extent').textContent=`${d.w} × ${d.h} m`;
+  replaceLabel('g-count-label',surface==='rigido'?'Losas y grilla':'Área muestra');
+  q('g-grid-label').querySelector('input').value=d.grid;
+  q('g-damage').innerHTML=d.items.map((a,i)=>`<option value="${i}">${a.code} · ${a.name}</option>`).join('');q('g-damage').value=selected;
+  q('g-severity').value=v.s;q('g-measure').value=v.measure;q('g-x1').value=v.a?.[0]??'No aplica';q('g-y1').value=v.a?.[1]??'No aplica';q('g-x2').value=v.b?.[0]??'No aplica';q('g-y2').value=v.b?.[1]??'No aplica';q('g-detail').value=v.detail;
+  replaceLabel('g-detail-label',v.detailLabel);replaceLabel('g-x1-label',v.kind==='circle'?'Centro X (m)':'x1 (m)');replaceLabel('g-y1-label',v.kind==='circle'?'Centro Y (m)':'y1 (m)');
+  q('g-global').textContent=surface==='rigido'?'26 · Sello de junta: evaluación global, sin dibujo.':'Los daños globales no ocupan una posición ficticia en el esquema.';
+  if(surface==='no_pavimentado')q('g-global').textContent='84 · Polvo: evaluación global, sin geometría ni densidad.';
+  q('g-rows').innerHTML=d.items.map((a,i)=>`<tr><td>${a.id}</td><td>${a.name}</td><td>${a.s}</td><td>${a.measure}</td><td><button type="button" data-record="${i}" aria-pressed="${i===selected}">Ver</button></td></tr>`).join('');
+  q('g-rows').querySelectorAll('[data-record]').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.record);render();});
+  q('g-calculation').textContent=`${d.index} no calculable: curvas pendientes de digitalizar.`;
+  draw();
+ }
+ root.querySelectorAll('[data-surface]').forEach(b=>b.onclick=()=>{surface=b.dataset.surface;selected=0;q('g-zoom').value=1;render();});
+ q('g-damage').onchange=()=>{selected=Number(q('g-damage').value);render();};q('g-zoom').oninput=draw;
+ new ResizeObserver(draw).observe(q('g-scheme'));
+ render();
+})();
+</script>
+</div>

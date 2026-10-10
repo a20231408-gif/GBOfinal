@@ -1,0 +1,35 @@
+{
+  "artifact": "GBO_InventarioVial_FINAL_INGENIEROS_MAPA hotfix",
+  "date": "2026-10-05",
+  "versionCode": 6,
+  "versionName": "1.3.1-final-mapa-hotfix-order-signs",
+  "checks": {
+    "trafficSignCatalogMatchesManualCodes": {
+      "status": "PASS",
+      "counts": {
+        "R": 84,
+        "P": 83,
+        "I": 40
+      },
+      "total": 207
+    },
+    "trafficSignCatalogStandaloneKotlinCompile": {
+      "status": "PASS"
+    },
+    "assetOrderEagerPlannerProtected": {
+      "status": "PASS",
+      "detail": "buildAssetOrderUiData catches ordering/Drive-plan exceptions"
+    },
+    "deliveryFlowProtected": {
+      "status": "PASS",
+      "detail": "Flow.catch emits empty list and UI error"
+    },
+    "roadMapInvalidPointFilter": {
+      "status": "PASS"
+    },
+    "gradleTestDebugUnitTest": {
+      "status": "BLOCKED",
+      "detail": "Gradle 9.6 distribution unavailable in this offline execution environment; compile in Android Studio/Windows before field distribution."
+    }
+  }
+}

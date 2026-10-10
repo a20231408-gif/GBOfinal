@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ScapDriveTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:34:44.972Z" hostname="JULIAN" time="4.077">
+  <properties/>
+  <testcase name="pendingReviewAndAnnulledParentsCannotUploadOrAcceptAnAck" classname="com.tuempresa.inventariovial.ScapDriveTest" time="0.28"/>
+  <testcase name="uploadBodyStreamsExactBase64AndEscapesMetadata" classname="com.tuempresa.inventariovial.ScapDriveTest" time="0.159"/>
+  <testcase name="bundleContainsOnlyOwnedMarkedPhotosWorkbookSketchesAndVerifiableManifestAndRetriesExactBytes" classname="com.tuempresa.inventariovial.ScapDriveTest" time="3.233"/>
+  <testcase name="editsDuringUploadStayPendingAndOldAckCannotOverwriteNewerData" classname="com.tuempresa.inventariovial.ScapDriveTest" time="0.189"/>
+  <testcase name="onlyMatchingServerAckMarksTheSavedRevisionAndPhotosSynced" classname="com.tuempresa.inventariovial.ScapDriveTest" time="0.205"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

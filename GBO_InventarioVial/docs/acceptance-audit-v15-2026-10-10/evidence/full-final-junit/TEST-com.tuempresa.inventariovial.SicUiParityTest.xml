@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SicUiParityTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:59:45.870Z" hostname="JULIAN" time="8.834">
+  <properties/>
+  <testcase name="fajaUsesLegacyFlowWithOne08And09FormAndProducesScreenshot" classname="com.tuempresa.inventariovial.SicUiParityTest" time="2.033"/>
+  <testcase name="newFormsUseRealRouteCatalogRoadwayChipsAndTraversalReset" classname="com.tuempresa.inventariovial.SicUiParityTest" time="0.762"/>
+  <testcase name="leavingAndReopeningLegacyFajaKeepsUuidRawFieldsDirectionAndJoinedWidths" classname="com.tuempresa.inventariovial.SicUiParityTest" time="1.659"/>
+  <testcase name="linkedSic09DestinationReopensOneFajaFormWithBothContracts" classname="com.tuempresa.inventariovial.SicUiParityTest" time="0.976"/>
+  <testcase name="accidentUsesLegacyFlowAndProducesScreenshot" classname="com.tuempresa.inventariovial.SicUiParityTest" time="0.783"/>
+  <testcase name="criticalPointUsesLegacyFlowAndProducesScreenshot" classname="com.tuempresa.inventariovial.SicUiParityTest" time="0.907"/>
+  <testcase name="sic18aDestinationOpensCulvertLegacyFormWithoutIndependentHeaderOrWorkspace" classname="com.tuempresa.inventariovial.SicUiParityTest" time="1.169"/>
+  <testcase name="canonicalCulvertUsesExtractedLegacyFormAndProducesScreenshot" classname="com.tuempresa.inventariovial.SicUiParityTest" time="0.534"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

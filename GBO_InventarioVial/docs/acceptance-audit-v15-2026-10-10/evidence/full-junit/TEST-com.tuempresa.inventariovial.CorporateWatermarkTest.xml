@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.CorporateWatermarkTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:32:56.229Z" hostname="JULIAN" time="4.042">
+  <properties/>
+  <testcase name="missingCopyIsRegeneratedButMissingSourceFailsClosed" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="0.232"/>
+  <testcase name="optionalTextCopyKeepsLogoWhenPreparedForDelivery" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="0.389"/>
+  <testcase name="textRemainsBottomRightAndPanoramasFitLogoWithoutCropping" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="0.143"/>
+  <testcase name="portraitAndLandscapeCopiesContainOnlyProportionalUpperRightLogoAndAlphaWorks" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="1.589"/>
+  <testcase name="requiredLogoIsAutomaticReusableAndKeepsOriginalUntouched" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="0.187"/>
+  <testcase name="officialPngIsByteIdenticalAndHasTransparentPixels" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="0.074"/>
+  <testcase name="allExifOrientationsAreAppliedBeforeLogoAndOriginalBytesNeverChange" classname="com.tuempresa.inventariovial.CorporateWatermarkTest" time="1.421"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

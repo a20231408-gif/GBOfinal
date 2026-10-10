@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PavementParallelCTest" tests="29" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:54:12.644Z" hostname="JULIAN" time="3.561">
+  <properties/>
+  <testcase name="sic14aDensityContradictionRemainsBlockedRatherThanInvented" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.064"/>
+  <testcase name="pdfSegmentsKeepFullScaleAndClipDamageAtSharedBoundaries" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.058"/>
+  <testcase name="sic16UsesContractualFajaTwoAndOwnDamageCatalog" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.054"/>
+  <testcase name="sequenceIsEditableAndScopedByRoadbedAndSurface" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.057"/>
+  <testcase name="chainageUsesKilometresAndMetresWithoutRoundingAwayDimensions" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.058"/>
+  <testcase name="rigidDensityCountsUniqueSlabsRatherThanSquareMetres" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.064"/>
+  <testcase name="rigidLengthUsesRowsAndRemembersIndividualSlabDimensions" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.058"/>
+  <testcase name="workbookHidesIterationsButCalculatorAndSnapshotRetainThem" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.056"/>
+  <testcase name="everyManualDamageHasDistinctApplicableVisualRecipe" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.059"/>
+  <testcase name="rulerLabelsUseFiveTwoAndOneMetresAtSuitableZoom" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.049"/>
+  <testcase name="crackIsDeterministicAcrossIdsScaleAndReopenAndEndpointsAreExact" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.054"/>
+  <testcase name="largePotholesUseMeasuredAreaAndManualEquivalentDivisors" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.062"/>
+  <testcase name="chainageRejectsNonFiniteNegativeAndMalformedValues" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.059"/>
+  <testcase name="suppliedSicLayoutsExportNativeGroupsAndThirteenColumns" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.121"/>
+  <testcase name="laneAndRoadbedUseExistingDropdownCatalog" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.061"/>
+  <testcase name="rigidLongSlabsRequireManualJointSubdivisionBeforeIndex" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.056"/>
+  <testcase name="migration12to13PreservesChildrenClosedSnapshotsAndBackfillsSlabGeometry" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.262"/>
+  <testcase name="consecutiveSamplesReuseGeometryAndChainEnd" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.112"/>
+  <testcase name="generatedFileManifestRetainsNativeIdentityHashAndPhotoAssociation" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.151"/>
+  <testcase name="persistentDateAndSicSurviveDatabaseReopen" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.179"/>
+  <testcase name="finalRecomputesFromEditableStartAndUnitLength" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.051"/>
+  <testcase name="slabSeverityAndDividedExclusionFollowManual" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.053"/>
+  <testcase name="severityCanonicalStorageRetainsLegacyCurveLookup" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.09"/>
+  <testcase name="sicHasOnlySourceColumnsReusesFieldsAndRejectsAmbiguousMappings" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.051"/>
+  <testcase name="repositoryPersistsCreationDateAndPreventsDuplicateNumbers" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.109"/>
+  <testcase name="sicManualPendingFieldsCompleteAndExportWithoutPciCodeLeak" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.054"/>
+  <testcase name="zoomKeepsFocalMetricPointAndRulerSharesOrigin" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.055"/>
+  <testcase name="selectedSlabHasThickRedBorderAboveDamage" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="0.115"/>
+  <testcase name="denseReportPaginatesRowsAndRendersEveryVisualRecipe" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="1.259"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

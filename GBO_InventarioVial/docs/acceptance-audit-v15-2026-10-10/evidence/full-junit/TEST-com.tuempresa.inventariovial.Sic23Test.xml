@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.Sic23Test" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:36:09.259Z" hostname="JULIAN" time="0.007">
+  <properties/>
+  <testcase name="descriptionMatchesManualTextConvention" classname="com.tuempresa.inventariovial.Sic23Test" time="0.003"/>
+  <testcase name="intervalNeedsBothEndpointsAndValidSide" classname="com.tuempresa.inventariovial.Sic23Test" time="0.001"/>
+  <testcase name="allSic23ClassesHaveAPhotoDestination" classname="com.tuempresa.inventariovial.Sic23Test" time="0.001"/>
+  <testcase name="widthAcceptsDecimalCommaAndRejectsInvalidMeasurements" classname="com.tuempresa.inventariovial.Sic23Test" time="0.0"/>
+  <testcase name="onlyTotalWidthAndCentralMedianRequireWidth" classname="com.tuempresa.inventariovial.Sic23Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

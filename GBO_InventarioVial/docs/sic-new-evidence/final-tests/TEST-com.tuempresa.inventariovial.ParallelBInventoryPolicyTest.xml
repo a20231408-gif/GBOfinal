@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:54:08.599Z" hostname="JULIAN" time="0.146">
+  <properties/>
+  <testcase name="unidentifiedPlateNeverStoresAFakeCodeAndRetainsObservation" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.023"/>
+  <testcase name="manualCodeRemainsExplicitAndCannotImpersonateCatalogueCode" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.006"/>
+  <testcase name="choosingCurrentSourceDoesNotEraseManualCapture" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.0"/>
+  <testcase name="savingAnExistingPointRetainsHiddenEndHistory" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.001"/>
+  <testcase name="finalCompletenessAllowsUnidentifiedButFlagsMissingOrMislabeledCatalogueCode" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.002"/>
+  <testcase name="informativeSubtypeSelectsExistingMarkerCodeAndExportsPostNumber" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.067"/>
+  <testcase name="searchByCodeIsCaseInsensitiveAndDoesNotCrossTypes" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.017"/>
+  <testcase name="searchByNameReturnsExistingPareCode" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.015"/>
+  <testcase name="photoPolicyRetainsExistingCulvertKeysAndAllowsMultiplePerCategory" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.004"/>
+  <testcase name="accentsAndExistingDescriptionsAreSearchableWithoutNewCatalogueRows" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.009"/>
+  <testcase name="kilometerMarkerHasNoFinalLocationAndNewCaptureIgnoresStaleEndValues" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.001"/>
+  <testcase name="matrixKeepsLinearAssetsAndPointAssetsDistinct" classname="com.tuempresa.inventariovial.ParallelBInventoryPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

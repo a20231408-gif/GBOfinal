@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.FieldSessionDefaultsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:33:10.659Z" hostname="JULIAN" time="0.438">
+  <properties/>
+  <testcase name="absentOrEndedSessionDoesNotProvideNewDefaults" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.03"/>
+  <testcase name="pavementManualRoutePersistsWithoutChangingOtherSamplesOrNextDefaults" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.065"/>
+  <testcase name="aAndBPreserveBothSelectedValuesAndTheRouteCatalogIdentity" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.024"/>
+  <testcase name="manualRecordAndPreviousSurveyPositionCannotReplaceTheSession" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.028"/>
+  <testcase name="recoveredDraftAndHistoricalBlanksAlwaysWinOverSessionDefaults" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.036"/>
+  <testcase name="completedScapContractualLocationAndRawDraftRemainUntouchedWhenSessionChanges" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.105"/>
+  <testcase name="switchingModulesAndCreatingConsecutiveRecordsUsesRoomSessionAndPreservesManualEdits" classname="com.tuempresa.inventariovial.FieldSessionDefaultsTest" time="0.142"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

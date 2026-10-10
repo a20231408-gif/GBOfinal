@@ -1,0 +1,34 @@
+[
+  {
+    "filename": "GBO_InventarioVial_VALIDATION_DEBUG_v11.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\output\\final-delivery\\GBO_InventarioVial_VALIDATION_DEBUG_v11.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 11,
+    "versionName": "1.4.0-sic-production",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v3": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v4": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 39434221,
+    "apkSha256": "5638f4f83ef54479ead54faee68be122986ed0ebb642bde91da72af191e39592",
+    "deviceGroupKnown": "UNKNOWN"
+  }
+]

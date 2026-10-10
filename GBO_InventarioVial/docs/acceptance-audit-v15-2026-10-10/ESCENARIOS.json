@@ -1,0 +1,725 @@
+[
+  {
+    "scenario": "01-alcantarilla",
+    "description": "Alcantarilla",
+    "data_source": "scenarios/01-alcantarilla/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/SIB-02/ALCANTARILLA 1/",
+    "client_prepared_paths": [
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/ENTRADA",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/PANORAMICA",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/SALIDA"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "001_F01.jpg",
+      "002_F02.jpg",
+      "003_F03.jpg",
+      "004_F04.jpg",
+      "metadata.json",
+      "SIC-18.xlsx",
+      "SIC-18A.xlsx"
+    ],
+    "obtained": "Archivos locales reales preparados; carpeta V2 diferente del contrato. Nombre por payload, bytes comprobables.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/01-alcantarilla/data-SIC-18.json",
+        "sha256": "2bcda894abd16af65acafc0a2f98c5309c20d54db505225d212c51e4d5cc5d67",
+        "size": 3297
+      },
+      {
+        "file": "scenarios/01-alcantarilla/fixture.json",
+        "sha256": "2bcda894abd16af65acafc0a2f98c5309c20d54db505225d212c51e4d5cc5d67",
+        "size": 3297
+      },
+      {
+        "file": "scenarios/01-alcantarilla/SIC-18-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/01-alcantarilla/SIC-18-2-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/01-alcantarilla/SIC-18-3-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/01-alcantarilla/SIC-18-4-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      }
+    ]
+  },
+  {
+    "scenario": "02-baden",
+    "description": "Badén",
+    "data_source": "scenarios/02-baden/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/SIB-02/BADEN 1/",
+    "client_prepared_paths": [
+      "PE-22A/BADENES/BADEN_001",
+      "PE-22A/BADENES/BADEN_001/GENERAL"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "005_F01.jpg",
+      "metadata.json",
+      "SIC-20.xlsx"
+    ],
+    "obtained": "Archivos locales reales preparados; carpeta V2 diferente del contrato. Nombre por payload, bytes comprobables.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/02-baden/data-SIC-20.json",
+        "sha256": "ea0cc6a37a2b4c86eb3bd6f3d56f26ee931887c9965144e4c5373bb08a590501",
+        "size": 3125
+      },
+      {
+        "file": "scenarios/02-baden/fixture.json",
+        "sha256": "ea0cc6a37a2b4c86eb3bd6f3d56f26ee931887c9965144e4c5373bb08a590501",
+        "size": 3125
+      },
+      {
+        "file": "scenarios/02-baden/SIC-20-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      }
+    ]
+  },
+  {
+    "scenario": "03-senales",
+    "description": "Señales horizontal/vertical",
+    "data_source": "scenarios/03-senales/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/SIB-02/SEÑALIZACION HORIZONTAL 1/ y SEÑALIZACION VERTICAL 1/",
+    "client_prepared_paths": [
+      "PE-22A/SENALIZACION_HORIZONTAL/SENALIZACION_HORIZONTAL_001",
+      "PE-22A/SENALIZACION_HORIZONTAL/SENALIZACION_HORIZONTAL_001/GENERAL",
+      "PE-22A/SENALIZACION_VERTICAL/SENAL_001",
+      "PE-22A/SENALIZACION_VERTICAL/SENAL_001/GENERAL"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "008_F01.jpg",
+      "metadata.json",
+      "009_F01.jpg",
+      "metadata.json",
+      "SIC-21.xlsx",
+      "SIC-22.xlsx"
+    ],
+    "obtained": "Archivos locales reales preparados; carpeta V2 diferente del contrato. Nombre por payload, bytes comprobables.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/03-senales/data-SIC-21.json",
+        "sha256": "c7af5ccd64dac8de2df4239c53883b67d06f31174ef751fbb1f2997ed328ef99",
+        "size": 3067
+      },
+      {
+        "file": "scenarios/03-senales/data-SIC-22.json",
+        "sha256": "0cad8ab3e26e3b61c70467a3fba970f2a88efb7e1f54fa52862b93532036cdb4",
+        "size": 3204
+      },
+      {
+        "file": "scenarios/03-senales/fixture.json",
+        "sha256": "0cad8ab3e26e3b61c70467a3fba970f2a88efb7e1f54fa52862b93532036cdb4",
+        "size": 3204
+      },
+      {
+        "file": "scenarios/03-senales/SIC-21-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/03-senales/SIC-22-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      }
+    ]
+  },
+  {
+    "scenario": "04-puente-losa",
+    "description": "Puente LOSA",
+    "data_source": "scenarios/04-puente-losa/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-28H/clasificación aprobada/puente individual; ficha/fotos/croquis/revisiones",
+    "client_prepared_paths": [
+      "ZIP protocolo1 incompleto: no logicalPath V2; ubicación externa NO PROBADO"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "fixture.json",
+      "original.jpg",
+      "SCAP_LOSA.xlsx",
+      "SCAP_LOSA.zip"
+    ],
+    "obtained": "Room snapshot guardado/leído; XLSX nueve hojas y ZIP bundle7. Ficha incompleta; no aprobación del cálculo ni envío.",
+    "status": "NO PROBADO",
+    "files": [
+      {
+        "file": "scenarios/04-puente-losa/fixture.json",
+        "sha256": "5bb53584b57bb886d0e0036b47a5bb049cf2118786b9c9e541abb1fd5ea02fa6",
+        "size": 726
+      },
+      {
+        "file": "scenarios/04-puente-losa/original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/04-puente-losa/SCAP_LOSA.xlsx",
+        "sha256": "697ec2cb00954562b9d82dccfd1df3bb7191a64b83f3c14492f4e496645f4093",
+        "size": 301879
+      },
+      {
+        "file": "scenarios/04-puente-losa/SCAP_LOSA.zip",
+        "sha256": "c1479f064916bd30479c0223bf25cd55964fc7a35b9f40fa53b5204a8a802879",
+        "size": 244462
+      }
+    ]
+  },
+  {
+    "scenario": "05-puente-modular",
+    "description": "Puente MODULAR",
+    "data_source": "scenarios/05-puente-modular/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-28H/clasificación aprobada/puente individual; ficha/fotos/croquis/revisiones",
+    "client_prepared_paths": [
+      "ZIP protocolo1 incompleto: no logicalPath V2; ubicación externa NO PROBADO"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "fixture.json",
+      "original.jpg",
+      "SCAP_MODULAR.xlsx",
+      "SCAP_MODULAR.zip"
+    ],
+    "obtained": "Room snapshot guardado/leído; XLSX nueve hojas y ZIP bundle7. Ficha incompleta; no aprobación del cálculo ni envío.",
+    "status": "NO PROBADO",
+    "files": [
+      {
+        "file": "scenarios/05-puente-modular/fixture.json",
+        "sha256": "4874fd2d9f0f046a7a60ba315b037515960e8fd91b0084793eb12e83e4bc3b14",
+        "size": 735
+      },
+      {
+        "file": "scenarios/05-puente-modular/original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/05-puente-modular/SCAP_MODULAR.xlsx",
+        "sha256": "dc21460c3ca86b1a1936c5549ac096cbefa21896a9d3f3c7ef0f9ca66f661294",
+        "size": 302592
+      },
+      {
+        "file": "scenarios/05-puente-modular/SCAP_MODULAR.zip",
+        "sha256": "3ea2031bdb373479a48f0ff4f495656167409e046d23130fb8d6000ea7d66c07",
+        "size": 221393
+      }
+    ]
+  },
+  {
+    "scenario": "06-asfaltico",
+    "description": "Asfáltico",
+    "data_source": "scenarios/06-asfaltico/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/EVALUACION_SUPERFICIAL/TRAMO_AUDITORIA/ASFALTICO/07_HOJAS_CAMPO,08_PANEL_FOTOGRAFICO,DATA_APP",
+    "client_prepared_paths": [
+      "PE-22A/PAVIMENTOS/ASFALTICO/MUESTRA_NNN",
+      "PE-22A/PAVIMENTOS/ASFALTICO/MUESTRA_NNN/GENERAL"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "calculation.json",
+      "fixture.json",
+      "HC_001.pdf",
+      "M_001.json",
+      "original.jpg",
+      "PAV_ASF.xlsx",
+      "SIC-14.xlsx",
+      "SIC-14A.xlsx"
+    ],
+    "obtained": "Room y XLSX/JSON reales; índice pendiente por curvas; intento PDF cero bytes en Robolectric. Carpeta implementada sin tramo.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/06-asfaltico/calculation.json",
+        "sha256": "662f0168d60f71ab160ded8d28a5a1f93114babd275b775475fb9b80c07aea9d",
+        "size": 200
+      },
+      {
+        "file": "scenarios/06-asfaltico/fixture.json",
+        "sha256": "450c5c9884747d9a86eff4404b9a81161ec76b812d5740e522fa4e97ecee5e84",
+        "size": 1753
+      },
+      {
+        "file": "scenarios/06-asfaltico/HC_001.pdf",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      {
+        "file": "scenarios/06-asfaltico/M_001.json",
+        "sha256": "a53ab1b2b2d57d5ebff4bb8fdbff2c33d7232625c6fc08c6894099db06b272c5",
+        "size": 1655
+      },
+      {
+        "file": "scenarios/06-asfaltico/original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/06-asfaltico/PAV_ASF.xlsx",
+        "sha256": "42d4ee9bdde3fc3f4763ff5034c7506364999e5c191332aae6b24aabb6cc2fa4",
+        "size": 4434
+      },
+      {
+        "file": "scenarios/06-asfaltico/SIC-14.xlsx",
+        "sha256": "dbd176789e92e4f124a47d988d2319cc1306061d76049a879a16a16fce685bde",
+        "size": 2747
+      },
+      {
+        "file": "scenarios/06-asfaltico/SIC-14A.xlsx",
+        "sha256": "69ee8af22f09402a238aab07b628017153dc29e8d5504f44824311aa127e7bfa",
+        "size": 2748
+      }
+    ]
+  },
+  {
+    "scenario": "07-rigido",
+    "description": "Rígido",
+    "data_source": "scenarios/07-rigido/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/EVALUACION_SUPERFICIAL/TRAMO_AUDITORIA/RIGIDO/07_HOJAS_CAMPO,08_PANEL_FOTOGRAFICO,DATA_APP",
+    "client_prepared_paths": [
+      "PE-22A/PAVIMENTOS/RIGIDO/MUESTRA_NNN",
+      "PE-22A/PAVIMENTOS/RIGIDO/MUESTRA_NNN/GENERAL"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "calculation.json",
+      "fixture.json",
+      "HC_001.pdf",
+      "M_001.json",
+      "original.jpg",
+      "PAV_RIG.xlsx",
+      "SIC-15.xlsx"
+    ],
+    "obtained": "Room y XLSX/JSON reales; índice pendiente por curvas; intento PDF cero bytes en Robolectric. Carpeta implementada sin tramo.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/07-rigido/calculation.json",
+        "sha256": "bd3bf1b5ba927cb274a3f41a388d7d78eeaba9c6a945a6006d3f0a29ab3692b6",
+        "size": 184
+      },
+      {
+        "file": "scenarios/07-rigido/fixture.json",
+        "sha256": "22eb355c9a29149c1b5eda02e1eec52f59c2fa90389c3dbd797125b31300ab1d",
+        "size": 1630
+      },
+      {
+        "file": "scenarios/07-rigido/HC_001.pdf",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      {
+        "file": "scenarios/07-rigido/M_001.json",
+        "sha256": "2a1e9df082bd1986e3c27e4205c8e7ab09390e96308ed4d523fb7ab688905cff",
+        "size": 1631
+      },
+      {
+        "file": "scenarios/07-rigido/original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/07-rigido/PAV_RIG.xlsx",
+        "sha256": "265751da837d33a3ebe9afb3d24da0975e4d2393e6238f33e9cca770621805ea",
+        "size": 4415
+      },
+      {
+        "file": "scenarios/07-rigido/SIC-15.xlsx",
+        "sha256": "700a53fd582d62f3ee268755428a6df79092da38f3544b091543c74fedbb2efc",
+        "size": 2747
+      }
+    ]
+  },
+  {
+    "scenario": "08-no-pavimentado",
+    "description": "No pavimentado",
+    "data_source": "scenarios/08-no-pavimentado/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/EVALUACION_SUPERFICIAL/TRAMO_AUDITORIA/NO_PAVIMENTADO/07_HOJAS_CAMPO,08_PANEL_FOTOGRAFICO,DATA_APP",
+    "client_prepared_paths": [
+      "PE-22A/PAVIMENTOS/NO_PAVIMENTADO/MUESTRA_NNN",
+      "PE-22A/PAVIMENTOS/NO_PAVIMENTADO/MUESTRA_NNN/GENERAL"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "calculation.json",
+      "fixture.json",
+      "HC_001.pdf",
+      "M_001.json",
+      "original.jpg",
+      "PAV_NPV.xlsx",
+      "SIC-16.xlsx"
+    ],
+    "obtained": "Room y XLSX/JSON reales; índice pendiente por curvas; intento PDF cero bytes en Robolectric. Carpeta implementada sin tramo.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/08-no-pavimentado/calculation.json",
+        "sha256": "1ba7e48dd3a4c147262e5c3835d7809ca01544f745acfe1fd8bd710af5beab63",
+        "size": 208
+      },
+      {
+        "file": "scenarios/08-no-pavimentado/fixture.json",
+        "sha256": "c47919b4c2c1fbc826ef36273c33814f262566f7843279226dc1ba2fb8573483",
+        "size": 1718
+      },
+      {
+        "file": "scenarios/08-no-pavimentado/HC_001.pdf",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      {
+        "file": "scenarios/08-no-pavimentado/M_001.json",
+        "sha256": "4f1f29221c216cf5c82837b6c4aab4bbd49976c64a902062f84fcd32e74f0e67",
+        "size": 1703
+      },
+      {
+        "file": "scenarios/08-no-pavimentado/original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/08-no-pavimentado/PAV_NPV.xlsx",
+        "sha256": "687f26841dd2caa27623527fae77d0bf58d61074a1a67addeacb77064eb33df3",
+        "size": 4452
+      },
+      {
+        "file": "scenarios/08-no-pavimentado/SIC-16.xlsx",
+        "sha256": "fa90d579bf0c188ef405bb583bbd56198773379fb8435a2e99b7102912a8f5bd",
+        "size": 2747
+      }
+    ]
+  },
+  {
+    "scenario": "09-misma-ruta-sib",
+    "description": "Varios elementos ruta/SIB",
+    "data_source": "scenarios/09-misma-ruta-sib/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/SIB correspondiente/elemento N y consolidados por lote; PE-3N separado en escenario10",
+    "client_prepared_paths": [
+      "PE-22A/ACCIDENTES/ACCIDENTE_001",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/ENTRADA",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/PANORAMICA",
+      "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/SALIDA",
+      "PE-22A/BADENES/BADEN_001",
+      "PE-22A/BADENES/BADEN_001/GENERAL",
+      "PE-22A/CALZADA_FAJAS/FAJA_001",
+      "PE-22A/CALZADA_FAJAS/FAJA_002",
+      "PE-22A/CUNETAS/CUNETA_001",
+      "PE-22A/CUNETAS/CUNETA_001/GENERAL",
+      "PE-22A/OTROS/DERECHO_DE_VIA_001",
+      "PE-22A/OTROS/DERECHO_DE_VIA_001/GENERAL",
+      "PE-22A/PUENTES/PUENTE_001",
+      "PE-22A/PUENTES/PUENTE_001/GENERAL",
+      "PE-22A/PUNTOS_CRITICOS/PUNTO_CRITICO_001",
+      "PE-22A/SENALIZACION_HORIZONTAL/SENALIZACION_HORIZONTAL_001",
+      "PE-22A/SENALIZACION_HORIZONTAL/SENALIZACION_HORIZONTAL_001/GENERAL",
+      "PE-22A/SENALIZACION_VERTICAL/SENAL_001",
+      "PE-22A/SENALIZACION_VERTICAL/SENAL_001/GENERAL"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "audit-record-17-0.jpg",
+      "audit-record-18-0.jpg",
+      "audit-record-18-1.jpg",
+      "audit-record-18-2.jpg",
+      "audit-record-18-3.jpg",
+      "audit-record-19-0.jpg",
+      "audit-record-20-0.jpg",
+      "audit-record-21-0.jpg",
+      "audit-record-22-0.jpg",
+      "audit-record-23-0.jpg",
+      "audit-SIC-08.json",
+      "audit-SIC-08_SIC-08.xlsx",
+      "audit-SIC-09.json",
+      "audit-SIC-09_SIC-09.xlsx",
+      "audit-SIC-13.json",
+      "audit-SIC-13_SIC-13.xlsx",
+      "audit-SIC-34.json",
+      "audit-SIC-34_SIC-34.xlsx",
+      "data-SIC-17.json",
+      "data-SIC-19.json",
+      "data-SIC-23.json",
+      "fixture.json",
+      "manifest.local.json",
+      "record-17.json",
+      "record-17_SIC-17.xlsx",
+      "record-18.json",
+      "record-18_SIC-18.xlsx",
+      "record-18_SIC-18A.xlsx",
+      "record-19.json",
+      "record-19_SIC-19.xlsx",
+      "record-20.json",
+      "record-20_SIC-20.xlsx",
+      "record-21.json",
+      "record-21_SIC-21.xlsx",
+      "record-22.json",
+      "record-22_SIC-22.xlsx",
+      "record-23.json",
+      "record-23_SIC-23.xlsx",
+      "SIC-17-1-original.jpg",
+      "SIC-19-1-original.jpg",
+      "SIC-23-1-original.jpg"
+    ],
+    "obtained": "Varios elementos de SIB02 y otras familias, payload UUID/fotos/XLSX; escenario10 exporta PE-3N sin mezclar hoja PE-22A.",
+    "status": "FAIL",
+    "files": [
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-17-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-18-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-18-1.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-18-2.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-18-3.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-19-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-20-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-21-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-22-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-record-23-0.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-08.json",
+        "sha256": "46056ca86717454b5dc5c00b02dea928465383e098a8fda83603a243ac3cec7c",
+        "size": 1165
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-08_SIC-08.xlsx",
+        "sha256": "0bb9108dcd5f8b2304de312d183eee9236da8426b16084da25b01e2dcb380481",
+        "size": 73708
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-09.json",
+        "sha256": "46e5cb9e1de13dff74eb695cae937bb26c952d05fc8de0838db87c5dd89d2ad3",
+        "size": 1165
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-09_SIC-09.xlsx",
+        "sha256": "71a6582e28e0cd408e24945bc3475b2a9aa4022b64c1122a25722c8d0258e8a8",
+        "size": 73718
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-13.json",
+        "sha256": "876861e5d6679031937e9a6a36508bab2d5c305ea5ecf99d32f80fec2c5104d2",
+        "size": 1175
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-13_SIC-13.xlsx",
+        "sha256": "4306b71eb3f404052a25cc1eb7842e95e0d4d1f0c8ed417d7acfddd318ebc7ff",
+        "size": 73667
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-34.json",
+        "sha256": "43dde44898fbd03802e6fb379ad1c430fe4ae48778b5f58ad7cd52b57e69f961",
+        "size": 1167
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/audit-SIC-34_SIC-34.xlsx",
+        "sha256": "9c46333614395ec02b88d9ad602874f4c610b43726e15bb7335bf6af5b0e69b8",
+        "size": 73743
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/data-SIC-17.json",
+        "sha256": "4969283c4dc71aaf030898a527db9acea0a74e6939b52117b6e881bcfbe2e58f",
+        "size": 3267
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/data-SIC-19.json",
+        "sha256": "8226c61b6e52894852eb259f224334200901d6a44082a72349ddca951ba28031",
+        "size": 3110
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/data-SIC-23.json",
+        "sha256": "778e69ad5b7c32c464102f5f4e387978b0326c0e2cc7460ec59b4fef4e1aa2c6",
+        "size": 3048
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/fixture.json",
+        "sha256": "778e69ad5b7c32c464102f5f4e387978b0326c0e2cc7460ec59b4fef4e1aa2c6",
+        "size": 3048
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/manifest.local.json",
+        "sha256": "f1615e697d44c53001dd6cc04e593592329eaea53c7811c2c29fee80db3d1b5c",
+        "size": 24864
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-17.json",
+        "sha256": "41840d4276f8f3128f58e8bae7ad6c6595236bd208569701327709f768233f6e",
+        "size": 1718
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-17_SIC-17.xlsx",
+        "sha256": "74daef347c8ffb130e732ea01c5d89ed1db1b14d0e724fd250f9bdce48698c00",
+        "size": 74021
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-18.json",
+        "sha256": "6a33da9a04e8db7ba18d7267010180136835fccc352125f6a7ca0f5a9db5cb9f",
+        "size": 3489
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-18_SIC-18.xlsx",
+        "sha256": "00a16a8f64350fac66a8289ed941e12ef6a3605479844801447b66546d2d8c37",
+        "size": 73792
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-18_SIC-18A.xlsx",
+        "sha256": "bc485d53cee6f9240d523e0afa13935b84cbae6e7bfc1895017b973e07c4f928",
+        "size": 73788
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-19.json",
+        "sha256": "28e1af62a99466ac4774742c3ad1018a7d0cada251b862c238b99dc7f467bc69",
+        "size": 1719
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-19_SIC-19.xlsx",
+        "sha256": "fd0fa2dd4e5d500551c68332c828f36d6543a2a6ef45c0119176db12cb66bf52",
+        "size": 73823
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-20.json",
+        "sha256": "6b5cc50ba77170e7a85a9afe71a216316d64e4edd8fe01900c78d9686066a445",
+        "size": 1717
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-20_SIC-20.xlsx",
+        "sha256": "fdfd4b4e816cabe3783533e13f24d784401d25cbaba1651b1a274a5f2421dbcd",
+        "size": 73827
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-21.json",
+        "sha256": "3230e82144eb102fb9e230bcdd1d02567aa8f544efe9cc2ccf01567950ad3d94",
+        "size": 1753
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-21_SIC-21.xlsx",
+        "sha256": "acc1ad0f44909d8f9880d1e4b5bef1d14da2fedee911f6c16595d01e946cff45",
+        "size": 73774
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-22.json",
+        "sha256": "f8456ad56415e8d99079e3ddab2f15d7743c59c683dc7fc346365ad7e5b3b110",
+        "size": 1749
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-22_SIC-22.xlsx",
+        "sha256": "5b1fc7e11174993fa16c83916949ac65179ab3a40c6a74ed63c4ebb6e1b88597",
+        "size": 73789
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-23.json",
+        "sha256": "fb46198ea79237468ecffc7e0f39bb3047a30619f30a7528e35e92a4d8770898",
+        "size": 1734
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/record-23_SIC-23.xlsx",
+        "sha256": "7b22f95abab9c6cba2f4e47fadc0aaeb84b88e11f2d18315c7def718e9cc207e",
+        "size": 73770
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/SIC-17-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/SIC-19-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      },
+      {
+        "file": "scenarios/09-misma-ruta-sib/SIC-23-1-original.jpg",
+        "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1",
+        "size": 1741
+      }
+    ]
+  },
+  {
+    "scenario": "10-dos-rutas",
+    "description": "Dos rutas",
+    "data_source": "scenarios/10-dos-rutas/fixture.json; data-*.json; AcceptanceDeliveryAuditTest.kt",
+    "expected_drive_path": "PE-22A/SIB correspondiente/elemento N y consolidados por lote; PE-3N separado en escenario10",
+    "client_prepared_paths": [
+      "Excel PE-3N separado; preparación/subida real de segundo lote NO PROBADO"
+    ],
+    "real_drive_path": "NO PROBADO (no POST v15)",
+    "expected_names": "SIC-XX.xlsx a nivel SIB; JPEG compactos de payload; SCAP.xlsx/croquis según flujo; HC_001.pdf/M_001.json/PAV_*.xlsx",
+    "actual_local_names": [
+      "fixture.json",
+      "PE-3N-SIC-17.xlsx"
+    ],
+    "obtained": "Varios elementos de SIB02 y otras familias, payload UUID/fotos/XLSX; escenario10 exporta PE-3N sin mezclar hoja PE-22A.",
+    "status": "NO PROBADO",
+    "files": [
+      {
+        "file": "scenarios/10-dos-rutas/fixture.json",
+        "sha256": "9d479d1178930dca18433c45cf1b899f8a96e245ff1aec684137ad13f096584a",
+        "size": 151
+      },
+      {
+        "file": "scenarios/10-dos-rutas/PE-3N-SIC-17.xlsx",
+        "sha256": "313e663ac45d1bf8dffe5cf0c1d31e21b3f184c299ea60ef1686fbc9365b0f9c",
+        "size": 74052
+      }
+    ]
+  }
+]

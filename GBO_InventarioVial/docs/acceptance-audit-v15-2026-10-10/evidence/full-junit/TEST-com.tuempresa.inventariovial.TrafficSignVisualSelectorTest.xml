@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.TrafficSignVisualSelectorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:36:34.033Z" hostname="JULIAN" time="0.581">
+  <properties/>
+  <testcase name="manualAndUnidentifiedReplacePreviousImageAndI2aKeepsRealAsset" classname="com.tuempresa.inventariovial.TrafficSignVisualSelectorTest" time="0.085"/>
+  <testcase name="selectingP1ChangesPreviewAndSearchResultsAreLazy" classname="com.tuempresa.inventariovial.TrafficSignVisualSelectorTest" time="0.314"/>
+  <testcase name="searchPareShowsR1CodeNameAndCorrespondingAccessibleImage" classname="com.tuempresa.inventariovial.TrafficSignVisualSelectorTest" time="0.176"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

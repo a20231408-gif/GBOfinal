@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PavementTouchTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:57:56.623Z" hostname="JULIAN" time="1.096">
+  <properties/>
+  <testcase name="tapsUseBottomLeftOriginAndEqualAxisScale" classname="com.tuempresa.inventariovial.PavementTouchTest" time="0.126"/>
+  <testcase name="changingGridKeepsMetricPosition" classname="com.tuempresa.inventariovial.PavementTouchTest" time="0.168"/>
+  <testcase name="eachPhotoHasDeleteAndConfirmation" classname="com.tuempresa.inventariovial.PavementTouchTest" time="0.435"/>
+  <testcase name="homeDisplaysNewModuleAndOpensItWhenTapped" classname="com.tuempresa.inventariovial.PavementTouchTest" time="0.172"/>
+  <testcase name="movingGestureUpdatesGeometryWithoutCreatingDamage" classname="com.tuempresa.inventariovial.PavementTouchTest" time="0.183"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

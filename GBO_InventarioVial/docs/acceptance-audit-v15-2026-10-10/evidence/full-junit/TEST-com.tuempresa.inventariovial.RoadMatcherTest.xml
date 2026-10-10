@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.RoadMatcherTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:34:09.907Z" hostname="JULIAN" time="0.019">
+  <properties/>
+  <testcase name="projectsInterpolatesAndUsesPreviousPr" classname="com.tuempresa.inventariovial.RoadMatcherTest" time="0.001"/>
+  <testcase name="importJsonAndGeoJsonValidateRatherThanInventChainages" classname="com.tuempresa.inventariovial.RoadMatcherTest" time="0.015"/>
+  <testcase name="previousPrIsRouteAndRoadbedScopedAndIncludesExactBoundary" classname="com.tuempresa.inventariovial.RoadMatcherTest" time="0.001"/>
+  <testcase name="refusesBadAccuracyFarPointsAndAmbiguousCarriageways" classname="com.tuempresa.inventariovial.RoadMatcherTest" time="0.001"/>
+  <testcase name="sideIsIndependentOfStoredPolylineDirection" classname="com.tuempresa.inventariovial.RoadMatcherTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

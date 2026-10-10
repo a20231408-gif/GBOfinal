@@ -1,0 +1,128 @@
+package com.tuempresa.inventariovial
+
+import android.content.Context
+
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+
+
+fun scheduleDriveUpload(
+
+    context: Context,
+
+    photoPath: String,
+
+    driveFileName: String,
+
+    routeCode: String,
+
+    sibCode: String,
+
+    sicCode: String,
+
+    photoId: String? = null,
+
+    recordId: String? = null
+
+) : androidx.work.Operation {
+    DriveUploadPolicy.requireSic(sicCode)
+    DriveUploadPolicy.requireConfiguration()
+
+    // =========================================================
+    // REQUERIR INTERNET
+    // =========================================================
+
+    val constraints =
+        Constraints.Builder()
+            .setRequiredNetworkType(
+                NetworkType.CONNECTED
+            )
+            .build()
+
+
+    // =========================================================
+    // DATOS QUE RECIBIRÁ DriveUploadWorker
+    // =========================================================
+
+    val inputData =
+        Data.Builder()
+
+            .putString(
+                "photoId",
+                photoId
+            )
+
+            .putString(
+                "recordId",
+                recordId
+            )
+
+            .putString(
+                "photoPath",
+                photoPath
+            )
+
+            .putString(
+                "driveFileName",
+                driveFileName
+            )
+
+            .putString(
+                "routeCode",
+                routeCode
+            )
+
+            .putString(
+                "sibCode",
+                sibCode
+            )
+
+            .putString(
+                "sicCode",
+                sicCode
+            )
+
+            .build()
+
+
+    // =========================================================
+    // CREAR TRABAJO
+    // =========================================================
+
+    val workRequest =
+        OneTimeWorkRequestBuilder<DriveUploadWorker>()
+
+            .setConstraints(
+                constraints
+            )
+
+            .setInputData(
+                inputData
+            )
+
+            .build()
+
+
+    // =========================================================
+    // PROGRAMAR SUBIDA
+    // =========================================================
+
+    return WorkManager
+        .getInstance(
+            context
+        )
+        .enqueueUniqueWork(
+
+            "drive-upload-${photoId ?: photoPath}",
+
+            // REPLACE permite reemplazar trabajos antiguos
+            // que todavía no tenían routeCode / sibCode / sicCode.
+            ExistingWorkPolicy.REPLACE,
+
+            workRequest
+        )
+}

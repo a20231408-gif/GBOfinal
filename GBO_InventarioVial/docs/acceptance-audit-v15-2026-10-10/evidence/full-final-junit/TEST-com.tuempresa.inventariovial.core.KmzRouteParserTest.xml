@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.core.KmzRouteParserTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-10T18:01:15.643Z" hostname="JULIAN" time="0.024">
+  <properties/>
+  <testcase name="invalidDoesNotProduceGeometry" classname="com.tuempresa.inventariovial.core.KmzRouteParserTest" time="0.018"/>
+  <testcase name="validKmzHasVersionAndIncreasingMeasuredGeometry" classname="com.tuempresa.inventariovial.core.KmzRouteParserTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[[Fatal Error] :1:1: El contenido no está permitido en el prólogo.
+[Fatal Error] :1:10: DOCTYPE no está permitido cuando la función "http://apache.org/xml/features/disallow-doctype-decl" se ha definido en true.
+]]></system-err>
+</testsuite>

@@ -1,0 +1,22 @@
+[
+  {
+    "case": "historical_reference_pass",
+    "exitCode": 0,
+    "passed": true
+  },
+  {
+    "case": "wrong_certificate_rejected",
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "case": "wrong_version_rejected",
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "case": "wrong_package_rejected",
+    "exitCode": 1,
+    "passed": true
+  }
+]

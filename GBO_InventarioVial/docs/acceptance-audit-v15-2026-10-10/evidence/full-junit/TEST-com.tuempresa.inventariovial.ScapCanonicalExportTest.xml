@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ScapCanonicalExportTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:34:13.917Z" hostname="JULIAN" time="31.023">
+  <properties/>
+  <testcase name="bothExportsKeepManualCodeMetradoContractualUnitAndActualImportanceValue" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="4.999"/>
+  <testcase name="bothTypesUseExactSourceAndKeepCorporateHeaderSheetNamesStylesGeometryAndDerivedFormulas" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="10.439"/>
+  <testcase name="portraitLandscapeAndExifRotationStayCenteredInsideOriginalPhotoFrames" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="8.942"/>
+  <testcase name="observedNumericSourceLiteralsSurviveAndNumbersRemainTyped" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="4.973"/>
+  <testcase name="canonicalBoundsRejectOverflowAndMismatchedTypeBeforeWriting" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="1.658"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

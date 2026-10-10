@@ -1,0 +1,34 @@
+[
+  {
+    "filename": "GBO Inventario Vial.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\app\\build\\outputs\\apk\\release\\GBO Inventario Vial.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 15,
+    "versionName": "1.4.1",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v2": true,
+      "v1": false,
+      "v3.1": false,
+      "v3": true
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 24278671,
+    "apkSha256": "a21282594179c6401f7cfb6df1186b90a70a67712d893cd12845bfa0401b2c1a",
+    "deviceGroupKnown": "UNKNOWN"
+  }
+]

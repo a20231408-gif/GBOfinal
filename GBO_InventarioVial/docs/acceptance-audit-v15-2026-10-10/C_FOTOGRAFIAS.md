@@ -1,0 +1,31 @@
+# C. Fotografías por todos los tipos implementados
+
+| Tipo | Categorías | Nomenclatura | Límite | Metadatos | Destino implementado | Estado |
+|---|---|---|---|---|---|---|
+| Puente | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/PUENTES/PUENTE_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Alcantarilla | PANORAMICA/ENTRADA/SALIDA; repetibles | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/ALCANTARILLAS/ALCANTARILLA_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Cuneta | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/CUNETAS/CUNETA_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Badén | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/BADENES/BADEN_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Túnel | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/TUNEL_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Muro | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/MURO_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Señalización vertical | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/SENALIZACION_VERTICAL/SEÑALIZACION VERTICAL_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Canal | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/CANAL_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Bajada de agua | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/BAJADA DE AGUA_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Zanja de drenaje | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/ZANJA DE DRENAJE_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Señalización horizontal | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/SENALIZACION_HORIZONTAL/SEÑALIZACION HORIZONTAL_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Derecho de vía | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/DERECHO DE VIA_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Calzada y fajas | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/CALZADA_FAJAS/FAJA_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Puntos críticos | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/PUNTOS_CRITICOS/PUNTO CRITICO_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Accidentes | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/ACCIDENTES/ACCIDENTE_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| Otros/no clasificados | GENERAL; repetible | NNN_FNN.jpg | 10–11+; ≤20 exigido al encolar | FotoEntity+DeliveryMetadata; EXIF conservado si existe | RUTA/OTROS/ELEMENTO_NNN/CATEGORIA | NO PROBADO; PNG→JPG FAIL demostrado |
+| SCAP LOSA/MODULAR F.2 | 31 nombres únicos de32 captions originales, editable; repetibles | Humano NNN_FNN.jpg; v1 UUID.jpg | Humano≤20; UUID usual40, alcance límite por confirmar | UUID/elementCode/fecha/GPS/origen/description en manifest; captions/foto | V2 puente individual; v1 fotos bajo inspección | NO PROBADO cámara/subida; JPEG de ZIP inspeccionado |
+| SCAP histórico | 9 primarias RIGHT_SIDE/LEFT_SIDE/UPSTREAM/DOWNSTREAM/ROAD_DECK/INFORMATIVE_SIGN/RAILINGS_SIDEWALKS_PIPES/DEFECT/BRIDGE_ELEMENT; adicionales | Humano compacto o UUID.jpg | Según flujo | PhotoEntity/manifest; sin inferir categorías por nombre | Puente revisado/legacy separado | NO PROBADO |
+| Pavimentos 3 superficies | GENERAL, asociado al UUID del daño | NNN_DNNN.jpg | 12 caracteres usuales;≤20 | UUID foto/daño, createdAt/categoría JSON; no GPS propio en modelo | RUTA/PAVIMENTOS/SUPERFICIE/MUESTRA_NNN/GENERAL | NO PROBADO; copia PNG sin conversión por diseño |
+
+Familias obtenidas automáticamente de AssetFamily (16). Reglas por SIC en PHOTO_CATEGORY_POLICY_INVENTORY.json y PhotoCategoryPolicy: solamente alcantarillas reciben tres categorías; históricos desconocidos permanecen GENERAL. Campos completos del modelo: PhotoEntity.kt; manifiestos de scenarios09 conservan UUID, orden y metadatos.
+
+Verificaciones físicas por tipo (todas NO PROBADO): cámara, galería, ocho orientaciones EXIF, reemplazo, eliminación, múltiples, guardar/reabrir, exportación y subida. Las imágenes sintéticas solo comprueban transporte sin cambios, decodificación/relación de archivos; no acreditan legibilidad de una inspección ni GNSS real. Prueba negativa independiente: el archivo JPG del probe decodifica como PNG; D04.
+
+El nombre compacto SIC tiene secuencia de entrega por ruta y photoIndex; DrivePathPlanner ordena por eje/PR y desempates, luego photoIndex/UUID. DrivePaths conserva contador de identidad local; no es la misma numeración geométrica. SCAP humano ordena puentes/fotos antes de preparar; pavimentos correlativo de daño/createdAt. Estabilidad entre nuevas capturas/tablets y ausencia de colisiones remotas: NO PROBADO.
+
+CleanPhotoPolicy no agrega watermark, pero tampoco verifica JPEG ni elimina texto existente. JPEG original de captura se mantiene byte por byte; SCAP genera versiones limitadas para workbook preservando proporción y convierte otros formatos del ZIP. EXIF no se promete si el original no lo tiene; faltantes deben ser visibles, no rellenados. D01/D02 impiden aprobar destinos remotos.

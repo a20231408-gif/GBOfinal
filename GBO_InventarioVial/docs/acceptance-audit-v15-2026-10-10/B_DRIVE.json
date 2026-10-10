@@ -1,0 +1,98 @@
+[
+  {
+    "area": "SIC fotografías",
+    "expected": "RUTA/SIB/ELEMENTO N/fotos",
+    "implemented": "RUTA/FAMILIA/ELEMENTO_NNN/CATEGORIA",
+    "observed": "PRUEBA_FINAL/PE-22A/SIB-02/ALCANTARILLA 1/001_PAN.jpg",
+    "status": "FAIL",
+    "evidence": "Lectura histórica real, NO envío v15"
+  },
+  {
+    "area": "SIC Excel de lote",
+    "expected": "RUTA/SIB/SIC-XX.xlsx consolidado",
+    "implemented": "RUTA/FAMILIA/ELEMENTO_NNN/SIC-XX.xlsx por registro",
+    "observed": "PRUEBA_FINAL/PE-22A/SIB-02/SIC-18.xlsx + SIC19/SIC23",
+    "status": "FAIL",
+    "evidence": "Manifest scenario09 + Drive list"
+  },
+  {
+    "area": "SIC metadata",
+    "expected": "Carpeta del mismo elemento; UUID/fotos/categorías",
+    "implemented": "metadata.json por UUID junto a XLSX",
+    "observed": "PRUEBA_FINAL/PE-22A/SIB-02/ALCANTARILLA 1/metadata.json",
+    "status": "NO PROBADO",
+    "evidence": "Solo histórica listada; asociación v15 pendiente"
+  },
+  {
+    "area": "SCAP completo revisado",
+    "expected": "Puente individual ruta/clasificación + fotos/croquis/revisiones",
+    "implemented": "RUTA/PUENTES/PUENTE_NNN; misma identidad que SIC17 compatible",
+    "observed": "No se observó una entrega SCAP v15",
+    "status": "NO PROBADO",
+    "evidence": "HumanLayout + manifest pathVersion2; backend distinto"
+  },
+  {
+    "area": "SCAP incompleto/legacy",
+    "expected": "Misma conservación de puente/archivos/revisiones; ubicación contractual por confirmar",
+    "implemented": "Protocolo1: SCAP/hash-identidad/UUID/revision; fotos UUID.jpg/croquis UUID.png",
+    "observed": "No se ejecutó POST",
+    "status": "NO PROBADO",
+    "evidence": "ZIP local real protocolo1/bundle7, no validación de ruta remota"
+  },
+  {
+    "area": "Pavimento asfáltico",
+    "expected": "RUTA/EVALUACION_SUPERFICIAL/TRAMO/ASFALTICO/{campo,panel,data}",
+    "implemented": "RUTA/PAVIMENTOS/ASFALTICO/MUESTRA_NNN/{documentos,GENERAL}",
+    "observed": "No se observó envío v15",
+    "status": "FAIL",
+    "evidence": "DrivePaths.pavement + uploader"
+  },
+  {
+    "area": "Pavimento rígido",
+    "expected": "RUTA/EVALUACION_SUPERFICIAL/TRAMO/RIGIDO/{campo,panel,data}",
+    "implemented": "RUTA/PAVIMENTOS/RIGIDO/MUESTRA_NNN/{documentos,GENERAL}",
+    "observed": "No se observó envío v15",
+    "status": "FAIL",
+    "evidence": "Tramo solo en JSON/payload, no en logicalPath"
+  },
+  {
+    "area": "No pavimentado",
+    "expected": "RUTA/EVALUACION_SUPERFICIAL/TRAMO/NO_PAVIMENTADO/{campo,panel,data}",
+    "implemented": "RUTA/PAVIMENTOS/NO_PAVIMENTADO/MUESTRA_NNN/{documentos,GENERAL}",
+    "observed": "No se observó envío v15",
+    "status": "FAIL",
+    "evidence": "GROUP_DATA copia Excel en carpeta de muestra"
+  },
+  {
+    "area": "ACK→SYNCED",
+    "expected": "Identidad+bytes+ubicación confirmados de todos los archivos",
+    "implemented": "SIC requiere ID/hash/protocol pero omite pathVersion/logicalPath",
+    "observed": "NO PROBADO servidor; probe local aceptó WRONG/PATH y SYNCED",
+    "status": "FAIL",
+    "evidence": "scenarios/wrong-path-ack.json"
+  },
+  {
+    "area": "Retry/idempotencia",
+    "expected": "Mismo contenido sin duplicados; cambios/revisiones conservados",
+    "implemented": "SIC batch fingerprint inmutable; SCAP revision; pav staging/hash",
+    "observed": "No se provocó corte real de red/ACK",
+    "status": "NO PROBADO",
+    "evidence": "Tests Node/client apoyan análisis, no E2E"
+  },
+  {
+    "area": "Varias tablets/lotes",
+    "expected": "Separación y numeración acordada sin colisión",
+    "implemented": "Counter por instalación; ruta con lote iniciado bloquea otro contenido",
+    "observed": "NO PROBADO dos tablets ni lote nuevo remoto",
+    "status": "NO PROBADO",
+    "evidence": "D05/D06; protocolo F"
+  },
+  {
+    "area": "Endpoint publicado",
+    "expected": "Contrato compatible con APK y raíz aislada confirmada",
+    "implemented": "APK GET Drive v6.2/bundle4; local v7/bundle6; Android bundle7",
+    "observed": "GET real HTTP200, sin pathVersion/pavementProtocol anunciados",
+    "status": "FAIL",
+    "evidence": "evidence/endpoint-health.json"
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "changed": [],
+  "added": [
+    "app/src/test/java/com/tuempresa/inventariovial/AcceptanceDeliveryAuditTest.kt"
+  ],
+  "production_unchanged": true
+}

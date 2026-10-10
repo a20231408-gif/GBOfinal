@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.TabletUxDataTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:55:08.063Z" hostname="JULIAN" time="0.836">
+  <properties/>
+  <testcase name="singleLocationSic22AndLegacyEndFieldsPhotosSurviveRoomReopen" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.196"/>
+  <testcase name="formattingPreservesPrecisionQuantityAndCalculator" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.061"/>
+  <testcase name="systemDatePersistsAndHistoricalResumeKeepsAssociationsAndCalculation" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.221"/>
+  <testcase name="verticalIgnoresLegacyEndValidationWithoutChangingHorizontalPolicy" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.056"/>
+  <testcase name="rulerUsesOneTransformAtEveryZoomPanAndAdaptsToDensity" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.043"/>
+  <testcase name="sic22WorkbookHasExactlyTwelveColumnsOneLocationAndNoLegacyEnd" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.079"/>
+  <testcase name="historyOrdersCreationAndRespectsFiltersAndClosedRights" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.054"/>
+  <testcase name="thumbnailHonorsExifBoundsWithoutRewritingOriginal" classname="com.tuempresa.inventariovial.TabletUxDataTest" time="0.112"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

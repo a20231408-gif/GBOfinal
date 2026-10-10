@@ -1,0 +1,23 @@
+{
+  "apkCount": 68,
+  "applicationApkCount": 46,
+  "previousMaximumVersionCode": 10,
+  "newVersionCode": 11,
+  "certificates": {
+    "FIELD_SIGNATURE_A": {
+      "sha256": "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315",
+      "subject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+      "apkCount": 12,
+      "deviceGroupKnown": "UNKNOWN"
+    },
+    "FIELD_SIGNATURE_B": {
+      "sha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+      "subject": "C=US, O=Android, CN=Android Debug",
+      "apkCount": 34,
+      "deviceGroupKnown": "UNKNOWN"
+    }
+  },
+  "expectedReleaseCertSha256": "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315",
+  "keyFound": false,
+  "serverLocalPropertiesPresent": false
+}

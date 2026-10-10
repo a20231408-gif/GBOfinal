@@ -1,0 +1,150 @@
+[
+  {
+    "folderId": "1Gz9mMMSXARsJ5Y_Kz2YCF0mbpmVQOtwi",
+    "result": {
+      "files": [
+        {
+          "id": "1Bt15OSGyB3mG5bvpb14DY7TC8mnVtxvy",
+          "title": "SIB-02",
+          "mime_type": "application/vnd.google-apps.folder",
+          "size": null,
+          "url": "https://drive.google.com/drive/folders/1Bt15OSGyB3mG5bvpb14DY7TC8mnVtxvy",
+          "display_url": "https://drive.google.com/drive/folders/1Bt15OSGyB3mG5bvpb14DY7TC8mnVtxvy",
+          "file_or_folder": "folder",
+          "created_time": "2026-09-30T01:21:57.283Z",
+          "modified_time": "2026-09-30T01:21:57.283Z",
+          "parent_ids": null,
+          "drive_id": null,
+          "current_user_can_share": null,
+          "has_augmented_permissions": null,
+          "shared": true,
+          "permissions": null,
+          "source_visibility_status": "access_not_verified",
+          "can_download": true,
+          "can_list_children": true
+        },
+        {
+          "id": "1WsXW2dtKstCkC9S7xCzYhSA3WiFNHIym",
+          "title": "SIB-07",
+          "mime_type": "application/vnd.google-apps.folder",
+          "size": null,
+          "url": "https://drive.google.com/drive/folders/1WsXW2dtKstCkC9S7xCzYhSA3WiFNHIym",
+          "display_url": "https://drive.google.com/drive/folders/1WsXW2dtKstCkC9S7xCzYhSA3WiFNHIym",
+          "file_or_folder": "folder",
+          "created_time": "2026-09-30T01:20:30.577Z",
+          "modified_time": "2026-09-30T01:20:30.577Z",
+          "parent_ids": null,
+          "drive_id": null,
+          "current_user_can_share": null,
+          "has_augmented_permissions": null,
+          "shared": true,
+          "permissions": null,
+          "source_visibility_status": "access_not_verified",
+          "can_download": true,
+          "can_list_children": true
+        }
+      ]
+    }
+  },
+  {
+    "folderId": "1ovq7-jJoJwTIW9WGpEFGrNvJvxbQ__vp",
+    "result": {
+      "files": [
+        {
+          "id": "1nygdYIfb6Rxzq0M_Z9ci6GEZm8jPzebr",
+          "title": "SIB-07",
+          "mime_type": "application/vnd.google-apps.folder",
+          "size": null,
+          "url": "https://drive.google.com/drive/folders/1nygdYIfb6Rxzq0M_Z9ci6GEZm8jPzebr",
+          "display_url": "https://drive.google.com/drive/folders/1nygdYIfb6Rxzq0M_Z9ci6GEZm8jPzebr",
+          "file_or_folder": "folder",
+          "created_time": "2026-09-30T01:21:30.932Z",
+          "modified_time": "2026-09-30T01:21:30.932Z",
+          "parent_ids": null,
+          "drive_id": null,
+          "current_user_can_share": null,
+          "has_augmented_permissions": null,
+          "shared": true,
+          "permissions": null,
+          "source_visibility_status": "access_not_verified",
+          "can_download": true,
+          "can_list_children": true
+        },
+        {
+          "id": "1udYfP1nTv--FEQvMJcIzswFFMKrQnEjA",
+          "title": "SIB-02",
+          "mime_type": "application/vnd.google-apps.folder",
+          "size": null,
+          "url": "https://drive.google.com/drive/folders/1udYfP1nTv--FEQvMJcIzswFFMKrQnEjA",
+          "display_url": "https://drive.google.com/drive/folders/1udYfP1nTv--FEQvMJcIzswFFMKrQnEjA",
+          "file_or_folder": "folder",
+          "created_time": "2026-09-30T01:20:19.445Z",
+          "modified_time": "2026-09-30T01:20:19.445Z",
+          "parent_ids": null,
+          "drive_id": null,
+          "current_user_can_share": null,
+          "has_augmented_permissions": null,
+          "shared": true,
+          "permissions": null,
+          "source_visibility_status": "access_not_verified",
+          "can_download": true,
+          "can_list_children": true
+        }
+      ]
+    }
+  },
+  {
+    "folderId": "1wuEOkwAufnQjZWXr85p-gvvGqJJriQSA",
+    "result": {
+      "files": [
+        {
+          "id": "1XwCwftyqkZAVJOlyh5DpB1CvKWZFP6p9",
+          "title": "SIB-02",
+          "mime_type": "application/vnd.google-apps.folder",
+          "size": null,
+          "url": "https://drive.google.com/drive/folders/1XwCwftyqkZAVJOlyh5DpB1CvKWZFP6p9",
+          "display_url": "https://drive.google.com/drive/folders/1XwCwftyqkZAVJOlyh5DpB1CvKWZFP6p9",
+          "file_or_folder": "folder",
+          "created_time": "2026-09-30T01:20:12.030Z",
+          "modified_time": "2026-09-30T01:20:12.030Z",
+          "parent_ids": null,
+          "drive_id": null,
+          "current_user_can_share": null,
+          "has_augmented_permissions": null,
+          "shared": true,
+          "permissions": null,
+          "source_visibility_status": "access_not_verified",
+          "can_download": true,
+          "can_list_children": true
+        }
+      ]
+    }
+  },
+  {
+    "folderId": "1a98TJ_w8IL_4WombxRt562AQS5Wm9wzA",
+    "result": {
+      "files": [
+        {
+          "id": "1a6L0EV-RpGBks9HPsvt_Sp0Fd9KOlOoV",
+          "title": "SIB-02",
+          "mime_type": "application/vnd.google-apps.folder",
+          "size": null,
+          "url": "https://drive.google.com/drive/folders/1a6L0EV-RpGBks9HPsvt_Sp0Fd9KOlOoV",
+          "display_url": "https://drive.google.com/drive/folders/1a6L0EV-RpGBks9HPsvt_Sp0Fd9KOlOoV",
+          "file_or_folder": "folder",
+          "created_time": "2026-09-30T01:19:57.455Z",
+          "modified_time": "2026-09-30T01:19:57.455Z",
+          "parent_ids": null,
+          "drive_id": null,
+          "current_user_can_share": null,
+          "has_augmented_permissions": null,
+          "shared": true,
+          "permissions": null,
+          "source_visibility_status": "access_not_verified",
+          "can_download": true,
+          "can_list_children": true
+        }
+      ]
+    }
+  }
+]

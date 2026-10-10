@@ -1,0 +1,1120 @@
+--- before/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt
+@@ -1,4 +1,7 @@
+ package com.tuempresa.inventariovial
++
++import androidx.compose.runtime.rememberCoroutineScope
++import kotlinx.coroutines.launch
+ 
+ import androidx.compose.material3.*
+ import com.tuempresa.inventariovial.auth.*
+@@ -224,7 +227,7 @@
+         ) {
+ 
+             when {
+-                newSicCode!=null -> com.tuempresa.inventariovial.sic.SicFieldWorkspace(inventoryViewModel,
++                newSicCode!=null -> com.tuempresa.inventariovial.sic.InventoryElementWorkspace(inventoryViewModel,
+                     com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(newSicCode!!)!!,newSicId) {newSicCode=null;newSicId=null}
+                 showDelivery -> AssetOrderScreen(inventoryViewModel) { showDelivery = false }
+                 showExport -> SicExportScreen(inventoryViewModel) { showExport = false }
+@@ -244,6 +247,7 @@
+                             } else {
+                             selectedDraft = draft
+                             selectedAsset = when(draft.sicCode) {
++                                "SIC-18" -> RoadAssetType.CULVERT
+                                 "SIC-19" -> RoadAssetType.DITCH
+                                 "SIC-23" -> RoadAssetType.RIGHT_OF_WAY
+                                 "SIC-21" -> RoadAssetType.SIGNALIZATION
+@@ -445,12 +449,15 @@
+             )
+         }
+ 
+-        item {inventoryViewModel?.let {com.tuempresa.inventariovial.sic.NewSicDashboard(it,onNewSic)}}
+-
+-        items(RoadAssetType.entries.toList().chunked(2)) {assets->
+-            Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(12.dp)) {
+-                assets.forEach {asset->Box(Modifier.weight(1f)) {AssetButton(asset) {onAssetSelected(asset)}}}
+-                if(assets.size==1) Spacer(Modifier.weight(1f))
++        com.tuempresa.inventariovial.sic.InventoryElements.home.groupBy {it.family}.forEach {(family,destinations)->
++            item {Text(family,style=MaterialTheme.typography.titleMedium)}
++            items(destinations.chunked(2)) {pair->
++                com.tuempresa.inventariovial.core.InventoryFieldRows(pair) {entry->
++                    InventoryElementButton(entry.title,entry.subtitle) {
++                        entry.asset?.let(onAssetSelected)
++                        entry.format?.let(onNewSic)
++                    }
++                }
+             }
+         }
+ 
+@@ -644,7 +651,12 @@
+ 
+ 
+ @Composable
+-fun AssetButton(asset:RoadAssetType,onClick:()->Unit) {
++fun AssetButton(asset:RoadAssetType,onClick:()->Unit) = InventoryElementButton(
++    if(asset==RoadAssetType.CULVERT) "Alcantarillas" else asset.title,
++    if(asset==RoadAssetType.CULVERT) "SIC-18 · SIC-18A cuando corresponde" else "${asset.sicCode} · ${asset.subtitle}",onClick)
++
++@Composable
++fun InventoryElementButton(title:String,subtitle:String,onClick:()->Unit) {
+     OutlinedCard(onClick=onClick,modifier=Modifier.fillMaxWidth().heightIn(min=168.dp),
+         colors=CardDefaults.outlinedCardColors(containerColor=MaterialTheme.colorScheme.surface),
+         border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outlineVariant)) {
+@@ -652,8 +664,8 @@
+             Surface(color=MaterialTheme.colorScheme.primaryContainer,shape=androidx.compose.foundation.shape.RoundedCornerShape(12.dp)) {
+                 Text("+",Modifier.padding(horizontal=16.dp,vertical=6.dp),style=MaterialTheme.typography.headlineSmall,color=MaterialTheme.colorScheme.primary)
+             }
+-            Text(asset.title,style=MaterialTheme.typography.titleLarge,fontWeight=FontWeight.Bold,color=MaterialTheme.colorScheme.primary)
+-            Text("${asset.sicCode} · ${asset.subtitle}",style=MaterialTheme.typography.bodyMedium)
++            Text(title,style=MaterialTheme.typography.titleLarge,fontWeight=FontWeight.Bold,color=MaterialTheme.colorScheme.primary)
++            Text(subtitle,style=MaterialTheme.typography.bodyMedium)
+         }
+     }
+ }
+@@ -1797,21 +1809,35 @@
+     draftRecord: InventoryRecordEntity? = null
+ ) {
+ 
++    var culvertExtraRaw by rememberSaveable {mutableStateOf("{}")}
++    var culvertExpanded by rememberSaveable {mutableStateOf(false)}
++    var pendingCulvertCondition by remember {mutableStateOf<Sic18FormState?>(null)}
++    var culvertDraftError by remember {mutableStateOf<String?>(null)}
++    var culvertExtraDirty by rememberSaveable {mutableStateOf(false)}
++    var showCulvertExit by remember {mutableStateOf(false)}
++    fun culvertExtra() = org.json.JSONObject(culvertExtraRaw).let {j->j.keys().asSequence().associateWith {j.getString(it)}}
+     var savedCulvert by remember {mutableStateOf<InventoryRecordEntity?>(null)}
+-    var completeCulvert by remember {mutableStateOf(false)}
+     savedCulvert?.let {record->
+-        if(completeCulvert) SupplementaryScreen(inventoryViewModel,record,com.tuempresa.inventariovial.supplementary.SupplementaryFormat.SIC18A,onSave)
+-        else Column(Modifier.fillMaxSize().padding(24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+-            Text("✓ SIC-18 guardado",style=MaterialTheme.typography.headlineMedium)
+-            Text("Condición mala detectada",color=MaterialTheme.colorScheme.error,style=MaterialTheme.typography.titleLarge)
+-            Text("Puedes completar la ficha asociada ahora o desde el historial.")
+-            Button(onClick={completeCulvert=true}) {Text("Completar SIC-18A")}
+-            OutlinedButton(onClick=onSave) {Text("Volver al inicio")}
+-        }
++        com.tuempresa.inventariovial.field.CulvertUnifiedScreen(inventoryViewModel,record.id,culvertExtra(),onSave)
+         return
+     }
+     val context =
+         LocalContext.current
++    val culvertScope=rememberCoroutineScope()
++    fun persistCulvertExtra(id:String,after:(()->Unit)?=null) {
++        if(assetType==RoadAssetType.CULVERT && culvertExtra().isNotEmpty()) culvertScope.launch {
++            runCatching {com.tuempresa.inventariovial.sic.SicFieldRepository(com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context))
++                .saveCulvertDraft(id,culvertExtra(),inventoryViewModel.field.auth.sessions.requireUser().id)}
++                .onSuccess {culvertExtraDirty=false;after?.invoke()}.onFailure {culvertDraftError=it.message}
++        } else after?.invoke()
++    }
++    LaunchedEffect(draftRecord?.id) {
++        if(assetType==RoadAssetType.CULVERT && draftRecord!=null) {
++            com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).inventoryDao().sicExtension(draftRecord.id)?.let {
++                culvertExtraRaw=org.json.JSONObject(it.values()).toString();culvertExpanded=true
++            }
++        }
++    }
+     val fieldSession by inventoryViewModel.field.session.collectAsState()
+     val survey = remember { SurveyPreferences(context) }
+     val prior = remember { survey.last()?.takeIf { it.sessionId == fieldSession?.sessionId } }
+@@ -2474,9 +2500,8 @@
+                                         ),
+ 
+                                     onSuccess = {
+-                                        if(assetType==RoadAssetType.CULVERT && com.tuempresa.inventariovial.catalog.EngineeringConditions.badCulvert(sic18State.structuralConditionCode,sic18State.functionalConditionCode)) {
++                                        if(assetType==RoadAssetType.CULVERT) {
+                                             savedCulvert=inventoryViewModel.lastSavedRecord
+-                                            completeCulvert=true
+                                         } else onSave()
+                                     },
+                                     onError = { error -> formError = error }
+@@ -2529,7 +2554,7 @@
+     LaunchedEffect(capturedPhotos,photoCaptures) {
+         if(capturedPhotos.isNotEmpty() || draftId!=null) {
+             kotlinx.coroutines.delay(400)
+-            inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
++            inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
+         }
+     }
+ 
+@@ -2539,14 +2564,15 @@
+         verticalArrangement = Arrangement.spacedBy(18.dp)
+     ) {
+         item {
+-            OutlinedButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})}) { Text("Guardar borrador") }
++            OutlinedButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})}) { Text("Guardar borrador") }
+             if(draftNotice.isNotBlank()) Text(draftNotice)
++            culvertDraftError?.let {ErrorText(it)}
+         }
+ 
+         item {
+ 
+             OutlinedButton(
+-                onClick = onBack
++                onClick = {if(assetType==RoadAssetType.CULVERT && culvertExtraDirty) showCulvertExit=true else onBack()}
+             ) {
+                 Text("← Volver")
+             }
+@@ -2756,11 +2782,17 @@
+ 
+                     Sic18Fields(
+                         state = sic18State,
+-                        onCompleteSic18A = saveAsset,
++                        onCompleteSic18A = {culvertExpanded=true},
+                         onStateChange = {
+-                            sic18State = it
++                            if(com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(sic18State.structuralConditionCode,sic18State.functionalConditionCode) &&
++                                !com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(it.structuralConditionCode,it.functionalConditionCode) && culvertExtra().isNotEmpty()) pendingCulvertCondition=it
++                            else sic18State = it
+                         }
+                     )
++                    if(culvertExpanded) {
++                        Text("$route · $roadbed · PR $startPr + $startDistance m · ${sic18State.spans} vanos")
++                        com.tuempresa.inventariovial.field.CulvertSupplementFields(culvertExtra(),true) {values->culvertExtraRaw=org.json.JSONObject(values).toString();culvertExtraDirty=true}
++                    }
+                 }
+ 
+                 RoadAssetType.DITCH -> {
+@@ -2986,7 +3018,7 @@
+ 
+                 Text(
+                     text =
+-                        "Revisar y guardar",
++                        "Revisar y finalizar",
+                     fontSize = 20.sp,
+                     fontWeight =
+                         FontWeight.Bold
+@@ -2994,6 +3026,17 @@
+             }
+         }
+     }
++    pendingCulvertCondition?.let {next->androidx.compose.material3.AlertDialog(onDismissRequest={pendingCulvertCondition=null},title={Text("Conservar detalle existente")},
++        text={Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")},
++        confirmButton={TextButton(onClick={sic18State=next;pendingCulvertCondition=null}) {Text("Conservar como antecedente")}},
++        dismissButton={TextButton(onClick={pendingCulvertCondition=null}) {Text("Cancelar cambio")}})}
++
++    androidx.activity.compose.BackHandler(enabled=assetType==RoadAssetType.CULVERT && culvertExtraDirty) {showCulvertExit=true}
++    if(showCulvertExit) androidx.compose.material3.AlertDialog(onDismissRequest={showCulvertExit=false},title={Text("Guardar cambios")},
++        text={Text("Conserva el detalle de condición mala como borrador antes de volver.")},
++        confirmButton={TextButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it){showCulvertExit=false;onBack()}},{culvertDraftError=it})}) {Text("Guardar borrador y volver")}},
++        dismissButton={TextButton(onClick={showCulvertExit=false}) {Text("Seguir editando")}})
++
+ }
+ 
+ 
+@@ -3029,7 +3072,7 @@
+ 
+ 
+     SectionTitle(
+-        "SIC-18 · Alcantarillas"
++        "Datos de la alcantarilla · SIC-18"
+     )
+ 
+     Text(
+@@ -3183,15 +3226,17 @@
+     } else Text("Dimensión 2: no aplica a sección circular")
+ 
+ 
+-    ConditionSelector("CONDICIÓN ESTRUCTURAL",state.structuralConditionCode,SicCatalogRepository.sic18StructuralDescriptions) {onStateChange(state.copy(structuralConditionCode=it))}
+-    ConditionSelector("Condición funcional",state.functionalConditionCode,com.tuempresa.inventariovial.catalog.EngineeringConditions.functional) {onStateChange(state.copy(functionalConditionCode=it))}
++    ConditionSelector("CONDICIÓN ESTRUCTURAL",state.structuralConditionCode,emptyMap()) {onStateChange(state.copy(structuralConditionCode=it))}
++    com.tuempresa.inventariovial.sic.TechnicalCriterion("Ver criterio estructural") {SicCatalogRepository.sic18StructuralDescriptions.forEach {(code,description)->Text("$code · $description")}}
++    ConditionSelector("Condición funcional",state.functionalConditionCode,emptyMap()) {onStateChange(state.copy(functionalConditionCode=it))}
++    com.tuempresa.inventariovial.sic.TechnicalCriterion("Ver criterio funcional") {com.tuempresa.inventariovial.catalog.EngineeringConditions.functional.forEach {(code,description)->Text("$code · $description")}}
+     if(com.tuempresa.inventariovial.catalog.EngineeringConditions.badCulvert(state.structuralConditionCode,state.functionalConditionCode)) {
+         Card(Modifier.fillMaxWidth(),colors=CardDefaults.cardColors(containerColor=MaterialTheme.colorScheme.errorContainer)) {
+             Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                 Text("⚠ CONDICIÓN MALA",style=MaterialTheme.typography.titleLarge)
+                 Text("Corresponde completar SIC-18A")
+-                Text("Primero se guardará SIC-18 con sus datos y fotografías.")
+-                if(onCompleteSic18A!=null) Button(onClick=onCompleteSic18A) {Text("COMPLETAR SIC-18A")}
++                Text("Se requiere información complementaria SIC-18A.")
++                if(onCompleteSic18A!=null) Button(onClick=onCompleteSic18A) {Text("Completar detalle de condición mala")}
+             }
+         }
+     }
+@@ -3851,23 +3896,28 @@
+     } ?: options.first()
+ }
+ @Composable
++fun ChoiceSelector(options: List<String>, selected: String, onSelected: (String) -> Unit) =
++    ChoiceSelector(options, selected, true, onSelected)
++
++@Composable
+ fun ChoiceSelector(
+     options: List<String>,
+     selected: String,
++    enabled: Boolean,
+     onSelected: (String) -> Unit
+ ) {
+ 
+     var expanded by remember { mutableStateOf(false) }
+     if(options.size > 3 || options.any { it.length > 40 }) {
+         Box(Modifier.fillMaxWidth()) {
+-            OutlinedButton(onClick={expanded=true}, modifier=Modifier.fillMaxWidth()) { Text(selected.ifBlank { "Seleccionar" }) }
++            OutlinedButton(enabled=enabled,onClick={expanded=true}, modifier=Modifier.fillMaxWidth()) { Text(selected.ifBlank { "Seleccionar" }) }
+             DropdownMenu(expanded=expanded,onDismissRequest={expanded=false}) {
+                 options.forEach { option -> DropdownMenuItem(text={Text(if(option==selected) "✓ $option" else option)},
+                     onClick={onSelected(option);expanded=false}) }
+             }
+         }
+     } else LazyRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+-        items(options) { option -> FilterChip(selected=selected==option,onClick={onSelected(option)},label={Text(option)}) }
++        items(options) { option -> FilterChip(enabled=enabled,selected=selected==option,onClick={onSelected(option)},label={Text(option)}) }
+     }
+ 
+ }
+--- before/app/src/main/java/com/tuempresa/inventariovial/RecordHistoryScreen.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/RecordHistoryScreen.kt
+@@ -26,7 +26,10 @@
+ import com.tuempresa.inventariovial.data.entity.InventoryRecordEntity
+ 
+ @Composable
+-fun FinalLocationCapture(location: GeoLocation?, onLocation: (GeoLocation) -> Unit) {
++fun FinalLocationCapture(location: GeoLocation?, onLocation: (GeoLocation) -> Unit) = FinalLocationCapture(location,onLocation,"final")
++
++@Composable
++fun FinalLocationCapture(location: GeoLocation?, onLocation: (GeoLocation) -> Unit, label: String) {
+     val context = LocalContext.current
+     val provider = remember(context) { TabletLocationProvider(context) }
+     var locating by remember { mutableStateOf(value = false) }
+@@ -56,9 +59,9 @@
+         } else {
+             permissions.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+         }
+-    }) { Text(if (locating) "Obteniendo GPS final…" else "Capturar GPS final") }
+-    if (location == null) Text("GPS final: pendiente (opcional)")
+-    else Text("GPS final: ${location.latitude}, ${location.longitude} · ± ${location.accuracyHorizontal} m")
++    }) { Text(if (locating) "Obteniendo GPS $label…" else "Capturar GPS $label") }
++    if (location == null) Text("GPS $label: pendiente (opcional)")
++    else Text("GPS $label: ${location.latitude}, ${location.longitude} · ± ${location.accuracyHorizontal} m")
+     error?.let { ErrorText(it) }
+ }
+ 
+@@ -70,19 +73,23 @@
+ ) {
+     val ordered by viewModel.sequencedHistory.collectAsState()
+     var showAnnulled by remember { mutableStateOf(false) }
+-    val records = ordered.filter {
++    val visibleRecords = ordered.filter {
+         it.item.record.sicCode != "SCAP" &&
+         (showAnnulled || it.item.record.status == "ACTIVE" || it.item.record.status=="DRAFT" && com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(it.item.record.sicCode)!=null)
+     }
+ 
++    val elementRecords=visibleRecords.map {it.item.record}
++    val elementExtensions=visibleRecords.mapNotNull {it.item.sicExtension}
++    val records=visibleRecords.filter {com.tuempresa.inventariovial.sic.InventoryElements.parentId(it.item.record,elementExtensions,elementRecords)==it.item.record.id}
++
+     var extension by remember {mutableStateOf<Pair<String,com.tuempresa.inventariovial.sic.SicFieldFormat>?>(null)}
+-    extension?.let {(id,format)->com.tuempresa.inventariovial.sic.SicFieldWorkspace(viewModel,format,id) {extension=null};return}
++    extension?.let {(id,format)->com.tuempresa.inventariovial.sic.InventoryElementWorkspace(viewModel,format,id) {extension=null};return}
+ 
+     var technicalId by remember { mutableStateOf<String?>(null) }
+     technicalId?.let { id ->
+-        com.tuempresa.inventariovial.field.EngineeringEditScreen(id) {
+-            technicalId = null
+-        }
++        if(ordered.any {it.item.record.id==id && it.item.record.sicCode=="SIC-18"})
++            com.tuempresa.inventariovial.field.CulvertUnifiedScreen(viewModel,id,onBack={technicalId=null})
++        else com.tuempresa.inventariovial.field.EngineeringEditScreen(id) {technicalId=null}
+         return
+     }
+ 
+@@ -155,7 +162,8 @@
+                 viewModel,
+                 { val format=com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(row.item.record.sicCode)
+                     if(format!=null) extension=row.item.record.id to format else technicalId = row.item.record.id },
+-                { complementary = row.item.record to it }
++                { complementary = row.item.record to it },
++                visibleRecords.filter {it.item.sicExtension?.sourceRecordId==row.item.record.id && it.item.record.sicCode=="SIC-09"}.map {it.item}
+             ) {
+                 error = it
+             }
+@@ -169,6 +177,7 @@
+     viewModel: InventoryViewModel,
+     onTechnical: ()->Unit,
+     onSupplementary: (SupplementaryFormat)->Unit,
++    fajaWidths: List<com.tuempresa.inventariovial.data.entity.InventoryRecordWithPhotos>,
+     onError: (String) -> Unit
+ ) {
+     val item = row.item
+@@ -194,7 +203,9 @@
+ 
+     Card(Modifier.fillMaxWidth()) {
+         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+-            Text("${record.sicCode} · ${record.assetType}", style = MaterialTheme.typography.titleMedium)
++            Text(if(record.sicCode in setOf("SIC-08","SIC-09","SIC-13","SIC-34","SIC-18")) com.tuempresa.inventariovial.sic.InventoryElements.title(record.sicCode) else record.assetType, style = MaterialTheme.typography.titleLarge)
++            Text(record.sicCode,style=MaterialTheme.typography.bodySmall)
++            if(record.sicCode=="SIC-08") Text("SIC-08 ${if(item.sicExtension?.status=="COMPLETE") "✓" else "Pendiente"} · SIC-09 ${if(fajaWidths.any {it.sicExtension?.status=="COMPLETE"}) "✓" else "Pendiente"}")
+             Text("${row.asset?.shortCode ?: "Sin número operativo"} · ${row.position.chainageM?.let { String.format(java.util.Locale.US,"%.2f m",it) } ?: "Posición no determinada"}")
+             Text(when(row.position.source) {
+                 com.tuempresa.inventariovial.road.PositionSource.AXIS_GEOMETRY -> "Posición geométrica sobre eje (GNSS)"
+@@ -221,7 +232,7 @@
+             item.photos.sortedBy { it.photoIndex }.forEach { photo ->
+                 Text("Foto ${photo.photoIndex} · ${DriveUploadPolicy.statusLabel(photo.syncStatus)}")
+             }
+-            Text(if (record.status == "ACTIVE") "Estado: activo" else "Estado: anulado")
++            Text(when(record.status) {"ACTIVE"->"Estado: activo";"DRAFT"->"Estado: borrador";else->"Estado: anulado"})
+             if(com.tuempresa.inventariovial.server.ServerConfiguration.enabled) {
+                 Text(if(com.tuempresa.inventariovial.server.ServerConfiguration.enabled) "Servidor: ${record.serverSyncStatus}" else "Servidor: sin configurar · datos guardados localmente")
+                 record.serverSyncError?.let { ErrorText(it) }
+@@ -237,7 +248,7 @@
+                 Text("Fin: PR ${record.endPrCode} + ${record.endDistanceM} · Lado: ${record.sideCode}")
+             }
+             item.sic18?.let {d->
+-                val state = if(item.sicExtension?.status=="DRAFT") "Borrador" else com.tuempresa.inventariovial.supplementary.Sic18AStatus.label(d,item.sic18a)
++                val state = com.tuempresa.inventariovial.sic.InventoryElements.culvertDetailStatus(d,item.sic18a,item.sicExtension)
+                 Text("SIC-18A: $state",style=MaterialTheme.typography.titleMedium,
+                     color=if(state=="Pendiente") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
+ 
+@@ -260,12 +271,12 @@
+                     val v=d.values()[f.key].orEmpty();Text("${f.label}: ${f.options.find {it.substringBefore(" - ")==v} ?: v}")
+                 }
+             }
+-            if(record.status=="ACTIVE" && record.sicCode in listOf("SIC-18","SIC-19","SIC-20","SIC-21","SIC-22")) OutlinedButton(onClick=onTechnical) {Text("Editar ficha técnica y fotografías")}
++            if(record.status=="ACTIVE" && record.sicCode in listOf("SIC-18","SIC-19","SIC-20","SIC-21","SIC-22")) OutlinedButton(onClick=onTechnical) {Text(if(record.sicCode=="SIC-18") "Abrir alcantarilla / exportar formatos" else "Editar ficha técnica y fotografías")}
+             if(com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(record.sicCode)!=null) {
+                 OutlinedButton(onClick=onTechnical) {Text(if(record.status=="DRAFT") "Editar borrador" else "Ver ficha / exportar")}
+             } else if (!editing) {
+                 if(record.status=="ACTIVE") SupplementaryFormat.entries.filter { it.enabled &&
+-                    if(record.sicCode=="SIC-17") it!=SupplementaryFormat.SIC18A else record.sicCode=="SIC-18" && it==SupplementaryFormat.SIC18A
++                    record.sicCode=="SIC-17" && it!=SupplementaryFormat.SIC18A
+                 }.forEach { format -> OutlinedButton(onClick={onSupplementary(format)}) {Text(if(format==SupplementaryFormat.SIC18A && item.sic18a!=null) if(item.sicExtension?.status=="DRAFT") "Editar borrador SIC-18A" else "Ver SIC-18A / exportar" else "Completar ${format.title}")} }
+                 record.observations?.let { Text(it) }
+                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+--- before/app/src/main/java/com/tuempresa/inventariovial/core/CoreFieldTools.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/core/CoreFieldTools.kt
+@@ -19,6 +19,7 @@
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withContext
++import kotlinx.coroutines.flow.first
+ import java.io.File
+ 
+ @Composable
+@@ -29,6 +30,8 @@
+     var showFiles by remember {mutableStateOf(false)}
+     var showKmz by remember {mutableStateOf(false)}
+     var files by remember { mutableStateOf<List<GeneratedFile>>(emptyList()) }
++    var elements by remember {mutableStateOf<List<com.tuempresa.inventariovial.data.entity.InventoryRecordEntity>>(emptyList())}
++    var extensions by remember {mutableStateOf<List<com.tuempresa.inventariovial.data.entity.SicExtensionEntity>>(emptyList())}
+     var showLocation by remember { mutableStateOf(false) }
+     var error by remember {mutableStateOf<String?>(null)}
+     Card(Modifier.fillMaxWidth()) {
+@@ -36,7 +39,15 @@
+             Text("Herramientas de campo", style=MaterialTheme.typography.titleMedium)
+             Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                 OutlinedButton(onClick={showSync=true}) {Text("Drive")}
+-                OutlinedButton(onClick={scope.launch { files=withContext(Dispatchers.IO) {GeneratedFileIndex.discover(context)};showFiles=true }}) { Text("Archivos") }
++                OutlinedButton(onClick={scope.launch {
++                    withContext(Dispatchers.IO) {
++                        val dao=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).inventoryDao()
++                        elements=dao.observeAllRecords().first()
++                        extensions=dao.observeSicExtensions().first()
++                        files=GeneratedFileIndex.discover(context)
++                    }
++                    showFiles=true
++                }}) { Text("Archivos") }
+             }
+             OutlinedButton(onClick={showKmz=true}) {Text("Importar ruta KMZ")}
+         }
+@@ -45,13 +56,17 @@
+     if(showFiles) AlertDialog(onDismissRequest={showFiles=false},title={Text("Archivos generados")},
+         text={Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+             if(files.isEmpty()) Text("Todavía no hay Excel, PDF o ZIP disponibles en el dispositivo.")
+-            files.take(40).forEach { file ->
++            GeneratedFileIndex.groupByElement(files.take(40),elements,extensions).forEach {(id,group)->
++              val element=elements.find {it.id==id}
++              Text(element?.let {"${com.tuempresa.inventariovial.sic.InventoryElements.title(it.sicCode)} · ${it.routeCode} · PR ${it.startPrCode}+${it.startDistanceM}"} ?: id,style=MaterialTheme.typography.titleMedium)
++              group.forEach { file ->
+                 Text("${file.assetFamily} · ${File(file.localPath).name}")
+                 Text(if(file.syncStatus=="SYNCED") "☁ Sincronizado" else "✓ Guardado en tablet · ☁ Pendiente")
+                 Row {
+                     TextButton(onClick={ runCatching {context.startActivity(GeneratedFileIndex.open(context,file))}.onFailure {error="No hay aplicación para abrir este archivo."} }) {Text("Abrir")}
+                     TextButton(onClick={ runCatching {context.startActivity(GeneratedFileIndex.share(context,file))}.onFailure {error="No se pudo compartir el archivo."} }) {Text("Compartir")}
+                 }
++              }
+             }
+             TextButton(onClick={showLocation=!showLocation}) { Text("Ver ubicación de archivos") }
+             if(showLocation) Text("Ubicación: almacenamiento interno de Inventario Vial (carpetas de exportaciones SIC, SCAP y entregas de ruta). Android puede impedir abrir estas carpetas directamente desde DocumentsUI. Usa Abrir o Compartir para obtener el archivo.", style=MaterialTheme.typography.bodySmall)
+--- before/app/src/main/java/com/tuempresa/inventariovial/core/GeneratedFileIndex.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/core/GeneratedFileIndex.kt
+@@ -21,6 +21,15 @@
+ )
+ 
+ object GeneratedFileIndex {
++    fun groupByElement(files:List<GeneratedFile>,records:List<com.tuempresa.inventariovial.data.entity.InventoryRecordEntity>,extensions:List<com.tuempresa.inventariovial.data.entity.SicExtensionEntity>):Map<String,List<GeneratedFile>> =
++        files.groupBy {file->
++            val record=records.find {it.id==file.recordId}
++            if(record!=null) com.tuempresa.inventariovial.sic.InventoryElements.parentId(record,extensions,records)
++            else file.recordId ?: file.assetFamily
++        }
++    fun recordIdFromName(name:String):String? =
++        Regex("^SIC-(?:08|09|13|18A|18|34)_([A-Za-z0-9_-]+)\\.xlsx$").matchEntire(name)?.groupValues?.get(1)
++            ?: Regex("^([A-Za-z0-9_-]+)_SIC-(?:08|09|13|18A|18|34)\\.xlsx$").matchEntire(name)?.groupValues?.get(1)
+     private fun type(f: File) = when (f.extension.lowercase()) {
+         "pdf" -> "application/pdf"
+         "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+@@ -50,9 +59,9 @@
+                 val path = file.canonicalPath
+                 unique.putIfAbsent(path, GeneratedFile(
+                     id = MessageDigest.getInstance("SHA-256").digest(path.toByteArray()).take(12).joinToString("") { "%02x".format(it) },
+-                    recordId = null,
++                    recordId = recordIdFromName(file.name),
+                     assetFamily = if (file.name.startsWith("SCAP", true)) "SCAP" else family,
+-                    fileType = Regex("SIC-(08|09|13|18A|34)").find(file.name)?.value ?: file.extension.uppercase(),
++                    fileType = Regex("SIC-(08|09|13|18A|18|34)").find(file.name)?.value ?: file.extension.uppercase(),
+                     localPath = path,
+                     mimeType = type(file)!!,
+                     createdAt = file.lastModified(),
+--- before/app/src/main/java/com/tuempresa/inventariovial/delivery/RouteDelivery.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/delivery/RouteDelivery.kt
+@@ -27,7 +27,15 @@
+         RoadAxisStorage(dao).refresh(reference, config, route)
+         val snapshots = snapshots(route)
+         require(snapshots.isNotEmpty()) { "No hay inventario SIC activo para esta ruta. SCAP se entrega desde su sección." }
+-        val plan = DrivePathPlanner.plan(snapshots.map(::row), ChainageCalculator(reference.prs), policy)
++        val recordList=snapshots.map {it.record}
++        val extensionList=snapshots.mapNotNull {it.sicExtension}
++        val elements=com.tuempresa.inventariovial.sic.InventoryElements.group(recordList,extensionList)
++        val planRows=elements.map {element->
++            val root=row(snapshots.single {it.record.id==element.record.id})
++            root.copy(photos=root.photos+snapshots.filter {child->element.children.any {it.id==child.record.id}}
++                .flatMap {it.photos.filter {p->p.scapInspectionId==null}.map {p->p.copy(recordId=root.record.id)}})
++        }
++        val plan = DrivePathPlanner.plan(planRows, ChainageCalculator(reference.prs), policy)
+         require(plan.folders.all { it.plannedPath != null }) { "Hay familias sin SIB o carpetas válidas. Revisa las advertencias antes de entregar." }
+         val identity = fingerprint(snapshots, policy)
+         val previous = dao.deliveries(route).firstOrNull { it.status != "PREPARED" }
+@@ -78,7 +86,8 @@
+                 "mimeType" to SicExcelWriter.XLSX_MIME,"pathVersion" to 2,
+                 "logicalPath" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))
+             // Supplement shares the parent folder/UUID; drafts are never sent as final documents.
+-            val supplementary=records.filter {SicExportFormat.SIC18A.appliesTo(it)}
++            val supplementary=records.filter {SicExportFormat.SIC18A.appliesTo(it) && it.sic18?.let {detail->
++                com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(detail.structuralConditionCode,detail.functionalConditionCode)}==true}
+             if(supplementary.isNotEmpty()) {
+                 val extra=File(directory,"${record.id}_SIC-18A.xlsx")
+                 extra.outputStream().use {SicExcelWriter.write(it,supplementary,SicExportFormat.SIC18A,heading)}
+@@ -86,6 +95,19 @@
+                     "sicCode" to "SIC-18A","elementFolder" to folder.asset.folderName,"fileName" to "SIC-18A.xlsx",
+                     "mimeType" to SicExcelWriter.XLSX_MIME,"pathVersion" to 2,
+                     "logicalPath" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))
++            }
++            // Width records retain their UUID/ACK identity; their documents use the parent element folder.
++            val widths=exports.filter {it.record.sicCode=="SIC-09" && it.sicExtension?.sourceRecordId==record.id}
++            if(record.sicCode=="SIC-08" && widths.isNotEmpty()) {
++                widths.forEach {width->
++                    val extra=File(directory,"${width.record.id}_SIC-09.xlsx")
++                    extra.outputStream().use {SicExcelWriter.write(it,listOf(width),SicExportFormat.SIC09,heading)}
++                    add(extra,json("kind" to "sic","recordId" to width.record.id,"routeCode" to route,"sibCode" to folder.asset.sibCode,
++                        "sicCode" to "SIC-09","elementFolder" to folder.asset.folderName,
++                        "fileName" to if(widths.size==1) "SIC-09.xlsx" else "SIC-09_${width.record.id}.xlsx",
++                        "mimeType" to SicExcelWriter.XLSX_MIME,"pathVersion" to 2,
++                        "logicalPath" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))
++                }
+             }
+         }
+         check(fingerprint(snapshots(route), policy) == identity) { "El inventario cambió mientras se preparaba. Vuelve a preparar la entrega." }
+--- before/app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt
+@@ -62,7 +62,9 @@
+     val allDrafts by field.drafts.collectAsState()
+     val context=LocalContext.current
+     val currentUser by field.auth.sessions.current.collectAsState()
+-    val drafts = allDrafts.filter { currentUser!=null && it.sicCode != "SCAP" && com.tuempresa.inventariovial.core.InventoryDraftStore.accessible(context,it.id) }
++    val extensions by field.dao.observeSicExtensions().collectAsState(initial=emptyList())
++    val accessibleDrafts = allDrafts.filter { currentUser!=null && it.sicCode != "SCAP" && com.tuempresa.inventariovial.core.InventoryDraftStore.accessible(context,it.id) }
++    val drafts=accessibleDrafts.filter {com.tuempresa.inventariovial.sic.InventoryElements.parentId(it,extensions,accessibleDrafts)==it.id}
+     var showSession by remember { mutableStateOf(false) }
+     var showSettings by remember { mutableStateOf(false) }
+     var message by remember { mutableStateOf<String?>(null) }
+@@ -83,7 +85,7 @@
+                 Text("Borradores por completar",style=MaterialTheme.typography.titleMedium)
+                 drafts.forEach { draft ->
+                     OutlinedButton(onClick={ onResumeDraft(draft) }) {
+-                        Text("Continuar ${draft.sicCode} · ${draft.routeCode} · ${draft.id.take(8)}")
++                        Text("Continuar ${com.tuempresa.inventariovial.sic.InventoryElements.title(draft.sicCode)} · ${draft.routeCode} · ${draft.id.take(8)}")
+                     }
+                 }
+                 Text("Los puntos están guardados. Completa los datos y las fotografías del registro.")
+@@ -178,7 +180,7 @@
+ @Composable
+ fun SupplementaryScreen(viewModel: InventoryViewModel,record: InventoryRecordEntity,format: SupplementaryFormat,onBack: ()->Unit) {
+     if(format==SupplementaryFormat.SIC18A) {
+-        com.tuempresa.inventariovial.sic.SicFieldWorkspace(viewModel,com.tuempresa.inventariovial.sic.SicFieldFormat.SIC18A,record.id,onBack)
++        CulvertUnifiedScreen(viewModel,record.id,onBack=onBack)
+         return
+     }
+     var registered by remember(record.id,format) { mutableStateOf(false) }
+--- before/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldRepository.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldRepository.kt
+@@ -21,13 +21,17 @@
+         return null
+     }
+     suspend fun inheritCurrent(s:SicFieldState):SicFieldState {
++        if(s.format==SicFieldFormat.SIC09 && s.sourceRecordId!=null) {
++            val parent=dao.sicExtension(s.sourceRecordId)
++            if(parent?.formatCode=="SIC-08") return s.copy(values=s.values+parent.values().filterKeys {it in sharedKeys || it=="faja"})
++        }
+         if(s.format!=SicFieldFormat.SIC18A) return s
+         val p=s.sourceRecordId?.let {dao.snapshot(it)} ?: return s
+         return s.copy(values=s.values+core(p.record)+com.tuempresa.inventariovial.supplementary.Sic18AStatus.inherited(requireNotNull(p.sic18),null))
+     }
+     suspend fun fromFaja(parentId:String):SicFieldState {
+         val r=requireNotNull(dao.recordById(parentId))
+-        require(r.sicCode=="SIC-08" && r.status=="ACTIVE") {"Selecciona una faja SIC-08 finalizada"}
++        require(r.sicCode=="SIC-08" && r.status in setOf("ACTIVE","DRAFT")) {"Selecciona una faja activa o en borrador"}
+         val parent=requireNotNull(dao.sicExtension(parentId))
+         val v=parent.values()
+         return SicFieldState(SicFieldFormat.SIC09,v.filterKeys {it in sharedKeys}+mapOf("faja" to v["faja"].orEmpty()),parentId)
+@@ -45,16 +49,21 @@
+         require(old==null || s.format==SicFieldFormat.SIC18A || old.status=="DRAFT") {"La ficha ya está finalizada"}
+         if(s.sourceRecordId!=null) {
+             val parent=requireNotNull(dao.recordById(s.sourceRecordId)) {"Registro fuente inexistente"}
+-            require(parent.status=="ACTIVE") {"El registro fuente debe estar activo"}
++            require(parent.status=="ACTIVE" || !finalize && s.format==SicFieldFormat.SIC09 && parent.status=="DRAFT") {"El registro fuente debe estar activo"}
+             require(parent.sicCode==if(s.format==SicFieldFormat.SIC18A) "SIC-18" else "SIC-08") {"Relación incompatible"}
+         }
+         val now=maxOf(System.currentTimeMillis(),(old?.updatedAt ?: 0)+1)
+         if(s.format!=SicFieldFormat.SIC18A) {
+             val r=InventoryRecordEntity(key,s.format.code,s.format.family,s.text("routeCode"),s.text("roadbedCode"),s.text("startPrCode"),
+                 SicFieldState.number(s.text("startDistanceM")) ?: 0.0,s.text("endPrCode").ifBlank {null},SicFieldState.number(s.text("endDistanceM")),s.text("sideCode").ifBlank {null},
+-                old?.latitude ?: 0.0,old?.longitude ?: 0.0,old?.altitudeM,old?.gpsAccuracyM,s.text("surveyDate"),null,
+-                if(finalize) "ACTIVE" else "DRAFT","PENDING","PENDING",old?.createdAt ?: now,now,locationSource="CONTRACTUAL_PR_ONLY",sessionId=sessionId ?: old?.sessionId)
++                SicFieldState.number(s.text("_latitude")) ?: old?.latitude ?: 0.0,SicFieldState.number(s.text("_longitude")) ?: old?.longitude ?: 0.0,
++                SicFieldState.number(s.text("_altitude")) ?: old?.altitudeM,SicFieldState.number(s.text("_accuracy")) ?: old?.gpsAccuracyM,s.text("surveyDate"),null,
++                if(finalize) "ACTIVE" else "DRAFT","PENDING","PENDING",old?.createdAt ?: now,now,
++                endLatitude=SicFieldState.number(s.text("_endLatitude")) ?: old?.endLatitude,endLongitude=SicFieldState.number(s.text("_endLongitude")) ?: old?.endLongitude,
++                endGpsAccuracyM=SicFieldState.number(s.text("_endAccuracy")) ?: old?.endGpsAccuracyM,
++                locationSource=if(s.text("_latitude").isNotBlank()) "TABLET_GNSS" else old?.locationSource ?: "CONTRACTUAL_PR_ONLY",sessionId=sessionId ?: old?.sessionId)
+             dao.insertOrCompleteDraft(r)
++            if(photoPaths!=null) savePhotos(key,photoPaths,categories,captures,now)
+         } else {
+             require(old?.sicCode=="SIC-18" && old.status=="ACTIVE") {"SIC-18A requiere una alcantarilla activa"}
+             dao.saveSic18A(Sic18AEntity.from(key,s.values))
+@@ -77,6 +86,38 @@
+         dao.saveSicExtension(SicExtensionEntity(key,s.format.code,JSONObject(s.values).toString(),s.sourceRecordId,owner,if(finalize) "COMPLETE" else "DRAFT"))
+         key
+     }
++    private suspend fun savePhotos(id:String,paths:List<String>,categories:Map<String,String>,captures:Map<String,PhotoCaptureMetadata>,now:Long) {
++        val existing=dao.snapshot(id)!!.photos
++        var next=(existing.maxOfOrNull {it.photoIndex} ?: 0)+1
++        existing.forEach { p ->
++            if(p.localPath !in paths) dao.deleteLocalPhoto(p.id,id)
++            else dao.updatePhotoMetadata(p.copy(photoCategory=categories[p.localPath] ?: p.photoCategory))
++        }
++        paths.distinct().filter {path->existing.none {it.localPath==path}}.forEach {path->
++            val p=PhotoEntity(UUID.randomUUID().toString(),id,next++,path,false,null,null,null,"PENDING",now,photoCategory=categories[path] ?: "GENERAL")
++            dao.insertPhoto((captures[path] ?: PhotoCaptureMetadata.fromOriginal(path)).applyTo(p))
++        }
++        dao.refreshRecordPhotoStatus(id)
++    }
++    /** Both formats are saved atomically; widths may remain absent or a raw draft. */
++    suspend fun saveFaja(id:String,characteristics:SicFieldState,widthId:String,widths:Map<String,String>,owner:String,finalize:Boolean,
++        photoPaths:List<String>?=null,captures:Map<String,PhotoCaptureMetadata> = emptyMap()):String = db.withTransaction {
++        require(characteristics.format==SicFieldFormat.SIC08)
++        if(dao.recordById(id)?.status!="ACTIVE") save(id,characteristics,owner,finalize,photoPaths,captures=captures)
++        else require(dao.sicExtension(id)?.ownerUserId==owner) {"Ficha de otro operador"}
++        if(widths.values.any {it.isNotBlank()} || dao.recordById(widthId)!=null) {
++            val width=fromFaja(id).copy(values=fromFaja(id).values+widths.filterKeys {it in setOf("usefulWidthM","totalWidthM")})
++            if(dao.sicExtension(widthId)?.status!="COMPLETE") save(widthId,width,owner,finalize && width.completion().canFinalize)
++        }
++        id
++    }
++    suspend fun saveCulvertDraft(id:String,values:Map<String,String>,owner:String) = db.withTransaction {
++        val record=requireNotNull(dao.recordById(id))
++        require(record.sicCode=="SIC-18" && record.status=="DRAFT")
++        val previous=dao.sicExtension(id)
++        require(previous==null || previous.ownerUserId==owner) {"Borrador de otro operador"}
++        if(values.isNotEmpty()) dao.saveSicExtension(SicExtensionEntity(id,"SIC-18A",JSONObject(values).toString(),id,owner,"DRAFT"))
++    }
+     companion object {
+         val sharedKeys=setOf("routeCode","roadbedCode","startPrCode","startDistanceM","endPrCode","endDistanceM","surveyDate")
+         fun core(r:InventoryRecordEntity)=mapOf("routeCode" to r.routeCode,"roadbedCode" to r.roadbedCode,"startPrCode" to r.startPrCode,
+--- before/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt
++++ after/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt
+@@ -4,21 +4,25 @@
+ import androidx.compose.foundation.layout.*
+ import androidx.compose.foundation.lazy.LazyColumn
+ import androidx.compose.foundation.lazy.items
++import androidx.compose.foundation.text.KeyboardOptions
+ import androidx.compose.material3.*
+ import androidx.compose.runtime.*
+ import androidx.compose.runtime.saveable.rememberSaveable
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.platform.LocalContext
++import androidx.compose.ui.text.input.KeyboardType
+ import androidx.compose.ui.unit.dp
++import com.tuempresa.inventariovial.ChoiceSelector
++import com.tuempresa.inventariovial.FinalLocationCapture
+ import com.tuempresa.inventariovial.core.*
+ import com.tuempresa.inventariovial.data.database.InventoryDatabase
+-import com.tuempresa.inventariovial.field.CulvertPhotos
++import com.tuempresa.inventariovial.field.CulvertUnifiedScreen
+ import com.tuempresa.inventariovial.camera.PhotoCaptureMetadata
+ import com.tuempresa.inventariovial.export.*
++import com.tuempresa.inventariovial.location.GeoLocation
+ import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
+ import kotlinx.coroutines.launch
+-import kotlinx.coroutines.Dispatchers
+-import kotlinx.coroutines.withContext
++import kotlinx.coroutines.flow.first
+ import org.json.JSONObject
+ import java.io.File
+ import java.time.LocalDate
+@@ -26,216 +30,254 @@
+ 
+ @Composable
+ fun SicCodeDropdown(field:SicField,value:String,onChange:(String)->Unit,enabled:Boolean=true) {
+-    var expanded by remember {mutableStateOf(false)}
+-    val label=field.options.find {it.code==value}?.let { if(it.code==ACCIDENT_TYPE_SOURCE_CONFLICT) it.name else it.label }
+-    Column {
+-        Text(field.label,style=MaterialTheme.typography.labelLarge)
+-        Box {
+-            OutlinedButton(enabled=enabled,onClick={expanded=true},modifier=Modifier.fillMaxWidth()) {Text(label ?: "Seleccionar")}
+-            DropdownMenu(expanded=expanded,onDismissRequest={expanded=false}) {
+-                field.options.forEach {option->DropdownMenuItem(text={Text(if(option.code==ACCIDENT_TYPE_SOURCE_CONFLICT) option.name else option.label)},onClick={onChange(option.code);expanded=false})}
+-            }
+-        }
+-        field.options.find {it.code==value}?.description?.takeIf {it.isNotBlank() && field.key=="levelCode"}?.let {Text(it,style=MaterialTheme.typography.bodySmall)}
+-    }
+-}
+-
+-/** One field workflow for all five formats, using CORE review/photos and Room transactions. */
++    Column(verticalArrangement=Arrangement.spacedBy(6.dp)) {
++        Text(field.label,style=MaterialTheme.typography.titleSmall)
++        val labels=field.options.map {if(it.code==ACCIDENT_TYPE_SOURCE_CONFLICT) it.name else it.label}
++        val selected=field.options.indexOfFirst {it.code==value}
++        ChoiceSelector(labels,labels.getOrNull(selected).orEmpty(),enabled) {label->
++            onChange(field.options[labels.indexOf(label)].code)
++        }
++    }
++}
++
++@Composable
++fun InventoryElementWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:String?=null,onBack:()->Unit) {
++    when(format) {
++        SicFieldFormat.SIC08,SicFieldFormat.SIC09 -> FajaWorkspace(vm,recordId,onBack)
++        SicFieldFormat.SIC18A -> if(recordId!=null) CulvertUnifiedScreen(vm,recordId,onBack=onBack) else Text("Selecciona una alcantarilla desde el historial")
++        else -> SicFieldWorkspace(vm,format,recordId,onBack)
++    }
++}
++
++@Composable
++fun FajaWorkspace(vm:InventoryViewModel,recordId:String?=null,onBack:()->Unit) {
++    val context=LocalContext.current
++    val db=remember(context) {InventoryDatabase.getInstance(context)}
++    val records by db.inventoryDao().observeAllRecords().collectAsState(initial=emptyList())
++    val extensions by db.inventoryDao().observeSicExtensions().collectAsState(initial=emptyList())
++    var selected by rememberSaveable(recordId) {mutableStateOf(recordId)}
++    var creating by rememberSaveable {mutableStateOf(false)}
++    var ready by remember(recordId) {mutableStateOf(recordId==null)}
++    var standaloneWidths by rememberSaveable(recordId) {mutableStateOf(false)}
++    LaunchedEffect(recordId) {
++        if(recordId!=null) {
++            val record=db.inventoryDao().recordById(recordId)
++            val source=db.inventoryDao().sicExtension(recordId)?.sourceRecordId
++            val parent=source?.let {db.inventoryDao().recordById(it)}
++            val grouped=record!=null && parent!=null && InventoryElements.parentId(record,listOfNotNull(db.inventoryDao().sicExtension(recordId)),listOf(record,parent))==parent.id
++            selected=if(grouped) parent!!.id else recordId
++            standaloneWidths=record?.sicCode=="SIC-09" && !grouped
++            ready=true
++        }
++    }
++    if(!ready) {Text("Cargando faja…");return}
++    if(creating || selected!=null) {
++        val legacy=standaloneWidths || records.find {it.id==selected}?.sicCode=="SIC-09"
++        SicFieldWorkspace(vm,if(legacy) SicFieldFormat.SIC09 else SicFieldFormat.SIC08,selected) {selected=null;creating=false;if(recordId!=null)onBack()}
++        return
++    }
++    BackHandler(onBack=onBack)
++    val fajas=InventoryElements.group(records.filter {it.sicCode in setOf("SIC-08","SIC-09") && it.status in setOf("ACTIVE","DRAFT")},extensions)
++    LazyColumn(Modifier.fillMaxSize().padding(horizontal=24.dp),contentPadding=PaddingValues(vertical=24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
++        item {OutlinedButton(onClick=onBack) {Text("Volver")};Text("Fajas",style=MaterialTheme.typography.headlineMedium);Text("SIC-08 · SIC-09",style=MaterialTheme.typography.bodySmall)}
++        item {Button(onClick={creating=true}) {Text("+ Nueva faja")}}
++        if(fajas.isEmpty()) item {Text("Todavía no hay fajas guardadas")}
++        items(fajas,key={it.record.id}) {element->
++            val ext=extensions.find {it.recordId==element.record.id}
++            val values=ext?.values().orEmpty()
++            val type=SicFieldFormat.fajaTypes.find {it.code==values["typeCode"]}?.name.orEmpty()
++            val direction=SicFieldFormat.directions.find {it.code==values["directionCode"]}?.name.orEmpty()
++            Card(Modifier.fillMaxWidth()) {Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
++                Text("Faja ${values["faja"].orEmpty()} · $type · $direction",style=MaterialTheme.typography.titleLarge)
++                Text("${element.record.routeCode} · ${element.record.roadbedCode}")
++                Text("PR ${element.record.startPrCode}+${element.record.startDistanceM} → ${element.record.endPrCode.orEmpty()}+${element.record.endDistanceM ?: ""}")
++                if(element.record.sicCode=="SIC-09") Text("Anchos históricos sin vínculo · datos conservados")
++                else Text("Características · ${if(ext?.status=="COMPLETE") "✓" else "Pendiente"} · Anchos · ${if(element.children.any {child->extensions.any {it.recordId==child.id && it.status=="COMPLETE"}}) "✓" else "Pendiente"}")
++                OutlinedButton(onClick={selected=element.record.id}) {Text("Abrir")}
++            }}
++        }
++    }
++}
++
+ @Composable
+ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:String?=null,onBack:()->Unit) {
++    if(format==SicFieldFormat.SIC18A) {InventoryElementWorkspace(vm,format,recordId,onBack);return}
+     val context=LocalContext.current
+     val db=remember(context) {InventoryDatabase.getInstance(context)}
+     val repo=remember(db) {SicFieldRepository(db)}
+     val scope=rememberCoroutineScope()
+-    val records by db.inventoryDao().observeAllRecords().collectAsState(initial=emptyList())
+     val extensions by db.inventoryDao().observeSicExtensions().collectAsState(initial=emptyList())
+-    var id by rememberSaveable(format,recordId) {mutableStateOf(recordId ?: UUID.randomUUID().toString())}
+-    var source by rememberSaveable(format,recordId) {mutableStateOf<String?>(if(format==SicFieldFormat.SIC18A) recordId else null)}
++    val session by vm.field.session.collectAsState()
++    val faja=format==SicFieldFormat.SIC08
++    val id=rememberSaveable(format,recordId) {recordId ?: UUID.randomUUID().toString()}
++    var source by rememberSaveable(format,recordId) {mutableStateOf<String?>(null)}
+     var raw by rememberSaveable(format,recordId) {mutableStateOf("{}")}
+     var loaded by rememberSaveable(format,recordId) {mutableStateOf(false)}
+     var complete by rememberSaveable(format,recordId) {mutableStateOf(false)}
+     var dirty by rememberSaveable(format,recordId) {mutableStateOf(false)}
++    var widthId by rememberSaveable(format,recordId) {mutableStateOf(UUID.randomUUID().toString())}
++    var widthRaw by rememberSaveable(format,recordId) {mutableStateOf("{}")}
++    var widthComplete by rememberSaveable(format,recordId) {mutableStateOf(false)}
++    var widthExpanded by rememberSaveable(format,recordId) {mutableStateOf(recordId==null)}
+     var review by rememberSaveable {mutableStateOf(false)}
+     var exit by remember {mutableStateOf(false)}
+     var busy by remember {mutableStateOf(false)}
+     var notice by remember {mutableStateOf<String?>(null)}
+-    var file by remember {mutableStateOf<GeneratedFile?>(null)}
++    var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
+     var paths by rememberSaveable {mutableStateOf<List<String>>(emptyList())}
+-    var categoryJson by rememberSaveable {mutableStateOf("{}")}
+     var captures by remember {mutableStateOf<Map<String,PhotoCaptureMetadata>>(emptyMap())}
+-    fun map(json:String)=JSONObject(json).let {j->j.keys().asSequence().associateWith {j.getString(it)}}
+-    val state=SicFieldState(format,map(raw),source)
+-    val categories=map(categoryJson)
+-    fun change(s:SicFieldState) {raw=JSONObject(s.values).toString();source=s.sourceRecordId;dirty=true;review=false;file=null}
+-    val completion=state.completion()
+-    val session by vm.field.session.collectAsState()
++    var fix by remember {mutableStateOf<GeoLocation?>(null)}
++    var endFix by remember {mutableStateOf<GeoLocation?>(null)}
++    fun values(json:String)=JSONObject(json).let {j->j.keys().asSequence().associateWith {j.getString(it)}}
++    val state=SicFieldState(format,values(raw),source)
++    val widths=values(widthRaw)
++    val widthState=SicFieldState(SicFieldFormat.SIC09,state.values.filterKeys {it in SicFieldRepository.sharedKeys || it=="faja"}+widths,id)
++    val widthStarted=widths.values.any {it.isNotBlank()}
++    val completion=CompletionResult(state.completion().issues+if(faja && widthStarted) widthState.completion().issues else emptyList())
++    val editable=!complete || faja && !widthComplete
++    fun change(key:String,value:String) {raw=JSONObject(state.set(key,value).values).toString();dirty=true;review=false;files=emptyList()}
+     LaunchedEffect(id) {
+-        if(!loaded) {
+-            try {
+-                val saved=repo.load(id,format)
+-                if(saved!=null) {
+-                    raw=JSONObject(saved.values).toString();source=saved.sourceRecordId
+-                    val ext=db.inventoryDao().sicExtension(id)
+-                    complete=ext?.status=="COMPLETE" || (ext==null && format==SicFieldFormat.SIC18A && db.inventoryDao().snapshot(id)?.sic18a!=null && saved.completion().canFinalize)
+-                    if(format==SicFieldFormat.SIC18A) {
+-                        val photos=db.inventoryDao().snapshot(id)!!.photos
+-                        paths=photos.map {it.localPath};categoryJson=JSONObject(photos.associate {it.localPath to (it.photoCategory ?: "GENERAL")}).toString()
+-                    }
+-                } else {
+-                    val values=mutableMapOf("surveyDate" to LocalDate.now().format(SicFieldFormat.dateFormatter))
+-                    session?.road?.takeIf {it.isNotBlank()}?.let {values["routeCode"]=it}
+-                    session?.roadbed?.takeIf {it.isNotBlank()}?.let {values["roadbedCode"]=it}
+-                    values.putAll(SicCaptureContext(context).values(session))
+-                    raw=JSONObject(values).toString()
+-                    if(format==SicFieldFormat.SIC09 && values["routeCode"].isNullOrBlank().not() && values["roadbedCode"].isNullOrBlank().not()) {
+-                        val compatible=db.inventoryDao().recordsForExport("SIC-08",values["routeCode"])
+-                            .filter {it.record.roadbedCode==values["roadbedCode"]}
+-                        if(compatible.size==1) {
+-                            val inherited=repo.fromFaja(compatible.single().record.id)
+-                            raw=JSONObject(inherited.values).toString();source=inherited.sourceRecordId
+-                        }
++        if(!loaded) try {
++            val saved=repo.load(id,format)
++            if(saved!=null) {
++                raw=JSONObject(saved.values).toString();source=saved.sourceRecordId
++                complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
++                val snapshot=db.inventoryDao().snapshot(id)!!
++                paths=snapshot.photos.sortedBy {it.photoIndex}.map {it.localPath}
++                if(snapshot.record.locationSource!="CONTRACTUAL_PR_ONLY") fix=GeoLocation(snapshot.record.latitude,snapshot.record.longitude,snapshot.record.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,snapshot.record.altitudeM)
++                snapshot.record.endLatitude?.let {endFix=GeoLocation(it,snapshot.record.endLongitude!!,snapshot.record.endGpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY)}
++                if(faja) {
++                    val children=db.inventoryDao().observeSicExtensions().first().filter {it.formatCode=="SIC-09" && it.sourceRecordId==id}
++                    (children.firstOrNull {it.status=="DRAFT"} ?: children.firstOrNull())?.let {child->
++                        widthId=child.recordId;widthRaw=JSONObject(child.values().filterKeys {it in setOf("usefulWidthM","totalWidthM")}).toString();widthComplete=child.status=="COMPLETE"
+                     }
+                 }
+-                loaded=true
+-            } catch(e:Exception) {notice=e.message}
+-        }
+-    }
+-    fun leave() {if(dirty && !complete) exit=true else onBack()}
++            } else {
++                val initial=mutableMapOf("surveyDate" to LocalDate.now().format(SicFieldFormat.dateFormatter))
++                session?.road?.let {initial["routeCode"]=it};session?.roadbed?.let {initial["roadbedCode"]=it}
++                initial.putAll(SicCaptureContext(context).values(session));raw=JSONObject(initial).toString()
++            }
++            loaded=true
++        } catch(e:Exception) {notice=e.message}
++    }
++    fun leave() {if(dirty)exit=true else onBack()}
+     fun save(finalize:Boolean,after:(()->Unit)?=null) {
+-        if(busy) return
++        if(busy)return
+         busy=true
+         scope.launch {try {
+             val owner=vm.field.auth.sessions.requireUser().id
+-            val saved=withContext(Dispatchers.IO) {repo.save(id,state,owner,finalize,paths,categories,captures,session?.sessionId)}
+-            id=saved;dirty=false;complete=finalize;notice=if(finalize) "✓ Completo · guardado en tablet" else "✓ Borrador guardado en tablet"
++            if(finalize) require(completion.canFinalize) {"Revisa los pendientes antes de finalizar"}
++            if(faja) repo.saveFaja(id,state,widthId,widths,owner,finalize,paths,captures)
++            else repo.save(id,state,owner,finalize,paths,captures=captures,sessionId=session?.sessionId)
++            complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
++            widthComplete=db.inventoryDao().sicExtension(widthId)?.status=="COMPLETE"
++            dirty=false;review=false;notice=if(finalize) "✓ Finalizado · guardado en tablet" else "✓ Borrador guardado en tablet"
+             if(finalize) SicCaptureContext(context).remember(session,state)
+             after?.invoke()
+-        } catch(e:Exception) {notice=e.message} finally {busy=false} }
+-    }
+-    fun export() {
+-        if(busy) return
+-        busy=true
+-        scope.launch {try {
+-            val output=withContext(Dispatchers.IO) {
+-                val current=requireNotNull(repo.load(id,format))
+-                require(current.completion().canFinalize) {"Completa los campos antes de exportar"}
+-                val selected=SicExportFormat.entries.single {it.code==format.code}
+-                val rows=db.inventoryDao().recordsForExport(selected.code,null).filter {it.record.id==id}
+-                val dir=File(context.cacheDir,"sic_exports").apply {check(isDirectory || mkdirs())}
+-                val target=File(dir,"${format.code}_${id}.xlsx")
+-                val atomic=android.util.AtomicFile(target);val stream=atomic.startWrite()
+-                try {SicExcelWriter.write(stream,rows,selected,vm.localExport.savedHeading);atomic.finishWrite(stream)}
+-                catch(e:Exception){atomic.failWrite(stream);throw e}
+-                GeneratedFile(id,id,format.family,"${format.code} XLSX",target.absolutePath,SicExcelWriter.XLSX_MIME,target.lastModified(),"LOCAL")
+-            }
+-            file=output;notice="✓ Excel preparado para abrir o compartir"
+-        } catch(e:Exception) {notice=e.message} finally {busy=false} }
++        } catch(e:Exception) {notice=e.message} finally {busy=false}}
+     }
+     BackHandler(enabled=!busy) {leave()}
+-    LazyColumn(Modifier.fillMaxSize().padding(horizontal=24.dp),contentPadding=PaddingValues(vertical=24.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
++    Box(Modifier.fillMaxSize(),contentAlignment=androidx.compose.ui.Alignment.TopCenter) {
++      LazyColumn(Modifier.widthIn(max=1000.dp).fillMaxSize().padding(horizontal=24.dp),contentPadding=PaddingValues(vertical=24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+         item {
+             OutlinedButton(enabled=!busy,onClick={leave()}) {Text("Volver")}
+-            Text("${format.code} · ${format.title}",style=MaterialTheme.typography.headlineSmall)
+-            if(complete) Text("Finalizado · consulta",color=MaterialTheme.colorScheme.primary)
+-        }
+-        if(!complete && loaded && format in setOf(SicFieldFormat.SIC09,SicFieldFormat.SIC18A)) item {
+-            val candidates=records.filter {it.status=="ACTIVE" && it.sicCode==if(format==SicFieldFormat.SIC09) "SIC-08" else "SIC-18"}
+-                .filter {state.text("routeCode").isBlank() || it.routeCode==state.text("routeCode")}
+-                .filter {state.text("roadbedCode").isBlank() || it.roadbedCode==state.text("roadbedCode")}
+-            var choosing by remember {mutableStateOf(false)}
+-            OutlinedButton(enabled=!busy,onClick={choosing=true},modifier=Modifier.fillMaxWidth()) {Text(if(format==SicFieldFormat.SIC09) "Seleccionar faja SIC-08" else "Seleccionar alcantarilla SIC-18")}
+-            if(choosing) AlertDialog(onDismissRequest={choosing=false},title={Text(if(format==SicFieldFormat.SIC09) "Fajas existentes" else "Alcantarillas existentes")},text={
+-                LazyColumn(Modifier.heightIn(max=400.dp)) {
+-                    if(candidates.isEmpty()) item {Text(if(format==SicFieldFormat.SIC09) "No hay SIC-08 compatible. Puedes identificar la faja manualmente." else "Primero guarda una alcantarilla SIC-18.")}
+-                    items(candidates,key={it.id}) {parent->
+-                        TextButton(onClick={scope.launch {try {
+-                            if(format==SicFieldFormat.SIC09) change(repo.fromFaja(parent.id))
+-                            else {
+-                                val existing=repo.load(parent.id,format)!!
+-                                change(existing);id=parent.id;loaded=false;dirty=false
+-                            }
+-                            choosing=false
+-                        } catch(e:Exception) {notice=e.message}}}) {Text("${parent.routeCode} · ${parent.roadbedCode} · ${if(format==SicFieldFormat.SIC09) "Faja ${extensions.find {it.recordId==parent.id}?.values()?.get("faja").orEmpty()} · " else ""}PR ${parent.startPrCode} + ${parent.startDistanceM}")}
+-                    }
+-                }
+-            },confirmButton={TextButton(onClick={choosing=false}){Text("Cerrar")}})
+-        }
+-        if(source!=null) item {Text(if(format==SicFieldFormat.SIC18A) "Tomado de SIC-18" else "Datos tomados de SIC-08",color=MaterialTheme.colorScheme.primary)}
+-        val inherited=if(source!=null) SicFieldRepository.sharedKeys+if(format==SicFieldFormat.SIC18A) setOf("classCode","typeCode","spans") else setOf("faja") else emptySet()
+-        if(loaded && (format!=SicFieldFormat.SIC18A || source!=null)) items(format.fields.map { f -> if(format==SicFieldFormat.SIC18A && f.key=="typeCode" && state.text("classCode")=="07") f.copy(options=listOf("Concreto","Mampostería","Piedra","Otro").mapIndexed {i,n->FieldOption("${i+1}",n)}) else f }.chunked(2)) {pair->
+-            Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(12.dp)) {
+-                pair.forEach {field->Column(Modifier.weight(1f)) {
+-                    val value=state.text(field.key)
+-                    val readOnly=complete || field.key in inherited || busy
+-                    if(field.options.isNotEmpty()) SicCodeDropdown(field,value,{change(state.set(field.key,it))},!readOnly)
+-                    else OutlinedTextField(value,{change(state.set(field.key,it))},readOnly=readOnly,label={Text(field.label)},
+-                        singleLine=field.key!="description",minLines=if(field.key=="description") 3 else 1,modifier=Modifier.fillMaxWidth())
+-                }}
+-                if(pair.size==1) Spacer(Modifier.weight(1f))
+-            }
+-        }
+-        if(format==SicFieldFormat.SIC13 && state.text("classCode").isNotBlank()) item {
+-            var explain by remember {mutableStateOf(false)}
+-            Card(Modifier.fillMaxWidth()) {Column(Modifier.padding(12.dp)) {
+-                TextButton(onClick={explain=!explain}) {Text("¿Qué incluye esta clase?")}
+-                if(explain) Text(SicFieldFormat.criticalClasses.find {it.code==state.text("classCode")}?.description.orEmpty())
+-            }}
+-        }
+-        if(state.text("typeCode")==ACCIDENT_TYPE_SOURCE_CONFLICT) item {Text("Tipo pendiente de equivalencia contractual",color=MaterialTheme.colorScheme.error)}
+-        if(format==SicFieldFormat.SIC09 && completion.issues.any {it.field=="Ancho total"}) item {Text("Ancho total menor que ancho útil. Puedes guardar borrador.",color=MaterialTheme.colorScheme.error)}
+-        if(format==SicFieldFormat.SIC18A && source!=null) item {
+-            if(complete) {
+-                PhotoCaptureCard("Fotografías de alcantarilla",paths.map(::File),{}, {}, {},editable=false)
+-            } else CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->paths=p;categoryJson=JSONObject(c).toString();dirty=true}
+-        }
++            Text(InventoryElements.title(format.code),style=MaterialTheme.typography.headlineMedium)
++            Text(if(faja) "SIC-08 · SIC-09" else format.code,style=MaterialTheme.typography.bodySmall)
++        }
++        item {InventoryFormSection("Identificación") {
++            InventoryFieldRows(format.fields.filter {it.key in setOf("routeCode","roadbedCode","faja","surveyDate")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
++        }}
++        item {InventoryFormSection(if(format.hasEnd) "Ubicación inicio" else "Ubicación") {
++            LocationSummaryCard(fix?.latitude,fix?.longitude,fix?.horizontalAccuracy?.toDouble(),"${state.text("startPrCode")} + ${state.text("startDistanceM")} m",state.text("routeCode"),"PR contractual") {
++                if(!complete && !busy) FinalLocationCapture(fix,{fix=it;raw=JSONObject(values(raw)+mapOf("_latitude" to it.latitude.toString(),"_longitude" to it.longitude.toString(),"_accuracy" to it.horizontalAccuracy.toString(),"_altitude" to it.altitude.toString())).toString();dirty=true},"inicio")
++            }
++            InventoryFieldRows(format.fields.filter {it.key in setOf("startPrCode","startDistanceM")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
++        }}
++        if(format.hasEnd) item {InventoryFormSection("Ubicación fin") {
++            LocationSummaryCard(endFix?.latitude,endFix?.longitude,endFix?.horizontalAccuracy?.toDouble(),"${state.text("endPrCode")} + ${state.text("endDistanceM")} m",state.text("routeCode"),"PR contractual") {
++                if(!complete && !busy) FinalLocationCapture(endFix,{endFix=it;raw=JSONObject(values(raw)+mapOf("_endLatitude" to it.latitude.toString(),"_endLongitude" to it.longitude.toString(),"_endAccuracy" to it.horizontalAccuracy.toString())).toString();dirty=true},"fin")
++            }
++            InventoryFieldRows(format.fields.filter {it.key in setOf("endPrCode","endDistanceM")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
++        }}
++        item {InventoryFormSection(if(faja) "Características de la faja" else "Datos del elemento",if(faja) "Formato SIC-08" else format.code) {
++            InventoryFieldRows(format.fields.filter {it.key !in SicFieldRepository.sharedKeys && it.key !in setOf("faja","description","levelCode")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
++            if(format==SicFieldFormat.SIC13) TechnicalCriterion("Ver criterio") {Text(SicFieldFormat.criticalClasses.find {it.code==state.text("classCode")}?.description.orEmpty())}
++        }}
++        if(faja) item {InventoryFormSection("Ancho de la faja","Formato SIC-09 · opcional al registrar características") {
++            Text("Características · ${if(complete) "✓" else "Pendiente"} · Anchos · ${if(widthComplete) "✓" else "Pendiente"}")
++            val children=extensions.filter {it.formatCode=="SIC-09" && it.sourceRecordId==id}
++            if(children.size>1) ChoiceSelector(children.mapIndexed {i,_->"Medición de anchos ${i+1}"},"Medición de anchos ${children.indexOfFirst {it.recordId==widthId}+1}",!busy && !dirty) {label->
++                val child=children[label.substringAfterLast(' ').toInt()-1];widthId=child.recordId;widthRaw=JSONObject(child.values().filterKeys {it in setOf("usefulWidthM","totalWidthM")}).toString();widthComplete=child.status=="COMPLETE"
++            }
++            if(!widthComplete) OutlinedButton(onClick={widthExpanded=true}) {Text("Completar anchos")}
++            if(widthExpanded || widthStarted || widthComplete) InventoryFieldRows(SicFieldFormat.SIC09.fields.filter {it.key in setOf("usefulWidthM","totalWidthM")}) {field->
++                SicFieldInput(field,widths[field.key].orEmpty(),{widthRaw=JSONObject(widths+(field.key to it)).toString();dirty=true;review=false},!widthComplete && !busy)
++            }
++            if(!widthComplete) Text("Puedes guardar la faja y completar anchos aquí después",style=MaterialTheme.typography.bodySmall)
++        }}
++        if(format==SicFieldFormat.SIC34) item {InventoryFormSection("Nivel") {
++            SicCodeDropdown(SicFieldFormat.SIC34.fields.single {it.key=="levelCode"},state.text("levelCode"),{change("levelCode",it)},!complete && !busy)
++            TechnicalCriterion("Ver criterio") {Text(SicFieldFormat.levels.find {it.code==state.text("levelCode")}?.description.orEmpty())}
++        }}
++        item {InventoryElementPhotos(paths,!complete && !busy,{paths=it;dirty=true},{path,metadata->captures=captures+(path to metadata)})}
++        if(format.fields.any {it.key=="description"}) item {InventoryFormSection("Observaciones") {SicFieldInput(format.fields.single {it.key=="description"},state.text("description"),{change("description",it)},!complete && !busy)}}
+         item {
+-            if(review || complete) RecordReviewSection("REVISIÓN",format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))},paths.map(::File),completion,initiallyExpanded=true)
++            if(review || !editable) RecordReviewSection("REVISIÓN",format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))}+if(faja) listOf("Ancho útil" to widthState.text("usefulWidthM"),"Ancho total" to widthState.text("totalWidthM")) else emptyList(),paths.map(::File),completion,initiallyExpanded=true)
+             notice?.let {Text(it)}
+             if(busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+-            if(!complete) Row(horizontalArrangement=Arrangement.spacedBy(12.dp)) {
+-                OutlinedButton(enabled=!busy && loaded && (format!=SicFieldFormat.SIC18A || source!=null),onClick={save(false)}) {Text("Guardar borrador")}
+-                Button(enabled=!busy && loaded,onClick={review=true}) {Text("Revisar / finalizar")}
+-            }
+-            if(review && !complete) {
+-                if(!completion.canFinalize) OutlinedButton(onClick={review=false}) {Text("Completar faltantes")}
+-                Button(enabled=!busy && completion.canFinalize,onClick={save(true)}) {Text("Finalizar")}
+-            }
+-            if(complete) Button(enabled=!busy,onClick={export()}) {Text("Exportar")}
+-            file?.let {generated->Row {
+-                TextButton(onClick={runCatching {context.startActivity(GeneratedFileIndex.open(context,generated))}.onFailure {notice="No hay visor compatible; puedes compartir el archivo"}}) {Text("Abrir")}
+-                TextButton(onClick={runCatching {context.startActivity(GeneratedFileIndex.share(context,generated))}.onFailure {notice=it.message}}) {Text("Compartir")}
+-            }}
+-        }
+-    }
+-    if(exit) AlertDialog(onDismissRequest={exit=false},title={Text("Guardar cambios")},text={Text("Conserva la captura como borrador antes de volver.")},
+-        confirmButton={TextButton(enabled=!busy,onClick={save(false){exit=false;onBack()}}){Text("Guardar borrador y volver")}},
+-        dismissButton={TextButton(onClick={exit=false}){Text("Seguir editando")}})
+-}
+-
+-@Composable
+-fun NewSicDashboard(vm:InventoryViewModel,onOpen:(SicFieldFormat)->Unit) {
++            if(editable) {
++                Row(horizontalArrangement=Arrangement.spacedBy(12.dp)) {
++                    OutlinedButton(enabled=loaded && !busy,onClick={save(false)}) {Text("Guardar borrador")}
++                    Button(enabled=loaded && !busy,onClick={review=true}) {Text("Revisar y finalizar")}
++                }
++                if(review) {
++                    OutlinedButton(onClick={review=false}) {Text("Volver a editar")}
++                    Button(enabled=!busy && completion.canFinalize,onClick={save(true)}) {Text("Finalizar")}
++                }
++            }
++            if(complete) Button(enabled=!busy && !dirty,onClick={busy=true;scope.launch {try {
++                files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading)
++                notice="Se generaron ${files.size} formatos para esta ${if(faja) "faja" else "ficha"}"
++            } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar")}
++            GeneratedElementFiles(files) {notice=it}
++        }
++      }
++    }
++    if(exit) AlertDialog(onDismissRequest={exit=false},title={Text("Guardar cambios")},text={Text("Conserva los cambios como borrador antes de volver")},confirmButton={TextButton(enabled=!busy,onClick={save(false){exit=false;onBack()}}) {Text("Guardar borrador y volver")}},dismissButton={TextButton(onClick={exit=false}) {Text("Seguir editando")}})
++}
++
++@Composable internal fun SicFieldInput(field:SicField,value:String,onChange:(String)->Unit,enabled:Boolean) {
++    if(field.options.isNotEmpty()) SicCodeDropdown(field,value,onChange,enabled)
++    else OutlinedTextField(value,onChange,readOnly=!enabled,label={Text(field.label)},singleLine=field.key!="description",minLines=if(field.key=="description")3 else 1,
++        keyboardOptions=KeyboardOptions(keyboardType=if(field.kind in setOf(CellKind.DECIMAL,CellKind.INTEGER))KeyboardType.Decimal else KeyboardType.Text),modifier=Modifier.fillMaxWidth())
++}
++
++@Composable internal fun TechnicalCriterion(label:String,content:@Composable ()->Unit) {
++    var expanded by remember {mutableStateOf(false)}
++    TextButton(onClick={expanded=!expanded}) {Text(if(expanded) "Ocultar criterio" else label)}
++    if(expanded) content()
++}
++
++@Composable fun GeneratedElementFiles(files:List<GeneratedFile>,onError:(String)->Unit) {
+     val context=LocalContext.current
+-    val db=remember(context) {InventoryDatabase.getInstance(context)}
+-    val records by db.inventoryDao().observeAllRecords().collectAsState(initial=emptyList())
+-    val extensions by db.inventoryDao().observeSicExtensions().collectAsState(initial=emptyList())
+-    val groups=listOf("CALZADA Y FAJAS" to listOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09),
+-        "SEGURIDAD / CONDICIÓN DE VÍA" to listOf(SicFieldFormat.SIC13,SicFieldFormat.SIC34),"OBRAS DE ARTE · COMPLEMENTO" to listOf(SicFieldFormat.SIC18A))
+-    val batches by db.inventoryDao().observeAllDeliveries().collectAsState(initial=emptyList())
+-    val acknowledged by produceState(emptySet<Pair<String,String>>(),batches,records) {
+-        value=withContext(Dispatchers.IO) {SicDeliveryStatus.acknowledged(batches,records)}
+-    }
++    files.forEach {file->
++        Text(File(file.localPath).name)
++        Row {
++            TextButton(onClick={runCatching {context.startActivity(GeneratedFileIndex.open(context,file))}.onFailure {onError("No hay visor compatible")}}) {Text("Abrir")}
++            TextButton(onClick={runCatching {context.startActivity(GeneratedFileIndex.share(context,file))}.onFailure {onError("No se pudo compartir")}}) {Text("Compartir")}
++        }
++    }
++}
++
++@Composable fun NewSicDashboard(vm:InventoryViewModel,onOpen:(SicFieldFormat)->Unit) {
++    InventoryElementDashboard(onOpen)
++}
++
++@Composable fun InventoryElementDashboard(onOpen:(SicFieldFormat)->Unit) {
+     Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
+-        groups.forEach {(label,formats)->
+-            Text(label,style=MaterialTheme.typography.titleSmall)
+-            Row(horizontalArrangement=Arrangement.spacedBy(12.dp)) {formats.forEach {format->
+-                val rows=extensions.filter {it.formatCode==format.code && records.any {r->r.id==it.recordId && r.status in setOf("ACTIVE","DRAFT")}}
+-                val drafts=rows.count {it.status=="DRAFT"};val done=rows.count {it.status=="COMPLETE"}
+-                val pending=rows.count {it.status=="COMPLETE" && (it.recordId to format.code) !in acknowledged}
+-                OutlinedCard(onClick={onOpen(format)},modifier=Modifier.weight(1f)) {Column(Modifier.padding(14.dp)) {
+-                    Text("${format.code} · ${format.title}",style=MaterialTheme.typography.titleMedium)
+-                    if(rows.isNotEmpty()) Text("Borradores: $drafts · Completos: $done · Pendientes sync: $pending",style=MaterialTheme.typography.bodySmall)
+-                }}
+-            }}
+-        }
+-    }
+-}
++        InventoryElements.dashboard.groupBy {it.family}.forEach {(family,entries)->
++            Text(family,style=MaterialTheme.typography.titleSmall)
++            InventoryFieldRows(entries) {entry->com.tuempresa.inventariovial.InventoryElementButton(entry.title,entry.subtitle) {onOpen(entry.format)}}
++        }
++    }
++}
+--- before/app/src/test/java/com/tuempresa/inventariovial/Engineering2ScreenTest.kt
++++ after/app/src/test/java/com/tuempresa/inventariovial/Engineering2ScreenTest.kt
+@@ -108,7 +108,7 @@
+         compose.setContent {InventarioVialTheme {Column(Modifier.verticalScroll(rememberScrollState())) {
+             Sic18Fields(com.tuempresa.inventariovial.model.form.Sic18FormState(functionalConditionCode="3"),onCompleteSic18A={clicked=true}) {}
+         }}}
+-        compose.onNodeWithText("COMPLETAR SIC-18A").performScrollTo().performClick()
++        compose.onNodeWithText("Completar detalle de condición mala").performScrollTo().performClick()
+         Assert.assertTrue(clicked)
+         compose.onNodeWithText("⚠ CONDICIÓN MALA").assertExists()
+     }
+--- before/app/build.gradle.kts
++++ after/app/build.gradle.kts
+@@ -29,7 +29,7 @@
+ fun localFlag(name: String) = serverProperties.getProperty(name, "false").toBoolean().toString()
+ 
+ // Public identity is pinned to the certificate verified in both historical field APKs.
+-val productionVersionCode = 11
++val productionVersionCode = 12
+ val expectedReleaseCertSha256 = "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+ val releaseProperties = Properties().apply {
+     val config = rootProject.file("keystore.properties")

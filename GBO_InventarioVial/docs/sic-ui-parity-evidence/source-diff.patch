@@ -1,0 +1,678 @@
+--- v12/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt
++++ parity/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt
+@@ -1089,52 +1089,11 @@
+         }
+     }
+ 
+-    LazyColumn(
+-        modifier = Modifier
+-            .fillMaxSize()
+-            .padding(horizontal = 24.dp),
+-
+-        contentPadding =
+-            PaddingValues(
+-                top = 24.dp,
+-                bottom = 40.dp
+-            ),
+-
+-        verticalArrangement =
+-            Arrangement.spacedBy(18.dp)
++    com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
++        title="Registrar ${signalizationType.title}",subtitle="${signalizationType.sicCode} · ${signalizationType.subtitle}",
++        onSaveDraft={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
++        onBack=onBack,draftNotice=draftNotice
+     ) {
+-        item {
+-            OutlinedButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})}) { Text("Guardar borrador") }
+-            if(draftNotice.isNotBlank()) Text(draftNotice)
+-        }
+-
+-
+-        item {
+-
+-            OutlinedButton(
+-                onClick = onBack
+-            ) {
+-                Text("← Volver")
+-            }
+-        }
+-
+-        item {
+-
+-            Text(
+-                text =
+-                    "Registrar ${signalizationType.title}",
+-                fontSize = 30.sp,
+-                fontWeight = FontWeight.Bold
+-            )
+-
+-            Text(
+-                text =
+-                    "${signalizationType.sicCode} · ${signalizationType.subtitle}",
+-                style =
+-                    MaterialTheme.typography.bodyLarge
+-            )
+-        }
+-
+         item {
+             SurveyHeader(survey, segment, route, roadbed, direction,
+                 onSegment={ segment=it },
+@@ -1142,7 +1101,7 @@
+                 onRoadbed={ roadbed=it; locationSource=LocationSource.edited(locationSource, startSuggestion != null); endLocationSource=LocationSource.edited(endLocationSource, endSuggestion != null) }, onDirection={ direction=it })
+         }
+         item {
+-            OutlinedButton(enabled = !locating, onClick = { if(hasLocationPermission()) captureLocation() else locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)) }) { Text(if(signalizationType==SignalizationType.VERTICAL) "Actualizar GPS del elemento" else "Actualizar GPS inicial") }
++            com.tuempresa.inventariovial.field.LegacyInitialGpsButton(locating, { if(hasLocationPermission()) captureLocation() else locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)) }, if(signalizationType==SignalizationType.VERTICAL) "Actualizar GPS del elemento" else "Actualizar GPS inicial")
+         }
+ 
+         if (requiresEndLocation(signalizationType.sicCode, signalizationType.name)) {
+@@ -2558,44 +2517,12 @@
+         }
+     }
+ 
+-    LazyColumn(
+-        modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+-        contentPadding = PaddingValues(top = 24.dp, bottom = 40.dp),
+-        verticalArrangement = Arrangement.spacedBy(18.dp)
++    com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
++        title="Registrar ${assetType.title}",subtitle="${assetType.sicCode} · ${assetType.subtitle}",
++        onSaveDraft={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
++        onBack={if(assetType==RoadAssetType.CULVERT && culvertExtraDirty) showCulvertExit=true else onBack()},draftNotice=draftNotice,
++        draftErrors={culvertDraftError?.let {ErrorText(it)}}
+     ) {
+-        item {
+-            OutlinedButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})}) { Text("Guardar borrador") }
+-            if(draftNotice.isNotBlank()) Text(draftNotice)
+-            culvertDraftError?.let {ErrorText(it)}
+-        }
+-
+-        item {
+-
+-            OutlinedButton(
+-                onClick = {if(assetType==RoadAssetType.CULVERT && culvertExtraDirty) showCulvertExit=true else onBack()}
+-            ) {
+-                Text("← Volver")
+-            }
+-        }
+-
+-        item {
+-
+-            Text(
+-                text =
+-                    "Registrar ${assetType.title}",
+-                fontSize = 30.sp,
+-                fontWeight =
+-                    FontWeight.Bold
+-            )
+-
+-            Text(
+-                text =
+-                    "${assetType.sicCode} · ${assetType.subtitle}",
+-                style =
+-                    MaterialTheme.typography.bodyLarge
+-            )
+-        }
+-
+         // FOTO
+         item {
+             SurveyHeader(survey, segment, route, roadbed, direction,
+@@ -2604,7 +2531,7 @@
+                 onRoadbed={ roadbed=it; locationSource=LocationSource.edited(locationSource, startSuggestion != null); endLocationSource=LocationSource.edited(endLocationSource, endSuggestion != null) }, onDirection={ direction=it })
+         }
+         item {
+-            OutlinedButton(enabled = !locating, onClick = { if(hasLocationPermission()) captureLocation() else locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)) }) { Text("Actualizar GPS inicial") }
++            com.tuempresa.inventariovial.field.LegacyInitialGpsButton(locating, { if(hasLocationPermission()) captureLocation() else locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)) }, "Actualizar GPS inicial")
+         }
+ 
+         if (requiresEndLocation(assetType.sicCode, assetType.name,
+@@ -2632,119 +2559,30 @@
+             HorizontalDivider()
+         }
+ 
+-        // DATOS COMUNES
+         item {
+-
+-            SectionTitle("Ubicación inicio")
+-            LocationSuggestionPanel(prReference, prSettings.matchConfig(), route, roadbed,
+-                latitude, longitude, gpsAccuracy?.toDouble(), "inicio", { if (it != null && (locationSource != LocationSource.MANUAL_OVERRIDE || (startSuggestion == null && draftRecord?.suggestedRouteCode == null && draftRecord?.suggestedPrCode == null))) startSuggestion = it }, { suggestion ->
+-                    startSuggestion = suggestion
+-                    route = suggestion.suggestedRouteCode ?: route
+-                    segment = inventoryViewModel.field.projectRoutes.find(route)?.segmentCode.orEmpty()
+-                    routeSource = LocationSource.GNSS_CONFIRMED
+-                    suggestion.pr?.let { startPr = it.suggestedPrCode; startDistance = it.distanceText }
+-                    locationSource = if (suggestion.pr == null) LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
+-                }, { locationSource = LocationSource.MANUAL_OVERRIDE; routeSource = LocationSource.MANUAL_OVERRIDE })
+-            FieldPrPanel(inventoryViewModel.field, route, roadbed)
+-            if (locationSource in setOf(PrEntrySource.CONFIRMED, LocationSource.GNSS_CONFIRMED, LocationSource.GNSS_PR_CONFIRMED)) Text("Inicio: sugerencia GNSS confirmada")
+-
+-            OutlinedTextField(
+-                value = startPr,
+-                onValueChange = {
+-                    locationSource = LocationSource.edited(locationSource, startSuggestion != null)
+-                    startPr = it
+-                },
+-                label = {
+-                    Text(if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) "Kilómetro de progresiva inicial (PR)" else "Código PR inicial")
+-                },
+-                placeholder = {
+-                    Text("4 dígitos, ej. 0010")
+-                },
+-                modifier =
+-                    Modifier.fillMaxWidth()
+-            )
+-
+-            Spacer(
+-                modifier =
+-                    Modifier.height(10.dp)
+-            )
+-
+-            OutlinedTextField(
+-                value = startDistance,
+-                onValueChange = {
+-                    locationSource = LocationSource.edited(locationSource, startSuggestion != null)
+-                    startDistance = it
+-                },
+-                label = {
+-                    Text(
+-                        if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) "Metros desde el kilómetro inicial" else "Metros desde el PR inicial"
+-                    )
+-                },
+-                placeholder = {
+-                    Text("Ej. 125.50")
+-                },
+-                modifier =
+-                    Modifier.fillMaxWidth()
+-            )
+-        }
+-
+-        if (needsEndLocation) {
+-
+-            item {
+-
+-                SectionTitle("Ubicación fin")
+-                LocationSuggestionPanel(prReference, prSettings.matchConfig(), route, roadbed,
+-                    endLocation?.latitude, endLocation?.longitude, endLocation?.horizontalAccuracy?.toDouble(), "fin",
+-                    { if (it != null && (endLocationSource != LocationSource.MANUAL_OVERRIDE || (endSuggestion == null && draftRecord?.endSuggestedPrCode == null))) endSuggestion = it }, { suggestion ->
+-                        if (route == suggestion.suggestedRouteCode) {
+-                            endSuggestion = suggestion
+-                            suggestion.pr?.let { endPr = it.suggestedPrCode; endDistance = it.distanceText }
+-                            endLocationSource = if (suggestion.pr == null) LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
+-                        }
+-                    }, { endLocationSource = LocationSource.MANUAL_OVERRIDE })
+-                if (endLocationSource in setOf(PrEntrySource.CONFIRMED, LocationSource.GNSS_CONFIRMED, LocationSource.GNSS_PR_CONFIRMED)) Text("Fin: sugerencia GNSS confirmada")
+-
+-                OutlinedTextField(
+-                    value = endPr,
+-                    onValueChange = {
+-                        endLocationSource = LocationSource.edited(endLocationSource, endSuggestion != null)
+-                        endPr = it
+-                    },
+-                    label = {
+-                        Text(if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) "Kilómetro de progresiva final (PR)" else "Código PR final")
+-                    },
+-                    placeholder = {
+-                        Text(
+-                            "4 dígitos, ej. 0010"
+-                        )
+-                    },
+-                    modifier =
+-                        Modifier.fillMaxWidth()
+-                )
+-
+-                Spacer(
+-                    modifier =
+-                        Modifier.height(10.dp)
+-                )
+-
+-                OutlinedTextField(
+-                    value = endDistance,
+-                    onValueChange = {
+-                        endLocationSource = LocationSource.edited(endLocationSource, endSuggestion != null)
+-                        endDistance = it
+-                    },
+-                    label = {
+-                        Text(
+-                            if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) "Metros desde el kilómetro final" else "Metros desde el PR final"
+-                        )
+-                    },
+-                    placeholder = {
+-                        Text("Ej. 180.25")
+-                    },
+-                    modifier =
+-                        Modifier.fillMaxWidth()
+-                )
+-            }
++            com.tuempresa.inventariovial.field.LegacyLocationSection(prReference,prSettings.matchConfig(),route,roadbed,
++                location,startPr,startDistance,locationSource,"inicio",
++                {if(it!=null && (locationSource!=LocationSource.MANUAL_OVERRIDE || (startSuggestion==null && draftRecord?.suggestedRouteCode==null && draftRecord?.suggestedPrCode==null)))startSuggestion=it},
++                {suggestion->
++                    startSuggestion=suggestion;route=suggestion.suggestedRouteCode ?: route
++                    segment=inventoryViewModel.field.projectRoutes.find(route)?.segmentCode.orEmpty()
++                    routeSource=LocationSource.GNSS_CONFIRMED
++                    suggestion.pr?.let {startPr=it.suggestedPrCode;startDistance=it.distanceText}
++                    locationSource=if(suggestion.pr==null)LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
++                },{locationSource=LocationSource.MANUAL_OVERRIDE;routeSource=LocationSource.MANUAL_OVERRIDE},
++                {locationSource=LocationSource.edited(locationSource,startSuggestion!=null);startPr=it},
++                {locationSource=LocationSource.edited(locationSource,startSuggestion!=null);startDistance=it},inventoryViewModel.field)
++        }
++        if(needsEndLocation) item {
++            com.tuempresa.inventariovial.field.LegacyLocationSection(prReference,prSettings.matchConfig(),route,roadbed,
++                endLocation,endPr,endDistance,endLocationSource,"fin",
++                {if(it!=null && (endLocationSource!=LocationSource.MANUAL_OVERRIDE || (endSuggestion==null && draftRecord?.endSuggestedPrCode==null)))endSuggestion=it},
++                {suggestion->if(route==suggestion.suggestedRouteCode) {
++                    endSuggestion=suggestion;suggestion.pr?.let {endPr=it.suggestedPrCode;endDistance=it.distanceText}
++                    endLocationSource=if(suggestion.pr==null)LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
++                }},{endLocationSource=LocationSource.MANUAL_OVERRIDE},
++                {endLocationSource=LocationSource.edited(endLocationSource,endSuggestion!=null);endPr=it},
++                {endLocationSource=LocationSource.edited(endLocationSource,endSuggestion!=null);endDistance=it})
+         }
+ 
+         if (needsSide) {
+@@ -3006,25 +2844,7 @@
+             }
+         }
+ 
+-        item {
+-
+-            Button(
+-                onClick = saveAsset,
+-
+-                modifier = Modifier
+-                    .fillMaxWidth()
+-                    .height(72.dp)
+-            ) {
+-
+-                Text(
+-                    text =
+-                        "Revisar y finalizar",
+-                    fontSize = 20.sp,
+-                    fontWeight =
+-                        FontWeight.Bold
+-                )
+-            }
+-        }
++        item {com.tuempresa.inventariovial.field.LegacyInventoryReviewButton(onReview=saveAsset)}
+     }
+     pendingCulvertCondition?.let {next->androidx.compose.material3.AlertDialog(onDismissRequest={pendingCulvertCondition=null},title={Text("Conservar detalle existente")},
+         text={Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")},
+--- v12/app/src/main/java/com/tuempresa/inventariovial/field/CulvertPhotos.kt
++++ parity/app/src/main/java/com/tuempresa/inventariovial/field/CulvertPhotos.kt
+@@ -22,11 +22,17 @@
+ 
+ @Composable
+ fun CulvertPhotos(paths:List<String>,categories:Map<String,String>,onPhotoMetadata: (String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata)->Unit = {_,_->},onChange:(List<String>,Map<String,String>)->Unit) {
++    LegacyInventoryPhotos("SIC-18",paths,categories,onPhotoMetadata=onPhotoMetadata,onChange=onChange)
++}
++
++/** Extracted SIC-18 camera/category/preview block; only the existing category policy varies. */
++@Composable
++fun LegacyInventoryPhotos(sicCode:String,paths:List<String>,categories:Map<String,String>,editable:Boolean=true,onPhotoMetadata: (String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata)->Unit = {_,_->},onChange:(List<String>,Map<String,String>)->Unit) {
+     val context=LocalContext.current;val scope=rememberCoroutineScope()
+-    val categoryOptions = PhotoCategoryPolicy.categories("SIC-18").associate {
++    val categoryOptions = PhotoCategoryPolicy.categories(sicCode).associate {
+         it.key to "${if(it.contractualName == "PANORAMICA") "FOTO" else "FOTO DE"} ${it.label.uppercase(java.util.Locale.ROOT)}"
+     }
+-    var category by rememberSaveable {mutableStateOf("CULVERT_PANORAMIC")}
++    var category by rememberSaveable {mutableStateOf(PhotoCategoryPolicy.categories(sicCode).first().key)}
+     var cameraPath by rememberSaveable {mutableStateOf<String?>(null)}
+     var remove by remember {mutableStateOf<String?>(null)}
+     var error by remember {mutableStateOf<String?>(null)}
+@@ -42,13 +48,13 @@
+             }
+         } else File(path).delete() };cameraPath=null
+     }
+-    val take:()->Unit={runCatching {val photo=createPhotoFile(context,"ALCANTARILLA");cameraPath=photo.file.absolutePath;camera.launch(photo.uri)}.onFailure {error=it.message}}
++    val take:()->Unit={runCatching {val photo=createPhotoFile(context,if(sicCode=="SIC-18") "ALCANTARILLA" else "INVENTARIO");cameraPath=photo.file.absolutePath;camera.launch(photo.uri)}.onFailure {error=it.message}}
+     val permission=rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {if(it)take() else error="Permiso de cámara denegado."}
+     val picker=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {uri->if(uri!=null) {
+         importing=true
+         scope.launch {try {
+             val path=withContext(Dispatchers.IO) {
+-                val file=createPhotoFile(context,"ALCANTARILLA_IMPORT").file
++                val file=createPhotoFile(context,if(sicCode=="SIC-18") "ALCANTARILLA_IMPORT" else "INVENTARIO_IMPORT").file
+                 try {
+                     context.contentResolver.openInputStream(uri).use {input->requireNotNull(input);file.outputStream().use {input.copyTo(it)}}
+                     val options=android.graphics.BitmapFactory.Options().apply {inJustDecodeBounds=true}
+@@ -66,7 +72,7 @@
+                 Text("${photos.size} fotografías · ${if(photos.isEmpty()) "○ Pendiente" else "✓ Capturadas"}")
+                 com.tuempresa.inventariovial.core.PhotoCaptureCard(title,photos.map(::File),
+                     onTakePhoto={ category=key;if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)take() else permission.launch(Manifest.permission.CAMERA) },
+-                    onSelectFile={category=key;picker.launch("image/*")},onDelete={remove=it.path},editable=!importing && cameraPath==null)
++                    onSelectFile={category=key;picker.launch("image/*")},onDelete={remove=it.path},editable=editable && !importing && cameraPath==null)
+             }
+         }}
+         val historical=paths.filter {categories[it] !in categoryOptions.keys}
+--- v12/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt
++++ parity/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt
+@@ -25,10 +25,12 @@
+ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTypeCode","functionalStateCode","probableCauseCode")
+ 
+ @Composable fun CulvertSupplementFields(values:Map<String,String>,editable:Boolean,onChange:(Map<String,String>)->Unit) {
+-    InventoryFormSection("Detalle de condición mala","Formato SIC-18A · datos heredados de la ficha principal") {
++    Column {
++        com.tuempresa.inventariovial.SectionTitle("Detalle de condición mala")
++        Text("SIC-18A · datos heredados de la ficha principal",style=MaterialTheme.typography.bodyLarge)
+         listOf("Función" to listOf("functionCode"),"Falla estructural" to listOf("failureLocationCode","failureTypeCode"),"Falla funcional" to listOf("functionalStateCode","probableCauseCode")).forEach {(title,keys)->
+-            Text(title,style=MaterialTheme.typography.titleMedium)
+-            InventoryFieldRows(SicFieldFormat.SIC18A.fields.filter {it.key in keys}) {field->
++            com.tuempresa.inventariovial.SectionTitle(title)
++            SicFieldFormat.SIC18A.fields.filter {it.key in keys}.forEach {field->
+                 SicCodeDropdown(field,values[field.key].orEmpty(),{onChange(values+(field.key to it))},editable)
+             }
+         }
+@@ -102,51 +104,47 @@
+         } catch(e:Exception) {notice=e.message} finally {busy=false}}
+     }
+     BackHandler(enabled=!busy) {leave()}
+-    Box(Modifier.fillMaxSize(),contentAlignment=androidx.compose.ui.Alignment.TopCenter) {
+-      Column(Modifier.widthIn(max=1000.dp).fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+-        OutlinedButton(enabled=!busy,onClick={leave()}) {Text("Volver")}
+-        Text("Alcantarilla",style=MaterialTheme.typography.headlineMedium)
+-        Text("SIC-18 · SIC-18A cuando corresponde",style=MaterialTheme.typography.bodySmall)
+-        r?.let {record->InventoryFormSection("Identificación") {
+-            Text("${record.routeCode} · ${record.roadbedCode}")
+-            Text("PR ${record.startPrCode} + ${record.startDistanceM} m · ${record.surveyDate}")
+-        }
+-        LocationSummaryCard(record.latitude,record.longitude,record.gpsAccuracyM,"${record.startPrCode} + ${record.startDistanceM} m",record.routeCode,record.locationSource)
++    LegacyInventoryFormScaffold("Registrar Alcantarilla","SIC-18 · Obras de drenaje",
++        onSaveDraft={save(false)},onBack=::leave,draftNotice=notice.orEmpty(),enabled=!busy && snapshot!=null) {
++        r?.let {record->
++            item {
++                val survey=remember(context) {SurveyPreferences(context)}
++                SurveyHeader(survey,record.segment.orEmpty(),record.routeCode,record.roadbedCode,record.surveyDirection ?: "INCREASING",{},{},{},{})
++            }
++            item {LocationSummaryCard(record.latitude,record.longitude,record.gpsAccuracyM,"${record.startPrCode} + ${record.startDistanceM} m",record.routeCode,record.locationSource)}
++            item {Text("PR ${record.startPrCode} + ${record.startDistanceM} m · ${record.surveyDate}")}
+         }
+         if(snapshot!=null) {
+-            InventoryFormSection("Datos del elemento") {
+-                Sic18Fields(base,onCompleteSic18A={expanded=true}) {next->
+-                    if(!busy) {
+-                        if(required && !InventoryElements.requiresCulvertDetail(next.structuralConditionCode,next.functionalConditionCode) && hasExtra) conditionChange=next
+-                        else {base=next;dirty=true;review=false;files=emptyList()}
+-                    }
++            item {Sic18Fields(base,onCompleteSic18A={expanded=true}) {next->
++                if(!busy) {
++                    if(required && !InventoryElements.requiresCulvertDetail(next.structuralConditionCode,next.functionalConditionCode) && hasExtra)conditionChange=next
++                    else {base=next;dirty=true;review=false;files=emptyList()}
+                 }
++            }}
++            item {
++                Text("SIC-18 · ${if(dirty) "Edición en borrador" else "Completo"}")
++                Text("SIC-18A · ${if(!required) if(hasExtra) "No requerido · antecedente conservado" else "No requerido" else if(extraComplete) "Completo" else "Pendiente"}")
++                if(!required && hasExtra)Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")
++                if(hasExtra && !required)OutlinedButton(onClick={expanded=!expanded}) {Text(if(expanded)"Ocultar detalle de condición mala" else "Ver antecedente")}
+             }
+-            Text("SIC-18 · ${if(dirty) "Edición en borrador" else "Completo"}")
+-            Text("SIC-18A · ${if(!required) if(hasExtra) "No requerido · antecedente conservado" else "No requerido" else if(extraComplete) "Completo" else "Pendiente"}")
+-            if(!required && hasExtra) Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")
+-            if(required || hasExtra) {
+-                OutlinedButton(onClick={expanded=!expanded}) {Text(if(expanded) "Ocultar detalle de condición mala" else if(required) "Completar detalle de condición mala" else "Ver antecedente")}
+-                if(expanded) CulvertSupplementFields(extra,!extraComplete && !busy) {extra=it;dirty=true;review=false;files=emptyList()}
++            if(expanded && (required || hasExtra)) item {CulvertSupplementFields(extra,!extraComplete && !busy) {extra=it;dirty=true;review=false;files=emptyList()}}
++            item {CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->if(!busy){paths=p;categories=c;dirty=true;files=emptyList()}}}
++            r?.observations?.takeIf {it.isNotBlank()}?.let {item {com.tuempresa.inventariovial.SectionTitle("Registro");Text(it)}}
++            item {LegacyInventoryReviewButton(!busy) {review=true}}
++            item {
++                if(editingDraft)Text("Finaliza el borrador de edición para exportar los cambios")
++                Button(enabled=!busy && !dirty && !editingDraft,onClick={busy=true;scope.launch {try {
++                    files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading);notice="Se generaron ${files.size} formatos para esta alcantarilla"
++                } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar formatos")}
++                GeneratedElementFiles(files) {notice=it}
+             }
+-            CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->if(!busy){paths=p;categories=c;dirty=true;files=emptyList()}}
+-            r?.observations?.takeIf {it.isNotBlank()}?.let {InventoryFormSection("Observaciones") {Text(it)}}
+-            if(review) RecordReviewSection("REVISIÓN",listOf("Ubicación" to "${r?.routeCode} · PR ${r?.startPrCode}+${r?.startDistanceM}","Clase / tipo / vanos" to "${base.classCode} / ${base.typeCode} / ${base.spans}","Condición estructural / funcional" to "${base.structuralConditionCode} / ${base.functionalConditionCode}","SIC-18A" to if(required)"Requerido" else "No requerido")+SicFieldFormat.SIC18A.fields.filter {it.key in culvertAdditionalKeys}.map {it.label to extraState.text(it.key)},paths.map(::File),completion,initiallyExpanded=true)
+-            Row(horizontalArrangement=Arrangement.spacedBy(12.dp)) {
+-                OutlinedButton(enabled=!busy,onClick={save(false)}) {Text("Guardar borrador")}
+-                Button(enabled=!busy,onClick={review=true}) {Text("Revisar y finalizar")}
+-            }
+-            if(review) {OutlinedButton(onClick={review=false}) {Text("Volver a editar")};Button(enabled=!busy && completion.canFinalize,onClick={save(true)}) {Text("Finalizar")}}
+-            if(editingDraft) Text("Finaliza el borrador de edición para exportar los cambios")
+-            Button(enabled=!busy && !dirty && !editingDraft,onClick={busy=true;scope.launch {try {
+-                files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading);notice="Se generaron ${files.size} formatos para esta alcantarilla"
+-            } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar formatos")}
+-            GeneratedElementFiles(files) {notice=it}
+         }
+-        notice?.let {Text(it)}
+-        if(busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+-      }
++        if(busy)item {LinearProgressIndicator(Modifier.fillMaxWidth())}
+     }
++    if(review) LegacyRecordReviewDialog(
++        listOf("Ubicación" to "${r?.routeCode} · PR ${r?.startPrCode}+${r?.startDistanceM}","Clase / tipo / vanos" to "${base.classCode} / ${base.typeCode} / ${base.spans}","Condición estructural / funcional" to "${base.structuralConditionCode} / ${base.functionalConditionCode}","SIC-18A" to if(required)"Requerido" else "No requerido")+
++            SicFieldFormat.SIC18A.fields.filter {it.key in culvertAdditionalKeys}.map {it.label to extraState.text(it.key)},paths.map(::File),completion,
++        enabled=!busy,onConfirm={save(true)},onDismiss={review=false})
+     conditionChange?.let {next->AlertDialog(onDismissRequest={conditionChange=null},title={Text("Conservar detalle existente")},
+         text={Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")},
+         confirmButton={TextButton(onClick={base=next;conditionChange=null;dirty=true;review=false;files=emptyList()}) {Text("Conservar como antecedente")}},
+--- v12/app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt
++++ parity/app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt
+@@ -42,16 +42,9 @@
+ fun SaveWarningsDialog(viewModel: InventoryViewModel) {
+     val pending by viewModel.pendingSave.collectAsState()
+     pending?.let { save ->
+-        AlertDialog(onDismissRequest=viewModel::dismissSaveWarnings,
+-            title={ Text("Verificar registro antes de guardar") },
+-            text={ Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)) {
+-                com.tuempresa.inventariovial.core.RecordReviewSection("Revisión SIC",captureSummary(save.request),save.request.photoPaths.map(::File),
+-                    com.tuempresa.inventariovial.core.CompletionResult(emptyList()),initiallyExpanded=true)
+-                save.warnings.forEach { Text("• ${it.message}") }
+-                Text("Puedes corregir los datos o guardar después de revisar estos avisos.")
+-            } },
+-            confirmButton={ TextButton(onClick=viewModel::confirmSaveWarnings) { Text("Confirmar y guardar") } },
+-            dismissButton={ TextButton(onClick=viewModel::dismissSaveWarnings) { Text("Revisar") } })
++        LegacyRecordReviewDialog(captureSummary(save.request),save.request.photoPaths.map(::File),
++            com.tuempresa.inventariovial.core.CompletionResult(emptyList()),save.warnings.map {it.message},
++            onConfirm=viewModel::confirmSaveWarnings,onDismiss=viewModel::dismissSaveWarnings)
+     }
+ }
+ 
+--- v12/app/src/main/java/com/tuempresa/inventariovial/field/SurveyPreferences.kt
++++ parity/app/src/main/java/com/tuempresa/inventariovial/field/SurveyPreferences.kt
+@@ -101,7 +101,11 @@
+         r.roadbedCode.trim().uppercase(),r.startPrCode.trim(),r.startDistanceM.replace(',','.').toDouble(),r.direction,r.sessionId)
+ 
+     fun remember(request: InventorySaveRequest) {
+-        val p = position(request)
++        remember(position(request))
++    }
++
++    /** Same survey continuity store for formats whose technical data lives in SicExtensionEntity. */
++    fun remember(p: SurveyPosition) {
+         prefs.edit().putString("last",JSONObject().put("segment",p.segment).put("route",p.route)
+             .put("roadbed",p.roadbed).put("pr",p.pr).put("distance",p.distance).put("direction",p.direction)
+             .put("sessionId",p.sessionId.orEmpty()).toString()).apply()
+--- v12/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt
++++ parity/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt
+@@ -30,13 +30,11 @@
+ 
+ @Composable
+ fun SicCodeDropdown(field:SicField,value:String,onChange:(String)->Unit,enabled:Boolean=true) {
+-    Column(verticalArrangement=Arrangement.spacedBy(6.dp)) {
+-        Text(field.label,style=MaterialTheme.typography.titleSmall)
++    Column {
++        Text(field.label,fontWeight=androidx.compose.ui.text.font.FontWeight.Bold)
+         val labels=field.options.map {if(it.code==ACCIDENT_TYPE_SOURCE_CONFLICT) it.name else it.label}
+         val selected=field.options.indexOfFirst {it.code==value}
+-        ChoiceSelector(labels,labels.getOrNull(selected).orEmpty(),enabled) {label->
+-            onChange(field.options[labels.indexOf(label)].code)
+-        }
++        ChoiceSelector(labels,labels.getOrNull(selected).orEmpty(),enabled) {label->onChange(field.options[labels.indexOf(label)].code)}
+     }
+ }
+ 
+@@ -108,8 +106,10 @@
+     val scope=rememberCoroutineScope()
+     val extensions by db.inventoryDao().observeSicExtensions().collectAsState(initial=emptyList())
+     val session by vm.field.session.collectAsState()
++    val survey=remember(context) {com.tuempresa.inventariovial.field.SurveyPreferences(context)}
+     val faja=format==SicFieldFormat.SIC08
+-    val id=rememberSaveable(format,recordId) {recordId ?: UUID.randomUUID().toString()}
++    var id by rememberSaveable(format,recordId) {mutableStateOf(recordId ?: UUID.randomUUID().toString())}
++    var trackRecordId by rememberSaveable(format,recordId) {mutableStateOf(recordId)}
+     var source by rememberSaveable(format,recordId) {mutableStateOf<String?>(null)}
+     var raw by rememberSaveable(format,recordId) {mutableStateOf("{}")}
+     var loaded by rememberSaveable(format,recordId) {mutableStateOf(false)}
+@@ -125,6 +125,7 @@
+     var notice by remember {mutableStateOf<String?>(null)}
+     var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
+     var paths by rememberSaveable {mutableStateOf<List<String>>(emptyList())}
++    var categories by remember {mutableStateOf<Map<String,String>>(emptyMap())}
+     var captures by remember {mutableStateOf<Map<String,PhotoCaptureMetadata>>(emptyMap())}
+     var fix by remember {mutableStateOf<GeoLocation?>(null)}
+     var endFix by remember {mutableStateOf<GeoLocation?>(null)}
+@@ -135,7 +136,7 @@
+     val widthStarted=widths.values.any {it.isNotBlank()}
+     val completion=CompletionResult(state.completion().issues+if(faja && widthStarted) widthState.completion().issues else emptyList())
+     val editable=!complete || faja && !widthComplete
+-    fun change(key:String,value:String) {raw=JSONObject(state.set(key,value).values).toString();dirty=true;review=false;files=emptyList()}
++    fun change(key:String,value:String) {raw=JSONObject(values(raw)+(key to value)).toString();dirty=true;review=false;files=emptyList()}
+     LaunchedEffect(id) {
+         if(!loaded) try {
+             val saved=repo.load(id,format)
+@@ -144,6 +145,7 @@
+                 complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
+                 val snapshot=db.inventoryDao().snapshot(id)!!
+                 paths=snapshot.photos.sortedBy {it.photoIndex}.map {it.localPath}
++                categories=snapshot.photos.associate {it.localPath to (it.photoCategory ?: "GENERAL")}
+                 if(snapshot.record.locationSource!="CONTRACTUAL_PR_ONLY") fix=GeoLocation(snapshot.record.latitude,snapshot.record.longitude,snapshot.record.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,snapshot.record.altitudeM)
+                 snapshot.record.endLatitude?.let {endFix=GeoLocation(it,snapshot.record.endLongitude!!,snapshot.record.endGpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY)}
+                 if(faja) {
+@@ -155,7 +157,11 @@
+             } else {
+                 val initial=mutableMapOf("surveyDate" to LocalDate.now().format(SicFieldFormat.dateFormatter))
+                 session?.road?.let {initial["routeCode"]=it};session?.roadbed?.let {initial["roadbedCode"]=it}
+-                initial.putAll(SicCaptureContext(context).values(session));raw=JSONObject(initial).toString()
++                val prior=survey.last()?.takeIf {it.sessionId==session?.sessionId}
++                prior?.let {initial["startPrCode"]=it.pr;initial["startDistanceM"]=it.distance.toString()}
++                initial["_direction"]=prior?.direction ?: session?.direction ?: "INCREASING"
++                initial["_segment"]=prior?.segment ?: session?.segment.orEmpty()
++                raw=JSONObject(initial).toString()
+             }
+             loaded=true
+         } catch(e:Exception) {notice=e.message}
+@@ -168,81 +174,44 @@
+             val owner=vm.field.auth.sessions.requireUser().id
+             if(finalize) require(completion.canFinalize) {"Revisa los pendientes antes de finalizar"}
+             if(faja) repo.saveFaja(id,state,widthId,widths,owner,finalize,paths,captures)
+-            else repo.save(id,state,owner,finalize,paths,captures=captures,sessionId=session?.sessionId)
++            else repo.save(id,state,owner,finalize,paths,categories=categories,captures=captures,sessionId=session?.sessionId)
+             complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
+             widthComplete=db.inventoryDao().sicExtension(widthId)?.status=="COMPLETE"
++            trackRecordId=id
+             dirty=false;review=false;notice=if(finalize) "✓ Finalizado · guardado en tablet" else "✓ Borrador guardado en tablet"
+-            if(finalize) SicCaptureContext(context).remember(session,state)
++            if(finalize) {
++                if(com.tuempresa.inventariovial.tracking.TrackCaptureService.activeRecordId.value==id)vm.field.stopTrack()
++                survey.remember(com.tuempresa.inventariovial.field.SurveyPosition(
++                    survey.projectRoutes.segment(state.text("routeCode"),state.text("_segment")),state.text("routeCode"),state.text("roadbedCode"),state.text("startPrCode"),
++                    SicFieldState.number(state.text("startDistanceM")) ?: 0.0,state.text("_direction").ifBlank {"INCREASING"},session?.sessionId))
++            }
+             after?.invoke()
+         } catch(e:Exception) {notice=e.message} finally {busy=false}}
+     }
+     BackHandler(enabled=!busy) {leave()}
+-    Box(Modifier.fillMaxSize(),contentAlignment=androidx.compose.ui.Alignment.TopCenter) {
+-      LazyColumn(Modifier.widthIn(max=1000.dp).fillMaxSize().padding(horizontal=24.dp),contentPadding=PaddingValues(vertical=24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+-        item {
+-            OutlinedButton(enabled=!busy,onClick={leave()}) {Text("Volver")}
+-            Text(InventoryElements.title(format.code),style=MaterialTheme.typography.headlineMedium)
+-            Text(if(faja) "SIC-08 · SIC-09" else format.code,style=MaterialTheme.typography.bodySmall)
+-        }
+-        item {InventoryFormSection("Identificación") {
+-            InventoryFieldRows(format.fields.filter {it.key in setOf("routeCode","roadbedCode","faja","surveyDate")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
+-        }}
+-        item {InventoryFormSection(if(format.hasEnd) "Ubicación inicio" else "Ubicación") {
+-            LocationSummaryCard(fix?.latitude,fix?.longitude,fix?.horizontalAccuracy?.toDouble(),"${state.text("startPrCode")} + ${state.text("startDistanceM")} m",state.text("routeCode"),"PR contractual") {
+-                if(!complete && !busy) FinalLocationCapture(fix,{fix=it;raw=JSONObject(values(raw)+mapOf("_latitude" to it.latitude.toString(),"_longitude" to it.longitude.toString(),"_accuracy" to it.horizontalAccuracy.toString(),"_altitude" to it.altitude.toString())).toString();dirty=true},"inicio")
+-            }
+-            InventoryFieldRows(format.fields.filter {it.key in setOf("startPrCode","startDistanceM")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
+-        }}
+-        if(format.hasEnd) item {InventoryFormSection("Ubicación fin") {
+-            LocationSummaryCard(endFix?.latitude,endFix?.longitude,endFix?.horizontalAccuracy?.toDouble(),"${state.text("endPrCode")} + ${state.text("endDistanceM")} m",state.text("routeCode"),"PR contractual") {
+-                if(!complete && !busy) FinalLocationCapture(endFix,{endFix=it;raw=JSONObject(values(raw)+mapOf("_endLatitude" to it.latitude.toString(),"_endLongitude" to it.longitude.toString(),"_endAccuracy" to it.horizontalAccuracy.toString())).toString();dirty=true},"fin")
+-            }
+-            InventoryFieldRows(format.fields.filter {it.key in setOf("endPrCode","endDistanceM")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
+-        }}
+-        item {InventoryFormSection(if(faja) "Características de la faja" else "Datos del elemento",if(faja) "Formato SIC-08" else format.code) {
+-            InventoryFieldRows(format.fields.filter {it.key !in SicFieldRepository.sharedKeys && it.key !in setOf("faja","description","levelCode")}) {field->SicFieldInput(field,state.text(field.key),{change(field.key,it)},!complete && !busy)}
+-            if(format==SicFieldFormat.SIC13) TechnicalCriterion("Ver criterio") {Text(SicFieldFormat.criticalClasses.find {it.code==state.text("classCode")}?.description.orEmpty())}
+-        }}
+-        if(faja) item {InventoryFormSection("Ancho de la faja","Formato SIC-09 · opcional al registrar características") {
+-            Text("Características · ${if(complete) "✓" else "Pendiente"} · Anchos · ${if(widthComplete) "✓" else "Pendiente"}")
+-            val children=extensions.filter {it.formatCode=="SIC-09" && it.sourceRecordId==id}
+-            if(children.size>1) ChoiceSelector(children.mapIndexed {i,_->"Medición de anchos ${i+1}"},"Medición de anchos ${children.indexOfFirst {it.recordId==widthId}+1}",!busy && !dirty) {label->
+-                val child=children[label.substringAfterLast(' ').toInt()-1];widthId=child.recordId;widthRaw=JSONObject(child.values().filterKeys {it in setOf("usefulWidthM","totalWidthM")}).toString();widthComplete=child.status=="COMPLETE"
+-            }
+-            if(!widthComplete) OutlinedButton(onClick={widthExpanded=true}) {Text("Completar anchos")}
+-            if(widthExpanded || widthStarted || widthComplete) InventoryFieldRows(SicFieldFormat.SIC09.fields.filter {it.key in setOf("usefulWidthM","totalWidthM")}) {field->
+-                SicFieldInput(field,widths[field.key].orEmpty(),{widthRaw=JSONObject(widths+(field.key to it)).toString();dirty=true;review=false},!widthComplete && !busy)
+-            }
+-            if(!widthComplete) Text("Puedes guardar la faja y completar anchos aquí después",style=MaterialTheme.typography.bodySmall)
+-        }}
+-        if(format==SicFieldFormat.SIC34) item {InventoryFormSection("Nivel") {
+-            SicCodeDropdown(SicFieldFormat.SIC34.fields.single {it.key=="levelCode"},state.text("levelCode"),{change("levelCode",it)},!complete && !busy)
+-            TechnicalCriterion("Ver criterio") {Text(SicFieldFormat.levels.find {it.code==state.text("levelCode")}?.description.orEmpty())}
+-        }}
+-        item {InventoryElementPhotos(paths,!complete && !busy,{paths=it;dirty=true},{path,metadata->captures=captures+(path to metadata)})}
+-        if(format.fields.any {it.key=="description"}) item {InventoryFormSection("Observaciones") {SicFieldInput(format.fields.single {it.key=="description"},state.text("description"),{change("description",it)},!complete && !busy)}}
+-        item {
+-            if(review || !editable) RecordReviewSection("REVISIÓN",format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))}+if(faja) listOf("Ancho útil" to widthState.text("usefulWidthM"),"Ancho total" to widthState.text("totalWidthM")) else emptyList(),paths.map(::File),completion,initiallyExpanded=true)
+-            notice?.let {Text(it)}
+-            if(busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+-            if(editable) {
+-                Row(horizontalArrangement=Arrangement.spacedBy(12.dp)) {
+-                    OutlinedButton(enabled=loaded && !busy,onClick={save(false)}) {Text("Guardar borrador")}
+-                    Button(enabled=loaded && !busy,onClick={review=true}) {Text("Revisar y finalizar")}
+-                }
+-                if(review) {
+-                    OutlinedButton(onClick={review=false}) {Text("Volver a editar")}
+-                    Button(enabled=!busy && completion.canFinalize,onClick={save(true)}) {Text("Finalizar")}
+-                }
+-            }
+-            if(complete) Button(enabled=!busy && !dirty,onClick={busy=true;scope.launch {try {
+-                files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading)
+-                notice="Se generaron ${files.size} formatos para esta ${if(faja) "faja" else "ficha"}"
+-            } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar")}
+-            GeneratedElementFiles(files) {notice=it}
+-        }
+-      }
+-    }
++    LegacySicElementForm(vm,state,editable,!complete,busy,loaded,notice,fix,endFix,paths,categories,
++        widths,widthId,widthComplete,widthExpanded,extensions.filter {it.formatCode=="SIC-09" && it.sourceRecordId==id},trackRecordId,
++        onChange=::change,onFix={location,end->
++            if(end)endFix=location else fix=location
++            val metadata=if(end)mapOf("_endLatitude" to location.latitude.toString(),"_endLongitude" to location.longitude.toString(),"_endAccuracy" to location.horizontalAccuracy.toString(),"_endGpsTimestamp" to location.timestamp.toString())
++                else mapOf("_latitude" to location.latitude.toString(),"_longitude" to location.longitude.toString(),"_accuracy" to location.horizontalAccuracy.toString(),"_altitude" to location.altitude.toString(),"_gpsTimestamp" to location.timestamp.toString())
++            raw=JSONObject(values(raw)+metadata).toString();dirty=true;review=false;files=emptyList()
++        },onPhotos={p,c->paths=p;categories=c;dirty=true;files=emptyList()},onMetadata={path,metadata->captures=captures+(path to metadata)},
++        onWidthChange={key,value->widthRaw=JSONObject(values(widthRaw)+(key to value)).toString();dirty=true;review=false;files=emptyList()},
++        onWidthSelect={selected->if(!dirty) {
++            val child=extensions.single {it.recordId==selected};widthId=child.recordId;widthRaw=JSONObject(child.values().filterKeys {it in setOf("usefulWidthM","totalWidthM")}).toString();widthComplete=child.status=="COMPLETE"
++        }},onExpandWidths={widthExpanded=true},onTrackId={id=it;trackRecordId=it;save(false)},
++        onDraft={if(editable)save(false)},onBack=::leave,onReview={review=true}) {
++        if(complete) Button(enabled=!busy && !dirty,onClick={busy=true;scope.launch {try {
++            files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading)
++            notice="Se generaron ${files.size} formatos para esta ${if(faja) "faja" else "ficha"}"
++        } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar")}
++        GeneratedElementFiles(files) {notice=it}
++    }
++    if(review) com.tuempresa.inventariovial.field.LegacyRecordReviewDialog(
++        format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))}+
++            if(faja)listOf("Ancho útil" to widthState.text("usefulWidthM"),"Ancho total" to widthState.text("totalWidthM")) else emptyList(),
++        paths.map(::File),completion,enabled=!busy,onConfirm={save(true)},onDismiss={review=false})
+     if(exit) AlertDialog(onDismissRequest={exit=false},title={Text("Guardar cambios")},text={Text("Conserva los cambios como borrador antes de volver")},confirmButton={TextButton(enabled=!busy,onClick={save(false){exit=false;onBack()}}) {Text("Guardar borrador y volver")}},dismissButton={TextButton(onClick={exit=false}) {Text("Seguir editando")}})
+ }
+ 
+--- v12/app/build.gradle.kts
++++ parity/app/build.gradle.kts
+@@ -29,7 +29,7 @@
+ fun localFlag(name: String) = serverProperties.getProperty(name, "false").toBoolean().toString()
+ 
+ // Public identity is pinned to the certificate verified in both historical field APKs.
+-val productionVersionCode = 12
++val productionVersionCode = 13
+ val expectedReleaseCertSha256 = "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+ val releaseProperties = Properties().apply {
+     val config = rootProject.file("keystore.properties")

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.InventoryElementFlowTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:57:38.595Z" hostname="JULIAN" time="3.312">
+  <properties/>
+  <testcase name="culvertNormalRequiresOneFormatBadConditionRequiresAdditionalDetailAndOneIdentity" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.535"/>
+  <testcase name="rawWidthsAndPartialCharacteristicsRemainDraftsWithoutDuplicatingTheirParent" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.144"/>
+  <testcase name="fajaCharacteristicsSaveReopenThenWidthsFinalizeAsOneElement" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.322"/>
+  <testcase name="culvertSupplementEnteredBeforeBaseFinalizationKeepsItsParentForeignKey" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.157"/>
+  <testcase name="oneDriveFolderForLinkedFajaFormatsKeepsChildAckIdAndDoesNotMarkPreparedAsSynced" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="1.361"/>
+  <testcase name="historicalUnlinkedWidthsAndMultipleLinkedMeasurementsAreNeverLostOrGuessed" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.193"/>
+  <testcase name="coordinatesAndCleanPhotographsOfNewElementsSurviveSaveAndReopen" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.093"/>
+  <testcase name="inheritedCommonFieldsFollowCurrentFajaWhilePreservingWidthUuidAndRawValues" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.13"/>
+  <testcase name="culvertRawEditDraftPersistsInvalidNumbersAndIsIsolatedByOperator" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.093"/>
+  <testcase name="generatedFileDiscoveryAndGroupingRetainElementContextForOldAndNewFilenameOrder" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.108"/>
+  <testcase name="conditionImprovementKeepsSupplementAsHistoryWithoutExportingItAsCurrentlyRequired" classname="com.tuempresa.inventariovial.InventoryElementFlowTest" time="0.142"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

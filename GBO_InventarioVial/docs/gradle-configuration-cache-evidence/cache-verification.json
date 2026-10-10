@@ -1,0 +1,58 @@
+{
+  "help-cache-first": {
+    "build_successful": true,
+    "cache_stored": true,
+    "cache_reused": false,
+    "configuration_cache_problem": false,
+    "signing_blocked": false,
+    "validation_build_blocked": false
+  },
+  "help-cache-second": {
+    "build_successful": true,
+    "cache_stored": false,
+    "cache_reused": true,
+    "configuration_cache_problem": false,
+    "signing_blocked": false,
+    "validation_build_blocked": false
+  },
+  "validation-cache-first": {
+    "build_successful": false,
+    "cache_stored": true,
+    "cache_reused": false,
+    "configuration_cache_problem": false,
+    "signing_blocked": true,
+    "validation_build_blocked": false
+  },
+  "validation-cache-second": {
+    "build_successful": false,
+    "cache_stored": false,
+    "cache_reused": true,
+    "configuration_cache_problem": false,
+    "signing_blocked": true,
+    "validation_build_blocked": false
+  },
+  "release-cache": {
+    "build_successful": false,
+    "cache_stored": true,
+    "cache_reused": false,
+    "configuration_cache_problem": false,
+    "signing_blocked": true,
+    "validation_build_blocked": false
+  },
+  "release-no-cache": {
+    "build_successful": false,
+    "cache_stored": false,
+    "cache_reused": false,
+    "configuration_cache_problem": false,
+    "signing_blocked": true,
+    "validation_build_blocked": false
+  },
+  "validation-build-blocked": {
+    "build_successful": false,
+    "cache_stored": true,
+    "cache_reused": false,
+    "configuration_cache_problem": false,
+    "signing_blocked": false,
+    "validation_build_blocked": true
+  }
+}

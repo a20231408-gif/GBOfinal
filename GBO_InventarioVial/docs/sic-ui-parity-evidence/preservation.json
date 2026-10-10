@@ -1,0 +1,18 @@
+{
+  "receivedFiles": 586,
+  "unchangedFiles": 579,
+  "changedFiles": [
+    "app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/CulvertPhotos.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/SurveyPreferences.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt",
+    "app/build.gradle.kts"
+  ],
+  "roomVersion": 15,
+  "migrationAdded": false,
+  "signingUnchanged": true,
+  "versionCode": 13,
+  "protectedHashesUnchanged": true
+}

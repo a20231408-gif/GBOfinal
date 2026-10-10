@@ -1,0 +1,32 @@
+{
+  "roomVersion": 15,
+  "migrationAdded": false,
+  "receivedFiles": 579,
+  "unchangedFiles": 569,
+  "changedFiles": [
+    "app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/RecordHistoryScreen.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/core/CoreFieldTools.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/core/GeneratedFileIndex.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/delivery/RouteDelivery.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldRepository.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/Engineering2ScreenTest.kt",
+    "app/build.gradle.kts"
+  ],
+  "newSourceFiles": [
+    "app/src/main/java/com/tuempresa/inventariovial/core/InventoryFormUi.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/CulvertEditDraft.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/sic/ElementExports.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/sic/InventoryElements.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/InventoryElementFlowTest.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/InventoryElementNavigationTest.kt"
+  ],
+  "releaseChangeOnlyVersionCode": "11 \u2192 12",
+  "signingPolicyPreserved": true,
+  "expectedCertificateSha256": "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315",
+  "protectedFiles": 569,
+  "protectedHashesUnchanged": true
+}

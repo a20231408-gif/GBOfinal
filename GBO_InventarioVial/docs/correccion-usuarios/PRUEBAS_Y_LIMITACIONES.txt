@@ -1,0 +1,22 @@
+Corrección Usuarios GBO · octubre 2026
+
+Prueba ejecutada con Node.js: node backend/user-service/tests/service.test.cjs
+Resultado: 21 pruebas del backend superadas.
+Cobertura: bootstrap, sincronización, autenticación, altas, edición, cambio PIN,
+roles, auditoría, expiración de sesión, limitación de intentos, revocación,
+revinculación aprobada, bloqueo de revinculación sin aprobación, destino equivocado,
+plazo vencido, token inválido y destino ocupado.
+
+Comprobación de sintaxis de archivos Apps Script: OK.
+
+Android: se corrigieron los 2 tests históricos del módulo Usuarios
+(UserAuthenticationTest) y se añadió un caso de rebind recuperable. No se han
+podido ejecutar aquí: falta el Gradle 9.6 solicitado por el wrapper y la red de
+este entorno no permite descargarlo. El SDK Android tampoco está instalado.
+Queda pendiente ejecutar :app:testDebugUnitTest en Android Studio local y
+verificar en una tablet real con el servicio Apps Script actualizado.
+
+Importante: sin despliegue del backend a la cuenta propietaria y
+revinculación autorizada cuando haga falta, no se garantiza el acceso online.
+No hay APK nueva en este proyecto; solo fuentes. No reutilizar APK de entregas
+antiguas para validar estos cambios.

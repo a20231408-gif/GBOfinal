@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PavementReportTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:54:17.387Z" hostname="JULIAN" time="0.354">
+  <properties/>
+  <testcase name="rendersSampleReportAndExcelWithoutCurves" classname="com.tuempresa.inventariovial.PavementReportTest" time="0.346"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

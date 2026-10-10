@@ -1,0 +1,5373 @@
+[
+  {
+    "file": "docs/reference/FICHA SCAP - GBO modelo - LOSA.xlsx",
+    "sha256": "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57",
+    "inspection": {
+      "sheets": [
+        "A-D.- FICHA",
+        "E.- CROQUIS",
+        "F.1- CONDICION GLOBAL",
+        "F.2.-PANEL FOTOGRAFICO",
+        "G.- CONDICION ESTADISTICA",
+        "G.2-CONCLUSIONES",
+        "AUXILIAR",
+        "Hoja1",
+        "Hoja3"
+      ],
+      "sheet_details": [
+        {
+          "name": "A-D.- FICHA",
+          "dimensions": "A1:X497",
+          "formula_count": 19,
+          "broken_formula_refs": [],
+          "hidden_rows": [
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            300,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368,
+            369,
+            370,
+            371,
+            372,
+            373,
+            374,
+            375,
+            376,
+            377,
+            378,
+            379,
+            380,
+            381,
+            382,
+            433,
+            434,
+            435,
+            436,
+            437,
+            438,
+            439,
+            440,
+            441,
+            442,
+            443,
+            444,
+            445,
+            446,
+            447,
+            448,
+            449,
+            450,
+            451,
+            452,
+            453,
+            454,
+            455,
+            456,
+            457,
+            458,
+            459,
+            460,
+            461,
+            462,
+            463,
+            464,
+            465,
+            466,
+            467,
+            468,
+            469,
+            470,
+            471,
+            472,
+            473,
+            474,
+            475,
+            476,
+            477,
+            478,
+            479,
+            481,
+            482,
+            483,
+            484,
+            485,
+            486,
+            487,
+            488,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494,
+            495,
+            496,
+            497,
+            498,
+            499,
+            500,
+            501
+          ],
+          "merges": [
+            "C25:G26",
+            "H325:J325",
+            "J408:L408",
+            "E244:F244",
+            "G267:H267",
+            "G57:H57",
+            "P215:R215",
+            "C250:C252",
+            "P205:R205",
+            "E81:G81",
+            "J46:L46",
+            "J232:L232",
+            "C275:E275",
+            "J38:L38",
+            "E256:F256",
+            "E246:F246",
+            "J40:L40",
+            "N81:P81",
+            "C302:G303",
+            "N161:P161",
+            "G375:H375",
+            "H358:J358",
+            "C222:G223",
+            "C273:E273",
+            "J234:L234",
+            "E132:R132",
+            "H425:J425",
+            "J119:K119",
+            "C125:E125",
+            "G213:L213",
+            "G49:H49",
+            "E252:F252",
+            "C263:G264",
+            "N49:P49",
+            "J42:L42",
+            "H427:J427",
+            "N36:P36",
+            "M144:P144",
+            "E250:F250",
+            "N375:P375",
+            "J44:L44",
+            "C92:G93",
+            "F205:H205",
+            "C269:E269",
+            "H323:J323",
+            "L478:N478",
+            "J161:L161",
+            "C121:E121",
+            "J412:L412",
+            "C443:G444",
+            "C399:G400",
+            "J55:L55",
+            "G296:H296",
+            "R51:T51",
+            "H429:J429",
+            "M290:N290",
+            "H434:K434",
+            "C60:G61",
+            "C331:G332",
+            "C385:G386",
+            "J404:L404",
+            "J56:L56",
+            "I282:J282",
+            "E336:G336",
+            "G203:L203",
+            "H431:J431",
+            "N340:P340",
+            "C256:C258",
+            "N1:R3",
+            "G306:H306",
+            "J57:L57",
+            "J10:L10",
+            "E234:G234",
+            "F290:G290",
+            "E258:F258",
+            "G56:H56",
+            "F1:M3",
+            "R290:S290",
+            "J49:L49",
+            "J36:L36",
+            "C277:E277",
+            "C4:R5",
+            "F144:H144",
+            "J375:L375",
+            "F215:H215",
+            "C188:E188",
+            "C1:E3",
+            "C169:G170",
+            "J336:L336",
+            "E240:F240",
+            "C7:G8",
+            "C420:G421",
+            "F282:G282",
+            "L306:N306",
+            "J12:L12",
+            "F161:H161",
+            "J406:L406",
+            "C354:G355",
+            "N119:O119",
+            "J228:L228",
+            "C279:E279",
+            "I290:J290",
+            "C58:E58",
+            "C73:G74",
+            "C318:G319",
+            "E242:F242",
+            "N267:P267",
+            "C271:E271",
+            "C115:G116"
+          ],
+          "sample_nonblank": [
+            [
+              "F1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "C4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "C7",
+              "SECCION (A) : IDENTIFICACIÓN Y UBICACIÓN",
+              "s"
+            ],
+            [
+              "H10",
+              "Nombre",
+              "s"
+            ],
+            [
+              "J10",
+              "PUENTE",
+              "s"
+            ],
+            [
+              "N10",
+              1,
+              "n"
+            ],
+            [
+              "H12",
+              "Código",
+              "s"
+            ],
+            [
+              "J12",
+              "MO-100.002A",
+              "s"
+            ],
+            [
+              "N12",
+              2,
+              "n"
+            ],
+            [
+              "C14",
+              "Altitud:",
+              "s"
+            ],
+            [
+              "G14",
+              3,
+              "n"
+            ],
+            [
+              "H14",
+              "Dpto Político:",
+              "s"
+            ],
+            [
+              "J14",
+              "LIMA",
+              "s"
+            ],
+            [
+              "L14",
+              6,
+              "n"
+            ],
+            [
+              "N14",
+              "Pob. mas cercano",
+              "s"
+            ],
+            [
+              "P14",
+              "=+J20",
+              "f"
+            ],
+            [
+              "R14",
+              10,
+              "n"
+            ],
+            [
+              "T15",
+              " ",
+              "s"
+            ],
+            [
+              "C16",
+              "Latitud",
+              "s"
+            ],
+            [
+              "G16",
+              4,
+              "n"
+            ]
+          ]
+        },
+        {
+          "name": "E.- CROQUIS",
+          "dimensions": "A1:M55",
+          "formula_count": 4,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B41:G42",
+            "B26:G27",
+            "I2:K4",
+            "D2:H4",
+            "A2:C4",
+            "B12:G13",
+            "A5:K6"
+          ],
+          "sample_nonblank": [
+            [
+              "D2",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A5",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "B8",
+              "SECCION ( E ) : CROQUIS DEL PUENTE",
+              "s"
+            ],
+            [
+              "B9",
+              "NOMBRE :",
+              "s"
+            ],
+            [
+              "C9",
+              "=+'A-D.- FICHA'!J10",
+              "f"
+            ],
+            [
+              "B10",
+              "Ruta  :",
+              "s"
+            ],
+            [
+              "C10",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "H10",
+              "Progresiva :",
+              "s"
+            ],
+            [
+              "I10",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "B12",
+              "ELEVACION",
+              "s"
+            ],
+            [
+              "B26",
+              "PLANTA",
+              "s"
+            ],
+            [
+              "B41",
+              "SECCION TRANSVERSAL",
+              "s"
+            ],
+            [
+              "B55",
+              "=+'A-D.- FICHA'!C48",
+              "f"
+            ]
+          ]
+        },
+        {
+          "name": "F.1- CONDICION GLOBAL",
+          "dimensions": "A1:L46",
+          "formula_count": 4,
+          "broken_formula_refs": [
+            {
+              "cell": "D6",
+              "formula": "=+#REF!"
+            }
+          ],
+          "hidden_rows": [],
+          "merges": [
+            "F31:L31",
+            "F22:L22",
+            "F28:L28",
+            "C44:E44",
+            "C41:E41",
+            "F27:L27",
+            "C31:E31",
+            "C22:E22",
+            "F43:L43",
+            "F37:L37",
+            "C43:E43",
+            "I1:L3",
+            "C36:E36",
+            "C27:E27",
+            "C23:E23",
+            "F44:L44",
+            "F34:L34",
+            "C32:E32",
+            "C38:E38",
+            "A4:L4",
+            "C28:E28",
+            "A1:D3",
+            "F40:L40",
+            "C37:E37",
+            "C8:F9",
+            "F21:L21",
+            "A5:E5",
+            "F24:L24",
+            "C34:E34",
+            "F42:L42",
+            "E1:H3",
+            "C24:E24",
+            "F45:L45",
+            "C42:E42",
+            "F33:L33",
+            "F36:L36",
+            "C33:E33",
+            "F32:L32",
+            "F26:L26",
+            "F41:L41",
+            "C45:E45",
+            "F35:L35",
+            "C26:E26",
+            "F38:L38",
+            "F23:L23"
+          ],
+          "sample_nonblank": [
+            [
+              "E1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "A5",
+              "SECCION (F): CONDICION DEL PUENTE",
+              "s"
+            ],
+            [
+              "C6",
+              "Puente :",
+              "s"
+            ],
+            [
+              "D6",
+              "=+#REF!",
+              "f"
+            ],
+            [
+              "F6",
+              "Ruta :",
+              "s"
+            ],
+            [
+              "G6",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "I6",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "K6",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "C8",
+              "F.2  :CONDICION GLOBAL DEL PUENTE",
+              "s"
+            ],
+            [
+              "D11",
+              1,
+              "n"
+            ],
+            [
+              "E11",
+              "Bueno",
+              "s"
+            ],
+            [
+              "G11",
+              3,
+              "n"
+            ],
+            [
+              "H11",
+              "Preocupante",
+              "s"
+            ],
+            [
+              "J11",
+              5,
+              "n"
+            ],
+            [
+              "K11",
+              "Pesimo",
+              "s"
+            ],
+            [
+              "D13",
+              0,
+              "n"
+            ],
+            [
+              "E13",
+              "Excelente",
+              "s"
+            ],
+            [
+              "G13",
+              2,
+              "n"
+            ],
+            [
+              "H13",
+              "Regular",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "F.2.-PANEL FOTOGRAFICO",
+          "dimensions": "A1:XFD42",
+          "formula_count": 3,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B6:C6",
+            "B9:E9",
+            "B7:C7",
+            "B5:C5",
+            "E1:F1",
+            "B3:E3",
+            "B1:C1"
+          ],
+          "sample_nonblank": [
+            [
+              "D1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "B3",
+              "F.2 PANEL FOTOGRAFICO",
+              "s"
+            ],
+            [
+              "XFD3",
+              "SI",
+              "s"
+            ],
+            [
+              "XFD4",
+              "NO",
+              "s"
+            ],
+            [
+              "B5",
+              "NOMBRE ",
+              "s"
+            ],
+            [
+              "D5",
+              "=+'A-D.- FICHA'!J10",
+              "f"
+            ],
+            [
+              "B6",
+              "RUTA",
+              "s"
+            ],
+            [
+              "D6",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "B7",
+              "PROGRESIVA",
+              "s"
+            ],
+            [
+              "D7",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "B9",
+              "LISTA DE FOTOGRAFIAS",
+              "s"
+            ],
+            [
+              "B10",
+              "NRO. ",
+              "s"
+            ],
+            [
+              "C10",
+              "FECHA ",
+              "s"
+            ],
+            [
+              "D10",
+              "DESCRIPCION ",
+              "s"
+            ],
+            [
+              "E10",
+              "DIGITAL ",
+              "s"
+            ],
+            [
+              "B11",
+              1,
+              "n"
+            ],
+            [
+              "C11",
+              "2025-02-27 00:00:00",
+              "d"
+            ],
+            [
+              "D11",
+              "ACCESO IZQUIERDO: Debido al alineamiento curvo la visibilidad desde el puente es regular, lo que podría representar un riesgo para la circulación vehicular.",
+              "s"
+            ],
+            [
+              "B12",
+              2,
+              "n"
+            ],
+            [
+              "C12",
+              "2025-02-27 00:00:00",
+              "d"
+            ]
+          ]
+        },
+        {
+          "name": "G.- CONDICION ESTADISTICA",
+          "dimensions": "A1:AA199",
+          "formula_count": 1360,
+          "broken_formula_refs": [
+            {
+              "cell": "E36",
+              "formula": "=+IF(A36=0,\" \",VLOOKUP(A36,#REF!,7))"
+            },
+            {
+              "cell": "E37",
+              "formula": "=+IF(A37=0,\" \",VLOOKUP(A37,#REF!,7))"
+            },
+            {
+              "cell": "E38",
+              "formula": "=+IF(A38=0,\" \",VLOOKUP(A38,#REF!,7))"
+            },
+            {
+              "cell": "E39",
+              "formula": "=+IF(A39=0,\" \",VLOOKUP(A39,#REF!,7))"
+            },
+            {
+              "cell": "E40",
+              "formula": "=+IF(A40=0,\" \",VLOOKUP(A40,#REF!,7))"
+            },
+            {
+              "cell": "E41",
+              "formula": "=+IF(A41=0,\" \",VLOOKUP(A41,#REF!,7))"
+            },
+            {
+              "cell": "E42",
+              "formula": "=+IF(A42=0,\" \",VLOOKUP(A42,#REF!,7))"
+            },
+            {
+              "cell": "E43",
+              "formula": "=+IF(A43=0,\" \",VLOOKUP(A43,#REF!,7))"
+            },
+            {
+              "cell": "E44",
+              "formula": "=+IF(A44=0,\" \",VLOOKUP(A44,#REF!,7))"
+            }
+          ],
+          "hidden_rows": [
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184
+          ],
+          "merges": [
+            "D49:D50",
+            "B16:C16",
+            "B25:C25",
+            "G10:L10",
+            "B22:C22",
+            "C85:C86",
+            "G49:L49",
+            "B27:C27",
+            "B18:C18",
+            "A1:B1",
+            "B31:C31",
+            "B43:C43",
+            "D120:D121",
+            "B39:C39",
+            "B21:C21",
+            "M13:M45",
+            "F10:F12",
+            "A10:A12",
+            "B42:C42",
+            "B23:C23",
+            "B14:C14",
+            "B17:C17",
+            "E49:E50",
+            "A85:A86",
+            "D10:D12",
+            "B10:C12",
+            "A120:A121",
+            "J1:M1",
+            "C120:C121",
+            "E120:E121",
+            "B38:C38",
+            "B44:C44",
+            "G85:L85",
+            "B29:C29",
+            "B19:C19",
+            "B34:C34",
+            "B37:C37",
+            "B28:C28",
+            "E85:E86",
+            "B40:C40",
+            "C1:I1",
+            "D85:D86",
+            "A155:A156",
+            "M10:M12",
+            "C155:C156",
+            "B24:C24",
+            "G120:L120",
+            "G155:L155",
+            "B15:C15",
+            "B30:C30",
+            "B33:C33",
+            "B20:C20",
+            "E10:E12",
+            "B45:C45",
+            "A3:M3",
+            "B36:C36",
+            "B32:C32",
+            "A49:A50",
+            "B26:C26",
+            "B41:C41",
+            "C49:C50",
+            "B35:C35"
+          ],
+          "sample_nonblank": [
+            [
+              "C1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A3",
+              "=+'A-D.- FICHA'!C4",
+              "f"
+            ],
+            [
+              "A5",
+              "G.1 : CONDICION ESTADISTICA DEL PUENTE",
+              "s"
+            ],
+            [
+              "A7",
+              "=+CONCATENATE(\"NOMBRE: \",'A-D.- FICHA'!J10)",
+              "f"
+            ],
+            [
+              "E7",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "F7",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "J7",
+              "PROGRESIVA :",
+              "s"
+            ],
+            [
+              "M7",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "A9",
+              "tabla 1",
+              "s"
+            ],
+            [
+              "A10",
+              "CODIGO",
+              "s"
+            ],
+            [
+              "B10",
+              "DESCRIPCION ",
+              "s"
+            ],
+            [
+              "D10",
+              "METRADO",
+              "s"
+            ],
+            [
+              "E10",
+              "UND.",
+              "s"
+            ],
+            [
+              "F10",
+              "Factor de Importancia ",
+              "s"
+            ],
+            [
+              "G10",
+              "CALIFICACION (%)",
+              "s"
+            ],
+            [
+              "M10",
+              "CONDICION ESTADISTICA DEL PUENTE",
+              "s"
+            ],
+            [
+              "G11",
+              0,
+              "n"
+            ],
+            [
+              "H11",
+              1,
+              "n"
+            ],
+            [
+              "I11",
+              2,
+              "n"
+            ],
+            [
+              "J11",
+              3,
+              "n"
+            ]
+          ]
+        },
+        {
+          "name": "G.2-CONCLUSIONES",
+          "dimensions": "A1:V58",
+          "formula_count": 8,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B17:D17",
+            "B43:D47",
+            "B6:F7",
+            "E43:I47",
+            "B18:I18",
+            "G1:I3",
+            "B29:D37",
+            "B38:I38",
+            "B49:I54",
+            "B19:D27",
+            "E29:I37",
+            "D1:F3",
+            "B28:I28",
+            "B39:D42",
+            "E19:I27",
+            "F17:I17",
+            "A1:C3",
+            "E39:I42",
+            "C9:D10",
+            "B4:I4"
+          ],
+          "sample_nonblank": [
+            [
+              "D1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "B4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "B6",
+              "SECCION (G): RESUMEN DE LA CONDICION DEL PUENTE Y RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "C9",
+              "G.2 :  OBSERVACIONES Y RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "B12",
+              "NOMBRE",
+              "s"
+            ],
+            [
+              "D12",
+              "=+Hoja3!C11",
+              "f"
+            ],
+            [
+              "B13",
+              "RUTA",
+              "s"
+            ],
+            [
+              "D13",
+              "=+Hoja3!C7",
+              "f"
+            ],
+            [
+              "B14",
+              "PROGRESIVA",
+              "s"
+            ],
+            [
+              "D14",
+              "=+Hoja3!C10",
+              "f"
+            ],
+            [
+              "B17",
+              "OBSERVACIONES",
+              "s"
+            ],
+            [
+              "F17",
+              "RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "B18",
+              "ACCIONES NORMATIVAS :",
+              "s"
+            ],
+            [
+              "B19",
+              "=_xlfn.CONCAT(\"De acuerdo a la evaluación realizada al \",'A-D.- FICHA'!J10:L10,\" y a los terminos de referencia (Gestión y relevamiento de Puentes); de ser necesario, corresponde realizar acciones normativas.\")",
+              "f"
+            ],
+            [
+              "B28",
+              "ACCIONES PREVENTIVAS :",
+              "s"
+            ],
+            [
+              "B29",
+              "=+_xlfn.CONCAT(\"De acuerdo a la evaluación realizada al Puente \",'A-D.- FICHA'!J10:L10,\" y a los terminos de referencia (Gestión y Relevamiento de Puentes); de ser necesario, corresponde realizar acciones preventivas.\")",
+              "f"
+            ],
+            [
+              "E29",
+              "Se recomienda que se cumpla con las especificaciones técnicas de los materiales y el procedimiento adecuado de las actividades de conservación rutinaria y periodica.                                                                                Al concluir el periodo de intervención se recomienda programar periódicamente el mantenimiento de los puentes.",
+              "s"
+            ],
+            [
+              "B38",
+              "ACCIONES EJECUTIVAS :",
+              "s"
+            ],
+            [
+              "B39",
+              "=_xlfn.CONCAT(\"De la inspeccion realizada podemos indicar las siguientes conclusiones:\", \"\nLa evaluación de la condición estadística del \",'A-D.- FICHA'!J10:L10, \", efectuada bajo la metodología SCAP señala que el puente se encuentra en la calificación \",'G.- CONDICION ESTADISTICA'!N12,\" requiriéndose realizar el mantenimiento rutinario a fin de mejorar e incrementar su vida útil, a continuacion detallamos las acciones a realizar.\")",
+              "f"
+            ],
+            [
+              "E39",
+              "=_xlfn.CONCAT(\"De la inspección realizada podemos indicar las siguientes conclusiones:\",\"\nRealizar el mantenimiento periodico a fin de mejorar e incrementar la vida útil del \",'A-D.- FICHA'!J10:L10,\", a continuacion detallamos las acciones a realizar.\")",
+              "f"
+            ]
+          ]
+        },
+        {
+          "name": "AUXILIAR",
+          "dimensions": "A1:I116",
+          "formula_count": 111,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B3:F3"
+          ],
+          "sample_nonblank": [
+            [
+              "B3",
+              "ELLEMENTOS CONFORMANTES DE UN PUENTE Y SU IMPORTANCIA",
+              "s"
+            ],
+            [
+              "B4",
+              "Item",
+              "s"
+            ],
+            [
+              "C4",
+              "Codif. Elemento",
+              "s"
+            ],
+            [
+              "D4",
+              1,
+              "n"
+            ],
+            [
+              "E4",
+              "Unidad",
+              "s"
+            ],
+            [
+              "F4",
+              "Factor Importancia",
+              "s"
+            ],
+            [
+              "G4",
+              "ELEMENTO",
+              "s"
+            ],
+            [
+              "B5",
+              1,
+              "n"
+            ],
+            [
+              "C5",
+              101,
+              "n"
+            ],
+            [
+              "D5",
+              "Losa de concreto armado (Refuerzo longitudinal)",
+              "s"
+            ],
+            [
+              "E5",
+              "m3",
+              "s"
+            ],
+            [
+              "F5",
+              1,
+              "n"
+            ],
+            [
+              "G5",
+              "SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "B6",
+              "=1+B5",
+              "f"
+            ],
+            [
+              "C6",
+              102,
+              "n"
+            ],
+            [
+              "D6",
+              "Losa de concreto pretensado (Pretensado Longitudinal)",
+              "s"
+            ],
+            [
+              "E6",
+              "m3",
+              "s"
+            ],
+            [
+              "F6",
+              1,
+              "n"
+            ],
+            [
+              "G6",
+              "SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "I6",
+              "MACRO",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "Hoja1",
+          "dimensions": "A1:Q389",
+          "formula_count": 307,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "C212:I213",
+            "A226:B226",
+            "A242:I244",
+            "C234:D234",
+            "A228:B228",
+            "B223:F223",
+            "A54:B54",
+            "B48:I48",
+            "A172:B172",
+            "A56:B56",
+            "A139:B141",
+            "C219:I220",
+            "B137:I137",
+            "C209:I210",
+            "A12:I13",
+            "A239:I240",
+            "A53:B53",
+            "E2:G3",
+            "C89:H89",
+            "A117:B117",
+            "C139:I139",
+            "B108:H108",
+            "A42:I45",
+            "A142:B142",
+            "A169:B169",
+            "A225:B225",
+            "C181:I183",
+            "A227:B227",
+            "A26:I28",
+            "A8:I8",
+            "C166:I166",
+            "A145:B145",
+            "I167:I168",
+            "A187:I188",
+            "B81:I82",
+            "A116:B116",
+            "B49:I49",
+            "C215:I217",
+            "A171:B171",
+            "B88:H88",
+            "B164:I164",
+            "E197:G198",
+            "A115:B115",
+            "C205:I207",
+            "A93:B93",
+            "A173:B173",
+            "A229:B229",
+            "A143:B143",
+            "A92:B92",
+            "E327:G328",
+            "B138:I138",
+            "B98:I99",
+            "B165:I165",
+            "A94:B94",
+            "A110:B112",
+            "A166:B168",
+            "E262:G263",
+            "E67:G68",
+            "C110:H110",
+            "B109:H109",
+            "E132:G133",
+            "B101:I103",
+            "F225:F229",
+            "A55:B55",
+            "B77:I79",
+            "A30:I33",
+            "A57:B57",
+            "A113:B113",
+            "A89:B91",
+            "B119:I121",
+            "B148:I152",
+            "A236:I237",
+            "A21:I24",
+            "A96:B96",
+            "A170:B170",
+            "B87:H87",
+            "A6:I6",
+            "B175:I176",
+            "A146:B146",
+            "A39:I40",
+            "C231:D231",
+            "A59:I60",
+            "B71:I75",
+            "A247:I249",
+            "A50:B52",
+            "A17:I19",
+            "C232:D232",
+            "A95:B95",
+            "C178:I179",
+            "A144:B144",
+            "C50:I50",
+            "A224:B224",
+            "C233:D233",
+            "A114:B114",
+            "C154:I155"
+          ],
+          "sample_nonblank": [
+            [
+              "E2",
+              "GUIA PARA LA INSPECCION, EVALUACION Y MANTENIMIENTO DE PUENTES",
+              "s"
+            ],
+            [
+              "B4",
+              " ",
+              "s"
+            ],
+            [
+              "A6",
+              "METODOLOGÍA PARA EVALUACION DE PUENTES",
+              "s"
+            ],
+            [
+              "A8",
+              "CONDICION ESTADISTICA DE LOS ELEMENTOS Y DEL PUENTE",
+              "s"
+            ],
+            [
+              "A10",
+              "Algoritmos para el análisis.",
+              "s"
+            ],
+            [
+              "A12",
+              "En esta sección se describe los principales criterios empleados para las opciones de análisis. Los criterios y metodologías, se utilizan al escribir los códigos.",
+              "s"
+            ],
+            [
+              "A15",
+              "1 - Concepto de condición estadística ",
+              "s"
+            ],
+            [
+              "A17",
+              "Está sección del presente Manual contiene una explicación y fundamentación ampliada respecto a los procedimientos de cálculo para encontrar un numero que califique la condición, sea de un elemento como del puente. ",
+              "s"
+            ],
+            [
+              "A21",
+              "Se introduce el concepto de condición estadística, como aquel numero que califique la situación del puente y de cada uno de sus elementos. Este valor se deduce de la condición en campo, que corresponde a varios números, expresados en la forma de porcentajes de la situación del elemento en la escala de 0 a 5. ",
+              "s"
+            ],
+            [
+              "A26",
+              "En la condición en campo, la situación del elemento está definida por porcentajes, uno para cada escala. Está condición, está relacionada directamente con las necesidades de reparación o sustitución del elemento. ",
+              "s"
+            ],
+            [
+              "A30",
+              "La condición estadística, corresponde a un solo número que calificaría situación integral del elemento. Es utilizada para el cálculo de la condición del puente, y de ahí para la priorización. Obsérvese que puede darse el caso de varias condiciones de campo que conduzcan a un mismo valor de condición estadística. ",
+              "s"
+            ],
+            [
+              "A35",
+              "En esta sección se describen los criterios y metodologías empleados para las opciones de análisis.",
+              "s"
+            ],
+            [
+              "A37",
+              "2 - Condición estadística de un elemento",
+              "s"
+            ],
+            [
+              "A39",
+              "Como se menciono, se introduce el concepto de condición estadística que simplifica en un número, la información de la condición del elemento proveniente, del trabajo de campo. ",
+              "s"
+            ],
+            [
+              "A42",
+              "La condición del elemento evaluada en campo, se expresa, según se ilustra en la Tabla 1, para un puente hipotético, como porcentajes para cada nivel de condición, desde 0 (muy bueno), hasta 5 (muy pobre). Así, el elemento 101, tiene el 10% en calidad satisfactoria, el 40% como bueno y el 50% como muy bueno. ",
+              "s"
+            ],
+            [
+              "B47",
+              "Tabla 1",
+              "s"
+            ],
+            [
+              "B48",
+              "Ejemplo para la condición de cuatro elementos de un puente, según evaluación de campo.",
+              "s"
+            ],
+            [
+              "B49",
+              "Porcentajes de la condición para cada elemento",
+              "s"
+            ],
+            [
+              "A50",
+              "Elemento",
+              "s"
+            ],
+            [
+              "C50",
+              "Nivel de la condición",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "Hoja3",
+          "dimensions": "A1:C27",
+          "formula_count": 23,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B25:C25",
+            "B2:C2",
+            "B12:C12"
+          ],
+          "sample_nonblank": [
+            [
+              "B2",
+              "UBICACIÓN GENERAL DEL PUENTE",
+              "s"
+            ],
+            [
+              "B3",
+              "Distrito: ",
+              "s"
+            ],
+            [
+              "C3",
+              "=+'A-D.- FICHA'!J20",
+              "f"
+            ],
+            [
+              "B4",
+              "Provincia:",
+              "s"
+            ],
+            [
+              "C4",
+              "=+'A-D.- FICHA'!J18",
+              "f"
+            ],
+            [
+              "B5",
+              "Departamento Político:",
+              "s"
+            ],
+            [
+              "C5",
+              "=+'A-D.- FICHA'!J14",
+              "f"
+            ],
+            [
+              "B6",
+              "Departamento Vial:",
+              "s"
+            ],
+            [
+              "C6",
+              "=+'A-D.- FICHA'!J16",
+              "f"
+            ],
+            [
+              "B7",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "C7",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "B8",
+              "Tipo de Ruta:",
+              "s"
+            ],
+            [
+              "C8",
+              "=+'A-D.- FICHA'!P20",
+              "f"
+            ],
+            [
+              "B9",
+              "Tramo:",
+              "s"
+            ],
+            [
+              "C9",
+              "=+'A-D.- FICHA'!E20",
+              "f"
+            ],
+            [
+              "B10",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "C10",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "B11",
+              "Puente:",
+              "s"
+            ],
+            [
+              "C11",
+              "=+'A-D.- FICHA'!J10",
+              "f"
+            ],
+            [
+              "B12",
+              "DESCRIPCION DE LA SUPERESTRUCTURA",
+              "s"
+            ]
+          ]
+        }
+      ],
+      "zip_crc_valid": true,
+      "media_count": 45,
+      "all_xml_well_formed": true,
+      "broken_defined_names": [
+        "Alineamiento",
+        "CatTipo",
+        "Cond.Borde",
+        "Cond.Carretera",
+        "CondAmb",
+        "elementos",
+        "FormaViga",
+        "luisa",
+        "MarcasdeCalzada",
+        "Mat",
+        "Mat.Predo",
+        "MatBaranda",
+        "MatDrenaje",
+        "MaterialCimenta",
+        "MaterialEleva",
+        "Materiallosa",
+        "MatJuntas",
+        "MatVeredas",
+        "MatVigas",
+        "Nat.Suelo",
+        "pendiente",
+        "pendiente",
+        "SeñaCarga",
+        "SeñaCarga",
+        "SeñalInformativa",
+        "Señalpreventiva",
+        "SeñalReglamentaria",
+        "Sobre",
+        "Subestructura",
+        "SuperDesgaste",
+        "TipoApoyos",
+        "TipoBarandas",
+        "TipoCimentación",
+        "TipoDrenaje",
+        "TipoElevación",
+        "Tiposerv",
+        "TipoVigas",
+        "Tramos",
+        "Visibilidad"
+      ]
+    }
+  },
+  {
+    "file": "docs/reference/FICHA SCAP - GBO modelo - MODULAR.xlsx",
+    "sha256": "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89",
+    "inspection": {
+      "sheets": [
+        "A-D.- FICHA",
+        "E.- CROQUIS",
+        "F.1- CONDICION GLOBAL",
+        "F.2.-PANEL FOTOGRAFICO",
+        "G.- CONDICION ESTADISTICA",
+        "G.2-CONCLUSIONES",
+        "AUXILIAR",
+        "Hoja1",
+        "Hoja3"
+      ],
+      "sheet_details": [
+        {
+          "name": "A-D.- FICHA",
+          "dimensions": "A1:X497",
+          "formula_count": 19,
+          "broken_formula_refs": [],
+          "hidden_rows": [
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            300,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368,
+            369,
+            370,
+            371,
+            372,
+            373,
+            374,
+            375,
+            376,
+            377,
+            378,
+            379,
+            380,
+            381,
+            382,
+            433,
+            434,
+            435,
+            436,
+            437,
+            438,
+            439,
+            440,
+            441,
+            442,
+            443,
+            444,
+            445,
+            446,
+            447,
+            448,
+            449,
+            450,
+            451,
+            452,
+            453,
+            454,
+            455,
+            456,
+            457,
+            458,
+            459,
+            460,
+            461,
+            462,
+            463,
+            464,
+            465,
+            466,
+            467,
+            468,
+            469,
+            470,
+            471,
+            472,
+            473,
+            474,
+            475,
+            476,
+            477,
+            478,
+            479,
+            481,
+            482,
+            483,
+            484,
+            485,
+            486,
+            487,
+            488,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494,
+            495,
+            496,
+            497,
+            498,
+            499,
+            500,
+            501
+          ],
+          "merges": [
+            "C25:G26",
+            "H325:J325",
+            "J408:L408",
+            "E244:F244",
+            "G267:H267",
+            "G57:H57",
+            "P215:R215",
+            "C250:C252",
+            "P205:R205",
+            "E81:G81",
+            "J46:L46",
+            "J232:L232",
+            "C275:E275",
+            "J38:L38",
+            "E256:F256",
+            "E246:F246",
+            "J40:L40",
+            "N81:P81",
+            "C302:G303",
+            "N161:P161",
+            "G375:H375",
+            "H358:J358",
+            "C222:G223",
+            "C273:E273",
+            "J234:L234",
+            "E132:R132",
+            "H425:J425",
+            "J119:K119",
+            "C125:E125",
+            "G213:L213",
+            "G49:H49",
+            "E252:F252",
+            "C263:G264",
+            "N49:P49",
+            "J42:L42",
+            "H427:J427",
+            "N36:P36",
+            "M144:P144",
+            "E250:F250",
+            "N375:P375",
+            "J44:L44",
+            "C92:G93",
+            "F205:H205",
+            "C269:E269",
+            "H323:J323",
+            "L478:N478",
+            "J161:L161",
+            "C121:E121",
+            "J412:L412",
+            "C443:G444",
+            "C399:G400",
+            "J55:L55",
+            "G296:H296",
+            "R51:T51",
+            "H429:J429",
+            "M290:N290",
+            "H434:K434",
+            "C60:G61",
+            "C331:G332",
+            "C385:G386",
+            "J404:L404",
+            "J56:L56",
+            "I282:J282",
+            "E336:G336",
+            "G203:L203",
+            "H431:J431",
+            "N340:P340",
+            "C256:C258",
+            "N1:R3",
+            "G306:H306",
+            "J57:L57",
+            "J10:L10",
+            "E234:G234",
+            "F290:G290",
+            "E258:F258",
+            "G56:H56",
+            "F1:M3",
+            "R290:S290",
+            "J49:L49",
+            "J36:L36",
+            "C277:E277",
+            "C4:R5",
+            "F144:H144",
+            "J375:L375",
+            "F215:H215",
+            "C188:E188",
+            "C1:E3",
+            "C169:G170",
+            "J336:L336",
+            "E240:F240",
+            "C7:G8",
+            "C420:G421",
+            "F282:G282",
+            "L306:N306",
+            "J12:L12",
+            "F161:H161",
+            "J406:L406",
+            "C354:G355",
+            "N119:O119",
+            "J228:L228",
+            "C279:E279",
+            "I290:J290",
+            "C58:E58",
+            "C73:G74",
+            "C318:G319",
+            "E242:F242",
+            "N267:P267",
+            "C271:E271",
+            "C115:G116"
+          ],
+          "sample_nonblank": [
+            [
+              "F1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "C4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "C7",
+              "SECCION (A) : IDENTIFICACIÓN Y UBICACIÓN",
+              "s"
+            ],
+            [
+              "H10",
+              "Nombre",
+              "s"
+            ],
+            [
+              "J10",
+              "PUENTE",
+              "s"
+            ],
+            [
+              "N10",
+              1,
+              "n"
+            ],
+            [
+              "H12",
+              "Código",
+              "s"
+            ],
+            [
+              "J12",
+              "PE-3N - 01",
+              "s"
+            ],
+            [
+              "N12",
+              2,
+              "n"
+            ],
+            [
+              "C14",
+              "Altitud:",
+              "s"
+            ],
+            [
+              "G14",
+              3,
+              "n"
+            ],
+            [
+              "H14",
+              "Dpto Político:",
+              "s"
+            ],
+            [
+              "J14",
+              "LIMA",
+              "s"
+            ],
+            [
+              "L14",
+              6,
+              "n"
+            ],
+            [
+              "N14",
+              "Pob. mas cercano",
+              "s"
+            ],
+            [
+              "P14",
+              "=+J20",
+              "f"
+            ],
+            [
+              "R14",
+              10,
+              "n"
+            ],
+            [
+              "T15",
+              " ",
+              "s"
+            ],
+            [
+              "C16",
+              "Latitud",
+              "s"
+            ],
+            [
+              "G16",
+              4,
+              "n"
+            ]
+          ]
+        },
+        {
+          "name": "E.- CROQUIS",
+          "dimensions": "A1:M55",
+          "formula_count": 4,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B41:G42",
+            "B26:G27",
+            "I2:K4",
+            "D2:H4",
+            "A2:C4",
+            "B12:G13",
+            "A5:K6"
+          ],
+          "sample_nonblank": [
+            [
+              "D2",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A5",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "B8",
+              "SECCION ( E ) : CROQUIS DEL PUENTE",
+              "s"
+            ],
+            [
+              "B9",
+              "NOMBRE :",
+              "s"
+            ],
+            [
+              "C9",
+              "=+'A-D.- FICHA'!J10",
+              "f"
+            ],
+            [
+              "B10",
+              "Ruta  :",
+              "s"
+            ],
+            [
+              "C10",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "H10",
+              "Progresiva :",
+              "s"
+            ],
+            [
+              "I10",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "B12",
+              "ELEVACION",
+              "s"
+            ],
+            [
+              "B26",
+              "PLANTA",
+              "s"
+            ],
+            [
+              "B41",
+              "SECCION TRANSVERSAL",
+              "s"
+            ],
+            [
+              "B55",
+              "=+'A-D.- FICHA'!C48",
+              "f"
+            ]
+          ]
+        },
+        {
+          "name": "F.1- CONDICION GLOBAL",
+          "dimensions": "A1:L39",
+          "formula_count": 4,
+          "broken_formula_refs": [
+            {
+              "cell": "D6",
+              "formula": "=+#REF!"
+            }
+          ],
+          "hidden_rows": [],
+          "merges": [
+            "F31:L31",
+            "F22:L22",
+            "F28:L28",
+            "F27:L27",
+            "C31:E31",
+            "C22:E22",
+            "F37:L37",
+            "I1:L3",
+            "C36:E36",
+            "C27:E27",
+            "F29:L29",
+            "F34:L34",
+            "F25:L25",
+            "A4:L4",
+            "C38:E38",
+            "C28:E28",
+            "A1:D3",
+            "C37:E37",
+            "C8:F9",
+            "F30:L30",
+            "F21:L21",
+            "A5:E5",
+            "F24:L24",
+            "C30:E30",
+            "C34:E34",
+            "E1:H3",
+            "C24:E24",
+            "F33:L33",
+            "F36:L36",
+            "F35:L35",
+            "F38:L38",
+            "C35:E35",
+            "C25:E25"
+          ],
+          "sample_nonblank": [
+            [
+              "E1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "A5",
+              "SECCION (F): CONDICION DEL PUENTE",
+              "s"
+            ],
+            [
+              "C6",
+              "Puente :",
+              "s"
+            ],
+            [
+              "D6",
+              "=+#REF!",
+              "f"
+            ],
+            [
+              "F6",
+              "Ruta :",
+              "s"
+            ],
+            [
+              "G6",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "I6",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "K6",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "C8",
+              "F.2  :CONDICION GLOBAL DEL PUENTE",
+              "s"
+            ],
+            [
+              "D11",
+              1,
+              "n"
+            ],
+            [
+              "E11",
+              "Bueno",
+              "s"
+            ],
+            [
+              "G11",
+              3,
+              "n"
+            ],
+            [
+              "H11",
+              "Preocupante",
+              "s"
+            ],
+            [
+              "J11",
+              5,
+              "n"
+            ],
+            [
+              "K11",
+              "Pesimo",
+              "s"
+            ],
+            [
+              "D13",
+              0,
+              "n"
+            ],
+            [
+              "E13",
+              "Excelente",
+              "s"
+            ],
+            [
+              "G13",
+              2,
+              "n"
+            ],
+            [
+              "H13",
+              "Regular",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "F.2.-PANEL FOTOGRAFICO",
+          "dimensions": "A1:XFD42",
+          "formula_count": 3,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B6:C6",
+            "B9:E9",
+            "B7:C7",
+            "B5:C5",
+            "E1:F1",
+            "B3:E3",
+            "B1:C1"
+          ],
+          "sample_nonblank": [
+            [
+              "D1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "B3",
+              "F.2 PANEL FOTOGRAFICO",
+              "s"
+            ],
+            [
+              "XFD3",
+              "SI",
+              "s"
+            ],
+            [
+              "XFD4",
+              "NO",
+              "s"
+            ],
+            [
+              "B5",
+              "NOMBRE ",
+              "s"
+            ],
+            [
+              "D5",
+              "=+'A-D.- FICHA'!J10",
+              "f"
+            ],
+            [
+              "B6",
+              "RUTA",
+              "s"
+            ],
+            [
+              "D6",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "B7",
+              "PROGRESIVA",
+              "s"
+            ],
+            [
+              "D7",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "B9",
+              "LISTA DE FOTOGRAFIAS",
+              "s"
+            ],
+            [
+              "B10",
+              "NRO. ",
+              "s"
+            ],
+            [
+              "C10",
+              "FECHA ",
+              "s"
+            ],
+            [
+              "D10",
+              "DESCRIPCION ",
+              "s"
+            ],
+            [
+              "E10",
+              "DIGITAL ",
+              "s"
+            ],
+            [
+              "B11",
+              1,
+              "n"
+            ],
+            [
+              "C11",
+              "2025-02-27 00:00:00",
+              "d"
+            ],
+            [
+              "D11",
+              "ACCESO IZQUIERDO: Debido al alineamiento curvo la visibilidad desde el puente es regular, lo que podría representar un riesgo para la circulación vehicular.",
+              "s"
+            ],
+            [
+              "B12",
+              2,
+              "n"
+            ],
+            [
+              "C12",
+              "2025-02-27 00:00:00",
+              "d"
+            ]
+          ]
+        },
+        {
+          "name": "G.- CONDICION ESTADISTICA",
+          "dimensions": "A1:AA199",
+          "formula_count": 1359,
+          "broken_formula_refs": [
+            {
+              "cell": "E36",
+              "formula": "=+IF(A36=0,\" \",VLOOKUP(A36,#REF!,7))"
+            },
+            {
+              "cell": "E37",
+              "formula": "=+IF(A37=0,\" \",VLOOKUP(A37,#REF!,7))"
+            },
+            {
+              "cell": "E38",
+              "formula": "=+IF(A38=0,\" \",VLOOKUP(A38,#REF!,7))"
+            },
+            {
+              "cell": "E39",
+              "formula": "=+IF(A39=0,\" \",VLOOKUP(A39,#REF!,7))"
+            },
+            {
+              "cell": "E40",
+              "formula": "=+IF(A40=0,\" \",VLOOKUP(A40,#REF!,7))"
+            },
+            {
+              "cell": "E41",
+              "formula": "=+IF(A41=0,\" \",VLOOKUP(A41,#REF!,7))"
+            },
+            {
+              "cell": "E42",
+              "formula": "=+IF(A42=0,\" \",VLOOKUP(A42,#REF!,7))"
+            },
+            {
+              "cell": "E43",
+              "formula": "=+IF(A43=0,\" \",VLOOKUP(A43,#REF!,7))"
+            },
+            {
+              "cell": "E44",
+              "formula": "=+IF(A44=0,\" \",VLOOKUP(A44,#REF!,7))"
+            }
+          ],
+          "hidden_rows": [
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184
+          ],
+          "merges": [
+            "D49:D50",
+            "B16:C16",
+            "B25:C25",
+            "G10:L10",
+            "B22:C22",
+            "C85:C86",
+            "G49:L49",
+            "B27:C27",
+            "B18:C18",
+            "A1:B1",
+            "B31:C31",
+            "B43:C43",
+            "D120:D121",
+            "B39:C39",
+            "B21:C21",
+            "M13:M45",
+            "F10:F12",
+            "A10:A12",
+            "B42:C42",
+            "B23:C23",
+            "B14:C14",
+            "B17:C17",
+            "E49:E50",
+            "A85:A86",
+            "D10:D12",
+            "B10:C12",
+            "A120:A121",
+            "J1:M1",
+            "C120:C121",
+            "E120:E121",
+            "B38:C38",
+            "B44:C44",
+            "G85:L85",
+            "B29:C29",
+            "B19:C19",
+            "B34:C34",
+            "B37:C37",
+            "B28:C28",
+            "E85:E86",
+            "B40:C40",
+            "C1:I1",
+            "D85:D86",
+            "A155:A156",
+            "M10:M12",
+            "C155:C156",
+            "B24:C24",
+            "G120:L120",
+            "G155:L155",
+            "B15:C15",
+            "B30:C30",
+            "B33:C33",
+            "B20:C20",
+            "E10:E12",
+            "B45:C45",
+            "A3:M3",
+            "B36:C36",
+            "B32:C32",
+            "A49:A50",
+            "B26:C26",
+            "B41:C41",
+            "C49:C50",
+            "B35:C35"
+          ],
+          "sample_nonblank": [
+            [
+              "C1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A3",
+              "=+'A-D.- FICHA'!C4",
+              "f"
+            ],
+            [
+              "A5",
+              "G.1 : CONDICION ESTADISTICA DEL PUENTE",
+              "s"
+            ],
+            [
+              "A7",
+              "=+CONCATENATE(\"NOMBRE: \",'A-D.- FICHA'!J10)",
+              "f"
+            ],
+            [
+              "E7",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "F7",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "J7",
+              "PROGRESIVA :",
+              "s"
+            ],
+            [
+              "M7",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "A9",
+              "tabla 1",
+              "s"
+            ],
+            [
+              "A10",
+              "CODIGO",
+              "s"
+            ],
+            [
+              "B10",
+              "DESCRIPCION ",
+              "s"
+            ],
+            [
+              "D10",
+              "METRADO",
+              "s"
+            ],
+            [
+              "E10",
+              "UND.",
+              "s"
+            ],
+            [
+              "F10",
+              "Factor de Importancia ",
+              "s"
+            ],
+            [
+              "G10",
+              "CALIFICACION (%)",
+              "s"
+            ],
+            [
+              "M10",
+              "CONDICION ESTADISTICA DEL PUENTE",
+              "s"
+            ],
+            [
+              "G11",
+              0,
+              "n"
+            ],
+            [
+              "H11",
+              1,
+              "n"
+            ],
+            [
+              "I11",
+              2,
+              "n"
+            ],
+            [
+              "J11",
+              3,
+              "n"
+            ]
+          ]
+        },
+        {
+          "name": "G.2-CONCLUSIONES",
+          "dimensions": "A1:V75",
+          "formula_count": 5,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B28:D33",
+            "E34:I39",
+            "B57:D57",
+            "E62:I62",
+            "E28:I33",
+            "B17:D17",
+            "E49:I50",
+            "B6:F7",
+            "B51:D52",
+            "B34:D39",
+            "B18:I18",
+            "G1:I3",
+            "E63:I63",
+            "B60:D64",
+            "E53:I54",
+            "E60:I60",
+            "E56:I59",
+            "B41:D48",
+            "B19:D27",
+            "D1:F3",
+            "E41:I48",
+            "E19:I27",
+            "E61:I61",
+            "B40:I40",
+            "B66:I71",
+            "F17:I17",
+            "B53:D54",
+            "E51:I52",
+            "B55:I55",
+            "A1:C3",
+            "B49:D50",
+            "B56:D56",
+            "B58:D58",
+            "C9:D10",
+            "B4:I4"
+          ],
+          "sample_nonblank": [
+            [
+              "D1",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "B4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "B6",
+              "SECCION (G): RESUMEN DE LA CONDICION DEL PUENTE Y RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "C9",
+              "G.2 :  OBSERVACIONES Y RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "B12",
+              "NOMBRE",
+              "s"
+            ],
+            [
+              "D12",
+              "=+Hoja3!C11",
+              "f"
+            ],
+            [
+              "B13",
+              "RUTA",
+              "s"
+            ],
+            [
+              "D13",
+              "=+Hoja3!C7",
+              "f"
+            ],
+            [
+              "B14",
+              "PROGRESIVA",
+              "s"
+            ],
+            [
+              "D14",
+              "=+Hoja3!C10",
+              "f"
+            ],
+            [
+              "B17",
+              "OBSERVACIONES",
+              "s"
+            ],
+            [
+              "F17",
+              "RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "B18",
+              "ACCIONES NORMATIVAS :",
+              "s"
+            ],
+            [
+              "B19",
+              "De la inspección realizada podemos indicar las siguientes conclusiones y recomendaciones:\n• La evaluación de la condición estadística del puente, efectuada bajo la metodología SCAP señala que el puente se encuentra en la calificación \"&  'Secc G.1 Eval SCAP'!E205&  \", requiriéndose realizar trabajos de reparación a fin de mejorar e incrementar su vida útil.\"",
+              "s"
+            ],
+            [
+              "B28",
+              "* El muro de concreto armado que se encuentra en los accesos se encuentra en un estado malo estructuralmente, debido al acero expuesto.",
+              "s"
+            ],
+            [
+              "E28",
+              "* Realizar reparacion del muro de concreto y pintarlo nuevamente.",
+              "s"
+            ],
+            [
+              "B34",
+              "* Ausencia de señales preventivas y reglamentarias en ambos accesos.",
+              "s"
+            ],
+            [
+              "E34",
+              "* Colocar señales preventivas y reglamentarias en ambos accesos.",
+              "s"
+            ],
+            [
+              "B40",
+              "ACCIONES PREVENTIVAS :",
+              "s"
+            ],
+            [
+              "B41",
+              "• La evaluación de la condición estadística del puente, efectuada bajo la metodología SCAP señala que el puente se encuentra en la calificación REGULAR, requiriéndose realizar el mantenimiento y algunos trabajos menores de reparación a fin de mejorar e incrementar su vida útil.",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "AUXILIAR",
+          "dimensions": "A1:I116",
+          "formula_count": 111,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B3:F3"
+          ],
+          "sample_nonblank": [
+            [
+              "B3",
+              "ELLEMENTOS CONFORMANTES DE UN PUENTE Y SU IMPORTANCIA",
+              "s"
+            ],
+            [
+              "B4",
+              "Item",
+              "s"
+            ],
+            [
+              "C4",
+              "Codif. Elemento",
+              "s"
+            ],
+            [
+              "D4",
+              1,
+              "n"
+            ],
+            [
+              "E4",
+              "Unidad",
+              "s"
+            ],
+            [
+              "F4",
+              "Factor Importancia",
+              "s"
+            ],
+            [
+              "G4",
+              "ELEMENTO",
+              "s"
+            ],
+            [
+              "B5",
+              1,
+              "n"
+            ],
+            [
+              "C5",
+              101,
+              "n"
+            ],
+            [
+              "D5",
+              "Losa de concreto armado (Refuerzo longitudinal)",
+              "s"
+            ],
+            [
+              "E5",
+              "m3",
+              "s"
+            ],
+            [
+              "F5",
+              1,
+              "n"
+            ],
+            [
+              "G5",
+              "SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "B6",
+              "=1+B5",
+              "f"
+            ],
+            [
+              "C6",
+              102,
+              "n"
+            ],
+            [
+              "D6",
+              "Losa de concreto pretensado (Pretensado Longitudinal)",
+              "s"
+            ],
+            [
+              "E6",
+              "m3",
+              "s"
+            ],
+            [
+              "F6",
+              1,
+              "n"
+            ],
+            [
+              "G6",
+              "SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "I6",
+              "MACRO",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "Hoja1",
+          "dimensions": "A1:Q389",
+          "formula_count": 307,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "C212:I213",
+            "A226:B226",
+            "A242:I244",
+            "C234:D234",
+            "A228:B228",
+            "B223:F223",
+            "A54:B54",
+            "B48:I48",
+            "A172:B172",
+            "A56:B56",
+            "A139:B141",
+            "C219:I220",
+            "B137:I137",
+            "C209:I210",
+            "A12:I13",
+            "A239:I240",
+            "A53:B53",
+            "E2:G3",
+            "C89:H89",
+            "A117:B117",
+            "C139:I139",
+            "B108:H108",
+            "A42:I45",
+            "A142:B142",
+            "A169:B169",
+            "A225:B225",
+            "C181:I183",
+            "A227:B227",
+            "A26:I28",
+            "A8:I8",
+            "C166:I166",
+            "A145:B145",
+            "I167:I168",
+            "A187:I188",
+            "B81:I82",
+            "A116:B116",
+            "B49:I49",
+            "C215:I217",
+            "A171:B171",
+            "B88:H88",
+            "B164:I164",
+            "E197:G198",
+            "A115:B115",
+            "C205:I207",
+            "A93:B93",
+            "A173:B173",
+            "A229:B229",
+            "A143:B143",
+            "A92:B92",
+            "E327:G328",
+            "B138:I138",
+            "B98:I99",
+            "B165:I165",
+            "A94:B94",
+            "A110:B112",
+            "A166:B168",
+            "E262:G263",
+            "E67:G68",
+            "C110:H110",
+            "B109:H109",
+            "E132:G133",
+            "B101:I103",
+            "F225:F229",
+            "A55:B55",
+            "B77:I79",
+            "A30:I33",
+            "A57:B57",
+            "A113:B113",
+            "A89:B91",
+            "B119:I121",
+            "B148:I152",
+            "A236:I237",
+            "A21:I24",
+            "A96:B96",
+            "A170:B170",
+            "B87:H87",
+            "A6:I6",
+            "B175:I176",
+            "A146:B146",
+            "A39:I40",
+            "C231:D231",
+            "A59:I60",
+            "B71:I75",
+            "A247:I249",
+            "A50:B52",
+            "A17:I19",
+            "C232:D232",
+            "A95:B95",
+            "C178:I179",
+            "A144:B144",
+            "C50:I50",
+            "A224:B224",
+            "C233:D233",
+            "A114:B114",
+            "C154:I155"
+          ],
+          "sample_nonblank": [
+            [
+              "E2",
+              "GUIA PARA LA INSPECCION, EVALUACION Y MANTENIMIENTO DE PUENTES",
+              "s"
+            ],
+            [
+              "B4",
+              " ",
+              "s"
+            ],
+            [
+              "A6",
+              "METODOLOGÍA PARA EVALUACION DE PUENTES",
+              "s"
+            ],
+            [
+              "A8",
+              "CONDICION ESTADISTICA DE LOS ELEMENTOS Y DEL PUENTE",
+              "s"
+            ],
+            [
+              "A10",
+              "Algoritmos para el análisis.",
+              "s"
+            ],
+            [
+              "A12",
+              "En esta sección se describe los principales criterios empleados para las opciones de análisis. Los criterios y metodologías, se utilizan al escribir los códigos.",
+              "s"
+            ],
+            [
+              "A15",
+              "1 - Concepto de condición estadística ",
+              "s"
+            ],
+            [
+              "A17",
+              "Está sección del presente Manual contiene una explicación y fundamentación ampliada respecto a los procedimientos de cálculo para encontrar un numero que califique la condición, sea de un elemento como del puente. ",
+              "s"
+            ],
+            [
+              "A21",
+              "Se introduce el concepto de condición estadística, como aquel numero que califique la situación del puente y de cada uno de sus elementos. Este valor se deduce de la condición en campo, que corresponde a varios números, expresados en la forma de porcentajes de la situación del elemento en la escala de 0 a 5. ",
+              "s"
+            ],
+            [
+              "A26",
+              "En la condición en campo, la situación del elemento está definida por porcentajes, uno para cada escala. Está condición, está relacionada directamente con las necesidades de reparación o sustitución del elemento. ",
+              "s"
+            ],
+            [
+              "A30",
+              "La condición estadística, corresponde a un solo número que calificaría situación integral del elemento. Es utilizada para el cálculo de la condición del puente, y de ahí para la priorización. Obsérvese que puede darse el caso de varias condiciones de campo que conduzcan a un mismo valor de condición estadística. ",
+              "s"
+            ],
+            [
+              "A35",
+              "En esta sección se describen los criterios y metodologías empleados para las opciones de análisis.",
+              "s"
+            ],
+            [
+              "A37",
+              "2 - Condición estadística de un elemento",
+              "s"
+            ],
+            [
+              "A39",
+              "Como se menciono, se introduce el concepto de condición estadística que simplifica en un número, la información de la condición del elemento proveniente, del trabajo de campo. ",
+              "s"
+            ],
+            [
+              "A42",
+              "La condición del elemento evaluada en campo, se expresa, según se ilustra en la Tabla 1, para un puente hipotético, como porcentajes para cada nivel de condición, desde 0 (muy bueno), hasta 5 (muy pobre). Así, el elemento 101, tiene el 10% en calidad satisfactoria, el 40% como bueno y el 50% como muy bueno. ",
+              "s"
+            ],
+            [
+              "B47",
+              "Tabla 1",
+              "s"
+            ],
+            [
+              "B48",
+              "Ejemplo para la condición de cuatro elementos de un puente, según evaluación de campo.",
+              "s"
+            ],
+            [
+              "B49",
+              "Porcentajes de la condición para cada elemento",
+              "s"
+            ],
+            [
+              "A50",
+              "Elemento",
+              "s"
+            ],
+            [
+              "C50",
+              "Nivel de la condición",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "Hoja3",
+          "dimensions": "A1:C27",
+          "formula_count": 23,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B25:C25",
+            "B2:C2",
+            "B12:C12"
+          ],
+          "sample_nonblank": [
+            [
+              "B2",
+              "UBICACIÓN GENERAL DEL PUENTE",
+              "s"
+            ],
+            [
+              "B3",
+              "Distrito: ",
+              "s"
+            ],
+            [
+              "C3",
+              "=+'A-D.- FICHA'!J20",
+              "f"
+            ],
+            [
+              "B4",
+              "Provincia:",
+              "s"
+            ],
+            [
+              "C4",
+              "=+'A-D.- FICHA'!J18",
+              "f"
+            ],
+            [
+              "B5",
+              "Departamento Político:",
+              "s"
+            ],
+            [
+              "C5",
+              "=+'A-D.- FICHA'!J14",
+              "f"
+            ],
+            [
+              "B6",
+              "Departamento Vial:",
+              "s"
+            ],
+            [
+              "C6",
+              "=+'A-D.- FICHA'!J16",
+              "f"
+            ],
+            [
+              "B7",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "C7",
+              "=+'A-D.- FICHA'!P16",
+              "f"
+            ],
+            [
+              "B8",
+              "Tipo de Ruta:",
+              "s"
+            ],
+            [
+              "C8",
+              "=+'A-D.- FICHA'!P20",
+              "f"
+            ],
+            [
+              "B9",
+              "Tramo:",
+              "s"
+            ],
+            [
+              "C9",
+              "=+'A-D.- FICHA'!E20",
+              "f"
+            ],
+            [
+              "B10",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "C10",
+              "=+'A-D.- FICHA'!P18",
+              "f"
+            ],
+            [
+              "B11",
+              "Puente:",
+              "s"
+            ],
+            [
+              "C11",
+              "=+'A-D.- FICHA'!J10",
+              "f"
+            ],
+            [
+              "B12",
+              "DESCRIPCION DE LA SUPERESTRUCTURA",
+              "s"
+            ]
+          ]
+        }
+      ],
+      "zip_crc_valid": true,
+      "media_count": 45,
+      "all_xml_well_formed": true,
+      "broken_defined_names": [
+        "Alineamiento",
+        "CatTipo",
+        "Cond.Borde",
+        "Cond.Carretera",
+        "CondAmb",
+        "elementos",
+        "FormaViga",
+        "luisa",
+        "MarcasdeCalzada",
+        "Mat",
+        "Mat.Predo",
+        "MatBaranda",
+        "MatDrenaje",
+        "MaterialCimenta",
+        "MaterialEleva",
+        "Materiallosa",
+        "MatJuntas",
+        "MatVeredas",
+        "MatVigas",
+        "Nat.Suelo",
+        "pendiente",
+        "pendiente",
+        "SeñaCarga",
+        "SeñaCarga",
+        "SeñalInformativa",
+        "Señalpreventiva",
+        "SeñalReglamentaria",
+        "Sobre",
+        "Subestructura",
+        "SuperDesgaste",
+        "TipoApoyos",
+        "TipoBarandas",
+        "TipoCimentación",
+        "TipoDrenaje",
+        "TipoElevación",
+        "Tiposerv",
+        "TipoVigas",
+        "Tramos",
+        "Visibilidad"
+      ]
+    }
+  },
+  {
+    "file": "docs/reference/SCAP_PUENTE_AGUA_BLANCA.xlsx",
+    "sha256": "1df9f651722d06d6cd886c9be3edf565df7aae8b6fca10097011f48b12430b13",
+    "inspection": {
+      "sheets": [
+        "A-D.- FICHA",
+        "E.- CROQUIS",
+        "F.- ELEMENTOS",
+        "sec F",
+        "F.2.-PANEL FOTOGRAFICO",
+        "G.- CONDICION ESTADISTICA",
+        "CONCLUSIONES",
+        "AUXILIAR",
+        "Hoja1",
+        "Hoja3"
+      ],
+      "sheet_details": [
+        {
+          "name": "A-D.- FICHA",
+          "dimensions": "A1:X496",
+          "formula_count": 25,
+          "broken_formula_refs": [],
+          "hidden_rows": [
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            281,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            360,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368,
+            369,
+            370,
+            371,
+            372,
+            373,
+            374,
+            375,
+            376,
+            377,
+            378,
+            379,
+            380,
+            381,
+            432,
+            433,
+            434,
+            435,
+            436,
+            437,
+            438,
+            439,
+            440,
+            441,
+            442,
+            443,
+            444,
+            445,
+            446,
+            447,
+            448,
+            449,
+            450,
+            451,
+            452,
+            453,
+            454,
+            455,
+            456,
+            457,
+            458,
+            459,
+            460,
+            461,
+            462,
+            463,
+            464,
+            465,
+            466,
+            467,
+            468,
+            469,
+            470,
+            471,
+            472,
+            473,
+            474,
+            475,
+            476,
+            477,
+            478,
+            480,
+            481,
+            482,
+            483,
+            484,
+            485,
+            486,
+            487,
+            488,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494,
+            495,
+            496,
+            497,
+            498,
+            499,
+            500
+          ],
+          "merges": [
+            "C274:E274",
+            "F289:G289",
+            "J335:L335",
+            "H424:J424",
+            "C301:G302",
+            "R289:S289",
+            "J27:L27",
+            "J35:L35",
+            "P204:R204",
+            "J11:L11",
+            "J374:L374",
+            "C3:R3",
+            "C268:E268",
+            "J403:L403",
+            "J160:L160",
+            "C57:E57",
+            "G202:L202",
+            "C24:G25",
+            "J39:L39",
+            "C4:R4",
+            "J48:L48",
+            "N266:P266",
+            "N160:P160",
+            "J29:L29",
+            "J339:L339",
+            "H428:J428",
+            "M289:N289",
+            "C270:E270",
+            "C249:C251",
+            "G48:H48",
+            "J407:L407",
+            "C262:G263",
+            "J41:L41",
+            "E80:G80",
+            "J405:L405",
+            "M143:P143",
+            "C72:G73",
+            "C272:E272",
+            "J43:L43",
+            "C419:G420",
+            "H357:J357",
+            "J33:L33",
+            "G266:H266",
+            "C6:G7",
+            "H430:J430",
+            "C384:G385",
+            "J411:L411",
+            "H426:J426",
+            "C353:G354",
+            "C187:E187",
+            "C398:G399",
+            "J37:L37",
+            "G374:H374",
+            "E239:F239",
+            "H433:K433",
+            "C330:G331",
+            "E251:F251",
+            "F281:G281",
+            "C114:G115",
+            "L477:N477",
+            "F160:H160",
+            "C276:E276",
+            "J55:L55",
+            "I281:J281",
+            "J227:L227",
+            "C1:R2",
+            "J54:L54",
+            "C278:E278",
+            "R50:T50",
+            "C317:G318",
+            "E249:F249",
+            "J56:L56",
+            "E241:F241",
+            "H322:J322",
+            "E233:G233",
+            "E257:F257",
+            "N35:P35",
+            "G305:H305",
+            "H324:J324",
+            "J118:K118",
+            "J231:L231",
+            "C255:C257",
+            "N374:P374",
+            "E243:F243",
+            "F143:H143",
+            "N118:O118",
+            "F214:H214",
+            "C168:G169",
+            "C59:G60",
+            "J9:L9",
+            "G56:H56",
+            "F204:H204",
+            "C124:E124",
+            "C442:G443",
+            "J45:L45",
+            "N48:P48",
+            "E335:G335",
+            "C120:E120",
+            "C91:G92",
+            "E131:R131",
+            "N339:P339",
+            "J233:L233",
+            "J31:L31",
+            "I289:J289",
+            "E245:F245",
+            "G212:L212",
+            "N80:P80",
+            "C221:G222",
+            "G55:H55",
+            "L305:N305",
+            "E255:F255",
+            "G295:H295",
+            "P214:R214"
+          ],
+          "sample_nonblank": [
+            [
+              "C4",
+              "PUENTE AGUA BLANCA",
+              "s"
+            ],
+            [
+              "C6",
+              "SECCION (A) : IDENTIFICACIÓN Y UBICACIÓN",
+              "s"
+            ],
+            [
+              "H9",
+              "Nombre",
+              "s"
+            ],
+            [
+              "J9",
+              "=+C4",
+              "f"
+            ],
+            [
+              "N9",
+              1,
+              "n"
+            ],
+            [
+              "H11",
+              "Código",
+              "s"
+            ],
+            [
+              "J11",
+              "MO-100.002A",
+              "s"
+            ],
+            [
+              "N11",
+              2,
+              "n"
+            ],
+            [
+              "C13",
+              "Altitud:",
+              "s"
+            ],
+            [
+              "E13",
+              "1978 m",
+              "s"
+            ],
+            [
+              "G13",
+              3,
+              "n"
+            ],
+            [
+              "H13",
+              "Dept Político:",
+              "s"
+            ],
+            [
+              "J13",
+              "Moquegua",
+              "s"
+            ],
+            [
+              "L13",
+              6,
+              "n"
+            ],
+            [
+              "N13",
+              "Poblado mas cercano",
+              "s"
+            ],
+            [
+              "P13",
+              "=+J19",
+              "f"
+            ],
+            [
+              "R13",
+              10,
+              "n"
+            ],
+            [
+              "T14",
+              " ",
+              "s"
+            ],
+            [
+              "C15",
+              "C Este (19K)",
+              "s"
+            ],
+            [
+              "E15",
+              311174.39,
+              "n"
+            ]
+          ]
+        },
+        {
+          "name": "E.- CROQUIS",
+          "dimensions": "A1:K51",
+          "formula_count": 4,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B37:E38",
+            "B22:E23",
+            "B8:E9"
+          ],
+          "sample_nonblank": [
+            [
+              "B4",
+              "SECCION ( E ) : CROQUIS DEL PUENTE",
+              "s"
+            ],
+            [
+              "C4",
+              "PUENTE AGUA BLANCA",
+              "s"
+            ],
+            [
+              "B5",
+              "NOMBRE :",
+              "s"
+            ],
+            [
+              "C5",
+              "=+'A-D.- FICHA'!J9",
+              "f"
+            ],
+            [
+              "B6",
+              "Ruta  :",
+              "s"
+            ],
+            [
+              "C6",
+              "=+'A-D.- FICHA'!P15",
+              "f"
+            ],
+            [
+              "F6",
+              "Progresiva :",
+              "s"
+            ],
+            [
+              "G6",
+              "=+'A-D.- FICHA'!P17",
+              "f"
+            ],
+            [
+              "B8",
+              "ELEVACION",
+              "s"
+            ],
+            [
+              "B22",
+              "PLANTA",
+              "s"
+            ],
+            [
+              "B37",
+              "SECCION TRANSVERSAL",
+              "s"
+            ],
+            [
+              "B51",
+              "=+'A-D.- FICHA'!C47",
+              "f"
+            ]
+          ]
+        },
+        {
+          "name": "F.- ELEMENTOS",
+          "dimensions": "A1:X278",
+          "formula_count": 276,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "O141:O149",
+            "N75:N87",
+            "O88:O94",
+            "O109:O113",
+            "Q43:X43",
+            "P135:P160",
+            "M11:M12",
+            "O95:O97",
+            "P161:P171",
+            "O138:O140",
+            "O154:O158",
+            "K11:K12",
+            "O135:O137",
+            "N73:N74",
+            "O115:O130",
+            "D72:H72",
+            "O159:O160",
+            "P172:P184",
+            "P73:P114",
+            "O98:O100",
+            "O102:O108",
+            "L11:L12",
+            "N11:N12",
+            "O150:O153",
+            "O131:O134",
+            "O73:O87",
+            "B71:J71",
+            "P115:P134"
+          ],
+          "sample_nonblank": [
+            [
+              "C4",
+              "PUENTE AGUA BLANCA",
+              "s"
+            ],
+            [
+              "C6",
+              "F.1 : RELACION DE ELEMENTOS CONFORMANTES DEL PUENTE",
+              "s"
+            ],
+            [
+              "C7",
+              "Nombre:",
+              "s"
+            ],
+            [
+              "E7",
+              "=+'E.- CROQUIS'!C5",
+              "f"
+            ],
+            [
+              "C8",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "E8",
+              "=+'A-D.- FICHA'!P15",
+              "f"
+            ],
+            [
+              "C9",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "E9",
+              "=+'A-D.- FICHA'!P17",
+              "f"
+            ],
+            [
+              "G11",
+              "DESCRIPCIÓN",
+              "s"
+            ],
+            [
+              "K11",
+              "Codigo",
+              "s"
+            ],
+            [
+              "L11",
+              "Metrado",
+              "s"
+            ],
+            [
+              "M11",
+              "UND.",
+              "s"
+            ],
+            [
+              "N11",
+              "Importancia",
+              "s"
+            ],
+            [
+              "C13",
+              "I.   SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "D14",
+              "=+VLOOKUP(K14,$C$73:$J$184,3,FALSE)",
+              "f"
+            ],
+            [
+              "K14",
+              104,
+              "n"
+            ],
+            [
+              "L14",
+              29.328,
+              "n"
+            ],
+            [
+              "M14",
+              "=+VLOOKUP(K14,$C$73:$J$184,7,FALSE)",
+              "f"
+            ],
+            [
+              "N14",
+              "=+VLOOKUP(K14,$C$73:$J$184,8,FALSE)",
+              "f"
+            ],
+            [
+              "D15",
+              "=+VLOOKUP(K15,$C$73:$J$184,3,FALSE)",
+              "f"
+            ]
+          ]
+        },
+        {
+          "name": "sec F",
+          "dimensions": "A1:P41",
+          "formula_count": 19,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "F31:L31",
+            "F22:L22",
+            "C29:E29",
+            "F27:L27",
+            "C31:E31",
+            "C22:E22",
+            "C40:E40",
+            "F37:L37",
+            "F39:L39",
+            "C27:E27",
+            "C23:E23",
+            "C39:E39",
+            "F29:L29",
+            "F34:L34",
+            "C32:E32",
+            "C38:E38",
+            "F40:L40",
+            "C37:E37",
+            "C8:F9",
+            "F30:L30",
+            "F21:L21",
+            "F24:L24",
+            "C30:E30",
+            "C34:E34",
+            "C24:E24",
+            "F33:L33",
+            "F36:L36",
+            "F32:L32",
+            "F26:L26",
+            "F35:L35",
+            "C26:E26",
+            "F38:L38",
+            "C35:E35",
+            "F23:L23"
+          ],
+          "sample_nonblank": [
+            [
+              "C4",
+              "PUENTE AGUA BLANCA",
+              "s"
+            ],
+            [
+              "C6",
+              "Puente :",
+              "s"
+            ],
+            [
+              "D6",
+              "=+'F.- ELEMENTOS'!E7",
+              "f"
+            ],
+            [
+              "F6",
+              "Ruta :",
+              "s"
+            ],
+            [
+              "G6",
+              "=+'A-D.- FICHA'!P15",
+              "f"
+            ],
+            [
+              "I6",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "K6",
+              "=+'A-D.- FICHA'!P17",
+              "f"
+            ],
+            [
+              "C8",
+              "F.2  :CONDICION GLOBAL DEL PUENTE",
+              "s"
+            ],
+            [
+              "D11",
+              1,
+              "n"
+            ],
+            [
+              "E11",
+              "Bueno",
+              "s"
+            ],
+            [
+              "G11",
+              3,
+              "n"
+            ],
+            [
+              "H11",
+              "Preocupante",
+              "s"
+            ],
+            [
+              "J11",
+              5,
+              "n"
+            ],
+            [
+              "K11",
+              "Pesimo",
+              "s"
+            ],
+            [
+              "D13",
+              0,
+              "n"
+            ],
+            [
+              "E13",
+              "Excelente",
+              "s"
+            ],
+            [
+              "G13",
+              2,
+              "n"
+            ],
+            [
+              "H13",
+              "Regular",
+              "s"
+            ],
+            [
+              "J13",
+              4,
+              "n"
+            ],
+            [
+              "K13",
+              "Malo",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "F.2.-PANEL FOTOGRAFICO",
+          "dimensions": "A1:XFD44",
+          "formula_count": 3,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B7:C7",
+            "B11:E11",
+            "B3:E3",
+            "B5:E5",
+            "B9:C9",
+            "B8:C8",
+            "G4:G6"
+          ],
+          "sample_nonblank": [
+            [
+              "G1",
+              "NUMERO DE FOTOS",
+              "s"
+            ],
+            [
+              "H1",
+              2,
+              "n"
+            ],
+            [
+              "B3",
+              "SECCION (F) CONDICION DEL PUENTE",
+              "s"
+            ],
+            [
+              "XFD3",
+              "SI",
+              "s"
+            ],
+            [
+              "C4",
+              "PUENTE AGUA BLANCA",
+              "s"
+            ],
+            [
+              "G4",
+              "Importar de forma manual?",
+              "s"
+            ],
+            [
+              "XFD4",
+              "NO",
+              "s"
+            ],
+            [
+              "B5",
+              "F.2 PANEL FOTOGRAFICO",
+              "s"
+            ],
+            [
+              "H5",
+              "NO",
+              "s"
+            ],
+            [
+              "B7",
+              "NOMBRE ",
+              "s"
+            ],
+            [
+              "D7",
+              "=+'A-D.- FICHA'!J9",
+              "f"
+            ],
+            [
+              "B8",
+              "RUTA",
+              "s"
+            ],
+            [
+              "D8",
+              "=+'A-D.- FICHA'!P15",
+              "f"
+            ],
+            [
+              "B9",
+              "PROGRESIVA",
+              "s"
+            ],
+            [
+              "D9",
+              "=+'A-D.- FICHA'!P17",
+              "f"
+            ],
+            [
+              "B11",
+              "LISTA DE FOTOGRAFIAS",
+              "s"
+            ],
+            [
+              "B12",
+              "NRO. ",
+              "s"
+            ],
+            [
+              "C12",
+              "FECHA ",
+              "s"
+            ],
+            [
+              "D12",
+              "DESCRIPCION ",
+              "s"
+            ],
+            [
+              "E12",
+              "DIGITAL ",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "G.- CONDICION ESTADISTICA",
+          "dimensions": "A1:Z199",
+          "formula_count": 1411,
+          "broken_formula_refs": [],
+          "hidden_rows": [
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184
+          ],
+          "merges": [
+            "D49:D50",
+            "B155:B156",
+            "F85:K85",
+            "L10:L12",
+            "C85:C86",
+            "A3:L3",
+            "B120:B121",
+            "D120:D121",
+            "F155:K155",
+            "A10:A12",
+            "A85:A86",
+            "D10:D12",
+            "A120:A121",
+            "C120:C121",
+            "F120:K120",
+            "B49:B50",
+            "F49:K49",
+            "C10:C12",
+            "D85:D86",
+            "A155:A156",
+            "F10:K10",
+            "B10:B12",
+            "E10:E12",
+            "L13:L45",
+            "B85:B86",
+            "A49:A50",
+            "C49:C50"
+          ],
+          "sample_nonblank": [
+            [
+              "A3",
+              "=+'A-D.- FICHA'!C4",
+              "f"
+            ],
+            [
+              "C4",
+              "PUENTE AGUA BLANCA",
+              "s"
+            ],
+            [
+              "A5",
+              "G.1 : CONDICION ESTADISTICA DEL PUENTE",
+              "s"
+            ],
+            [
+              "A7",
+              "=+CONCATENATE(\"NOMBRE: \",'A-D.- FICHA'!J9)",
+              "f"
+            ],
+            [
+              "D7",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "E7",
+              "=+'A-D.- FICHA'!P15",
+              "f"
+            ],
+            [
+              "I7",
+              "PROGRESIVA :",
+              "s"
+            ],
+            [
+              "L7",
+              "=+'A-D.- FICHA'!P17",
+              "f"
+            ],
+            [
+              "A9",
+              "tabla 1",
+              "s"
+            ],
+            [
+              "A10",
+              "CODIGO",
+              "s"
+            ],
+            [
+              "B10",
+              "DESCRIPCION ",
+              "s"
+            ],
+            [
+              "C10",
+              "METRADO",
+              "s"
+            ],
+            [
+              "D10",
+              "UND.",
+              "s"
+            ],
+            [
+              "E10",
+              "Factor de Importancia ",
+              "s"
+            ],
+            [
+              "F10",
+              "CALIFICACION (%)",
+              "s"
+            ],
+            [
+              "L10",
+              "CONDICION ESTADISTICA DEL PUENTE",
+              "s"
+            ],
+            [
+              "F11",
+              0,
+              "n"
+            ],
+            [
+              "G11",
+              1,
+              "n"
+            ],
+            [
+              "H11",
+              2,
+              "n"
+            ],
+            [
+              "I11",
+              3,
+              "n"
+            ]
+          ]
+        },
+        {
+          "name": "CONCLUSIONES",
+          "dimensions": "A1:V58",
+          "formula_count": 8,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B18:I18",
+            "E43:I47",
+            "F17:I17",
+            "B38:I38",
+            "B19:D27",
+            "B49:I54",
+            "E29:I37",
+            "B28:I28",
+            "E39:I42",
+            "B17:D17",
+            "B39:D42",
+            "B43:D47",
+            "B6:F7",
+            "E19:I27",
+            "C9:D10",
+            "B4:I4",
+            "B29:D37"
+          ],
+          "sample_nonblank": [
+            [
+              "B4",
+              "FICHA SCAP",
+              "s"
+            ],
+            [
+              "B6",
+              "SECCION (G): RESUMEN DE LA CONDICION DEL PUENTE Y RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "C9",
+              "G.2 :  OBSERVACIONES Y RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "B12",
+              "NOMBRE",
+              "s"
+            ],
+            [
+              "D12",
+              "=+Hoja3!C11",
+              "f"
+            ],
+            [
+              "B13",
+              "RUTA",
+              "s"
+            ],
+            [
+              "D13",
+              "=+Hoja3!C7",
+              "f"
+            ],
+            [
+              "B14",
+              "PROGRESIVA",
+              "s"
+            ],
+            [
+              "D14",
+              "=+Hoja3!C10",
+              "f"
+            ],
+            [
+              "B17",
+              "OBSERVACIONES",
+              "s"
+            ],
+            [
+              "F17",
+              "RECOMENDACIONES",
+              "s"
+            ],
+            [
+              "B18",
+              "ACCIONES NORMATIVAS :",
+              "s"
+            ],
+            [
+              "B19",
+              "=_xlfn.CONCAT(\"De acuerdo a la evaluación realizada al \",'A-D.- FICHA'!J9:L9,\" y a los terminos de referencia (Gestión y relevamiento de Puentes); de ser necesario, corresponde realizar acciones normativas.\")",
+              "f"
+            ],
+            [
+              "B28",
+              "ACCIONES PREVENTIVAS :",
+              "s"
+            ],
+            [
+              "B29",
+              "=+_xlfn.CONCAT(\"De acuerdo a la evaluación realizada al Puente \",'A-D.- FICHA'!J9:L9,\" y a los terminos de referencia (Gestión y Relevamiento de Puentes); de ser necesario, corresponde realizar acciones preventivas.\")",
+              "f"
+            ],
+            [
+              "E29",
+              "Se recomienda que se cumpla con las especificaciones técnicas de los materiales y el procedimiento adecuado de las actividades de conservación rutinaria y periodica.                                                                                Al concluir el periodo de intervención se recomienda programar periódicamente el mantenimiento de los puentes.",
+              "s"
+            ],
+            [
+              "B38",
+              "ACCIONES EJECUTIVAS :",
+              "s"
+            ],
+            [
+              "B39",
+              "=_xlfn.CONCAT(\"De la inspeccion realizada podemos indicar las siguientes conclusiones:\", \"\nLa evaluación de la condición estadística del \",'A-D.- FICHA'!J9:L9, \", efectuada bajo la metodología SCAP señala que el puente se encuentra en la calificación \",'G.- CONDICION ESTADISTICA'!M12,\" requiriéndose realizar el mantenimiento rutinario a fin de mejorar e incrementar su vida útil, a continuacion detallamos las acciones a realizar.\")",
+              "f"
+            ],
+            [
+              "E39",
+              "=_xlfn.CONCAT(\"De la inspección realizada podemos indicar las siguientes conclusiones:\",\"\nRealizar el mantenimiento periodico a fin de mejorar e incrementar la vida útil del \",'A-D.- FICHA'!J9:L9,\", a continuacion detallamos las acciones a realizar.\")",
+              "f"
+            ],
+            [
+              "B43",
+              "•\tLimpieza roce y desbroce.\n•\tLimpieza de puentes.\n•\tReparación de deterioros superficiales en elementos de concreto.\n•\tReparación de fisuras y grietas en elementos de concreto.\n•\tConservación de barandas.\n•\tConservación de pintado de veredas, sardineles y muros de puentes.",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "AUXILIAR",
+          "dimensions": "A1:I116",
+          "formula_count": 111,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B3:F3"
+          ],
+          "sample_nonblank": [
+            [
+              "B3",
+              "ELLEMENTOS CONFORMANTES DE UN PUENTE Y SU IMPORTANCIA",
+              "s"
+            ],
+            [
+              "B4",
+              "Item",
+              "s"
+            ],
+            [
+              "C4",
+              "Codif. Elemento",
+              "s"
+            ],
+            [
+              "D4",
+              1,
+              "n"
+            ],
+            [
+              "E4",
+              "Unidad",
+              "s"
+            ],
+            [
+              "F4",
+              "Factor Importancia",
+              "s"
+            ],
+            [
+              "G4",
+              "ELEMENTO",
+              "s"
+            ],
+            [
+              "B5",
+              1,
+              "n"
+            ],
+            [
+              "C5",
+              101,
+              "n"
+            ],
+            [
+              "D5",
+              "Losa de concreto armado (Refuerzo longitudinal)",
+              "s"
+            ],
+            [
+              "E5",
+              "m3",
+              "s"
+            ],
+            [
+              "F5",
+              1,
+              "n"
+            ],
+            [
+              "G5",
+              "SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "B6",
+              "=1+B5",
+              "f"
+            ],
+            [
+              "C6",
+              102,
+              "n"
+            ],
+            [
+              "D6",
+              "Losa de concreto pretensado (Pretensado Longitudinal)",
+              "s"
+            ],
+            [
+              "E6",
+              "m3",
+              "s"
+            ],
+            [
+              "F6",
+              1,
+              "n"
+            ],
+            [
+              "G6",
+              "SUPERESTRUCTURA",
+              "s"
+            ],
+            [
+              "I6",
+              "MACRO",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "Hoja1",
+          "dimensions": "A1:Q389",
+          "formula_count": 307,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "C212:I213",
+            "A226:B226",
+            "A242:I244",
+            "C234:D234",
+            "A228:B228",
+            "B223:F223",
+            "A54:B54",
+            "B48:I48",
+            "A172:B172",
+            "A56:B56",
+            "A139:B141",
+            "C219:I220",
+            "B137:I137",
+            "C209:I210",
+            "A12:I13",
+            "A53:B53",
+            "A239:I240",
+            "E2:G3",
+            "C89:H89",
+            "A117:B117",
+            "C139:I139",
+            "B108:H108",
+            "A42:I45",
+            "A142:B142",
+            "A169:B169",
+            "A225:B225",
+            "C181:I183",
+            "A227:B227",
+            "A26:I28",
+            "A8:I8",
+            "C166:I166",
+            "A145:B145",
+            "I167:I168",
+            "A187:I188",
+            "B81:I82",
+            "A116:B116",
+            "B49:I49",
+            "C215:I217",
+            "A171:B171",
+            "B88:H88",
+            "B164:I164",
+            "E197:G198",
+            "C205:I207",
+            "A115:B115",
+            "A93:B93",
+            "A173:B173",
+            "A229:B229",
+            "A143:B143",
+            "A92:B92",
+            "E327:G328",
+            "B138:I138",
+            "B98:I99",
+            "B165:I165",
+            "A94:B94",
+            "A110:B112",
+            "A166:B168",
+            "E262:G263",
+            "E67:G68",
+            "C110:H110",
+            "B109:H109",
+            "E132:G133",
+            "B101:I103",
+            "F225:F229",
+            "A55:B55",
+            "B77:I79",
+            "A30:I33",
+            "A57:B57",
+            "A113:B113",
+            "A89:B91",
+            "B119:I121",
+            "B148:I152",
+            "A236:I237",
+            "A21:I24",
+            "A96:B96",
+            "A170:B170",
+            "B87:H87",
+            "A6:I6",
+            "B175:I176",
+            "A146:B146",
+            "A39:I40",
+            "C231:D231",
+            "A59:I60",
+            "B71:I75",
+            "A247:I249",
+            "A50:B52",
+            "A17:I19",
+            "C232:D232",
+            "A95:B95",
+            "C178:I179",
+            "A144:B144",
+            "A224:B224",
+            "C50:I50",
+            "C233:D233",
+            "A114:B114",
+            "C154:I155"
+          ],
+          "sample_nonblank": [
+            [
+              "E2",
+              "GUIA PARA LA INSPECCION, EVALUACION Y MANTENIMIENTO DE PUENTES",
+              "s"
+            ],
+            [
+              "B4",
+              " ",
+              "s"
+            ],
+            [
+              "A6",
+              "METODOLOGÍA PARA EVALUACION DE PUENTES",
+              "s"
+            ],
+            [
+              "A8",
+              "CONDICION ESTADISTICA DE LOS ELEMENTOS Y DEL PUENTE",
+              "s"
+            ],
+            [
+              "A10",
+              "Algoritmos para el análisis.",
+              "s"
+            ],
+            [
+              "A12",
+              "En esta sección se describe los principales criterios empleados para las opciones de análisis. Los criterios y metodologías, se utilizan al escribir los códigos.",
+              "s"
+            ],
+            [
+              "A15",
+              "1 - Concepto de condición estadística ",
+              "s"
+            ],
+            [
+              "A17",
+              "Está sección del presente Manual contiene una explicación y fundamentación ampliada respecto a los procedimientos de cálculo para encontrar un numero que califique la condición, sea de un elemento como del puente. ",
+              "s"
+            ],
+            [
+              "A21",
+              "Se introduce el concepto de condición estadística, como aquel numero que califique la situación del puente y de cada uno de sus elementos. Este valor se deduce de la condición en campo, que corresponde a varios números, expresados en la forma de porcentajes de la situación del elemento en la escala de 0 a 5. ",
+              "s"
+            ],
+            [
+              "A26",
+              "En la condición en campo, la situación del elemento está definida por porcentajes, uno para cada escala. Está condición, está relacionada directamente con las necesidades de reparación o sustitución del elemento. ",
+              "s"
+            ],
+            [
+              "A30",
+              "La condición estadística, corresponde a un solo número que calificaría situación integral del elemento. Es utilizada para el cálculo de la condición del puente, y de ahí para la priorización. Obsérvese que puede darse el caso de varias condiciones de campo que conduzcan a un mismo valor de condición estadística. ",
+              "s"
+            ],
+            [
+              "A35",
+              "En esta sección se describen los criterios y metodologías empleados para las opciones de análisis.",
+              "s"
+            ],
+            [
+              "A37",
+              "2 - Condición estadística de un elemento",
+              "s"
+            ],
+            [
+              "A39",
+              "Como se menciono, se introduce el concepto de condición estadística que simplifica en un número, la información de la condición del elemento proveniente, del trabajo de campo. ",
+              "s"
+            ],
+            [
+              "A42",
+              "La condición del elemento evaluada en campo, se expresa, según se ilustra en la Tabla 1, para un puente hipotético, como porcentajes para cada nivel de condición, desde 0 (muy bueno), hasta 5 (muy pobre). Así, el elemento 101, tiene el 10% en calidad satisfactoria, el 40% como bueno y el 50% como muy bueno. ",
+              "s"
+            ],
+            [
+              "B47",
+              "Tabla 1",
+              "s"
+            ],
+            [
+              "B48",
+              "Ejemplo para la condición de cuatro elementos de un puente, según evaluación de campo.",
+              "s"
+            ],
+            [
+              "B49",
+              "Porcentajes de la condición para cada elemento",
+              "s"
+            ],
+            [
+              "A50",
+              "Elemento",
+              "s"
+            ],
+            [
+              "C50",
+              "Nivel de la condición",
+              "s"
+            ]
+          ]
+        },
+        {
+          "name": "Hoja3",
+          "dimensions": "A1:C27",
+          "formula_count": 23,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "B25:C25",
+            "B2:C2",
+            "B12:C12"
+          ],
+          "sample_nonblank": [
+            [
+              "B2",
+              "UBICACIÓN GENERAL DEL PUENTE",
+              "s"
+            ],
+            [
+              "B3",
+              "Distrito: ",
+              "s"
+            ],
+            [
+              "C3",
+              "=+'A-D.- FICHA'!J19",
+              "f"
+            ],
+            [
+              "B4",
+              "Provincia:",
+              "s"
+            ],
+            [
+              "C4",
+              "=+'A-D.- FICHA'!J17",
+              "f"
+            ],
+            [
+              "B5",
+              "Departamento Político:",
+              "s"
+            ],
+            [
+              "C5",
+              "=+'A-D.- FICHA'!J13",
+              "f"
+            ],
+            [
+              "B6",
+              "Departamento Vial:",
+              "s"
+            ],
+            [
+              "C6",
+              "=+'A-D.- FICHA'!J15",
+              "f"
+            ],
+            [
+              "B7",
+              "Ruta:",
+              "s"
+            ],
+            [
+              "C7",
+              "=+'A-D.- FICHA'!P15",
+              "f"
+            ],
+            [
+              "B8",
+              "Tipo de Ruta:",
+              "s"
+            ],
+            [
+              "C8",
+              "=+'A-D.- FICHA'!P19",
+              "f"
+            ],
+            [
+              "B9",
+              "Tramo:",
+              "s"
+            ],
+            [
+              "C9",
+              "=+'A-D.- FICHA'!E19",
+              "f"
+            ],
+            [
+              "B10",
+              "Progresiva:",
+              "s"
+            ],
+            [
+              "C10",
+              "=+'A-D.- FICHA'!P17",
+              "f"
+            ],
+            [
+              "B11",
+              "Puente:",
+              "s"
+            ],
+            [
+              "C11",
+              "=+'A-D.- FICHA'!J9",
+              "f"
+            ],
+            [
+              "B12",
+              "DESCRIPCION DE LA SUPERESTRUCTURA",
+              "s"
+            ]
+          ]
+        }
+      ],
+      "zip_crc_valid": true,
+      "media_count": 47,
+      "all_xml_well_formed": true,
+      "broken_defined_names": [
+        "Alineamiento",
+        "CatTipo",
+        "Cond.Borde",
+        "Cond.Carretera",
+        "CondAmb",
+        "FormaViga",
+        "luisa",
+        "MarcasdeCalzada",
+        "Mat",
+        "Mat.Predo",
+        "MatBaranda",
+        "MatDrenaje",
+        "MaterialCimenta",
+        "MaterialEleva",
+        "Materiallosa",
+        "MatJuntas",
+        "MatVeredas",
+        "MatVigas",
+        "Nat.Suelo",
+        "pendiente",
+        "pendiente",
+        "SeñaCarga",
+        "SeñaCarga",
+        "SeñalInformativa",
+        "Señalpreventiva",
+        "SeñalReglamentaria",
+        "Sobre",
+        "Subestructura",
+        "SuperDesgaste",
+        "TipoApoyos",
+        "TipoBarandas",
+        "TipoCimentación",
+        "TipoDrenaje",
+        "TipoElevación",
+        "Tiposerv",
+        "TipoVigas",
+        "Tramos",
+        "Visibilidad"
+      ]
+    }
+  },
+  {
+    "file": "docs/reference/SIC17_MO-104.xlsx",
+    "sha256": "28309d60c57df357396af4db93bb3d5da408934b9fa59ab464833948cd3cbb09",
+    "inspection": {
+      "sheets": [
+        "SIC17"
+      ],
+      "sheet_details": [
+        {
+          "name": "SIC17",
+          "dimensions": "A1:T21",
+          "formula_count": 0,
+          "broken_formula_refs": [],
+          "hidden_rows": [],
+          "merges": [
+            "E16:F16",
+            "C16:D16",
+            "F5:O8",
+            "A5:E8",
+            "P5:T8",
+            "A11:T11"
+          ],
+          "sample_nonblank": [
+            [
+              "F5",
+              "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+              "s"
+            ],
+            [
+              "A11",
+              "FORMATOS SIC-17 Puentes",
+              "s"
+            ],
+            [
+              "A13",
+              "RUTA: MO-104: Emp. MO-103 (Lucco) - Emp. AR-120 (Dv. Huancarani)",
+              "s"
+            ],
+            [
+              "A14",
+              "PROGRESIVA:  00+000 al 35+463",
+              "s"
+            ],
+            [
+              "C16",
+              "Ubicación Inicio",
+              "s"
+            ],
+            [
+              "E16",
+              "Ubicación Fin",
+              "s"
+            ],
+            [
+              "A17",
+              "Ruta",
+              "s"
+            ],
+            [
+              "B17",
+              "Calzada",
+              "s"
+            ],
+            [
+              "C17",
+              "Código PR",
+              "s"
+            ],
+            [
+              "D17",
+              "Distancia (m)",
+              "s"
+            ],
+            [
+              "E17",
+              "Código PR",
+              "s"
+            ],
+            [
+              "F17",
+              "Distancia (m)",
+              "s"
+            ],
+            [
+              "G17",
+              "Clase",
+              "s"
+            ],
+            [
+              "H17",
+              "Tipo",
+              "s"
+            ],
+            [
+              "I17",
+              "Código del Puente",
+              "s"
+            ],
+            [
+              "J17",
+              "Inventariado",
+              "s"
+            ],
+            [
+              "K17",
+              "Vanos",
+              "s"
+            ],
+            [
+              "L17",
+              "Dimensión 1 Longitud (m)",
+              "s"
+            ],
+            [
+              "M17",
+              "Dimensión 2 Altura Inferior (m)",
+              "s"
+            ],
+            [
+              "N17",
+              "Condición Estructural",
+              "s"
+            ]
+          ]
+        }
+      ],
+      "zip_crc_valid": true,
+      "media_count": 2,
+      "all_xml_well_formed": true,
+      "broken_defined_names": []
+    }
+  }
+]

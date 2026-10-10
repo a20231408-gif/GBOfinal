@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.RouteDeliveryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:54:21.396Z" hostname="JULIAN" time="2.807">
+  <properties/>
+  <testcase name="brandedImportGetsSeparateWritableCopyWithoutRestampingOriginal" classname="com.tuempresa.inventariovial.RouteDeliveryTest" time="0.163"/>
+  <testcase name="exportReviewableDemoFromRealAxisWithThreePhotosAndTwoElements" classname="com.tuempresa.inventariovial.RouteDeliveryTest" time="2.003"/>
+  <testcase name="prepareWritesActualPhotosExifMetadataAndExistingSicWorkbookWithoutChangingOriginalOrIds" classname="com.tuempresa.inventariovial.RouteDeliveryTest" time="0.459"/>
+  <testcase name="exifUsesPhotoPositionAndNeverEditsOriginalOrWatermarkMarker" classname="com.tuempresa.inventariovial.RouteDeliveryTest" time="0.174"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

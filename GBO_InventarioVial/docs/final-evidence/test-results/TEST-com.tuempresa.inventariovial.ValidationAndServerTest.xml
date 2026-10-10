@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ValidationAndServerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T06:57:30.111Z" hostname="ANTHONYZA" time="0.053">
+  <properties/>
+  <testcase name="nmeaChecksChecksumUtcTimeFixAndDoesNotTreatHdopAsAccuracy" classname="com.tuempresa.inventariovial.ValidationAndServerTest" time="0.003"/>
+  <testcase name="supplementaryCatalogRetainsAmbiguitiesWithoutInventingCodes" classname="com.tuempresa.inventariovial.ValidationAndServerTest" time="0.002"/>
+  <testcase name="qualityWarningsDoNotBecomeStructuralErrors" classname="com.tuempresa.inventariovial.ValidationAndServerTest" time="0.003"/>
+  <testcase name="missingPrIsFlaggedAndDecreasingIntervalsNeedReview" classname="com.tuempresa.inventariovial.ValidationAndServerTest" time="0.0"/>
+  <testcase name="serverPayloadContainsAllRelationsWithoutPhotoBinaryOrLocalPaths" classname="com.tuempresa.inventariovial.ValidationAndServerTest" time="0.045"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

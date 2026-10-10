@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SicNewFormatsTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:50:19.517Z" hostname="JULIAN" time="2.053">
+  <properties/>
+  <testcase name="sic18aAllMappingsAndSharedPhotosCompleteReopenExport" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.107"/>
+  <testcase name="deliveryUsesNewFamiliesAndSupplementUsesParentFolderOnlyWhenComplete" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="1.209"/>
+  <testcase name="sic34NormalCodesLevelsAndFreeDescription" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.039"/>
+  <testcase name="sic34SourceConflictIsNeverSilentlySixAndSurvivesDraft" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.045"/>
+  <testcase name="sic08AllCodesUseContractValuesAndRejectVisualIndexes" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.038"/>
+  <testcase name="dashboardSyncRequiresAcknowledgedBatchAndCurrentRecord" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.052"/>
+  <testcase name="sic13SidesClassesDescriptionsAndExactColumns" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.036"/>
+  <testcase name="draftOwnerAndFinalRecordAreProtected" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.065"/>
+  <testcase name="sic09InvalidWidthsCanSaveDraftButCannotFinalizeOrExport" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.058"/>
+  <testcase name="allNewWorkbooksShareHeaderExactColumnsAndNoInternalIds" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.105"/>
+  <testcase name="sic08MissingFieldsAndRawDraftSurviveReopen" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.098"/>
+  <testcase name="supplementaryDraftWithoutPhotoEditsKeepsAllParentPhotos" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.045"/>
+  <testcase name="sic09InheritsByUuidWithoutMutatingFaja" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.043"/>
+  <testcase name="sharedContextReusesConfirmedStartEndDateOnlyWithinSameSurvey" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.049"/>
+  <testcase name="sic18aParentLinkInheritedFieldsAndNoAutomaticCreation" classname="com.tuempresa.inventariovial.SicNewFormatsTest" time="0.054"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

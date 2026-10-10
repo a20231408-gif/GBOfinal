@@ -1,0 +1,6 @@
+{
+  "syntheticContractProbe": true,
+  "observedStatus": "SYNCED",
+  "acceptance": "FAIL",
+  "reason": "Receipt has wrong logicalPath\/pathVersion; server is synthetic, no real upload"
+}

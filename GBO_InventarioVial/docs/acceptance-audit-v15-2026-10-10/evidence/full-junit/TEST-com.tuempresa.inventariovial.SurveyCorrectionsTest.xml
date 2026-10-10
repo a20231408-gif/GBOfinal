@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SurveyCorrectionsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:36:17.073Z" hostname="JULIAN" time="0.007">
+  <properties/>
+  <testcase name="reviewHasDescriptionsAndOmitsRemovedFields" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.001"/>
+  <testcase name="separateReportPreservesLiteralObservationsAndExcludesAnnulledRecords" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.004"/>
+  <testcase name="circularCulvertsNeedOneDimensionAndOvalCulvertsNeedTwo" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.001"/>
+  <testcase name="kilometreBoundaryDoesNotBehaveLikeARecordCounter" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.001"/>
+  <testcase name="historicalAuxiliaryPercentagesDoNotControlNewCulvertValidation" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.0"/>
+  <testcase name="routeOrderRequiresExplicitRestartForAnEarlierRouteButAllowsBothKilometreDirections" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.0"/>
+  <testcase name="increasingAndDecreasingSurveysRejectOnlyMovementAgainstChosenDirection" classname="com.tuempresa.inventariovial.SurveyCorrectionsTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

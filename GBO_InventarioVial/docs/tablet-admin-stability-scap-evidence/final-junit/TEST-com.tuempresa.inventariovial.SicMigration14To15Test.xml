@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SicMigration14To15Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:50:18.988Z" hostname="JULIAN" time="0.483">
+  <properties/>
+  <testcase name="version14PreservesEveryTableColumnAndReopensVersion15" classname="com.tuempresa.inventariovial.SicMigration14To15Test" time="0.471"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

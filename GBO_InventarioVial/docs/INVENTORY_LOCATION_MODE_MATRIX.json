@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "implementation": "validation.EndLocationPolicy.locationMode",
+  "matrix": [
+    {"sicCode": "SIC-17", "assetType": "BRIDGE / PUENTE", "locationMode": "LINEAR", "basis": "Attached SIC17_MO-104.xlsx start and end columns"},
+    {"sicCode": "SIC-18", "assetType": "CULVERT / ALCANTARILLA", "locationMode": "POINT", "basis": "Existing culvert format and location policy"},
+    {"sicCode": "SIC-19", "assetType": "DITCH / CUNETA", "locationMode": "LINEAR"},
+    {"sicCode": "SIC-20", "assetType": "FORD / BADEN", "classCode": "12", "locationMode": "POINT"},
+    {"sicCode": "SIC-20", "assetType": "TUNNEL / TUNEL", "classCode": "13", "locationMode": "LINEAR"},
+    {"sicCode": "SIC-20", "assetType": "WALL / MURO", "classCode": "14", "locationMode": "LINEAR"},
+    {"sicCode": "SIC-21", "assetType": "HORIZONTAL_MARKS / HORIZONTAL_STUDS / SAFETY", "locationMode": "LINEAR", "basis": "Existing start/end capture policy; applies to surveyed extent, not a claim that each individual safety object is linear"},
+    {"sicCode": "SIC-22", "assetType": "VERTICAL", "locationMode": "POINT"},
+    {"sicCode": "SIC-22", "assetType": "HITO_KILOMETRICO", "typeCode": "3", "signalCode": "I-2A", "locationMode": "POINT", "basis": "Existing informative catalogue POSTES DE KILOMETRAJE and user requirement"},
+    {"sicCode": "SIC-22", "assetType": "LEGACY_KILOMETER_POST / SEMAFORO / POSTE_SOS", "typeCode": ["4", "5", "6"], "locationMode": "POINT", "capture": "Historic read/edit only; no new type codes"},
+    {"sicCode": "SIC-23", "assetType": "DERECHO_VIA / ZONA_URBANA", "classCode": ["21", "22"], "locationMode": "LINEAR"},
+    {"sicCode": "SIC-23", "assetType": "PUNTO_ESPECIFICO / CANTERA", "classCode": ["23", "24"], "locationMode": "POINT"}
+  ],
+  "historicalEndLocations": "Hidden end fields on SIC-22 are ignored during new capture validation but are preserved when an existing record is edited. No historical SQL updates.",
+  "signalIdentification": {
+    "CATALOG": "Existing contractual code selected by search; Informativa subtype Hito / poste kilométrico selects existing I-2A, typeCode 3, and captures kilometerPostNumber in the existing contractual number column",
+    "MANUAL": "Unlisted code with operator description; cannot reuse an existing catalogue code",
+    "UNIDENTIFIABLE": "Null signalCode with optional observation; never fabricate a contractual code",
+    "completion": "SignalIdentificationPolicy.completionPending(state or Sic22Entity) flags missing or mismatched code, manual description and marker number at final/export review. UNIDENTIFIABLE has no required fake code.",
+    "CORE_metadata": "signalCodeSource, signalDescription and signalObservation are persisted in Room and available to CORE. No new contractual SIC22 workbook columns are invented."
+  }
+}

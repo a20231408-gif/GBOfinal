@@ -1,0 +1,34 @@
+[
+    {
+        "filename":  "GBO_InventarioVial_UI_UNIFICADA_DEBUG_v12.apk",
+        "path":  "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\output\\ui-unification\\GBO_InventarioVial_UI_UNIFICADA_DEBUG_v12.apk",
+        "package":  "com.tuempresa.inventariovial",
+        "versionCode":  12,
+        "versionName":  "1.4.0-sic-production",
+        "minSdk":  "26",
+        "targetSdk":  "37",
+        "certificateSha256":  [
+                                  "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+                              ],
+        "certificateSha1":  [
+                                "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+                            ],
+        "certificateSubject":  "C=US, O=Android, CN=Android Debug",
+        "signatureSchemes":  {
+                                 "v3":  false,
+                                 "v1":  false,
+                                 "v3.1":  false,
+                                 "v2":  true,
+                                 "v4":  false
+                             },
+        "verified":  true,
+        "zipAligned":  true,
+        "pageAligned16KiB":  true,
+        "isSplit":  false,
+        "isTest":  false,
+        "debuggable":  true,
+        "bytes":  39532525,
+        "apkSha256":  "8caf26d966e2d5f1042ef986027e6fb0748e62c5acfd28ac0fd8077610e670b8",
+        "deviceGroupKnown":  "UNKNOWN"
+    }
+]

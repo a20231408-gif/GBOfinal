@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.InventoryElementNavigationTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:48:45.601Z" hostname="JULIAN" time="1.628">
+  <properties/>
+  <testcase name="dashboardHasOneElementEntryForFajasAndAlcantarillasAndNoIndependentSibling" classname="com.tuempresa.inventariovial.InventoryElementNavigationTest" time="1.044"/>
+  <testcase name="culvertBadConditionRevealsSupplementInsideSameFormWithoutIndependentCommonInputs" classname="com.tuempresa.inventariovial.InventoryElementNavigationTest" time="0.273"/>
+  <testcase name="fajasDashboardOpensCharacteristicsDestinationAndKeepsCodesSecondary" classname="com.tuempresa.inventariovial.InventoryElementNavigationTest" time="0.138"/>
+  <testcase name="culvertTechnicalCriteriaStartCollapsedAndRemainAvailableOnDemand" classname="com.tuempresa.inventariovial.InventoryElementNavigationTest" time="0.168"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

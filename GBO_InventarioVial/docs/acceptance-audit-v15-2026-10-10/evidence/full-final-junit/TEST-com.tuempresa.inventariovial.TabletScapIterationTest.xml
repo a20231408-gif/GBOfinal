@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.TabletScapIterationTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T18:00:01.311Z" hostname="JULIAN" time="16.295">
+  <properties/>
+  <testcase name="missingValuesRequireUploadConfirmationWhileMalformedValuesBlockAndAckDoesNotFreezeDraft" classname="com.tuempresa.inventariovial.TabletScapIterationTest" time="0.449"/>
+  <testcase name="photoDefaultsCoverEverySourceCaptionAndEditableRecordsExportAspectRatioAndOriginalJpegUnchanged" classname="com.tuempresa.inventariovial.TabletScapIterationTest" time="8.542"/>
+  <testcase name="bothContractsSeedAllUnsetElementsAndTwoSupportsAndRetainManualAndHiddenValuesAfterReopen" classname="com.tuempresa.inventariovial.TabletScapIterationTest" time="1.121"/>
+  <testcase name="incompleteExportsPreserveSourceGeometryAndBlanksAndSupportThreeAndCustomGlobalDescription" classname="com.tuempresa.inventariovial.TabletScapIterationTest" time="5.778"/>
+  <testcase name="nullRatingsCalculateExactlyAsExplicitZerosAndAllBlankNeverInventsClassification" classname="com.tuempresa.inventariovial.TabletScapIterationTest" time="0.396"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

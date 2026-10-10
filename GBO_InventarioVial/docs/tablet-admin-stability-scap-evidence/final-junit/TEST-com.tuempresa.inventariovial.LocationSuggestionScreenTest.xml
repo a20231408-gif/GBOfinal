@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.LocationSuggestionScreenTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:48:48.063Z" hostname="JULIAN" time="0.318">
+  <properties/>
+  <testcase name="ambiguityRequiresCandidateSelectionAndConfirmation" classname="com.tuempresa.inventariovial.LocationSuggestionScreenTest" time="0.202"/>
+  <testcase name="oneButtonConfirmsWholeBlockAndEditKeepsProposalForAudit" classname="com.tuempresa.inventariovial.LocationSuggestionScreenTest" time="0.111"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,91 @@
+package com.tuempresa.inventariovial.model.form
+
+
+sealed interface SicFormDetail {
+
+    data class Sic23(val state: Sic23FormState) : SicFormDetail
+
+    data class Sic17(
+        val state: Sic17FormState
+    ) : SicFormDetail
+
+
+    data class Sic18(
+        val state: Sic18FormState
+    ) : SicFormDetail
+
+
+    data class Sic19(
+        val state: Sic19FormState
+    ) : SicFormDetail
+
+
+    data class Sic20(
+        val state: Sic20FormState
+    ) : SicFormDetail
+
+
+    data class Sic21(
+        val state: Sic21FormState
+    ) : SicFormDetail
+
+
+    data class Sic22(
+        val state: Sic22FormState
+    ) : SicFormDetail
+}
+
+
+data class InventorySaveRequest(
+
+    val sicCode: String,
+
+    val assetType: String,
+
+    val routeCode: String,
+
+    val roadbedCode: String,
+
+    val startPrCode: String,
+
+    val startDistanceM: String,
+
+    val endPrCode: String?,
+
+    val endDistanceM: String?,
+
+    val sideCode: String?,
+
+    val latitude: Double,
+
+    val longitude: Double,
+
+    val gpsAccuracyM: Float?,
+
+    val surveyDate: String,
+
+    val observations: String,
+
+    val photoPath: String,
+
+    val detail: SicFormDetail,
+    val photoPaths: List<String> = listOf(photoPath),
+    val endLatitude: Double? = null,
+    val endLongitude: Double? = null,
+    val endGpsAccuracyM: Float? = null,
+    val recordId: String? = null,
+    val location: com.tuempresa.inventariovial.location.GeoLocation? = null,
+    val endLocation: com.tuempresa.inventariovial.location.GeoLocation? = null,
+    val locationSource: String = "MANUAL",
+    val sideSource: String = "MANUAL",
+    val sessionId: String? = null,
+    val stampedPaths: Map<String, String> = emptyMap(),
+    val segment: String = "",
+    val direction: String = "INCREASING",
+    val photoCategories: Map<String,String> = emptyMap(),
+    val endLocationSource: String = "MANUAL",
+    val routeSource: String = "MANUAL",
+    val startSuggestion: com.tuempresa.inventariovial.road.LocationSuggestion? = null,
+    val endSuggestion: com.tuempresa.inventariovial.road.LocationSuggestion? = null,
+    val photoCaptures: Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap()
+)

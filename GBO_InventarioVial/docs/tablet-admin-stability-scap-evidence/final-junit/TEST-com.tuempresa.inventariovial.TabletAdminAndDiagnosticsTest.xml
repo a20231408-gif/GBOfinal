@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:50:29.289Z" hostname="JULIAN" time="1.969">
+  <properties/>
+  <testcase name="invalidScopeNeverAuthorizesAndBackgroundLockInvalidatesAdministration" classname="com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest" time="0.032"/>
+  <testcase name="engineerRequiresExplicitHintAndScopedTokenExpiresWithoutNormalLogoutAndCannotInvokeUserActions" classname="com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest" time="0.059"/>
+  <testcase name="unknownExitIsReportedHonestlyAndKnownReasonsRemainDistinct" classname="com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest" time="0.037"/>
+  <testcase name="diagnosticIsBoundedAndNeverSerializesExceptionMessagesPathsCoordinatesOrSecrets" classname="com.tuempresa.inventariovial.TabletAdminAndDiagnosticsTest" time="1.837"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

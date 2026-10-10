@@ -1,0 +1,18 @@
+{
+  "SicUiParityTest": {
+    "fajaUsesLegacyFlowWithOne08And09FormAndProducesScreenshot": "PASSED",
+    "newFormsUseRealRouteCatalogRoadwayChipsAndTraversalReset": "PASSED",
+    "leavingAndReopeningLegacyFajaKeepsUuidRawFieldsDirectionAndJoinedWidths": "PASSED",
+    "linkedSic09DestinationReopensOneFajaFormWithBothContracts": "PASSED",
+    "accidentUsesLegacyFlowAndProducesScreenshot": "PASSED",
+    "criticalPointUsesLegacyFlowAndProducesScreenshot": "PASSED",
+    "sic18aDestinationOpensCulvertLegacyFormWithoutIndependentHeaderOrWorkspace": "PASSED",
+    "canonicalCulvertUsesExtractedLegacyFormAndProducesScreenshot": "PASSED"
+  },
+  "TabletUxUiTest": {
+    "historicCardContinuesExactIdAndClosedCardUsesView": "PASSED",
+    "tableHasOneRowPerDamageAndSelectionKeepsRealId": "PASSED",
+    "verticalFormUsesElementLocationAndDoesNotRenderEndBlock": "PASSED",
+    "twoPhotosPreviewCloseRemovalPreserveOtherAndForm": "PASSED"
+  }
+}

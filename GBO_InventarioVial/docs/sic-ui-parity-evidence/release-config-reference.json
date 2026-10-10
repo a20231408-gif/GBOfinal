@@ -1,0 +1,6 @@
+{
+  "receivedVersionCode": 12,
+  "versionCode": 13,
+  "expectedNormalizedSha256": "7607d090626e432ab35d6aee284aaaa69465e69fa94a45d636467009c7bbae8b",
+  "change": "Only versionCode 12 \u2192 13; release certificate, gates, signing and applicationId unchanged"
+}

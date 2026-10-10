@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.LocationSuggestionTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:57:46.102Z" hostname="JULIAN" time="1.026">
+  <properties/>
+  <testcase name="confirmedRouteIsPrimaryAndStrongDiscrepancyDoesNotReplaceIt" classname="com.tuempresa.inventariovial.LocationSuggestionTest" time="0.073"/>
+  <testcase name="globalRealSixRouteReferenceSuggestsPe22WithoutContractualMutation" classname="com.tuempresa.inventariovial.LocationSuggestionTest" time="0.786"/>
+  <testcase name="prProposalAndManualOverrideAreStoredSeparatelyAndEndIsIndependent" classname="com.tuempresa.inventariovial.LocationSuggestionTest" time="0.054"/>
+  <testcase name="invalidGnssCannotInventRouteOrPr" classname="com.tuempresa.inventariovial.LocationSuggestionTest" time="0.053"/>
+  <testcase name="closeRoutesRemainAmbiguousAndGnssAndManualValuesSurvive" classname="com.tuempresa.inventariovial.LocationSuggestionTest" time="0.048"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

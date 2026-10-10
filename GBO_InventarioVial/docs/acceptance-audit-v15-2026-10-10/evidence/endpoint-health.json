@@ -1,0 +1,30 @@
+{
+  "read_only_get": true,
+  "token_read": false,
+  "token_sent": false,
+  "endpoint_source": "Release APK public HTTPS URL",
+  "apk_endpoint_count": 2,
+  "endpoints": [
+    {
+      "public_url_sha256": "00b853f405a3ea9448d832ea9994cf81844a1298bf284d3ae633ba870bac9e86",
+      "http_status": 200,
+      "capabilities": {
+        "ok": true,
+        "version": "v6.2 · encarpetado estricto por elemento + SCAP v2",
+        "deliveryProtocol": 1,
+        "scapProtocol": 2,
+        "scapBundleVersion": 4,
+        "strictElementFoldering": true
+      },
+      "json_response": true
+    },
+    {
+      "public_url_sha256": "5c01550de15e2e1735a580308aaf0bf13206ac57585dfa27f7040ac4e14023e6",
+      "http_status": 200,
+      "capabilities": {
+        "version": "users-v2.4-tablet-admin"
+      },
+      "json_response": true
+    }
+  ]
+}

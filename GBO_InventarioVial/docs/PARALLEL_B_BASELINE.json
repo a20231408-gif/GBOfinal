@@ -1,0 +1,69 @@
+{
+  "tests": 249,
+  "failures": [
+    {
+      "class": "com.tuempresa.inventariovial.Engineering2DataTest",
+      "name": "sevenPiersFixedStructuresAndObservationsSurviveReopenWithoutMaterializingReminders"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Engineering2ScreenTest",
+      "name": "f2ShowsPendingDefaultsAndEditingAnObservationPersistsWithoutAssertingPresence"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.EngineeringUxTest",
+      "name": "versionSixMigrationKeepsAllHistoricalDataAndPromotesLegacyJoint"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.InventoryRoomMigrationTest",
+      "name": "migrationsFromEveryReleasedVersionPreserveRecordsPhotosAndSic23"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.PrSuggestionStorageTest",
+      "name": "migrationNineToTenRetainsRecordsPhotosAndStartSourceAndDefaultsEndToManual"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.RoadAxisStorageTest",
+      "name": "realVersionEightMigrationPreservesManualPrPhotosAndDetailsAndNewFieldsStartNull"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.RoadReferenceDeliveryTest",
+      "name": "categoryStylesShortNamesAndExtendedDataPreserveManualAndGeometricValues"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.RoadReferenceDeliveryTest",
+      "name": "compatibleAxisHasYellowTopBlackBorderIdenticalGeometryAndSidebarLegend"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.RoundTwoStorageTest",
+      "name": "migration10to11PreservesEveryColumnOfEveryLegacyTableIncludingSecurityAndScap"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.ScapExportTest",
+      "name": "runtimeIncludesExactTemplateAndExportPreservesSheetsStylesGeometryAndCalculationFormulas"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.ScapFullExportTest",
+      "name": "SCAP_COMPLETO_TEST_reopensWithAllFieldsSevenDistinctPiersAndOriginalGeometry"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.ScapStorageTest",
+      "name": "versionFiveMigrationPreservesSicRecordsPhotosMetadataAndNewCulvertFields"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.SurveyStorageTest",
+      "name": "versionFourUpgradeRetainsOldCulvertDimensionsAndMarksNewFieldsUnknown"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.UserAuthenticationTest",
+      "name": "fieldSessionOperatorComesFromAuthenticatedUser"
+    },
+    {
+      "class": "com.tuempresa.inventariovial.UserAuthenticationTest",
+      "name": "migration7to8PreservesEveryExistingTable"
+    }
+  ],
+  "skipped": 0,
+  "assembleDebug": "SUCCESS",
+  "roomVersion": 12,
+  "gitRepository": false
+}

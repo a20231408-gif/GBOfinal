@@ -1,0 +1,20 @@
+{
+  "tracked_files": 610,
+  "changed_files": [
+    "app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementHeader.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRepository.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDialogs.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapRepository.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapWorkspace.kt",
+    "app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/SicUiParityTest.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/TabletUxUiTest.kt"
+  ],
+  "added_source_files": [
+    "app/src/main/java/com/tuempresa/inventariovial/field/FieldSessionDefaults.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/FieldSessionDefaultsTest.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/FieldSessionFormsTest.kt"
+  ],
+  "room_schema_auth_tablet_admin_backend_apps_script_gradle_unchanged": true
+}

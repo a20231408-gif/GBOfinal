@@ -1,0 +1,76 @@
+{
+  "LOSA": {
+    "sheets": [
+      "A-D.- FICHA",
+      "E.- CROQUIS",
+      "F.1- CONDICION GLOBAL",
+      "F.2.-PANEL FOTOGRAFICO",
+      "G.- CONDICION ESTADISTICA",
+      "G.2-CONCLUSIONES",
+      "AUXILIAR",
+      "Hoja1",
+      "Hoja3"
+    ],
+    "sheetCount": 9,
+    "stylesMergesDimensionsLogoPreserved": true,
+    "sourceSha256": "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57"
+  },
+  "MODULAR": {
+    "sheets": [
+      "A-D.- FICHA",
+      "E.- CROQUIS",
+      "F.1- CONDICION GLOBAL",
+      "F.2.-PANEL FOTOGRAFICO",
+      "G.- CONDICION ESTADISTICA",
+      "G.2-CONCLUSIONES",
+      "AUXILIAR",
+      "Hoja1",
+      "Hoja3"
+    ],
+    "sheetCount": 9,
+    "stylesMergesDimensionsLogoPreserved": true,
+    "sourceSha256": "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89"
+  },
+  "SIC-17": {
+    "ownTitle": "SIC-17: PUENTES Y PONTONES",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  },
+  "SIC-18": {
+    "ownTitle": "SIC-18: ALCANTARILLAS",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  },
+  "SIC-19": {
+    "ownTitle": "SIC-19: CUNETAS, CANALES, BAJADAS DE AGUA Y ZANJAS DE DRENAJE",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  },
+  "SIC-20": {
+    "ownTitle": "SIC-20: BADENES, TÚNELES Y MUROS",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  },
+  "SIC-21": {
+    "ownTitle": "SIC-21: SEGURIDAD Y SEÑALIZACIÓN HORIZONTAL",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  },
+  "SIC-22": {
+    "ownTitle": "SIC-22: SEÑALIZACIÓN VERTICAL",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  },
+  "SIC-23": {
+    "ownTitle": "SIC-23: DERECHO DE VÍA",
+    "corporateHeading": true,
+    "originalLogoCount": 2,
+    "prPreservedAsText": true
+  }
+}

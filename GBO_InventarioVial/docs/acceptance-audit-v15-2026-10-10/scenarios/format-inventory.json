@@ -1,0 +1,314 @@
+{
+  "sic": [
+    {
+      "code": "SIC-17",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Código PR",
+        "Distancia (m)",
+        "Clase",
+        "Tipo",
+        "Código del puente",
+        "Inventariado",
+        "Ojos \/ Vanos",
+        "Dimensión 1 Longitud (m)",
+        "Dimensión 2 Altura inferior (m)",
+        "Condición estructural",
+        "Condición funcional",
+        "Fecha",
+        "Tipo de servicio",
+        "Singularidad salvada",
+        "Nombre singularidad",
+        "Dimensión 3 Altura superior (m)"
+      ],
+      "columnCount": 20,
+      "matchingRecords": 1,
+      "artifact": "SIC-17.xlsx"
+    },
+    {
+      "code": "SIC-18",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Clase",
+        "Tipo",
+        "Ojos \/ Vanos",
+        "Sección transversal",
+        "Dimensión 1 (m)",
+        "Dimensión 2 (m)",
+        "Condición estructural",
+        "Condición funcional",
+        "Fecha"
+      ],
+      "columnCount": 13,
+      "matchingRecords": 1,
+      "artifact": "SIC-18.xlsx"
+    },
+    {
+      "code": "SIC-19",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Código PR",
+        "Distancia (m)",
+        "Lado",
+        "Clase",
+        "Tipo",
+        "Sección transversal",
+        "Condición estructural",
+        "Condición funcional",
+        "Fecha"
+      ],
+      "columnCount": 13,
+      "matchingRecords": 1,
+      "artifact": "SIC-19.xlsx"
+    },
+    {
+      "code": "SIC-20",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Código PR",
+        "Distancia (m)",
+        "Lado",
+        "Clase",
+        "Tipo",
+        "Dimensión 1 (m)",
+        "Dimensión 2 (m)",
+        "Condición estructural",
+        "Condición funcional",
+        "Fecha"
+      ],
+      "columnCount": 14,
+      "matchingRecords": 1,
+      "artifact": "SIC-20.xlsx"
+    },
+    {
+      "code": "SIC-21",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Código PR",
+        "Distancia (m)",
+        "Lado",
+        "Clase",
+        "Tipo",
+        "Material",
+        "Condición",
+        "Fecha"
+      ],
+      "columnCount": 12,
+      "matchingRecords": 1,
+      "artifact": "SIC-21.xlsx"
+    },
+    {
+      "code": "SIC-22",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Lado",
+        "Clase",
+        "Tipo",
+        "Material",
+        "Código de señal",
+        "Número del poste kilométrico",
+        "Condición",
+        "Fecha"
+      ],
+      "columnCount": 12,
+      "matchingRecords": 1,
+      "artifact": "SIC-22.xlsx"
+    },
+    {
+      "code": "SIC-23",
+      "columns": [
+        "Carretera",
+        "Calzada",
+        "Código PR",
+        "Distancia (m)",
+        "Código PR",
+        "Distancia (m)",
+        "Lado",
+        "Clase",
+        "Tipo",
+        "Ancho (m)",
+        "Descripción",
+        "Fecha"
+      ],
+      "columnCount": 12,
+      "matchingRecords": 1,
+      "artifact": "SIC-23.xlsx"
+    },
+    {
+      "code": "SIC-08",
+      "columns": [
+        "Ruta",
+        "Calzada",
+        "Faja",
+        "Código PR",
+        "Distancia",
+        "Código PR",
+        "Distancia",
+        "Tipo",
+        "Sentido del tránsito",
+        "Fecha"
+      ],
+      "columnCount": 10,
+      "matchingRecords": 1,
+      "artifact": "SIC-08.xlsx"
+    },
+    {
+      "code": "SIC-09",
+      "columns": [
+        "Ruta",
+        "Calzada",
+        "Faja",
+        "Código PR",
+        "Distancia",
+        "Código PR",
+        "Distancia",
+        "Ancho útil (m)",
+        "Ancho total (m)",
+        "Fecha"
+      ],
+      "columnCount": 10,
+      "matchingRecords": 1,
+      "artifact": "SIC-09.xlsx"
+    },
+    {
+      "code": "SIC-13",
+      "columns": [
+        "Ruta",
+        "Calzada",
+        "Código PR",
+        "Distancia",
+        "Código PR",
+        "Distancia",
+        "Lado",
+        "Clase",
+        "Fecha"
+      ],
+      "columnCount": 9,
+      "matchingRecords": 1,
+      "artifact": "SIC-13.xlsx"
+    },
+    {
+      "code": "SIC-34",
+      "columns": [
+        "Ruta",
+        "Calzada",
+        "Faja",
+        "Código PR",
+        "Distancia",
+        "Código PR",
+        "Distancia",
+        "Tipo",
+        "Nivel",
+        "Descripción",
+        "Fecha"
+      ],
+      "columnCount": 11,
+      "matchingRecords": 1,
+      "artifact": "SIC-34.xlsx"
+    },
+    {
+      "code": "SIC-18A",
+      "columns": [
+        "Ruta",
+        "Calzada",
+        "Código PR",
+        "Distancia",
+        "Clase",
+        "Tipo (según clase)",
+        "Ojos \/ vanos",
+        "Función",
+        "Ubicación de Falla",
+        "Tipo de Falla",
+        "Estado",
+        "Causa probable",
+        "Fecha"
+      ],
+      "columnCount": 13,
+      "matchingRecords": 1,
+      "artifact": "SIC-18A.xlsx"
+    }
+  ],
+  "bridgeSupplements": [
+    {
+      "format": "SIC-17A",
+      "standaloneFlagEnabled": false,
+      "scapProjectionImplemented": true,
+      "fields": [
+        "bridgeName",
+        "bridgeCode",
+        "constructionYear",
+        "department",
+        "province",
+        "district",
+        "nearbyTown",
+        "latitude",
+        "longitude",
+        "altitude",
+        "lanes",
+        "roadwayWidthM",
+        "sidewalkWidthM",
+        "deckWidthM",
+        "superstructureWidthM",
+        "alignmentCode"
+      ]
+    },
+    {
+      "format": "SIC-17B",
+      "standaloneFlagEnabled": false,
+      "scapProjectionImplemented": true,
+      "fields": [
+        "bridgeCode",
+        "designLoad",
+        "maximumCapacity",
+        "wearingSurface",
+        "vehicleRestraintCode",
+        "mainSpanM",
+        "boundaryCode",
+        "crossSectionCode",
+        "beams",
+        "slabMaterialCode",
+        "beamMaterialCode",
+        "abutmentElevationCode",
+        "abutmentMaterialCode",
+        "abutmentFoundationCode",
+        "pierElevationCode",
+        "pierMaterialCode",
+        "pierFoundationCode",
+        "comments"
+      ]
+    }
+  ],
+  "pavementSic": [
+    "SIC-14",
+    "SIC-14A",
+    "SIC-15",
+    "SIC-16"
+  ],
+  "surfaces": [
+    "ASPHALT",
+    "RIGID",
+    "UNSURFACED"
+  ],
+  "scap": [
+    "MODULAR",
+    "LOSA"
+  ]
+}

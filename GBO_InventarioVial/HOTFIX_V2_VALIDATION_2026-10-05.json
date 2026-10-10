@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": {
+    "live_map_exact_showcase": true,
+    "road_ordering_unchanged_vs_showcase": true,
+    "road_reference_geometry_same": true,
+    "drive_panel_lazy": true,
+    "order_screen_defensive": true,
+    "signal_dropdown_preserved": true,
+    "version_bumped": true
+  },
+  "notes": [
+    "Validación estática; falta BUILD SUCCESSFUL y prueba física en tablet.",
+    "LiveRoadMap.kt es byte-a-byte idéntico al VIDEO_SHOWCASE aportado por el usuario.",
+    "RoadOrdering y road_reference.json se conservaron; solo se portó la UI del mapa estable."
+  ]
+}

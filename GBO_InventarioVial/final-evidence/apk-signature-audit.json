@@ -1,0 +1,2178 @@
+[
+  {
+    "filename": "GBO Inventario.apk",
+    "path": "D:\\Downloads\\GBO Inventario.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 5,
+    "versionName": "1.3.0-final-mapa-offline",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9367715,
+    "apkSha256": "40af841d1c9495e9b13356eeea45f89c17a6f64298b47e793a1ddcc221d05873",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO Inventario (1).apk",
+    "path": "D:\\Downloads\\GBO Inventario (1).apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 16726643,
+    "apkSha256": "618484e87f9bff596730849d1bc1b1a22fe95a84bc6681572de50d19f639a171",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_FINAL\\GBO_InventarioVial\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_ESTABLE_HUELLA\\GBO_InventarioVial_FINAL_ESTABLE\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_FINAL\\GBO_InventarioVial\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22857774,
+    "apkSha256": "da7369c98d9efa4dca64ebfa75199e96063519f13629752d5a6010f4678c100a",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_FINAL\\GBO_InventarioVial\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208195,
+    "apkSha256": "5d8513aff0101b41ba30557fdf728b0dd624859cbf750ce90f051753ffb14a9e",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-release.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\app\\release\\app-release.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 5,
+    "versionName": "1.3.0-final-mapa-offline",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9367715,
+    "apkSha256": "40af841d1c9495e9b13356eeea45f89c17a6f64298b47e793a1ddcc221d05873",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_ESTABLE_HUELLA\\GBO_InventarioVial_FINAL_ESTABLE\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 4,
+    "versionName": "1.2.1-pavimentos-estable",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23043900,
+    "apkSha256": "0abf4a19a4f3fada1e86ceb267f598d96c03591f47002d484fe94d147d1dfc37",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_ESTABLE_HUELLA\\GBO_InventarioVial_FINAL_ESTABLE\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208338,
+    "apkSha256": "3116e7ee032821d5af60614b2e125cebf18eddcda28deb8b24de33e615cdfde4",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-release.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\app\\build\\outputs\\apk\\release\\app-release.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 5,
+    "versionName": "1.3.0-final-mapa-offline",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9367715,
+    "apkSha256": "40af841d1c9495e9b13356eeea45f89c17a6f64298b47e793a1ddcc221d05873",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 5,
+    "versionName": "1.3.0-final-mapa-offline",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23090418,
+    "apkSha256": "05a86eea2e673f937d43f729d6af4f59995042a39a9e452a552b8a30641063dd",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208200,
+    "apkSha256": "7a180036a9a0abc4312d73a34bd7a89671bf19038add264973bbc756556b8be3",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_DRIVE_BLOCKED_HOTFIX\\GBO_DRIVE_BLOCKED_HOTFIX\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.showcase",
+    "versionCode": 1,
+    "versionName": "1.0-showcase",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22901010,
+    "apkSha256": "acb578611a7bbcf1cad093f2ece4d0f7a56e377298a1cac13444441db2aa0c60",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_TABLET_UX_2026-10-07-debug.apk",
+    "path": "D:\\Downloads\\GBO_FIX\\output\\GBO_InventarioVial_TABLET_UX_2026-10-07-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23526699,
+    "apkSha256": "d79ac6003d698b11a8b523cf63f73466338d4a83adc35933b6a8f0c918ed9027",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_PUENTES_SIC_2026-10-06-debug.apk",
+    "path": "D:\\Downloads\\GBO_FIX\\output\\GBO_InventarioVial_PUENTES_SIC_2026-10-06-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23526303,
+    "apkSha256": "c2f0ba25ec129f2f9b71001f00747152554d42fa85673a8f2cd1450eda08d050",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_DRIVE_BLOCKED_HOTFIX\\GBO_DRIVE_BLOCKED_HOTFIX\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.showcase.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208213,
+    "apkSha256": "7f69469398b59103ff5a0c0831f7e744d1f9e68899a6853920c764a46d44c021",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO Inventario.apk",
+    "path": "D:\\Downloads\\GBO_FIX\\app\\release\\GBO Inventario.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9384107,
+    "apkSha256": "c7968bb00b95f654098cc70d088dae04bd43f53c04aec390551a46b5bc007676",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-release.apk",
+    "path": "D:\\Downloads\\GBO_FIX\\app\\build\\outputs\\apk\\release\\app-release.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9384107,
+    "apkSha256": "c7968bb00b95f654098cc70d088dae04bd43f53c04aec390551a46b5bc007676",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_FIX\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23270284,
+    "apkSha256": "d1311dce034de9bbdabe7ef6b0c36a852722dea2a04745e4ad46d814e37f8c3c",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_FIX\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1218788,
+    "apkSha256": "43f2121dcaf5b7fd120da0469e1474a857f1bcd16868769333dd5f7a6a792ecf",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_DRIVE_BLOCKED_HOTFIX\\GBO_DRIVE_BLOCKED_HOTFIX\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.showcase",
+    "versionCode": 1,
+    "versionName": "1.0-showcase",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23324849,
+    "apkSha256": "017014bc15dc1fa8e8133ba246532a29b08ccb95844a01b104a7c365d7533f3a",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_ESTABLE_HUELLA\\GBO_InventarioVial_FINAL_ESTABLE\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 4,
+    "versionName": "1.2.1-pavimentos-estable",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 22998831,
+    "apkSha256": "dafa3f93a7d21723c8ab69f63651f7fe3a41b15c6e3e2cb274af5ddd71eb38f6",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 5,
+    "versionName": "1.3.0-final-mapa-offline",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23463730,
+    "apkSha256": "1ae61275f14a882de7e1eb1c384935a8d4c9cd20c3b44ee145415137f8d60209",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_ESTABLE_V2\\GBO_InventarioVial_FINAL_ESTABLE_V2\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_FINAL\\GBO_InventarioVial\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23275432,
+    "apkSha256": "35cfab19cdf253090322fcfecc2cadc0684ca182fe7071d5cbe0f99e0c686f5b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_CAMPO\\GBO_InventarioVial\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_PAVIMENTOS_DRIVE\\GBO_InventarioVial_FINAL_PAVIMENTOS\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_CAMPO\\GBO_InventarioVial\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22819151,
+    "apkSha256": "873bda01d63aca0d6cd9eddd7d23b515e6b9c3645193c09e784cddb0c0f45f6b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_CAMPO\\GBO_InventarioVial\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208193,
+    "apkSha256": "97810e7ffa8087cf5419a62e36214f54b94da9655756d0421032dbb700b96145",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO Inventario version SCAP 2019.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\app\\release\\GBO Inventario version SCAP 2019.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 7,
+    "versionName": "1.3.2-final-scap-2019-order",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9328995,
+    "apkSha256": "b6c18845691fca965f98a5fdc8821fece8c66102ed11331aed6c02e538dd93f9",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-release.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\app\\build\\outputs\\apk\\release\\app-release.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 7,
+    "versionName": "1.3.2-final-scap-2019-order",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9328995,
+    "apkSha256": "b6c18845691fca965f98a5fdc8821fece8c66102ed11331aed6c02e538dd93f9",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 7,
+    "versionName": "1.3.2-final-scap-2019-order",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23047047,
+    "apkSha256": "1c73aea1ed3c805cd4a96df7b9171da0a63185376813a431802b019d98e0915e",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208098,
+    "apkSha256": "37bf92b78f9cda9affc42b8981174042654f56f5c773266e5f3fbe1164b90a5d",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_VIDEO_SHOWCASE\\GBO_InventarioVial_VIDEO_SHOWCASE\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.showcase",
+    "versionCode": 1,
+    "versionName": "1.0-showcase",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22907698,
+    "apkSha256": "f8983c9d3d1a7c01288b089b50b00303164902c5aadbd0591ed0ea59410c78ba",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_VIDEO_SHOWCASE\\GBO_InventarioVial_VIDEO_SHOWCASE\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.showcase.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208352,
+    "apkSha256": "db472a2d0d89fee50e2362f9112eff65f084ab1dd4bec9299a605902c417631d",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_PAVIMENTOS_DRIVE\\GBO_InventarioVial_FINAL_PAVIMENTOS\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 3,
+    "versionName": "1.2-pavimentos-final",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23043677,
+    "apkSha256": "25c12d8b135cb441102e44cd93599cbf6641043d7d3d02727d2b55d7417405d6",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_PAVIMENTOS_DRIVE\\GBO_InventarioVial_FINAL_PAVIMENTOS\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208198,
+    "apkSha256": "30ae643c25ca0dc813162e34d55861204a43d720b585ffdbb1915f10fd45b5e6",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_DATASET_INTEGRAL\\GBO_InventarioVial\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.qa",
+    "versionCode": 1,
+    "versionName": "1.0-qa",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23317637,
+    "apkSha256": "2b2b0b52f4b6b9876922628a616de8c0793a8d27a0c064c0b4b1b498ac91352c",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_SIC_08_09_13_18A_34_DEBUG.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\output\\sic-new\\GBO_InventarioVial_SIC_08_09_13_18A_34_DEBUG.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 39434241,
+    "apkSha256": "522023f89f48f459aee66a74132aa4c57c62a28882ac9ac5eeee706ec40eabbb",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO Inventario.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\app\\release\\GBO Inventario.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 16726643,
+    "apkSha256": "618484e87f9bff596730849d1bc1b1a22fe95a84bc6681572de50d19f639a171",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-release.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\app\\build\\outputs\\apk\\release\\app-release.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 16726643,
+    "apkSha256": "618484e87f9bff596730849d1bc1b1a22fe95a84bc6681572de50d19f639a171",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 39434241,
+    "apkSha256": "522023f89f48f459aee66a74132aa4c57c62a28882ac9ac5eeee706ec40eabbb",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1240422,
+    "apkSha256": "3eb30457fb9b9bf407392e5c437578a819984798610d2c20fbf7053cdcb956c0",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_VIDEO_SHOWCASE\\GBO_InventarioVial_VIDEO_SHOWCASE\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.showcase",
+    "versionCode": 1,
+    "versionName": "1.0-showcase",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 22859989,
+    "apkSha256": "dcc3d90e5c2dd035fa8a7bb23998a71915a544f8bd8a360e35adb09abadc84e2",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_VALIDACION_CAMPO\\GBO_InventarioVial\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23229577,
+    "apkSha256": "3960fc1700457776d5f49d21e52dd84b85655b2392ead084e9e153e064a1e2b6",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\GBO_InventarioVial_FINAL_SCAP_2019_ORDEN_1_18\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 7,
+    "versionName": "1.3.2-final-scap-2019-order",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23004914,
+    "apkSha256": "333e8a9bf1ea38e3c8db9a2b936cd36a2aa3ae2cccf699e6a123f1de73e2e835",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_PAVIMENTOS_DRIVE\\GBO_InventarioVial_FINAL_PAVIMENTOS\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 3,
+    "versionName": "1.2-pavimentos-final",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 22998984,
+    "apkSha256": "c85f01f1b23e68e46c82ed7d6c4653eb80573e63fa03c06169f80b79f5e54963",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INTEGRADO\\GBO_InventarioVial\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_DATASET_INTEGRAL_LOGIN_HOTFIX\\GBO_InventarioVial_QA_DATASET_INTEGRAL_LOGIN_HOTFIX\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.qa",
+    "versionCode": 1,
+    "versionName": "1.0-qa",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22897243,
+    "apkSha256": "3f17c6dfbc5ab49b03ef7c061807de08e550b1fcee21da78d494aa697f4d5313",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_DATASET_INTEGRAL_LOGIN_HOTFIX\\GBO_InventarioVial_QA_DATASET_INTEGRAL_LOGIN_HOTFIX\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.qa.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208197,
+    "apkSha256": "07ac17b4227010a688812b0f8f039e95ce3a9b7a25d41c9dfdab2c1fe4abe4d4",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 39381501,
+    "apkSha256": "7eca3a9da42f75625536aef686f6ef1b59f62d55a88c336a4af29dc04a3f7b62",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INTEGRADO\\GBO_InventarioVial\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22755811,
+    "apkSha256": "098667cf3d88d6c429b3b43546a320e6528ec724d9fee4a1e16a918a7a6d6525",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INTEGRADO\\GBO_InventarioVial\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208323,
+    "apkSha256": "8784deb00b10ebc92a99bff40dc7b8ee9c7db831cc9d76371bb66bc78400c0fa",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_Ronda2-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FUSIONADO_FALLAS\\GBO_InventarioVial_FUSIONADO_FALLAS\\output\\GBO_InventarioVial_Ronda2-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22183240,
+    "apkSha256": "d7e96c9e3ebf40e31d186b5ddca0465d4a6643cbd6ff1b7146efe71c7b44455b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FUSIONADO_FALLAS\\GBO_InventarioVial_FUSIONADO_FALLAS\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 22992566,
+    "apkSha256": "bcecf9d5cd354053660cba76d334c105dec47abea6bbad900a6d53eb678b2650",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FUSIONADO_FALLAS\\GBO_InventarioVial_FUSIONADO_FALLAS\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1208196,
+    "apkSha256": "e5c6617eb0870a7d59ca6637c893d531e284b7f09635d79f1cc046884fb2d5b1",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_QA_DATASET_INTEGRAL_LOGIN_HOTFIX\\GBO_InventarioVial_QA_DATASET_INTEGRAL_LOGIN_HOTFIX\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial.qa",
+    "versionCode": 1,
+    "versionName": "1.0-qa",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23318525,
+    "apkSha256": "7dfc8fb1d3adacd1e14cd15a41ff2b889bd3a033bbf6c0e1c8596adfe30e7bbc",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INTEGRADO\\GBO_InventarioVial\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 22721088,
+    "apkSha256": "fdcab871022673d4127bced0f5066eeaa115d261083d249b74e46cbd8a61e597",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FUSIONADO_FALLAS\\GBO_InventarioVial_FUSIONADO_FALLAS\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 1,
+    "versionName": "1.0",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 22947050,
+    "apkSha256": "b5342e79d86735919a1025c67658136d4c16dd32dfd07c4061c3a61aa1ffe700",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_TABLET_UX_2026-10-07-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V3_COMPILE_MAPA_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V2_WORK\\output\\GBO_InventarioVial_TABLET_UX_2026-10-07-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23526699,
+    "apkSha256": "d79ac6003d698b11a8b523cf63f73466338d4a83adc35933b6a8f0c918ed9027",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO_InventarioVial_PUENTES_SIC_2026-10-06-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V3_COMPILE_MAPA_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V2_WORK\\output\\GBO_InventarioVial_PUENTES_SIC_2026-10-06-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23526303,
+    "apkSha256": "c2f0ba25ec129f2f9b71001f00747152554d42fa85673a8f2cd1450eda08d050",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "GBO Inventario_antes_de_Integracion.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V3_COMPILE_MAPA_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V2_WORK\\app\\release\\GBO Inventario_antes_de_Integracion.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9384107,
+    "apkSha256": "c7968bb00b95f654098cc70d088dae04bd43f53c04aec390551a46b5bc007676",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-release.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V3_COMPILE_MAPA_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V2_WORK\\app\\build\\outputs\\apk\\release\\app-release.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+    ],
+    "certificateSha1": [
+      "991f860bf3aa34965e743a6d03cd31045e80b5d2"
+    ],
+    "certificateSubject": "C=PE, ST=Lima, L=Lima, O=GBO Ingenieros Consultores S.A.C., OU=Desarrollo de Software, CN=GBO Ingenieros Consultores S.A.C.",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": false,
+    "bytes": 9384107,
+    "apkSha256": "c7968bb00b95f654098cc70d088dae04bd43f53c04aec390551a46b5bc007676",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V3_COMPILE_MAPA_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V2_WORK\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 8,
+    "versionName": "1.3.3-final-mapa-hotfix-map-compat",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23188364,
+    "apkSha256": "5058d2d6c067af517ea159eb8a0d88fa6ab48e2aca5ffa811b4562ae0c832d9c",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V3_COMPILE_MAPA_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_V2_WORK\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1218788,
+    "apkSha256": "43f2121dcaf5b7fd120da0469e1474a857f1bcd16868769333dd5f7a6a792ecf",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_ORDEN_SENALES_SOURCE_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 6,
+    "versionName": "1.3.1-final-mapa-hotfix-order-signs",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 23095187,
+    "apkSha256": "93c9db39dba274dcc5ec2ae9999e3ea2ac93f67002a65e2f453798513bbe882b",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug-androidTest.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_ORDEN_SENALES_SOURCE_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX\\app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk",
+    "package": "com.tuempresa.inventariovial.test",
+    "versionCode": 0,
+    "versionName": "",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 1218788,
+    "apkSha256": "cd5bdd42599a3b6dd46664a976fbb06f0b776962b07ecbddb3d10889ef4cfa66",
+    "deviceGroupKnown": "UNKNOWN"
+  },
+  {
+    "filename": "app-debug.apk",
+    "path": "D:\\Downloads\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX_ORDEN_SENALES_SOURCE_2026-10-05\\GBO_InventarioVial_FINAL_INGENIEROS_MAPA_HOTFIX\\app\\build\\intermediates\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 6,
+    "versionName": "1.3.1-final-mapa-hotfix-order-signs",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+    ],
+    "certificateSha1": [
+      "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v4": false,
+      "v3.1": false,
+      "v1": false,
+      "v2": true,
+      "v3": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": true,
+    "debuggable": true,
+    "bytes": 23034536,
+    "apkSha256": "b2a66040bee32dc0fd2e4f390ac633e28e960a4d3abd1f6ae60587bbe96cc137",
+    "deviceGroupKnown": "UNKNOWN"
+  }
+]

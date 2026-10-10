@@ -1,0 +1,837 @@
+{
+  "source": "SIC17_MO-104.xlsx",
+  "sha256": "28309d60c57df357396af4db93bb3d5da408934b9fa59ab464833948cd3cbb09",
+  "definedNames": {
+    "Km_ultimo": "[1]Hoja1!$A:$B"
+  },
+  "sheets": [
+    {
+      "name": "SIC17",
+      "maxRow": 21,
+      "maxColumn": 20,
+      "cells": [
+        {
+          "cell": "F5",
+          "value": "SERVICIO DE CONSULTORIA PARA EL INVENTARIO ESPECIALIZADO DE LA INFRAESTRUCTURA VIAL EN LOS TRAMOS DE LA RED VIAL NACIONAL NO CONCESIONADA",
+          "type": "s",
+          "style": 59
+        },
+        {
+          "cell": "A11",
+          "value": "FORMATOS SIC-17 Puentes",
+          "type": "s",
+          "style": 60
+        },
+        {
+          "cell": "A13",
+          "value": "RUTA: MO-104: Emp. MO-103 (Lucco) - Emp. AR-120 (Dv. Huancarani)",
+          "type": "s",
+          "style": 3
+        },
+        {
+          "cell": "A14",
+          "value": "PROGRESIVA:  00+000 al 35+463",
+          "type": "s",
+          "style": 27
+        },
+        {
+          "cell": "C16",
+          "value": "Ubicación Inicio",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "E16",
+          "value": "Ubicación Fin",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "A17",
+          "value": "Ruta",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "B17",
+          "value": "Calzada",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "C17",
+          "value": "Código PR",
+          "type": "s",
+          "style": 11
+        },
+        {
+          "cell": "D17",
+          "value": "Distancia (m)",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "E17",
+          "value": "Código PR",
+          "type": "s",
+          "style": 11
+        },
+        {
+          "cell": "F17",
+          "value": "Distancia (m)",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "G17",
+          "value": "Clase",
+          "type": "s",
+          "style": 19
+        },
+        {
+          "cell": "H17",
+          "value": "Tipo",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "I17",
+          "value": "Código del Puente",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "J17",
+          "value": "Inventariado",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "K17",
+          "value": "Vanos",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "L17",
+          "value": "Dimensión 1 Longitud (m)",
+          "type": "s",
+          "style": 24
+        },
+        {
+          "cell": "M17",
+          "value": "Dimensión 2 Altura Inferior (m)",
+          "type": "s",
+          "style": 24
+        },
+        {
+          "cell": "N17",
+          "value": "Condición Estructural",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "O17",
+          "value": "Condición Funcional",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "P17",
+          "value": "Fecha",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "Q17",
+          "value": "Tipo de Servicio",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "R17",
+          "value": "Singularidad Salvada",
+          "type": "s",
+          "style": 15
+        },
+        {
+          "cell": "S17",
+          "value": "Nombre Singularidad",
+          "type": "s",
+          "style": 2
+        },
+        {
+          "cell": "T17",
+          "value": "Dimension 3 Altura Superior (m)",
+          "type": "s",
+          "style": 24
+        },
+        {
+          "cell": "A18",
+          "value": "MO-104",
+          "type": "s",
+          "style": 26
+        },
+        {
+          "cell": "B18",
+          "value": "CD100",
+          "type": "s",
+          "style": 8
+        },
+        {
+          "cell": "C18",
+          "value": "0000",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "D18",
+          "value": 863,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "E18",
+          "value": "0000",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "F18",
+          "value": 887,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "G18",
+          "value": 1,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "H18",
+          "value": 2,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "I18",
+          "value": "MO-104.001L",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "J18",
+          "value": "S",
+          "type": "s",
+          "style": 30
+        },
+        {
+          "cell": "K18",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "L18",
+          "value": 24,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "M18",
+          "value": 3.9,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "N18",
+          "value": 2,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "O18",
+          "value": 2,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "P18",
+          "value": "2025-02-08 00:00:00",
+          "type": "d",
+          "style": 32
+        },
+        {
+          "cell": "Q18",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "R18",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "S18",
+          "value": "S.N.",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "T18",
+          "value": 0,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "A19",
+          "value": "MO-104",
+          "type": "s",
+          "style": 26
+        },
+        {
+          "cell": "B19",
+          "value": "CD100",
+          "type": "s",
+          "style": 8
+        },
+        {
+          "cell": "C19",
+          "value": "0001",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "D19",
+          "value": 729,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "E19",
+          "value": "0001",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "F19",
+          "value": 783,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "G19",
+          "value": 1,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "H19",
+          "value": 4,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "I19",
+          "value": "MO-104.002M",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "J19",
+          "value": "S",
+          "type": "s",
+          "style": 30
+        },
+        {
+          "cell": "K19",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "L19",
+          "value": 54,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "M19",
+          "value": 6.9,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "N19",
+          "value": 2,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "O19",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "P19",
+          "value": "2025-02-08 00:00:00",
+          "type": "d",
+          "style": 32
+        },
+        {
+          "cell": "Q19",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "R19",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "S19",
+          "value": "S.N.",
+          "type": "s",
+          "style": 33
+        },
+        {
+          "cell": "T19",
+          "value": 0,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "A20",
+          "value": "MO-104",
+          "type": "s",
+          "style": 26
+        },
+        {
+          "cell": "B20",
+          "value": "CD101",
+          "type": "s",
+          "style": 8
+        },
+        {
+          "cell": "C20",
+          "value": "0031",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "D20",
+          "value": 645.2,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "E20",
+          "value": "0031",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "F20",
+          "value": 658.8000000000001,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "G20",
+          "value": 1,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "H20",
+          "value": 2,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "I20",
+          "value": "MO-104.003P",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "J20",
+          "value": "S",
+          "type": "s",
+          "style": 30
+        },
+        {
+          "cell": "K20",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "L20",
+          "value": 13.6,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "M20",
+          "value": 3.75,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "N20",
+          "value": 2,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "O20",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "P20",
+          "value": "2025-02-08 00:00:00",
+          "type": "d",
+          "style": 32
+        },
+        {
+          "cell": "Q20",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "R20",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "S20",
+          "value": "S.N.",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "T20",
+          "value": 0,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "A21",
+          "value": "MO-104",
+          "type": "s",
+          "style": 26
+        },
+        {
+          "cell": "B21",
+          "value": "CD101",
+          "type": "s",
+          "style": 8
+        },
+        {
+          "cell": "C21",
+          "value": "0034",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "D21",
+          "value": 306.7,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "E21",
+          "value": "0034",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "F21",
+          "value": 313.3,
+          "type": "n",
+          "style": 35
+        },
+        {
+          "cell": "G21",
+          "value": 1,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "H21",
+          "value": 4,
+          "type": "n",
+          "style": 29
+        },
+        {
+          "cell": "I21",
+          "value": "MO-104.004P",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "J21",
+          "value": "S",
+          "type": "s",
+          "style": 30
+        },
+        {
+          "cell": "K21",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "L21",
+          "value": 7.3,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "M21",
+          "value": 1.7,
+          "type": "n",
+          "style": 31
+        },
+        {
+          "cell": "N21",
+          "value": 2,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "O21",
+          "value": 2,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "P21",
+          "value": "2025-02-08 00:00:00",
+          "type": "d",
+          "style": 32
+        },
+        {
+          "cell": "Q21",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "R21",
+          "value": 1,
+          "type": "n",
+          "style": 28
+        },
+        {
+          "cell": "S21",
+          "value": "S.N.",
+          "type": "s",
+          "style": 28
+        },
+        {
+          "cell": "T21",
+          "value": 0,
+          "type": "n",
+          "style": 31
+        }
+      ],
+      "merges": [
+        "E16:F16",
+        "C16:D16",
+        "F5:O8",
+        "A5:E8",
+        "P5:T8",
+        "A11:T11"
+      ],
+      "validations": [],
+      "rowDimensions": {
+        "4": {
+          "height": 15.75,
+          "hidden": false
+        },
+        "5": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "6": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "7": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "8": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "9": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "10": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "11": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "12": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "13": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "14": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "15": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "16": {
+          "height": 12.6,
+          "hidden": false
+        },
+        "17": {
+          "height": 45.0,
+          "hidden": false
+        }
+      },
+      "columnDimensions": {
+        "A": {
+          "width": 6.7109375,
+          "hidden": false
+        },
+        "C": {
+          "width": 7.28515625,
+          "hidden": false
+        },
+        "D": {
+          "width": 10.42578125,
+          "hidden": false
+        },
+        "E": {
+          "width": 7.28515625,
+          "hidden": false
+        },
+        "F": {
+          "width": 9.5703125,
+          "hidden": false
+        },
+        "G": {
+          "width": 5.140625,
+          "hidden": false
+        },
+        "H": {
+          "width": 4.7109375,
+          "hidden": false
+        },
+        "I": {
+          "width": 11.0,
+          "hidden": false
+        },
+        "J": {
+          "width": 10.0,
+          "hidden": false
+        },
+        "K": {
+          "width": 5.7109375,
+          "hidden": false
+        },
+        "L": {
+          "width": 11.42578125,
+          "hidden": false
+        },
+        "M": {
+          "width": 11.140625,
+          "hidden": false
+        },
+        "N": {
+          "width": 8.7109375,
+          "hidden": false
+        },
+        "P": {
+          "width": 8.7109375,
+          "hidden": false
+        },
+        "Q": {
+          "width": 8.7109375,
+          "hidden": false
+        },
+        "R": {
+          "width": 9.7109375,
+          "hidden": false
+        },
+        "S": {
+          "width": 12.28515625,
+          "hidden": false
+        },
+        "T": {
+          "width": 8.28515625,
+          "hidden": false
+        }
+      },
+      "headerFooter": "<openpyxl.worksheet.header_footer.HeaderFooter object>\nParameters:\ndifferentOddEven=None, differentFirst=None, scaleWithDoc=None, alignWithMargins=None, oddHeader=<openpyxl.worksheet.header_footer.HeaderFooterItem object at 0x000001B63F799F40>, oddFooter=<openpyxl.worksheet.header_footer.HeaderFooterItem object at 0x000001B63F71F380>, evenHeader=<openpyxl.worksheet.header_footer.HeaderFooterItem object at 0x000001B63F53F110>, evenFooter=<openpyxl.worksheet.header_footer.HeaderFooterItem object at 0x000001B63F53E8D0>, firstHeader=<openpyxl.worksheet.header_footer.HeaderFooterItem object at 0x000001B63F53CAD0>, firstFooter=<openpyxl.worksheet.header_footer.HeaderFooterItem object at 0x000001B63F53CD10>",
+      "printArea": "'SIC17'!$A$5:$T$21",
+      "images": [
+        {
+          "width": 1086,
+          "height": 108,
+          "anchorType": "TwoCellAnchor",
+          "from": {
+            "col": 0,
+            "colOff": 352425,
+            "row": 4,
+            "rowOff": 66676
+          },
+          "to": {
+            "col": 4,
+            "colOff": 19050,
+            "row": 7,
+            "rowOff": 9526
+          }
+        },
+        {
+          "width": 413,
+          "height": 77,
+          "anchorType": "TwoCellAnchor",
+          "from": {
+            "col": 15,
+            "colOff": 133350,
+            "row": 4,
+            "rowOff": 57150
+          },
+          "to": {
+            "col": 19,
+            "colOff": 381000,
+            "row": 7,
+            "rowOff": 82592
+          }
+        }
+      ],
+      "formulas": [],
+      "sections": []
+    }
+  ],
+  "mediaParts": [
+    "xl/media/image1.png",
+    "xl/media/image2.jpeg"
+  ]
+}

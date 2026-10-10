@@ -1,0 +1,126 @@
+package com.tuempresa.inventariovial.field
+
+import android.content.Context
+import androidx.room.withTransaction
+import com.tuempresa.inventariovial.access.*
+import com.tuempresa.inventariovial.auth.AuthGraph
+import com.tuempresa.inventariovial.auth.AuditLogEntity
+import com.tuempresa.inventariovial.auth.AuthSessionManager
+import com.tuempresa.inventariovial.data.database.InventoryDatabase
+import com.tuempresa.inventariovial.data.entity.*
+import com.tuempresa.inventariovial.gis.LocalKmlExport
+import com.tuempresa.inventariovial.location.GeoLocation
+import com.tuempresa.inventariovial.road.*
+import com.tuempresa.inventariovial.server.scheduleServerSync
+import com.tuempresa.inventariovial.tracking.TrackCaptureService
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
+
+class FieldController(private val context: Context,private val database: InventoryDatabase,private val scope: CoroutineScope,
+    private val authSessions: AuthSessionManager = AuthGraph.get(context).sessions) {
+    val auth get() = AuthGraph.get(context)
+    val projectRoutes = ProjectRouteCatalog.load(context)
+    val dao=database.inventoryDao()
+    private val _reference=MutableStateFlow(RoadReferenceData())
+    val reference=_reference.asStateFlow()
+    private val _referenceError=MutableStateFlow<String?>(null)
+    val referenceError=_referenceError.asStateFlow()
+    private val _settings=MutableStateFlow(FieldSettings.load(context))
+    val settings=_settings.asStateFlow()
+    private val _access=MutableStateFlow<DeviceAccessState?>(null)
+    val access=_access.asStateFlow()
+    val session=dao.observeSession().stateIn(scope,SharingStarted.Eagerly,null)
+    val drafts=dao.observeDrafts().stateIn(scope,SharingStarted.WhileSubscribed(5000),emptyList())
+    val kml=LocalKmlExport(context,database)
+    init { reloadReference();checkAccess();scheduleServerSync(context) }
+
+    fun checkAccess() { scope.launch {
+        _access.value=try { DeviceAccessManager(context).check() } catch(error: Exception) {
+            DeviceAccessState(false,"",error.message ?: "No se pudo verificar el dispositivo.")
+        }
+    } }
+    fun reloadReference() { scope.launch {
+        try { _reference.value=FieldPrRepository(dao).merge(RoadReferenceRepository(context).loadFromAssets());_referenceError.value=null }
+        catch(error: Exception) { _reference.value=RoadReferenceData();_referenceError.value=error.message ?: "Cartografía inválida." }
+    } }
+    fun recalculateSuggestions(onResult: (String) -> Unit) { scope.launch {
+        try {
+            val engine = LocationSuggestionEngine(reference.value, settings.value.matchConfig())
+            var count = 0
+            database.withTransaction {
+                dao.recordsForAxis().forEach { r ->
+                    val start = withContext(Dispatchers.Default) { engine.suggest(r.routeCode, r.roadbedCode, r.latitude, r.longitude, r.gpsAccuracyM) }
+                    val end = withContext(Dispatchers.Default) { engine.suggest(r.routeCode, r.roadbedCode, r.endLatitude, r.endLongitude, r.endGpsAccuracyM) }
+                    dao.updateRecord(r.withSuggestions(start, end))
+                    count++
+                }
+            }
+            onResult("$count sugerencias recalculadas. Los valores contractuales se conservan.")
+        } catch (e: Exception) { onResult(e.message ?: "No se pudieron recalcular las sugerencias.") }
+    } }
+    fun saveSettings(value: FieldSettings) { value.save(context);_settings.value=value }
+    fun startSession(project: String,road: String,segment: String,roadbed: String,direction: String,onSuccess: ()->Unit,onError: (String)->Unit) {
+        scope.launch {
+            try {
+                val user = authSessions.requireUser()
+                val operator = user.displayName
+                require(project.isNotBlank()) { "Completa el proyecto." }
+                require(direction in SurveyDirection.entries.map { it.name })
+                val projectRoute = if (road.isBlank()) null else projectRoutes.requireRoute(road)
+                check(TrackCaptureService.activeRecordId.value==null) { "Finaliza el recorrido antes de cambiar de sesión." }
+                database.withTransaction {
+                    authSessions.requireUser()
+                    val now=System.currentTimeMillis()
+                    if (dao.currentSession() != null) database.auditDao().insert(AuditLogEntity(userId = user.id, username = user.username, action = "FIELD_SESSION_ENDED"))
+                    dao.closeSessions(now)
+                    dao.insertSession(FieldSession(UUID.randomUUID().toString(),project.trim(),operator.trim(),
+                        DeviceAccessManager(context).fingerprint(),road.trim().uppercase().ifEmpty { null },projectRoute?.segmentCode,
+                        roadbed.trim().uppercase().ifEmpty { null },direction,now))
+                    database.auditDao().insert(AuditLogEntity(userId = user.id, username = user.username, action = "FIELD_SESSION_STARTED"))
+                }
+                scheduleServerSync(context)
+                onSuccess()
+            } catch(error:Exception) { onError(error.message ?: "No se pudo iniciar la sesión.") }
+        }
+    }
+    fun endSession(onError: (String)->Unit) { scope.launch {
+        try {
+            check(TrackCaptureService.activeRecordId.value==null) { "Finaliza el recorrido antes de cerrar la sesión." }
+            database.withTransaction {
+                dao.closeSessions(System.currentTimeMillis())
+                val user = authSessions.current.value
+                database.auditDao().insert(AuditLogEntity(userId = user?.id, username = user?.username, action = "FIELD_SESSION_ENDED"))
+            }
+            scheduleServerSync(context)
+        } catch(error:Exception) { onError(error.message ?: "No se pudo finalizar la sesión.") }
+    } }
+    fun startTrack(existingId: String?,sicCode: String,asset: String,route: String,roadbed: String,pr: String,distance: String,
+        side: String?,fix: GeoLocation,onStarted: (String)->Unit,onError: (String)->Unit,
+        segment: String="",direction: String="INCREASING",prSource: String="MANUAL",routeSource: String="MANUAL",suggestion: LocationSuggestion?=null) {
+        scope.launch {
+            try {
+                authSessions.requireUser()
+                require(TrackCaptureService.activeRecordId.value==null) { "Ya hay un recorrido activo." }
+                val derivedSegment = projectRoutes.requireRoute(route).segmentCode
+                require(roadbed.isNotBlank()) { "Completa tramo, ruta y calzada antes de iniciar el recorrido." }
+                require(ContractualPrInput.valid(pr,distance,reference.value.prs,route,roadbed)) { "Completa una progresiva inicial válida." }
+                val id=existingId ?: UUID.randomUUID().toString()
+                if(existingId==null) {
+                    val now=System.currentTimeMillis()
+                    dao.insertRecord(InventoryRecordEntity(id,sicCode,asset,route.trim().uppercase(),roadbed.trim().uppercase(),pr,
+                        distance.replace(',','.').toDoubleOrNull()?.takeIf { it.isFinite() && it>=0 } ?: 0.0,
+                        null,null,side,fix.latitude,fix.longitude,fix.altitude,fix.horizontalAccuracy.toDouble(),
+                        SimpleDateFormat("dd/MM/yyyy",Locale.US).format(Date(now)),null,"DRAFT","PENDING","PENDING",now,now,
+                        sessionId=session.value?.sessionId,gpsTimestamp=fix.timestamp,segment=derivedSegment,surveyDirection=direction,locationSource=prSource,routeSource=routeSource).withSuggestions(suggestion))
+                } else check(dao.recordById(id)?.status=="DRAFT")
+                onStarted(id)
+                TrackCaptureService.start(context,id)
+            } catch(error:Exception) { onError(error.message ?: "No se pudo iniciar el recorrido.") }
+        }
+    }
+    fun stopTrack() = TrackCaptureService.stop(context)
+}

@@ -1,0 +1,23 @@
+PARALLEL A — RESULTADOS DE VERIFICACIÓN
+Base: GBO_USUARIOS_CORREGIDO_2026-10-07(1).zip
+
+1) ./gradlew --offline testDebugUnitTest
+RESULTADO: NO EJECUTADO por falta de Gradle 9.6.0 local; intento realizado, wrapper intentó descargar services.gradle.org y falló con java.net.UnknownHostException.
+Baseline declarado por proyecto: 249 tests / 15 fallos anteriores (no reproducido en este contenedor).
+NO se afirma que haya 0 regresiones Android; 7 archivos nuevos de pruebas requieren ejecución en Android SDK + Gradle.
+
+2) ./gradlew assembleDebug
+RESULTADO: NO EJECUTADO por la misma dependencia. java.net.UnknownHostException: services.gradle.org.
+No se creó APK; no se pueden afirmar resultados de compilación Android.
+
+3) node backend/user-service/tests/service.test.cjs
+RESULTADO: PASS; 21 service tests passed.
+La lógica de Usuarios previamente corregida no fue modificada en esta rama.
+
+4) kotlinc + java -jar core_smoke.jar (validación independiente de lógica Kotlin, con stubs de Context Android)
+RESULTADO: PASS; 13 assertions verificadas: router, categorías, nombres prohibidos, estados, borrador, KMZ válido, ZIP inválido, DTD/XXE rechazado.
+No es equivalente a compilar la app.
+
+5) Revisiones de empaquetado: se comprobarán al producir el ZIP; integridad archive ZIP usando zipfile.testzip.
+
+Limitaciones: tests JUnit nuevos y testDebugUnitTest/assembleDebug requieren un entorno de Android real.

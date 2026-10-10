@@ -1,0 +1,68 @@
+{
+  "recordId": "record-22",
+  "shortCode": "SV-1",
+  "displayName": "SEÑALIZACION VERTICAL 1",
+  "assetFamily": "SENALIZACION_VERTICAL",
+  "sicCode": "SIC-22",
+  "sibCode": "SIB-07",
+  "routeCode": "PE-22A",
+  "roadbedCode": "CD",
+  "location": {
+    "confirmedRoute": "PE-22A",
+    "confirmedPr": "0005",
+    "confirmedDistance": 12.5,
+    "locationSource": "MANUAL",
+    "routeSource": "MANUAL",
+    "confirmedEndPr": "0006",
+    "confirmedEndDistance": 20,
+    "endLocationSource": "MANUAL"
+  },
+  "suggestion": {
+    "suggestedRoute": null,
+    "suggestedPr": null,
+    "suggestedDistance": null,
+    "suggestedEndPr": null,
+    "suggestedEndDistance": null,
+    "routeMatchAmbiguous": false,
+    "routeMatchConfidence": null,
+    "routeMatchDistanceM": null
+  },
+  "geometricLocation": {
+    "axisMeasureM": 1500,
+    "distanceToRoadAxisM": 0,
+    "projectedLatitude": 0,
+    "projectedLongitude": 0.005,
+    "matchedSegmentId": "axis",
+    "endAxisMeasureM": null,
+    "endProjectedLatitude": null,
+    "endProjectedLongitude": null
+  },
+  "recordLocation": {
+    "latitude": 0,
+    "longitude": 0.005,
+    "altitude": null,
+    "accuracy": 3
+  },
+  "photos": [
+    {
+      "photoId": "audit-record-22-0",
+      "photoIndex": 1,
+      "deliveryPhotoSequence": 9,
+      "fileName": "009_F01.jpg",
+      "capturedAt": null,
+      "latitude": 0,
+      "longitude": 0.005,
+      "altitudeM": null,
+      "accuracyM": 2,
+      "gpsTimestamp": null,
+      "provider": null,
+      "photoLocationSource": "UNAVAILABLE_LEGACY",
+      "satellites": null,
+      "hdop": null,
+      "isRtkFixed": null,
+      "category": "GENERAL",
+      "description": null,
+      "sha256": "fe7e938cd88a3e027a80941caf5103d66d716f341b53cd07babacdf387121bb1"
+    }
+  ]
+}

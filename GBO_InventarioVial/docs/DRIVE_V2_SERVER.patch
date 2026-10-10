@@ -1,0 +1,226 @@
+--- a/google-apps-script/Code.gs
++++ b/google-apps-script/Code.gs
+@@ -21,7 +21,7 @@
+   return jsonResponse({
+     ok: true,
+     message: "Inventario Vial API funcionando",
+-    version: "v6.5 · Drive + pavimentos + entrega por lotes", scapProtocol: 2, scapBundleVersion: 4, deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING
++    version: "v7.0 · Integración Drive V2", scapProtocol: 2, scapBundleVersion: 6, pathVersion: 2, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING
+   });
+ }
+ 
+@@ -600,21 +600,21 @@
+     return fail("Los nombres de fotos no corresponden al manifiesto SCAP.");
+ 
+   const properties = PropertiesService.getScriptProperties();
+-  const inspectionKey = "scap.human.inspection." + data.scapInspectionId;
++  const inspectionKey = "scap.human.inspection." + (manifest.pathVersion===2 ? "v2." : "") + data.scapInspectionId;
+   const revisionKey = "scap.human.revision." + data.scapInspectionId + "." + data.revision;
+   const revisionHash = properties.getProperty(revisionKey);
+   if (revisionHash && revisionHash !== data.sha256)
+     return fail("La revisión SCAP ya está asociada a otro contenido. Guarda una nueva revisión.");
+-  const codeKey = data.bridgeCode.trim() ? "scap.human.code." + scapHash(data.bridgeCode.trim()) : null;
++  const codeKey = data.bridgeCode.trim() ? "scap.human.code." + (manifest.pathVersion===2 ? "v2." : "") + scapHash(data.bridgeCode.trim()) : null;
+   const previous = properties.getProperty(inspectionKey);
+   const byCode = codeKey && properties.getProperty(codeKey);
+-  const context = d.routeCode + "/" + d.sibCode + "/" + d.elementFolder;
++  const context = manifest.pathVersion===2 ? manifest.logicalPath : d.routeCode + "/" + d.sibCode + "/" + d.elementFolder;
+ 
+   // La entrega visible debe resolverse siempre desde el ROOT_FOLDER_ID configurado.
+   // Si una asociación guardada apunta a una carpeta antigua o movida, se ignora y repara.
+   const configuredRoot = DriveApp.getFolderById(ROOT_FOLDER_ID);
+   const route = getOrCreateFolder(configuredRoot, d.routeCode);
+-  const sib = getOrCreateFolder(route, d.sibCode);
++  const sib = getOrCreateFolder(route, manifest.pathVersion===2 ? "PUENTES" : d.sibCode);
+ 
+   function validBinding(raw) {
+     if (!raw) return null;
+@@ -640,11 +640,11 @@
+ 
+   let bridge = previousBinding ? previousBinding.folder : (codeBinding ? codeBinding.folder : null);
+   if (!bridge) {
+-    bridge = getOrCreateFolder(sib, d.elementFolder);
++    bridge = manifest.pathVersion===2 ? driveV2Folder(manifest.logicalPath,manifest.roadRecordId,d.routeCode) : getOrCreateFolder(sib, d.elementFolder);
+     const ownerKey = "scap.human.owner." + bridge.getId();
+     const owner = properties.getProperty(ownerKey);
+-    if ((owner && owner !== expectedIdentity) || properties.getProperty("delivery_folder_owner_" + bridge.getId()) ||
+-        (!owner && bridge.getFiles().hasNext())) return fail("La carpeta visible pertenece a otro elemento o entrega.");
++    if ((owner && owner !== expectedIdentity) || (manifest.pathVersion!==2 && properties.getProperty("delivery_folder_owner_" + bridge.getId())) ||
++        (manifest.pathVersion!==2 && !owner && bridge.getFiles().hasNext())) return fail("La carpeta visible pertenece a otro elemento o entrega.");
+     properties.setProperty(ownerKey, expectedIdentity);
+   }
+ 
+@@ -681,7 +681,7 @@
+   return jsonResponse({ok: true, protocol: 2, recordKind: "SCAP", scapInspectionId: data.scapInspectionId,
+     revision: data.revision, sha256: data.sha256, fileId: packed.file.getId(), folderId: version.getId(),
+     configuredRootFolderId: ROOT_FOLDER_ID, routeFolderId: route.getId(), sibFolderId: sib.getId(),
+-    bridgeFolderId: bridge.getId(), path: context, alreadyExists: packed.alreadyExists, fileCount: entries.length, files: savedFiles});
++    bridgeFolderId: bridge.getId(), path: context, pathVersion:manifest.pathVersion||1, logicalPath:manifest.logicalPath||null, alreadyExists: packed.alreadyExists, fileCount: entries.length, files: savedFiles});
+ }
+ 
+ function publishHumanScap(bridge, publication, properties, currentKey, pendingKey) {
+@@ -802,12 +802,44 @@
+     old.moveTo(revisions);
+   }
+ }
++function driveV2Parts(path, routeCode) {
++  const parts = typeof path === "string" ? path.split("/") : [];
++  const route = String(routeCode).trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/\s+/g,"_").replace(/[^A-Z0-9_-]+/g,"_").replace(/^_+|_+$/g,"");
++  if(parts.length<3 || parts.length>5 || parts[0]!==route || parts.some(p=>!p || p.length>80 || !/^[A-Z0-9_-]+$/.test(p))) throw new Error("Ruta lógica inválida");
++  if(!["PUENTES","ALCANTARILLAS","CUNETAS","BADENES","OTROS","SENALIZACION_VERTICAL","SENALIZACION_HORIZONTAL","PAVIMENTOS"].includes(parts[1])) throw new Error("Familia inválida");
++  const pavement=parts[1]==="PAVIMENTOS";
++  const elementIndex=pavement?3:2;
++  if(pavement && !["ASFALTICO","RIGIDO","NO_PAVIMENTADO"].includes(parts[2])) throw new Error("Superficie inválida");
++  if(!/^[A-Z_]+_[0-9]{3,}$/.test(parts[elementIndex]||"")) throw new Error("Identidad de elemento inválida");
++  return {parts,elementIndex};
++}
++// Called under the existing upload lock. Freeze the element path by persistent Room ID.
++function driveV2Folder(path, identity, routeCode) {
++  if(typeof identity!=="string" || !identity.length || identity.length>100) throw new Error("ID persistente ausente");
++  const {parts,elementIndex}=driveV2Parts(path,routeCode);
++  const props=PropertiesService.getScriptProperties();
++  const base=parts.slice(0,elementIndex+1).join("/");
++  const key="drive.v2.identity."+scapHash(ROOT_FOLDER_ID+":"+parts[0]+":"+parts[1]+":"+identity);
++  const saved=props.getProperty(key);
++  if(saved && saved!==base) throw new Error("La identidad ya tiene otra ruta; no se renombra");
++  let folder=DriveApp.getFolderById(ROOT_FOLDER_ID);
++  for(let i=0;i<parts.length;i++) {
++    folder=getOrCreateFolder(folder,parts[i]);
++    if(i===elementIndex) {
++      const ownerKey="drive.v2.owner."+folder.getId();
++      const owner=props.getProperty(ownerKey);
++      if(owner && owner!==identity) throw new Error("Carpeta de otro elemento");
++      props.setProperty(ownerKey,identity);props.setProperty(key,base);
++    }
++  }
++  return folder;
++}
+ function uploadPavementFile(data) {
+   const reject = (message, retryable) => jsonResponse({ok:false, retryable:!!retryable, error:message});
+   if (data.protocol !== 1 || !pavementComponent(data.routeCode, 20) || !pavementComponent(data.tramo, 80) ||
+       !pavementSurfaceFolder(data.surface) || !Number.isInteger(data.sampleNo) || data.sampleNo < 1 ||
+       !deliveryId(data.sampleId) || !/^[a-f0-9]{8}$/.test(data.revision || "") ||
+-      !["FIELD","SAMPLE_DATA","GROUP_DATA","PHOTO"].includes(data.category) ||
++      !["FIELD","SAMPLE_DATA","GROUP_DATA","PHOTO","SIC_SIC14","SIC_SIC14A","SIC_SIC15","SIC_SIC16"].includes(data.category) ||
+       !pavementComponent(data.fileName, 20) || !/^[a-f0-9]{64}$/.test(data.sha256 || "") ||
+       typeof data.base64 !== "string" || typeof data.mimeType !== "string")
+     return reject("Entrega de pavimentos inválida o nombre no permitido.", false);
+@@ -818,7 +850,7 @@
+     return reject("La hoja de campo debe ser PDF.", false);
+   if (data.category === "SAMPLE_DATA" && (data.mimeType !== "application/json" || !/\.json$/i.test(data.fileName)))
+     return reject("La data nativa debe ser JSON.", false);
+-  if (data.category === "GROUP_DATA" && (!/\.xlsx$/i.test(data.fileName)))
++  if ((data.category === "GROUP_DATA" || data.category.startsWith("SIC_")) && (!/\.xlsx$/i.test(data.fileName)))
+     return reject("La data consolidada debe ser XLSX.", false);
+ 
+   let bytes, blob;
+@@ -828,20 +860,28 @@
+     blob = Utilities.newBlob(bytes, data.mimeType, data.fileName);
+   } catch (_) { return reject("No se pudo decodificar el archivo de pavimentos.", false); }
+ 
++  if(data.pathVersion!==undefined) {
++    try { if(data.pathVersion!==2) throw new Error();driveV2Parts(data.logicalPath,data.routeCode); }
++    catch(_) { return reject("Ruta lógica inválida",false); }
++  }
+   const lock = LockService.getScriptLock(); let acquired=false;
+   try {
+     acquired = lock.tryLock(30000);
+     if (!acquired) return reject("Servidor ocupado. Reintentar pavimentos.", true);
+     const root = DriveApp.getFolderById(ROOT_FOLDER_ID);
+     const route = getOrCreateFolder(root, normalizeFolderName(data.routeCode));
++    let target;
++    if(data.pathVersion===2) target=driveV2Folder(data.logicalPath,data.sampleId,data.routeCode);
++    else {
+     const activity = getOrCreateFolder(route, "EVALUACION_SUPERFICIAL");
+     const tramo = getOrCreateFolder(activity, normalizeFolderName(data.tramo));
+     const surface = getOrCreateFolder(tramo, pavementSurfaceFolder(data.surface));
+-    let target;
++
+     if (data.category === "FIELD") target = getOrCreateFolder(getOrCreateFolder(surface,"07_HOJAS_CAMPO"), "MUESTRA " + data.sampleNo);
+     else if (data.category === "PHOTO") target = getOrCreateFolder(getOrCreateFolder(surface,"08_PANEL_FOTOGRAFICO"), "MUESTRA " + data.sampleNo);
+     else if (data.category === "SAMPLE_DATA") target = getOrCreateFolder(getOrCreateFolder(surface,"DATA_APP"), "MUESTRA " + data.sampleNo);
+     else target = getOrCreateFolder(surface,"DATA_APP");
++    }
+ 
+     const props = PropertiesService.getScriptProperties();
+     const logical = [ROOT_FOLDER_ID,data.routeCode,data.tramo,data.surface,data.category,data.sampleId,data.fileName].join(":");
+@@ -852,7 +892,7 @@
+       if (old.sha256 === data.sha256 && old.folderId === target.getId() && old.fileName === data.fileName) {
+         try {
+           const existing = DriveApp.getFileById(old.fileId);
+-          return jsonResponse({ok:true, protocol:1, pavementProtocol:1, alreadyExists:true, fileId:existing.getId(), folderId:target.getId(), fileName:data.fileName, sha256:data.sha256});
++          return jsonResponse({ok:true, protocol:1, pavementProtocol:1,sampleId:data.sampleId,revision:data.revision,pathVersion:data.pathVersion||1,logicalPath:data.logicalPath||null, alreadyExists:true, fileId:existing.getId(), folderId:target.getId(), fileName:data.fileName, sha256:data.sha256});
+         } catch (_) { /* Archivo eliminado: se recrea. */ }
+       }
+       pavementArchiveExisting(target, data.fileName);
+@@ -862,7 +902,7 @@
+       if (byName.hasNext()) {
+         const f = byName.next();
+         if (scapHash(f.getBlob().getBytes()) === data.sha256 && !byName.hasNext()) {
+-          const receipt={ok:true,protocol:1,pavementProtocol:1,alreadyExists:true,fileId:f.getId(),folderId:target.getId(),fileName:data.fileName,sha256:data.sha256};
++          const receipt={ok:true,protocol:1,pavementProtocol:1,sampleId:data.sampleId,revision:data.revision,pathVersion:data.pathVersion||1,logicalPath:data.logicalPath||null,alreadyExists:true,fileId:f.getId(),folderId:target.getId(),fileName:data.fileName,sha256:data.sha256};
+           props.setProperty(key,JSON.stringify(receipt)); return jsonResponse(receipt);
+         }
+         pavementArchiveExisting(target, data.fileName);
+@@ -870,7 +910,7 @@
+     }
+     const file = target.createFile(blob);
+     if (typeof file.setDescription === "function") file.setDescription("pavement-sha256:" + data.sha256 + "; sample:" + data.sampleId + "; revision:" + data.revision);
+-    const receipt={ok:true,protocol:1,pavementProtocol:1,alreadyExists:false,fileId:file.getId(),folderId:target.getId(),fileName:data.fileName,sha256:data.sha256};
++    const receipt={ok:true,protocol:1,pavementProtocol:1,sampleId:data.sampleId,revision:data.revision,pathVersion:data.pathVersion||1,logicalPath:data.logicalPath||null,alreadyExists:false,fileId:file.getId(),folderId:target.getId(),fileName:data.fileName,sha256:data.sha256};
+     props.setProperty(key,JSON.stringify(receipt));
+     return jsonResponse(receipt);
+   } catch (error) {
+@@ -899,15 +939,19 @@
+       !/^SIB-\d{2}$/.test(data.sibCode || "") || !isValidSicCode(data.sicCode) ||
+       !deliveryComponent(data.fileName) || data.fileName.length > 20 ||
+       !/^[a-f0-9]{64}$/.test(data.sha256 || "") || typeof data.base64 !== "string") return invalid();
++  if(data.pathVersion!==undefined) {
++    try { if(data.pathVersion!==2) throw new Error();driveV2Parts(data.logicalPath,data.routeCode); }
++    catch(_) { return invalid(); }
++  }
+   const kind = data.kind;
+   if (!["photo", "metadata", "sic"].includes(kind)) return invalid();
+-  if (kind !== "sic" && (!deliveryId(data.recordId) || !deliveryComponent(data.elementFolder) ||
++  if ((kind !== "sic" || data.pathVersion===2) && (!deliveryId(data.recordId) || !deliveryComponent(data.elementFolder) ||
+       !/^[A-ZÁÉÍÓÚÜÑ ]+ [1-9][0-9]*$/.test(data.elementFolder))) return invalid();
+   if (kind === "photo" && (!deliveryId(data.photoId) || !Number.isInteger(data.photoIndex) || data.photoIndex < 1 ||
+       !Number.isInteger(data.deliveryPhotoSequence) || data.deliveryPhotoSequence < 1 || data.mimeType !== "image/jpeg" || !/\.jpg$/.test(data.fileName))) return invalid();
+   if (kind === "metadata" && (data.fileName !== "metadata.json" || data.mimeType !== "application/json")) return invalid();
+   if (kind === "sic" && (data.fileName !== data.sicCode + ".xlsx" ||
+-      data.mimeType !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || data.elementFolder != null)) return invalid();
++      data.mimeType !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || (data.pathVersion!==2 && data.elementFolder != null))) return invalid();
+   let bytes, blob;
+   try {
+     bytes = Utilities.base64Decode(data.base64);
+@@ -929,9 +973,10 @@
+     properties.setProperty(batchKey, data.fingerprint);
+     const root = DriveApp.getFolderById(ROOT_FOLDER_ID);
+     const route = getOrCreateFolder(root, data.routeCode);
+-    const sib = getOrCreateFolder(route, data.sibCode);
++    const sib = data.pathVersion===2 ? null : getOrCreateFolder(route, data.sibCode);
+     let target = sib;
+-    if (kind !== "sic") {
++    if(data.pathVersion===2) target=driveV2Folder(data.logicalPath,data.recordId,data.routeCode);
++    else if (kind !== "sic") {
+       const folderKey = "delivery_record_" + scapHash(ROOT_FOLDER_ID + ":" + data.routeCode + ":" + data.recordId);
+       const savedFolder = properties.getProperty(folderKey);
+       const identity = data.sibCode + "/" + data.elementFolder;
+@@ -948,7 +993,7 @@
+         properties.setProperty(folderKey, JSON.stringify({id: target.getId(), identity}));
+       }
+     }
+-    const logicalId = kind === "photo" ? "photo:" + data.photoId : kind === "metadata" ? "metadata:" + data.recordId : "sic:" + data.sibCode + ":" + data.sicCode;
++    const logicalId = kind === "photo" ? "photo:" + data.photoId : kind === "metadata" ? "metadata:" + data.recordId : "sic:" + (data.pathVersion===2?data.recordId:data.sibCode) + ":" + data.sicCode;
+     const nameKey = "delivery_name_" + scapHash(target.getId() + ":" + data.fileName);
+     const owner = properties.getProperty(nameKey);
+     if (owner && owner !== logicalId) return jsonResponse({ok: false, retryable: false, error: "El nombre pertenece a otro archivo lógico."});
+@@ -962,7 +1007,7 @@
+     }
+     const saved = scapSaveExact(target, blob);
+     const receipt = {ok: true, protocol: 1, deliveryId: data.deliveryId, fileId: saved.file.getId(),
+-      folderId: target.getId(), fileName: data.fileName, sha256: data.sha256, alreadyExists: saved.alreadyExists};
++      folderId: target.getId(), pathVersion:data.pathVersion||1, logicalPath:data.logicalPath||null, fileName: data.fileName, sha256: data.sha256, alreadyExists: saved.alreadyExists};
+     properties.setProperty(fileKey, JSON.stringify(receipt));
+     return jsonResponse(receipt);
+   } catch (_) {

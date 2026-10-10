@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "owner": "PARALLEL_B",
+  "consumer": "CORE",
+  "scope": "Inventory SIC forms only; SCAP retains its existing template categories",
+  "implementation": "com.tuempresa.inventariovial.field.PhotoCategoryPolicy",
+  "routing": "Category metadata only. No Drive routing or file naming changes.",
+  "rules": {
+    "multiplePhotosPerCategory": true,
+    "inferCategoryFromFileName": false,
+    "unknownOrHistoricalCategory": "GENERAL",
+    "historicalMetadata": "Preserve existing values and local files. Classification is explicit.",
+    "missingCategoryBlocksDraftSave": false
+  },
+  "assets": [
+    {
+      "sicCode": "SIC-18",
+      "assetType": ["CULVERT", "ALCANTARILLA"],
+      "basis": "User-confirmed culvert categories; EngineeringConditions.culvertPhotos existing keys",
+      "categories": [
+        {"key": "CULVERT_PANORAMIC", "contractualName": "PANORAMICA", "label": "Panorámica"},
+        {"key": "CULVERT_INLET", "contractualName": "ENTRADA", "label": "Entrada"},
+        {"key": "CULVERT_OUTLET", "contractualName": "SALIDA", "label": "Salida"}
+      ]
+    },
+    {"sicCode": "SIC-17", "assetType": ["BRIDGE", "PUENTE"], "categories": ["GENERAL"]},
+    {"sicCode": "SIC-19", "assetType": ["DITCH", "CUNETA"], "categories": ["GENERAL"]},
+    {"sicCode": "SIC-20", "assetType": ["FORD", "BADEN", "WALL", "MURO", "TUNNEL", "TUNEL"], "categories": ["GENERAL"]},
+    {"sicCode": "SIC-21", "assetType": ["HORIZONTAL_MARKS", "HORIZONTAL_STUDS", "SAFETY"], "categories": ["GENERAL"]},
+    {"sicCode": "SIC-22", "assetType": ["VERTICAL", "HITO_KILOMETRICO"], "categories": ["GENERAL"]},
+    {"sicCode": "SIC-23", "assetType": ["DERECHO_VIA", "ZONA_URBANA", "PUNTO_ESPECIFICO", "CANTERA"], "categories": ["GENERAL"]}
+  ],
+  "default": ["GENERAL"]
+}

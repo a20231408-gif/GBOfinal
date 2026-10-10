@@ -1,0 +1,159 @@
+[
+  {
+    "code": "SIC-08",
+    "columns": [
+      "Ruta",
+      "Calzada",
+      "Faja",
+      "Código PR",
+      "Distancia",
+      "Código PR",
+      "Distancia",
+      "Tipo",
+      "Sentido del tránsito",
+      "Fecha"
+    ],
+    "columnCount": 10,
+    "rows": 14,
+    "logos": 2,
+    "merges": [
+      "A5:J5",
+      "F12:G12",
+      "A8:J8",
+      "C1:H4",
+      "A6:J6",
+      "A1:B4",
+      "A7:J7",
+      "I1:J4",
+      "A10:J10",
+      "D12:E12"
+    ],
+    "valid": true
+  },
+  {
+    "code": "SIC-09",
+    "columns": [
+      "Ruta",
+      "Calzada",
+      "Faja",
+      "Código PR",
+      "Distancia",
+      "Código PR",
+      "Distancia",
+      "Ancho útil (m)",
+      "Ancho total (m)",
+      "Fecha"
+    ],
+    "columnCount": 10,
+    "rows": 14,
+    "logos": 2,
+    "merges": [
+      "A5:J5",
+      "F12:G12",
+      "A8:J8",
+      "C1:H4",
+      "A6:J6",
+      "A1:B4",
+      "A7:J7",
+      "I1:J4",
+      "A10:J10",
+      "D12:E12"
+    ],
+    "valid": true
+  },
+  {
+    "code": "SIC-13",
+    "columns": [
+      "Ruta",
+      "Calzada",
+      "Código PR",
+      "Distancia",
+      "Código PR",
+      "Distancia",
+      "Lado",
+      "Clase",
+      "Fecha"
+    ],
+    "columnCount": 9,
+    "rows": 14,
+    "logos": 2,
+    "merges": [
+      "A7:I7",
+      "C12:D12",
+      "E12:F12",
+      "A10:I10",
+      "A5:I5",
+      "H1:I4",
+      "A1:B4",
+      "A8:I8",
+      "C1:G4",
+      "A6:I6"
+    ],
+    "valid": true
+  },
+  {
+    "code": "SIC-34",
+    "columns": [
+      "Ruta",
+      "Calzada",
+      "Faja",
+      "Código PR",
+      "Distancia",
+      "Código PR",
+      "Distancia",
+      "Tipo",
+      "Nivel",
+      "Descripción",
+      "Fecha"
+    ],
+    "columnCount": 11,
+    "rows": 14,
+    "logos": 2,
+    "merges": [
+      "A6:K6",
+      "F12:G12",
+      "A7:K7",
+      "A10:K10",
+      "A1:E4",
+      "F1:G4",
+      "H1:K4",
+      "A5:K5",
+      "D12:E12",
+      "A8:K8"
+    ],
+    "valid": true
+  },
+  {
+    "code": "SIC-18A",
+    "columns": [
+      "Ruta",
+      "Calzada",
+      "Código PR",
+      "Distancia",
+      "Clase",
+      "Tipo (según clase)",
+      "Ojos / vanos",
+      "Función",
+      "Ubicación de Falla",
+      "Tipo de Falla",
+      "Estado",
+      "Causa probable",
+      "Fecha"
+    ],
+    "columnCount": 13,
+    "rows": 14,
+    "logos": 2,
+    "merges": [
+      "C12:D12",
+      "A5:M5",
+      "A8:M8",
+      "A6:M6",
+      "A1:E4",
+      "J1:M4",
+      "A7:M7",
+      "A10:M10",
+      "F1:I4"
+    ],
+    "valid": true
+  }
+]

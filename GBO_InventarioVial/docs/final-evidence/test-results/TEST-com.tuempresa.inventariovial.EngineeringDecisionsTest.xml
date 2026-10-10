@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.EngineeringDecisionsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-08T06:57:10.239Z" hostname="ANTHONYZA" time="0.165">
+  <properties/>
+  <testcase name="newVerticalTypesAreExactlyThreeAndKilometreMarkerIsInformative" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.022"/>
+  <testcase name="legacyVerticalTypesStillExportIncludingKilometreNumber" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.024"/>
+  <testcase name="fixedRoutesFollowTramoAndSelectedProgressivePersists" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.035"/>
+  <testcase name="legacyKilometrePostCanStillBeReadFromRoom" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.025"/>
+  <testcase name="conditionsAreLiteralAndAuxiliaryPercentagesAreAbsentFromSummary" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.02"/>
+  <testcase name="horizontalMaterialIsEmptyWhileSecurityMaterialSurvives" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.018"/>
+  <testcase name="circularExportDiscardsSecondDimensionButOvalAndLegacyPreserveIt" classname="com.tuempresa.inventariovial.EngineeringDecisionsTest" time="0.018"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

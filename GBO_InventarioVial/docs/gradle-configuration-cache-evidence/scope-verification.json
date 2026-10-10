@@ -1,0 +1,8 @@
+{
+  "tracked_files": 608,
+  "changed_files": [
+    "app/build.gradle.kts"
+  ],
+  "added_protected_files": [],
+  "app_script_unchanged_outside_guard_and_imports": true
+}

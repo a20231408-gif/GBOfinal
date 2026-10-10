@@ -1,0 +1,10 @@
+{
+  "R-5-1": {"printedPage":41,"rect":[202.63,157.37,250.778,215.02],"evidence":"Figura 2.14: gráfico encima de la etiqueta R-5-1; verificado visualmente"},
+  "R-5-2": {"printedPage":41,"rect":[259.43,157.265,307.58,214.99],"evidence":"Figura 2.14: gráfico encima de la etiqueta R-5-2; verificado visualmente"},
+  "R-5-3": {"printedPage":41,"rect":[316.23,157.311,364.38,215.0],"evidence":"Figura 2.14: gráfico encima de la etiqueta R-5-3; verificado visualmente"},
+  "R-5-4": {"printedPage":41,"rect":[373.02,157.311,421.17,215.0],"evidence":"Figura 2.14: gráfico encima de la etiqueta R-5-4; verificado visualmente"},
+  "R-45": {"printedPage":95,"rect":[93.6,387.53,178.033,514.18],"evidence":"§2.10.1: figura izquierda MOTOTAXI debajo del encabezado R-45/R-45A"},
+  "R-45A": {"printedPage":95,"rect":[185.0,387.53,267.5,514.18],"evidence":"§2.10.1: figura vectorial derecha MOTOCARGA debajo del encabezado R-45/R-45A"},
+  "R-54A": {"printedPage":97,"rect":[94.15,459.272,178.55,584.472],"evidence":"§2.10.1: figura izquierda SOLO MOTOTAXI debajo del encabezado R-54A/R-54B"},
+  "R-54B": {"printedPage":97,"rect":[185.0,459.272,267.5,584.472],"evidence":"§2.10.1: figura vectorial derecha SOLO MOTOCARGA debajo del encabezado R-54A/R-54B"}
+}

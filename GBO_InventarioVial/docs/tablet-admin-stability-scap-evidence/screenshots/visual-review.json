@@ -1,0 +1,12 @@
+{
+  "source": "Production ScapEditor under Robolectric API34 Native 800x1200",
+  "reviewed": [
+    "A",
+    "C5",
+    "F1",
+    "F2",
+    "G1"
+  ],
+  "result": "PASS",
+  "notes": "All five real destinations visible; A/F1/G1 text fields focused, support2 material and photo controls highlighted. No mockup. Physical keyboard/tablet validation pending."
+}

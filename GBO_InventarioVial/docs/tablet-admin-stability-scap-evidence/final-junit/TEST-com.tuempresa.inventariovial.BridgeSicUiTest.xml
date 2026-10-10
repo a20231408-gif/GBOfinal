@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.BridgeSicUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:47:43.740Z" hostname="JULIAN" time="13.073">
+  <properties/>
+  <testcase name="supplementsAreDiscoverableEditableAndContractPendingIsDiagnosticOnly" classname="com.tuempresa.inventariovial.BridgeSicUiTest" time="12.573"/>
+  <testcase name="existingLocationDisplaysWithoutDuplicatePrAndDistanceInputs" classname="com.tuempresa.inventariovial.BridgeSicUiTest" time="0.487"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

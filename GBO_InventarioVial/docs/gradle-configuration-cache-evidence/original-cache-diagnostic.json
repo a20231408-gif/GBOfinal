@@ -1,0 +1,48 @@
+{
+  "trace": [
+    {
+      "kind": "Field",
+      "name": "this$0",
+      "declaringType": "Build_gradle$releaseConfigurationCheck$1$1"
+    },
+    {
+      "kind": "Bean",
+      "type": "Build_gradle$releaseConfigurationCheck$1$1"
+    },
+    {
+      "kind": "Field",
+      "name": "action",
+      "declaringType": "org.gradle.api.internal.AbstractTask$TaskActionWrapper"
+    },
+    {
+      "kind": "Bean",
+      "type": "org.gradle.api.internal.AbstractTask$TaskActionWrapper"
+    },
+    {
+      "kind": "VirtualProperty",
+      "name": "actions",
+      "owner": ":app:validateReleaseConfiguration"
+    },
+    {
+      "kind": "Task",
+      "path": ":app:validateReleaseConfiguration",
+      "type": "org.gradle.api.DefaultTask"
+    }
+  ],
+  "problem": [
+    {
+      "text": "cannot "
+    },
+    {
+      "text": "serialize"
+    },
+    {
+      "text": " Gradle script object references"
+    },
+    {
+      "text": " as these are not supported with the configuration cache."
+    }
+  ],
+  "documentationLink": "https://docs.gradle.org/9.6.0/userguide/configuration_cache_requirements.html#config_cache:requirements:disallowed_types",
+  "error": {}
+}

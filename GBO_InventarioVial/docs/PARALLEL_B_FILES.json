@@ -1,0 +1,272 @@
+[
+  {
+    "path": "app/src/main/assets/scap_modular_catalog.json",
+    "change": "ADDED",
+    "sha256": "e3f5313e79f9ab5039509ba1e399e9ee0e61543ac04901fee1c114766ed37aca"
+  },
+  {
+    "path": "app/src/main/assets/scap_slab_catalog.json",
+    "change": "ADDED",
+    "sha256": "16d720b69b5f8a05f12e32f371dafa4f2ebb9db7331ec66f92a6c52f35a679d9"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt",
+    "change": "MODIFIED",
+    "sha256": "b9bada9fddc61438f2183827319bead8b8d1fa0f03ef51653dc59aa1d0522d5f"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/SicExportScreen.kt",
+    "change": "MODIFIED",
+    "sha256": "d90ca65e99195f2db3859597cdf0c248d3e1f0946eabed7e8d44baf7baee4dc4"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/TrafficSignCatalog.kt",
+    "change": "MODIFIED",
+    "sha256": "cf97dbae657541eb5fea276ee4ed867408566e564ade13ee4c0c91f40c68f9ac"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/export/LocalSicExport.kt",
+    "change": "MODIFIED",
+    "sha256": "2600601d0f8941684afb2bfb7f960f9e085a213c7eeff4233c0d8c2141c164d2"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/export/SicExcelWriter.kt",
+    "change": "MODIFIED",
+    "sha256": "41ca81f7f2a94165f8298c65f5511af04042cf2b18d776ac0fb7135a1a5f694e"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/export/SicExportFormat.kt",
+    "change": "MODIFIED",
+    "sha256": "b7ca329c3d1060caf2ffa5e05eb0809edee2934315eb71eef5c3d05668e3dabe"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/export/SicWorkbookHeaderWriter.kt",
+    "change": "ADDED",
+    "sha256": "7fa5727eb4cdec46d1c2cbec82878805658af8b2993d656f5d49c91d97c99507"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/field/CaptureSummary.kt",
+    "change": "MODIFIED",
+    "sha256": "416eb39ecbb0d28ebf0286c1c7a5da443be861387ffafff27f3f17e53cde91a0"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/field/CulvertPhotos.kt",
+    "change": "MODIFIED",
+    "sha256": "c6bc5a9f42c8f528932beff6c18b8599ea366045a9051ae87ecb07866c01b719"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt",
+    "change": "MODIFIED",
+    "sha256": "4fdfb419d48d5ce95d8fe38e677aaf237506073f0b9006496139b27289c26ecc"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/field/InventoryPhotoGallery.kt",
+    "change": "MODIFIED",
+    "sha256": "ba18c837071e59b9112f7517eca36c662ec713916f5880e8932243e39621e784"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/field/PhotoCategoryPolicy.kt",
+    "change": "ADDED",
+    "sha256": "07ac294d69fc62972a32ec653d41df7f2776bab36d839a6e0acf00f60bb6f2b2"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/field/SignalCodeFields.kt",
+    "change": "ADDED",
+    "sha256": "1d97d839f1795fd0e1405f3b8fc3a34868b05e93224406df40824027841e39d0"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/repository/EngineeringEdits.kt",
+    "change": "MODIFIED",
+    "sha256": "3f51555b222d4648741fd6f98e6f3b0fa2a4e86832afa3f51ee036b763cc47c4"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/validation/CaptureValidation.kt",
+    "change": "MODIFIED",
+    "sha256": "346e9add40113e50e417c5ed3f835e59f8c4ba9eec951da4c6f3eaf99748a7d9"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/validation/EndLocationPolicy.kt",
+    "change": "MODIFIED",
+    "sha256": "91810bc488dbcf0153eceaa78e266546a5d3eb5bdc7affa6f37533b580684acf"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/viewmodel/InventoryViewModel.kt",
+    "change": "MODIFIED",
+    "sha256": "f06a703328177bb3d5cabe824dcf83ba128fb326c92a6e53b77fdfe73a204fc6"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryDatabase.kt",
+    "change": "MODIFIED",
+    "sha256": "104ee70615627d83207468ce0e7b859e6b9fe24acd0fd3b7743d41efefc6f898"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic22Entity.kt",
+    "change": "MODIFIED",
+    "sha256": "6bae57f0cd9d1991a301b67c3b37fdf6339fc1649902ece4465353c88e27259c"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/model/form/Sic22FormState.kt",
+    "change": "MODIFIED",
+    "sha256": "4674a5943cb2262226dd49624de03cc4e01be27a1421f85c59b4dad9f1ec4875"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/catalog/ScapCatalog.kt",
+    "change": "MODIFIED",
+    "sha256": "5729269e26d594f2a1c2dbee68d5864467b81a7b7b4b7b7dcb0ee2cdd9dc5056"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapRepository.kt",
+    "change": "MODIFIED",
+    "sha256": "005c360bfc58a6f15ed339661a7acfd7f7ec918296332f043e217823848c2981"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapBridgeType.kt",
+    "change": "ADDED",
+    "sha256": "fc3d8592696cefe9e7435a0f2c5b667ae6b9a7b77849f4df27923b18a903516e"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapCompleteness.kt",
+    "change": "ADDED",
+    "sha256": "3ce088045a2f4ba1f7e63c1de454c285bd031d263faf0c94cb49c3e001f8f40c"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapFieldPolicy.kt",
+    "change": "MODIFIED",
+    "sha256": "1560c5b763fc9e5ceebb41286fe6a0d8525bb587a168af7c48d6d7c55efb8ef6"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapPresentation.kt",
+    "change": "MODIFIED",
+    "sha256": "fe9929cabb1757e4452f3ae580ec75ddad52253b83397fbf846d3b332b1f252a"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapToSicMapper.kt",
+    "change": "MODIFIED",
+    "sha256": "bb7eacc86459db5992802d9c5f121aaa224d420eb10f25c951466c95277f64db"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapValidation.kt",
+    "change": "MODIFIED",
+    "sha256": "808c3b960cf3b3bd23ee3d8c1b9558e99bc35628a4fcb30a6594b063fa015e9f"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapCanonicalExporter.kt",
+    "change": "ADDED",
+    "sha256": "922c5cfe0e5a7d67183c202597ea1604e8d90b043bbecd80b23b83d47431e5c6"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDelivery.kt",
+    "change": "MODIFIED",
+    "sha256": "dbd8233ce1fde70b7ed2edd29d0a7bdb87be460504abae733aea8f7429c6732b"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapExcelExporter.kt",
+    "change": "MODIFIED",
+    "sha256": "59cb962cc0e71202a4669bd63839879f134ef3a2d9bdb6a4b574dca3380d2717"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapImageOrientation.kt",
+    "change": "ADDED",
+    "sha256": "91e9640226ada6d6f5d0849d7732282ee089656e4b6095a5e46100aec6f038bc"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapTemplateMedia.kt",
+    "change": "MODIFIED",
+    "sha256": "d96736c740f044729734cda372db4d8891bec1613a99c9f631fd44a34beb40af"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapBridgeSicPanel.kt",
+    "change": "MODIFIED",
+    "sha256": "d0c8ad75683184328f9dc0586bbd0fff55c1626296bb24333953e4b8ec1be163"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapElements.kt",
+    "change": "MODIFIED",
+    "sha256": "f3396738eae726106d4eb8a12c4966f2d5b3b3727b6e004d3708fb3ab0d0b3e9"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapExportPanel.kt",
+    "change": "MODIFIED",
+    "sha256": "fa0edf2bbf481e64ca29d8904f310b62a7b9e61e095d89df82780061359b22d6"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapForms.kt",
+    "change": "MODIFIED",
+    "sha256": "0edc7136c00521e42cfec98c595827b9c7062069c81a010acf4081aa3ba0ac6d"
+  },
+  {
+    "path": "app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapWorkspace.kt",
+    "change": "MODIFIED",
+    "sha256": "1031b2e59a577dc328ed9baaa122cada5a2ed69e378de5a7339351753ad25030"
+  },
+  {
+    "path": "app/src/main/resources/sic_header/image1.png",
+    "change": "ADDED",
+    "sha256": "f1d72a5817a5dfbbca2cb335dc07626bd1fd8155f5f69fe82f9df2fdda326d85"
+  },
+  {
+    "path": "app/src/main/resources/sic_header/image2.jpeg",
+    "change": "ADDED",
+    "sha256": "6e1c92f9fa1d50deb26c04b07c6b443eddeea2a0cc469a13846b3fe1f391b117"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/BridgeSicFlowTest.kt",
+    "change": "MODIFIED",
+    "sha256": "59c260859e0687483255b5fd7f0c9e2ab036dc08c36b24d2b7a6e8a886373b13"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/FieldLifecycleTest.kt",
+    "change": "MODIFIED",
+    "sha256": "cb4cad8abf09d23622bdc8cd2a80bf8356353c3bb4be2fe5f8a62c1a05343269"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/FieldReadinessTest.kt",
+    "change": "MODIFIED",
+    "sha256": "2b02527d8e3e1f286244d94ccc9b0f1eff24af33af2a7da487c33e966ebecde6"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/ParallelBInventoryPolicyTest.kt",
+    "change": "ADDED",
+    "sha256": "d8540aaec879c51067155538b76df8aa46365f6bf9e66e1a84d5d2019f0a06a6"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/ParallelBMigrationTest.kt",
+    "change": "ADDED",
+    "sha256": "e66d1a6acc7527c840d4db774d74d6ee60df722780a493936e8a5b9badc2b044"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/ParallelBScapCaptureTest.kt",
+    "change": "ADDED",
+    "sha256": "66f2905d69dcb1e457317b2583ccc1f1a77805b6f0330ce7ac6126d45834b7cb"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/ParallelBSicHeaderTest.kt",
+    "change": "ADDED",
+    "sha256": "8ed2e10a83d3fbdfe5dbc230dadca3283d0b61958f6ba02e9fbff24bc81dfe5f"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/ParallelBSignalStorageTest.kt",
+    "change": "ADDED",
+    "sha256": "de30c7f4481b814baa60d6babe090b6310ba58f9aa271f978a83688a274b5ec7"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/PavementModuleTest.kt",
+    "change": "MODIFIED",
+    "sha256": "fc81e0717605f01d08776a9a465971acfb1af8ca4ab5ce09cac65dc4cfc5df61"
+  },
+  {
+    "path": "app/src/test/java/com/tuempresa/inventariovial/ScapCanonicalExportTest.kt",
+    "change": "ADDED",
+    "sha256": "dc1d3aeb080fc6762645d4ff39dc486da732b3dd61305e4a6e6a2e2ebe3fac4e"
+  },
+  {
+    "path": "app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/13.json",
+    "change": "ADDED",
+    "sha256": "b7a94d2183233c55f81c9846d8eb829f2c4d71d5eab9fec047b9c90902b93a06"
+  },
+  {
+    "path": "app/build.gradle.kts",
+    "change": "MODIFIED",
+    "sha256": "d2ebe994b35b482653bbf54648e64e2999be2527da8da25288f32e39721a5869"
+  }
+]

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.FieldLifecycleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-08T15:11:53.534Z" hostname="JULIAN" time="0.791">
+  <properties/>
+  <testcase name="gisSharesNormalizedMaterialAndAssociatesPhotosWithoutExposingPrivatePaths" classname="com.tuempresa.inventariovial.FieldLifecycleTest" time="0.143"/>
+  <testcase name="fieldRecordsReopenEditAndExport" classname="com.tuempresa.inventariovial.FieldLifecycleTest" time="0.64"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,34 @@
+[
+    {
+        "filename":  "GBO_InventarioVial_SIC_UI_PARITY_DEBUG_v13.apk",
+        "path":  "D:\\Downloads\\GBO_InventarioVial_INTEGRADO_FINAL_SOURCE\\GBO_InventarioVial\\output\\sic-ui-parity\\GBO_InventarioVial_SIC_UI_PARITY_DEBUG_v13.apk",
+        "package":  "com.tuempresa.inventariovial",
+        "versionCode":  13,
+        "versionName":  "1.4.0-sic-production",
+        "minSdk":  "26",
+        "targetSdk":  "37",
+        "certificateSha256":  [
+                                  "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+                              ],
+        "certificateSha1":  [
+                                "a2fd99e731c3a9a5a8b3874220f1701759d67914"
+                            ],
+        "certificateSubject":  "C=US, O=Android, CN=Android Debug",
+        "signatureSchemes":  {
+                                 "v3":  false,
+                                 "v1":  false,
+                                 "v3.1":  false,
+                                 "v2":  true,
+                                 "v4":  false
+                             },
+        "verified":  true,
+        "zipAligned":  true,
+        "pageAligned16KiB":  true,
+        "isSplit":  false,
+        "isTest":  false,
+        "debuggable":  true,
+        "bytes":  39565293,
+        "apkSha256":  "ac03782a8267176119c9425c8b21934f6b2687f7ea374286b324233849300b03",
+        "deviceGroupKnown":  "UNKNOWN"
+    }
+]

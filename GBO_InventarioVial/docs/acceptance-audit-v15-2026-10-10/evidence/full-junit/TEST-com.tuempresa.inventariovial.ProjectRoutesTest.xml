@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ProjectRoutesTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:33:59.274Z" hostname="JULIAN" time="0.443">
+  <properties/>
+  <testcase name="scapDerivesTramoFromRouteAndRetainsIdsAndHistoricalValuesUntilRouteEdit" classname="com.tuempresa.inventariovial.ProjectRoutesTest" time="0.068"/>
+  <testcase name="fixedMappingAndOfficialAxesMatchAllSixRoutesStartingPe3nAtPallasca" classname="com.tuempresa.inventariovial.ProjectRoutesTest" time="0.372"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,83 @@
+{
+  "cases": [
+    {
+      "fromVersion": 4,
+      "toVersion": 15,
+      "tables": 14,
+      "columnsVerified": 169,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 5,
+      "toVersion": 15,
+      "tables": 14,
+      "columnsVerified": 174,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 6,
+      "toVersion": 15,
+      "tables": 24,
+      "columnsVerified": 259,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 7,
+      "toVersion": 15,
+      "tables": 25,
+      "columnsVerified": 267,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 8,
+      "toVersion": 15,
+      "tables": 29,
+      "columnsVerified": 290,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 9,
+      "toVersion": 15,
+      "tables": 29,
+      "columnsVerified": 296,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 10,
+      "toVersion": 15,
+      "tables": 29,
+      "columnsVerified": 297,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 11,
+      "toVersion": 15,
+      "tables": 31,
+      "columnsVerified": 346,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 12,
+      "toVersion": 15,
+      "tables": 35,
+      "columnsVerified": 401,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 13,
+      "toVersion": 15,
+      "tables": 35,
+      "columnsVerified": 404,
+      "result": "PASS_LOCAL_SQLITE"
+    },
+    {
+      "fromVersion": 14,
+      "toVersion": 15,
+      "tables": 35,
+      "columnsVerified": 407,
+      "result": "PASS_LOCAL_SQLITE"
+    }
+  ],
+  "physicalUpgrade": "NO PROBADO",
+  "versions1to3": "Original schema files unavailable; no claim of coverage"
+}

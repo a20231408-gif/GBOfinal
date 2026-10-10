@@ -1,0 +1,43 @@
+{
+  "reference": "A_Alcantarilla_SIC18",
+  "capture": "Native Android Canvas drawing the actual production Compose view in Robolectric API 34, 800x1200 mdpi; no physical device",
+  "comparisons": [
+    {
+      "screen": "B_Faja_SIC08_09",
+      "boundsIdentical": true,
+      "titleOriginAndHeightIdentical": true,
+      "commonButtonAndSurveyHeaderPixelsIdentical": true
+    },
+    {
+      "screen": "C_PuntoCritico_SIC13",
+      "boundsIdentical": true,
+      "titleOriginAndHeightIdentical": true,
+      "commonButtonAndSurveyHeaderPixelsIdentical": true
+    },
+    {
+      "screen": "D_Accidente_SIC34",
+      "boundsIdentical": true,
+      "titleOriginAndHeightIdentical": true,
+      "commonButtonAndSurveyHeaderPixelsIdentical": true
+    }
+  ],
+  "screenshots": {
+    "A_Alcantarilla_SIC18": {
+      "sha256": "7720daf9e877415e80306452b6165e3b789a18a715bf68e9b94c2d7c4fab2654",
+      "bytes": 75335
+    },
+    "B_Faja_SIC08_09": {
+      "sha256": "c41cb66756c54f5b76443eabf060705dc47abc99ff5a6fc964fead9fbfe1def8",
+      "bytes": 84487
+    },
+    "C_PuntoCritico_SIC13": {
+      "sha256": "436c38a7e96cfab7facb887331915506f8342ed22313f1402d7adc49fb2f2740",
+      "bytes": 87566
+    },
+    "D_Accidente_SIC34": {
+      "sha256": "fa692547bcc3565cc7db755a0ee48fa6fa01f2dea21675bd62350c299cdfea3f",
+      "bytes": 87666
+    }
+  },
+  "note": "Title/subtitle and technical fields differ intentionally; linear elements reuse the existing TrackCapturePanel, absent for a point culvert."
+}

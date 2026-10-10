@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "sample": {
+    "id": "audit-RIGID",
+    "tramo": "TRAMO_AUDITORIA",
+    "ruta": "PE-22A",
+    "muestra": 1,
+    "carril": "Derecho",
+    "calzada": "CD",
+    "prInicial": "001+000",
+    "prFinal": "001+046",
+    "anchoM": 5,
+    "largoM": 46,
+    "surface": "RIGID",
+    "fecha": "2026-10-10",
+    "inspector": "Auditor sintético",
+    "status": "CLOSED",
+    "slabRows": 10,
+    "slabColumns": 2,
+    "slabWidthM": 2.5,
+    "slabLengthM": 4.6,
+    "sicData": null
+  },
+  "result": {
+    "index": null,
+    "rating": null,
+    "pending": [
+      "Falta curva rigido:21:M (sin digitalizar\/validar)."
+    ]
+  },
+  "photoPolicy": "ORIGINAL_CLEAN",
+  "photos": [
+    {
+      "photoId": "photo-audit-RIGID",
+      "damageId": "damage-audit-RIGID",
+      "capturedAt": 1791580800000,
+      "category": "GENERAL"
+    }
+  ],
+  "calculation": {
+    "index": null,
+    "rating": null,
+    "pending": [
+      "Falta curva rigido:21:M (sin digitalizar\/validar)."
+    ],
+    "totals": [
+      {
+        "code": 21,
+        "severity": "M",
+        "quantity": 2,
+        "density": 10,
+        "vd": null
+      }
+    ],
+    "iterations": []
+  },
+  "damages": [
+    {
+      "id": "damage-audit-RIGID",
+      "correlativo": 1,
+      "code": 21,
+      "name": "Rotura por pandeo",
+      "severity": "M",
+      "geometry": "SLABS",
+      "x1": 1,
+      "y1": 10,
+      "x2": 3,
+      "y2": 15,
+      "diameterM": null,
+      "widthM": 2,
+      "lengthM": 5,
+      "areaM2": 10,
+      "crackWidthMm": 2,
+      "depthMm": null,
+      "slabs": "1,2",
+      "observation": "AUDITORIA SINTETICA",
+      "photoCount": 1
+    }
+  ]
+}

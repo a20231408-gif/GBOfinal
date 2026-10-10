@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.DeliveryMetadataTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:53:44.772Z" hostname="JULIAN" time="0.036">
+  <properties/>
+  <testcase name="staleFixIsUnavailableWithoutBlockingThePhoto" classname="com.tuempresa.inventariovial.DeliveryMetadataTest" time="0.008"/>
+  <testcase name="routeSequenceUsesPhysicalOrderAndLocalIndicesWhileLateElementRetainsIdentities" classname="com.tuempresa.inventariovial.DeliveryMetadataTest" time="0.002"/>
+  <testcase name="legacyNamesRemainCompleteAndWarnAbove20Characters" classname="com.tuempresa.inventariovial.DeliveryMetadataTest" time="0.002"/>
+  <testcase name="separatePhotoFixesAndAuditedMetadataNeverCopyRecordLocationOrPrivatePaths" classname="com.tuempresa.inventariovial.DeliveryMetadataTest" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

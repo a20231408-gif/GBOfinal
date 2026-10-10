@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.core.GeneratedFileIndexTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-10T18:01:12.857Z" hostname="JULIAN" time="0.289">
+  <properties/>
+  <testcase name="existingReportsAppearAndOnlyExpectedTypesAreOpenable" classname="com.tuempresa.inventariovial.core.GeneratedFileIndexTest" time="0.284"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

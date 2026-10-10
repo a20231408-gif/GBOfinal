@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.FieldReadinessTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T15:11:54.357Z" hostname="JULIAN" time="1.555">
+  <properties/>
+  <testcase name="driveRejectsBlankTokenAndNonDeploymentUrlsWithoutLeakingConfiguration" classname="com.tuempresa.inventariovial.FieldReadinessTest" time="0.089"/>
+  <testcase name="scapCannotEnterQueueEvenIfItsTechnicalParentIsIncorrectlyMarkedActive" classname="com.tuempresa.inventariovial.FieldReadinessTest" time="1.008"/>
+  <testcase name="uploadCompletionUsesRoomIdentityWhenPhysicalFileIsStamped" classname="com.tuempresa.inventariovial.FieldReadinessTest" time="0.227"/>
+  <testcase name="endLocationPolicyPreservesPointLineRulesAndMatchesWarnings" classname="com.tuempresa.inventariovial.FieldReadinessTest" time="0.145"/>
+  <testcase name="stampedReadableImageWinsAndInvalidStampFallsBackWithoutRenaming" classname="com.tuempresa.inventariovial.FieldReadinessTest" time="0.077"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

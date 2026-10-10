@@ -1,0 +1,20 @@
+{
+  "fase": "0_PROPUESTA",
+  "application_source_modified": false,
+  "new_android_app_created": false,
+  "archivos_referencia_en_zip_original": false,
+  "base_zip_sha256": "de4143c247a401be0940635eff1596bb2219c9d600ef08d202ddc05f2f6d12ff",
+  "manual": {
+    "archivo": "docs/Manual_PCI_URCI.pdf",
+    "titulo": "Índice de Condición del Pavimento",
+    "autor": "L. R. Vásquez Varela",
+    "edicion": "2002–2024",
+    "sha256": "a83c5efa2d5a045f0f0c2e197783ccff5b1b6c4248da3f2a8f39e3022ca9394d"
+  },
+  "conteos": {
+    "asfalto": 20,
+    "rigido": 19,
+    "no_pavimentado": 7
+  },
+  "curvas_digitizadas": 0
+}

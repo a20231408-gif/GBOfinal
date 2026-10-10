@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.AcceptanceDeliveryAuditTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-10T17:50:01.037Z" hostname="JULIAN" time="40.273">
+  <properties/>
+  <testcase name="actualCanonicalScapRoomExcelAndBundles" classname="com.tuempresa.inventariovial.AcceptanceDeliveryAuditTest" time="30.635"/>
+  <testcase name="actualSicRoomDeliveryFilesAndAllFormats" classname="com.tuempresa.inventariovial.AcceptanceDeliveryAuditTest" time="4.764"/>
+  <testcase name="importedPngBytesRemainPngUnderJpegDeliveryName" classname="com.tuempresa.inventariovial.AcceptanceDeliveryAuditTest" time="0.449"/>
+  <testcase name="actualPavementRoomExcelPdfAndSicFiles" classname="com.tuempresa.inventariovial.AcceptanceDeliveryAuditTest" time="4.156"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

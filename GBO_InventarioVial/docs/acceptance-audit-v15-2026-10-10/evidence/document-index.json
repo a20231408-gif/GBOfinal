@@ -1,0 +1,2094 @@
+[
+  {
+    "file": "docs/ANDROID_RELEASE_POLICY.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Política de releases Android GBO"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/APK_IN_PLACE_UPGRADE_TEST.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Prueba de actualización sin desinstalar"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/APK_RELEASE_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "APK_RELEASE_REPORT"
+      },
+      {
+        "line": 3,
+        "title": "Estado"
+      },
+      {
+        "line": 9,
+        "title": "Identidad preparada"
+      },
+      {
+        "line": 26,
+        "title": "Auditoría de firma y bloqueo"
+      },
+      {
+        "line": 36,
+        "title": "Cambios de esta iteración"
+      },
+      {
+        "line": 47,
+        "title": "Pruebas"
+      },
+      {
+        "line": 57,
+        "title": "Actualización y fabricantes"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/APK_SIGNATURE_AUDIT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Auditoría de firmas APK"
+      },
+      {
+        "line": 9,
+        "title": "FIELD_SIGNATURE_A"
+      },
+      {
+        "line": 17,
+        "title": "FIELD_SIGNATURE_B"
+      },
+      {
+        "line": 25,
+        "title": "Matriz completa"
+      },
+      {
+        "line": 100,
+        "title": "Conclusiones de compatibilidad"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/APP_EXIT_DIAGNOSTIC_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Diagnóstico y memoria"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ARCHITECTURE_REVIEW.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Revisión de la base antes de ampliar"
+      },
+      {
+        "line": 12,
+        "title": "Referencias y límites"
+      },
+      {
+        "line": 24,
+        "title": "Estrategia"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ARCHIVOS_REVISION_UX.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Archivos de la revisión funcional y UX"
+      },
+      {
+        "line": 5,
+        "title": "Aplicación"
+      },
+      {
+        "line": 48,
+        "title": "Pruebas unitarias"
+      },
+      {
+        "line": 55,
+        "title": "Pruebas instrumentadas"
+      },
+      {
+        "line": 61,
+        "title": "Schema Room"
+      },
+      {
+        "line": 65,
+        "title": "Documentación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ARCHIVOS_RONDA_3.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Archivos de la ronda 3"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/CHECKLIST_TABLET_UX.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Checklist de aceptación en tablet"
+      },
+      {
+        "line": 5,
+        "title": "Instalación e históricos"
+      },
+      {
+        "line": 14,
+        "title": "SCAP"
+      },
+      {
+        "line": 34,
+        "title": "SIC-18 y SIC-18A"
+      },
+      {
+        "line": 48,
+        "title": "SIC-19"
+      },
+      {
+        "line": 56,
+        "title": "SIC-20"
+      },
+      {
+        "line": 65,
+        "title": "Campo / sincronización"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/CORRECCIONES_TABLET_2026-10-07.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Correcciones funcionales de campo — 07/10/2026"
+      },
+      {
+        "line": 5,
+        "title": "Archivos modificados o agregados"
+      },
+      {
+        "line": 33,
+        "title": "Fecha e historial de pavimentos"
+      },
+      {
+        "line": 39,
+        "title": "Fotografías del inventario"
+      },
+      {
+        "line": 45,
+        "title": "SIC-22 puntual y compatibilidad"
+      },
+      {
+        "line": 51,
+        "title": "XLSX SIC-22"
+      },
+      {
+        "line": 59,
+        "title": "Regla, coordenadas y gestos"
+      },
+      {
+        "line": 65,
+        "title": "Tabla de daños"
+      },
+      {
+        "line": 71,
+        "title": "Room y cálculos"
+      },
+      {
+        "line": 75,
+        "title": "Pruebas"
+      },
+      {
+        "line": 125,
+        "title": "Limitaciones y revisión física"
+      },
+      {
+        "line": 129,
+        "title": "Checklist exacta solicitada para la tablet"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/DRIVE_SCAP_CONTRACT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Drive SCAP — contrato implementado v1"
+      },
+      {
+        "line": 5,
+        "title": "Publicación"
+      },
+      {
+        "line": 9,
+        "title": "Paquete"
+      },
+      {
+        "line": 15,
+        "title": "Solicitud"
+      },
+      {
+        "line": 21,
+        "title": "Identidad e idempotencia"
+      },
+      {
+        "line": 31,
+        "title": "ACK y estados"
+      },
+      {
+        "line": 41,
+        "title": "Verificación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/DRIVE_V2_SERVER_CHANGE_REQUIRED.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Drive V2: cambio de servidor pendiente de publicación"
+      },
+      {
+        "line": 7,
+        "title": "Estructura implementada"
+      },
+      {
+        "line": 41,
+        "title": "Inventario/SIC: HTTP POST JSON"
+      },
+      {
+        "line": 97,
+        "title": "Pavimentos: HTTP POST JSON"
+      },
+      {
+        "line": 144,
+        "title": "SCAP: ZIP y manifiesto"
+      },
+      {
+        "line": 166,
+        "title": "Publicación y verificación pendiente"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ENGINEERING_CHANGED_FILES.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Archivos del cierre de ingeniería"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ENGINEERING_RELEASE.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Cierre de decisiones confirmadas de ingeniería"
+      },
+      {
+        "line": 9,
+        "title": "Captura y exportación SIC"
+      },
+      {
+        "line": 17,
+        "title": "Excel SCAP"
+      },
+      {
+        "line": 27,
+        "title": "Límites y mapeos pendientes"
+      },
+      {
+        "line": 35,
+        "title": "SCAP → SIC"
+      },
+      {
+        "line": 41,
+        "title": "Prueba manual exacta en tablet"
+      },
+      {
+        "line": 58,
+        "title": "Verificación de esta entrega"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ENTREGA_ORDEN_GEOMETRICO.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Entrega: referencia geométrica y orden de elementos"
+      },
+      {
+        "line": 7,
+        "title": "A. Archivos modificados y añadidos"
+      },
+      {
+        "line": 54,
+        "title": "B. Migración Room"
+      },
+      {
+        "line": 58,
+        "title": "C. Cálculo geométrico"
+      },
+      {
+        "line": 79,
+        "title": "D. Numeración"
+      },
+      {
+        "line": 85,
+        "title": "E–F. Códigos y colores"
+      },
+      {
+        "line": 105,
+        "title": "G. Inserción retroactiva"
+      },
+      {
+        "line": 109,
+        "title": "H. Plan Drive"
+      },
+      {
+        "line": 115,
+        "title": "I. KML/KMZ e interfaz"
+      },
+      {
+        "line": 133,
+        "title": "J. Pruebas"
+      },
+      {
+        "line": 139,
+        "title": "K. Build"
+      },
+      {
+        "line": 145,
+        "title": "L. Limitaciones reales y componentes preservados"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ENTREGA_PR_Y_KMZ_COMPATIBLE.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Preparación de sugerencias PR y KML/KMZ compatible"
+      },
+      {
+        "line": 5,
+        "title": "PR: cálculo y confirmación"
+      },
+      {
+        "line": 23,
+        "title": "KML/KMZ"
+      },
+      {
+        "line": 36,
+        "title": "Verificación y entrega"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ENTREGA_RONDA_2.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Entrega de ronda 2 — GBO Inventario Vial"
+      },
+      {
+        "line": 7,
+        "title": "A. Archivos modificados"
+      },
+      {
+        "line": 70,
+        "title": "B. Versión Room antes/después"
+      },
+      {
+        "line": 74,
+        "title": "C. Migraciones"
+      },
+      {
+        "line": 78,
+        "title": "D. Autodetección de ruta"
+      },
+      {
+        "line": 82,
+        "title": "E. Ruta ambigua"
+      },
+      {
+        "line": 86,
+        "title": "F. PR con catálogo"
+      },
+      {
+        "line": 90,
+        "title": "G. Sin catálogo PR"
+      },
+      {
+        "line": 96,
+        "title": "H. Registrar PR"
+      },
+      {
+        "line": 102,
+        "title": "I. Confirmación Ruta + PR + Distancia"
+      },
+      {
+        "line": 106,
+        "title": "J. Trazabilidad sugerencia / corrección manual"
+      },
+      {
+        "line": 110,
+        "title": "K. Estructura Drive"
+      },
+      {
+        "line": 120,
+        "title": "L. Ejemplo de paths generados"
+      },
+      {
+        "line": 136,
+        "title": "M. Correlativo general de fotos"
+      },
+      {
+        "line": 140,
+        "title": "N. LEGACY_COMPATIBLE"
+      },
+      {
+        "line": 146,
+        "title": "O. FOLDER_COMPACT"
+      },
+      {
+        "line": 150,
+        "title": "P. Límite de 20 caracteres"
+      },
+      {
+        "line": 154,
+        "title": "Q. EXIF"
+      },
+      {
+        "line": 160,
+        "title": "R. metadata.json"
+      },
+      {
+        "line": 164,
+        "title": "S. GNSS propio de cada foto"
+      },
+      {
+        "line": 170,
+        "title": "T. Apps Script"
+      },
+      {
+        "line": 176,
+        "title": "U. Idempotencia"
+      },
+      {
+        "line": 182,
+        "title": "V. KML"
+      },
+      {
+        "line": 188,
+        "title": "W. ScreenOverlay"
+      },
+      {
+        "line": 192,
+        "title": "X. Pruebas Android"
+      },
+      {
+        "line": 200,
+        "title": "Y. Pruebas Apps Script"
+      },
+      {
+        "line": 204,
+        "title": "Z. assembleDebug"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FIELD_CHANGED_FILES.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Archivos de la estabilización"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FIELD_DELIVERY_2026_09_27.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Cierre de campo y Drive SCAP — 27/09/2026"
+      },
+      {
+        "line": 5,
+        "title": "Arquitectura y alcance"
+      },
+      {
+        "line": 11,
+        "title": "Cambios funcionales"
+      },
+      {
+        "line": 18,
+        "title": "Auditoría del documento solicitado"
+      },
+      {
+        "line": 41,
+        "title": "Capacidades reales y límites conservados"
+      },
+      {
+        "line": 49,
+        "title": "Prueba manual de aceptación"
+      },
+      {
+        "line": 64,
+        "title": "Publicación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FIELD_READINESS.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Versión rústica para prueba de campo"
+      },
+      {
+        "line": 7,
+        "title": "Configuración Drive"
+      },
+      {
+        "line": 22,
+        "title": "Estados y archivo enviado"
+      },
+      {
+        "line": 39,
+        "title": "SCAP local y GPS"
+      },
+      {
+        "line": 45,
+        "title": "Limpieza y verificación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FIELD_SESSION_ROUTE_ROADBED_REGRESSION_FIX.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Sesión de campo: ruta y calzada predeterminadas"
+      },
+      {
+        "line": 6,
+        "title": "Causa raíz y recorrido de los datos"
+      },
+      {
+        "line": 34,
+        "title": "Solución y precedencia"
+      },
+      {
+        "line": 82,
+        "title": "Archivos"
+      },
+      {
+        "line": 96,
+        "title": "Verificación"
+      },
+      {
+        "line": 206,
+        "title": "Identidad y límites"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FINAL_INTEGRATION_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "GBO_InventarioVial — integración final A + B + C"
+      },
+      {
+        "line": 5,
+        "title": "Resultado y procedencia"
+      },
+      {
+        "line": 20,
+        "title": "Room y preservación de datos"
+      },
+      {
+        "line": 33,
+        "title": "Auth y dispositivo"
+      },
+      {
+        "line": 39,
+        "title": "CORE conectado y experiencia de campo"
+      },
+      {
+        "line": 52,
+        "title": "Fotografías limpias"
+      },
+      {
+        "line": 60,
+        "title": "Drive: implementación y estado real"
+      },
+      {
+        "line": 76,
+        "title": "Archivos y backup"
+      },
+      {
+        "line": 84,
+        "title": "Puentes, señalización y Pavimentos"
+      },
+      {
+        "line": 94,
+        "title": "KMZ"
+      },
+      {
+        "line": 98,
+        "title": "Pruebas finales"
+      },
+      {
+        "line": 116,
+        "title": "APK y firma"
+      },
+      {
+        "line": 132,
+        "title": "Entrega y límites pendientes"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FINAL_MERGE_PLAN.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "FINAL MERGE PLAN"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FINAL_PAVIMENTOS_CHANGED_FILES.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Archivos modificados — integración pavimentos"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FINAL_PAVIMENTOS_DEPLOY.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Puesta en marcha — Inventario Vial + Pavimentos"
+      },
+      {
+        "line": 3,
+        "title": "1. Android"
+      },
+      {
+        "line": 20,
+        "title": "2. Apps Script"
+      },
+      {
+        "line": 31,
+        "title": "3. SIC de inventario vial"
+      },
+      {
+        "line": 38,
+        "title": "4. Pavimentos"
+      },
+      {
+        "line": 44,
+        "title": "5. SCAP D.4"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FINAL_TABLET_CHECKLIST.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Smoke test de tablet — integración final"
+      },
+      {
+        "line": 5,
+        "title": "Login y dispositivo"
+      },
+      {
+        "line": 12,
+        "title": "Inventario, señalización y obras de arte"
+      },
+      {
+        "line": 26,
+        "title": "Puentes y SCAP"
+      },
+      {
+        "line": 36,
+        "title": "Pavimentos"
+      },
+      {
+        "line": 47,
+        "title": "Drive y protección local"
+      },
+      {
+        "line": 60,
+        "title": "KMZ"
+      },
+      {
+        "line": 68,
+        "title": "Actualización y firma de campo"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/FINAL_TABLET_CHECKLIST_THIS_ITERATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Validación física pendiente — esta iteración"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/GRADLE_CONFIGURATION_CACHE_FIX.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Corrección de Gradle Configuration Cache"
+      },
+      {
+        "line": 6,
+        "title": "Causa exacta"
+      },
+      {
+        "line": 30,
+        "title": "Implementación"
+      },
+      {
+        "line": 86,
+        "title": "Pruebas con y sin Configuration Cache"
+      },
+      {
+        "line": 115,
+        "title": "Suite y alcance"
+      },
+      {
+        "line": 149,
+        "title": "Identidad y límites"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/INTEGRATION_SCAP_PLAN.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Comparación previa a la integración SCAP"
+      },
+      {
+        "line": 215,
+        "title": "Cambios de GitHub preservados"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/INTEGRATION_SCAP_RESULT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Resultado de la integración SCAP"
+      },
+      {
+        "line": 9,
+        "title": "A. Archivos añadidos"
+      },
+      {
+        "line": 74,
+        "title": "B. Archivos modificados"
+      },
+      {
+        "line": 107,
+        "title": "C. Archivos de GitHub conservados"
+      },
+      {
+        "line": 284,
+        "title": "D. Conflictos y decisiones de integración"
+      },
+      {
+        "line": 295,
+        "title": "E. Resultado de pruebas"
+      },
+      {
+        "line": 344,
+        "title": "F. Git status final"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/LEGACY_FIELD_UI_REFERENCE.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Referencia real de captura histórica"
+      },
+      {
+        "line": 28,
+        "title": "Extracción prevista y procedencia"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/MAN8_SOURCE_INCONSISTENCIES.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Inconsistencias MAN_8"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/MARCA_AGUA_OBLIGATORIA.md",
+    "headings": [
+      {
+        "line": 3,
+        "title": "Marca corporativa obligatoria"
+      }
+    ],
+    "historical_notice": true
+  },
+  {
+    "file": "docs/PARALLEL_A_INTEGRATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "PARALLEL A — contrato de integración con ramas B / C"
+      },
+      {
+        "line": 3,
+        "title": "Colisiones probables"
+      },
+      {
+        "line": 15,
+        "title": "Room"
+      },
+      {
+        "line": 22,
+        "title": "Contratos de CORE"
+      },
+      {
+        "line": 24,
+        "title": "DriveAssetPathRouter"
+      },
+      {
+        "line": 30,
+        "title": "DriveSyncCenter / SyncOverview"
+      },
+      {
+        "line": 36,
+        "title": "GeneratedFileIndex"
+      },
+      {
+        "line": 40,
+        "title": "PhotoCaptureCard / PhotoPreview"
+      },
+      {
+        "line": 46,
+        "title": "LocationSummaryCard / RecordReviewSection"
+      },
+      {
+        "line": 50,
+        "title": "KMZ por SAF"
+      },
+      {
+        "line": 56,
+        "title": "Fotos limpias"
+      },
+      {
+        "line": 60,
+        "title": "Riesgos críticos para integración y campo"
+      },
+      {
+        "line": 68,
+        "title": "Paso a paso"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PARALLEL_A_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "PARALLEL A — CORE / plataforma común"
+      },
+      {
+        "line": 5,
+        "title": "Estado y alcance real"
+      },
+      {
+        "line": 9,
+        "title": "Cambios a archivos existentes"
+      },
+      {
+        "line": 17,
+        "title": "Nuevos componentes"
+      },
+      {
+        "line": 28,
+        "title": "Tests añadidos (7 archivos)"
+      },
+      {
+        "line": 38,
+        "title": "Resultado de pruebas ejecutadas"
+      },
+      {
+        "line": 46,
+        "title": "Baseline histórico de la auditoría previa"
+      },
+      {
+        "line": 68,
+        "title": "Limitaciones / trabajo que NO está terminado"
+      },
+      {
+        "line": 80,
+        "title": "Antes de integrar / instalar"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PARALLEL_B_INTEGRATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Integración de Parallel B · Inventario vial / Puentes / SCAP / SIC"
+      },
+      {
+        "line": 5,
+        "title": "Room"
+      },
+      {
+        "line": 23,
+        "title": "Contratos que CORE debe consumir"
+      },
+      {
+        "line": 42,
+        "title": "Archivos compartidos y conflictos"
+      },
+      {
+        "line": 52,
+        "title": "Plantillas y límites"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PARALLEL_B_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Parallel B · Inventario vial / Puentes / SCAP / SIC"
+      },
+      {
+        "line": 5,
+        "title": "Cambios para campo"
+      },
+      {
+        "line": 16,
+        "title": "Fuentes y mapping"
+      },
+      {
+        "line": 30,
+        "title": "Archivos y revisión"
+      },
+      {
+        "line": 38,
+        "title": "Pruebas y Gradle"
+      },
+      {
+        "line": 59,
+        "title": "Límites de entrega"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PARALLEL_B_SCAP_CAPTURE.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Captura SCAP de Parallel B"
+      },
+      {
+        "line": 5,
+        "title": "Modelo y persistencia"
+      },
+      {
+        "line": 13,
+        "title": "Catálogos y mapping"
+      },
+      {
+        "line": 19,
+        "title": "Guardar y finalizar"
+      },
+      {
+        "line": 27,
+        "title": "Elemento manual G.1"
+      },
+      {
+        "line": 31,
+        "title": "SIC y SIC-3"
+      },
+      {
+        "line": 39,
+        "title": "Verificación"
+      },
+      {
+        "line": 43,
+        "title": "Límites"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PARALLEL_C_INTEGRATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Integración PARALLEL C · Pavimentos / PCI / URCI"
+      },
+      {
+        "line": 5,
+        "title": "Room 13 provisional"
+      },
+      {
+        "line": 30,
+        "title": "Contratos con CORE"
+      },
+      {
+        "line": 40,
+        "title": "SIC y fuentes"
+      },
+      {
+        "line": 50,
+        "title": "Conflictos previstos"
+      },
+      {
+        "line": 56,
+        "title": "Google Earth: evaluación, sin implementación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PARALLEL_C_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "PARALLEL C · Pavimentos / PCI / URCI"
+      },
+      {
+        "line": 5,
+        "title": "Cambios funcionales"
+      },
+      {
+        "line": 18,
+        "title": "Validación"
+      },
+      {
+        "line": 34,
+        "title": "Limitaciones técnicas explícitas"
+      },
+      {
+        "line": 42,
+        "title": "Archivos y entrega"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PAVEMENT_MANUAL_MAPPING.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Validación de Pavimentos contra el manual"
+      },
+      {
+        "line": 58,
+        "title": "Reglas de medición conservadas o corregidas"
+      },
+      {
+        "line": 71,
+        "title": "Separación de SIC"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PAVIMENTOS_REGLA_FOTOS_2026-10-06.md",
+    "headings": [
+      {
+        "line": 3,
+        "title": "Corrección de pavimentos: regla y fotografías"
+      },
+      {
+        "line": 7,
+        "title": "Arquitectura"
+      },
+      {
+        "line": 17,
+        "title": "Archivos"
+      },
+      {
+        "line": 29,
+        "title": "Validación manual pendiente en tablet"
+      },
+      {
+        "line": 49,
+        "title": "Resultado automático final"
+      }
+    ],
+    "historical_notice": true
+  },
+  {
+    "file": "docs/PAVIMENTOS_TDR_DRIVE.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Módulo Fallas en pavimentos — alcance TDR y Drive"
+      },
+      {
+        "line": 3,
+        "title": "Integración"
+      },
+      {
+        "line": 9,
+        "title": "Captura implementada"
+      },
+      {
+        "line": 20,
+        "title": "Drive"
+      },
+      {
+        "line": 44,
+        "title": "Relación con el TDR"
+      },
+      {
+        "line": 50,
+        "title": "No se debe declarar todavía como generado automáticamente"
+      },
+      {
+        "line": 63,
+        "title": "Curvas PCI/URCI"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/PUENTES_SIC_FLUJO_2026-10-06.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Puentes: captura SCAP → SIC-17 / SIC-17A / SIC-17B"
+      },
+      {
+        "line": 3,
+        "title": "Resultado y auditoría inicial"
+      },
+      {
+        "line": 11,
+        "title": "Fuente y límites contractuales"
+      },
+      {
+        "line": 19,
+        "title": "Campos capturables"
+      },
+      {
+        "line": 27,
+        "title": "Tabla exacta de proyección"
+      },
+      {
+        "line": 53,
+        "title": "Correspondencias que no se aplican"
+      },
+      {
+        "line": 57,
+        "title": "Catálogos exactos usados"
+      },
+      {
+        "line": 61,
+        "title": "SIC-17 — SicCatalogRepository, tipos p. 242"
+      },
+      {
+        "line": 79,
+        "title": "SIC-17A/B — SupplementaryForms, fichas pp. 207–212 y tipos pp. 242–243"
+      },
+      {
+        "line": 99,
+        "title": "Estado y exportación"
+      },
+      {
+        "line": 105,
+        "title": "Persistencia, migración y Drive"
+      },
+      {
+        "line": 113,
+        "title": "Archivos y alcance"
+      },
+      {
+        "line": 143,
+        "title": "Pruebas"
+      },
+      {
+        "line": 149,
+        "title": "Fallos de referencia fuera de esta corrección"
+      },
+      {
+        "line": 153,
+        "title": "Checklist de tablet (pendiente de ejecución física)"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/RELEASE_BLOCKED_MISSING_SIGNING_KEY.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "RELEASE_BLOCKED_MISSING_SIGNING_KEY"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/RELEASE_SIGNING.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Firma de producción GBO"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/REVISION_INGENIERIA_PUENTES_2.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Revisión de ingeniería de puentes 2"
+      },
+      {
+        "line": 3,
+        "title": "Inspección previa"
+      },
+      {
+        "line": 15,
+        "title": "Análisis de la plantilla antes de modificar el exportador"
+      },
+      {
+        "line": 23,
+        "title": "Cambios entregados y verificados"
+      },
+      {
+        "line": 35,
+        "title": "Compatibilidad y archivos conservados"
+      },
+      {
+        "line": 43,
+        "title": "Verificación automatizada"
+      },
+      {
+        "line": 58,
+        "title": "Límites y pendientes reales"
+      },
+      {
+        "line": 66,
+        "title": "Checklist manual en tablet — pendiente"
+      },
+      {
+        "line": 97,
+        "title": "Archivos y estado de Git"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/REVISION_INGENIERIA_UX.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Corrección funcional y UX — 25 de septiembre de 2026"
+      },
+      {
+        "line": 7,
+        "title": "Alcance por punto solicitado"
+      },
+      {
+        "line": 34,
+        "title": "Decisiones de ingeniería y límites explícitos"
+      },
+      {
+        "line": 48,
+        "title": "Migración 6 → 7"
+      },
+      {
+        "line": 60,
+        "title": "Google Drive / Apps Script"
+      },
+      {
+        "line": 70,
+        "title": "Verificación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/ROAD_REFERENCE_FORMAT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Catálogo de ejes y PR"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_ANDROID_EXPORT_FIX.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Exportación SCAP compatible con Android"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_ARCHITECTURE_REVIEW.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Base revisada antes de SCAP"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_BRIDGE_F_G_AUDIT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Auditoría directa F.1 / F.2 / G.1"
+      },
+      {
+        "line": 5,
+        "title": "LOSA"
+      },
+      {
+        "line": 28,
+        "title": "MODULAR"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_BRIDGE_TABLET_CHECKLIST.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Checklist SCAP LOSA/MODULAR en tablet y Excel"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_CALCULATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Cálculo SCAP del archivo de referencia"
+      },
+      {
+        "line": 5,
+        "title": "Algoritmo observado en G.- CONDICION ESTADISTICA"
+      },
+      {
+        "line": 21,
+        "title": "Reproducción Agua Blanca"
+      },
+      {
+        "line": 25,
+        "title": "Diferencias y límites que requieren confirmación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_EXPORT_CONTRACT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Exportación SCAP por tipo"
+      },
+      {
+        "line": 12,
+        "title": "Hojas y coordenadas"
+      },
+      {
+        "line": 32,
+        "title": "Límites y revisión"
+      },
+      {
+        "line": 54,
+        "title": "Conservación de plantilla y fotografías"
+      },
+      {
+        "line": 66,
+        "title": "Verificación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_F1_F2_G1_CORRECTION_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Corrección SCAP de esta iteración"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_FULL_EXPORT_VERIFICATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Verificación completa del exportador SCAP"
+      },
+      {
+        "line": 5,
+        "title": "Resultado"
+      },
+      {
+        "line": 15,
+        "title": "Cálculo en Excel"
+      },
+      {
+        "line": 26,
+        "title": "Hojas revisadas"
+      },
+      {
+        "line": 43,
+        "title": "Continuaciones verificadas e impresión"
+      },
+      {
+        "line": 59,
+        "title": "Reproducción y evidencias locales"
+      },
+      {
+        "line": 67,
+        "title": "Matriz de campos verificados"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_IMPLEMENTATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Implementación SCAP"
+      },
+      {
+        "line": 3,
+        "title": "Alcance y uso"
+      },
+      {
+        "line": 29,
+        "title": "Arquitectura"
+      },
+      {
+        "line": 41,
+        "title": "Persistencia"
+      },
+      {
+        "line": 64,
+        "title": "Catálogos reproducibles"
+      },
+      {
+        "line": 77,
+        "title": "Validación y cálculo"
+      },
+      {
+        "line": 83,
+        "title": "Integraciones preservadas y pendientes"
+      },
+      {
+        "line": 91,
+        "title": "Verificación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_PENDING_CLIENT_DECISIONS.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Decisiones pendientes de SCAP"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_TEMPLATE_INCONSISTENCIES.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Inconsistencias de las fuentes originales"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SCAP_TO_SIC_MAPPING.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Mapeo SCAP → SIC-17 / SIC-17A / SIC-17B"
+      },
+      {
+        "line": 5,
+        "title": "Tabla exacta de proyección"
+      },
+      {
+        "line": 29,
+        "title": "Correspondencias que no se aplican"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SECURITY_REVIEW.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Revisión de seguridad: usuarios centrales y login offline"
+      },
+      {
+        "line": 3,
+        "title": "Arquitectura implementada"
+      },
+      {
+        "line": 15,
+        "title": "PIN y caché de credenciales"
+      },
+      {
+        "line": 31,
+        "title": "Login, sincronización y caducidad"
+      },
+      {
+        "line": 51,
+        "title": "Sesiones y permisos"
+      },
+      {
+        "line": 74,
+        "title": "Servicio y transporte"
+      },
+      {
+        "line": 89,
+        "title": "Auditoría, backups y release"
+      },
+      {
+        "line": 108,
+        "title": "Riesgos pendientes y límites"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SERVER_API_CONTRACT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Contrato propuesto para la API empresarial"
+      },
+      {
+        "line": 5,
+        "title": "Activación"
+      },
+      {
+        "line": 9,
+        "title": "Operación"
+      },
+      {
+        "line": 59,
+        "title": "Idempotencia, modificaciones y anulación"
+      },
+      {
+        "line": 74,
+        "title": "Decisiones pendientes"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SESSION_LIFECYCLE_AUDIT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Auditoría real de sesiones y ciclo de vida"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC14A_PENDING_DECISION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "SIC-14A: decisión contractual pendiente"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC34_TYPE_CODE_PENDING_DECISION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "SIC-34: equivalencia pendiente"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_08_09_13_18A_34_SOURCE_MAP.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Mapa normativo previo a cambios de producción"
+      },
+      {
+        "line": 7,
+        "title": "SIC-08"
+      },
+      {
+        "line": 23,
+        "title": "SIC-09"
+      },
+      {
+        "line": 39,
+        "title": "SIC-13"
+      },
+      {
+        "line": 54,
+        "title": "SIC-34"
+      },
+      {
+        "line": 71,
+        "title": "SIC-18A"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_NEW_FORMATS_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Nuevos SIC y selector visual — reporte de entrega"
+      },
+      {
+        "line": 5,
+        "title": "Resultado funcional"
+      },
+      {
+        "line": 13,
+        "title": "Columnas contractuales"
+      },
+      {
+        "line": 27,
+        "title": "Mappings y discrepancias"
+      },
+      {
+        "line": 36,
+        "title": "Room e identidad"
+      },
+      {
+        "line": 42,
+        "title": "Señales y memoria"
+      },
+      {
+        "line": 48,
+        "title": "Drive y archivos"
+      },
+      {
+        "line": 54,
+        "title": "Validación y evidencias"
+      },
+      {
+        "line": 75,
+        "title": "Alcance protegido y limitaciones"
+      },
+      {
+        "line": 81,
+        "title": "Archivos modificados y añadidos"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_NEW_FORMATS_TABLET_CHECKLIST.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Validación física en tablet — nuevos SIC"
+      },
+      {
+        "line": 8,
+        "title": "SIC-08"
+      },
+      {
+        "line": 16,
+        "title": "SIC-09"
+      },
+      {
+        "line": 24,
+        "title": "SIC-13"
+      },
+      {
+        "line": 31,
+        "title": "SIC-34"
+      },
+      {
+        "line": 39,
+        "title": "SIC-18A"
+      },
+      {
+        "line": 49,
+        "title": "Señalización global"
+      },
+      {
+        "line": 59,
+        "title": "Regresión y aceptación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_UI_PARITY.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Paridad de la captura histórica"
+      },
+      {
+        "line": 5,
+        "title": "Capturas reales"
+      },
+      {
+        "line": 24,
+        "title": "Checklist obligatorio"
+      },
+      {
+        "line": 46,
+        "title": "Composición y datos conservados"
+      },
+      {
+        "line": 54,
+        "title": "Alcance de la validación"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_UI_PARITY_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "SIC UI PARITY REPORT"
+      },
+      {
+        "line": 3,
+        "title": "Resultado"
+      },
+      {
+        "line": 9,
+        "title": "Composables realmente compartidos"
+      },
+      {
+        "line": 27,
+        "title": "Código de SicFieldWorkspace que dejó de imponer UI"
+      },
+      {
+        "line": 33,
+        "title": "Nuevos SIC y navegación"
+      },
+      {
+        "line": 44,
+        "title": "Room, exportadores y funcionalidades protegidas"
+      },
+      {
+        "line": 52,
+        "title": "Paridad visual y checklist"
+      },
+      {
+        "line": 60,
+        "title": "Tests"
+      },
+      {
+        "line": 71,
+        "title": "Build, identidad y entrega"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_UI_UNIFICATION_AUDIT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Auditoría previa de UI SIC"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_UI_UNIFICATION_BEFORE_AFTER.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "SIC UI: antes y después"
+      },
+      {
+        "line": 57,
+        "title": "Formularios puntuales o lineales"
+      },
+      {
+        "line": 63,
+        "title": "Revisión y estados"
+      },
+      {
+        "line": 82,
+        "title": "Historial y archivos"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIC_UI_UNIFICATION_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "SIC UI UNIFICATION REPORT"
+      },
+      {
+        "line": 3,
+        "title": "Resultado"
+      },
+      {
+        "line": 9,
+        "title": "Antes / después y componentes"
+      },
+      {
+        "line": 19,
+        "title": "Alcantarilla SIC-18 / SIC-18A"
+      },
+      {
+        "line": 29,
+        "title": "Faja SIC-08 / SIC-09"
+      },
+      {
+        "line": 37,
+        "title": "Historial, archivos y Drive"
+      },
+      {
+        "line": 45,
+        "title": "Room, seguridad y versión"
+      },
+      {
+        "line": 59,
+        "title": "Tests y build"
+      },
+      {
+        "line": 87,
+        "title": "Archivos de aplicación modificados o añadidos"
+      },
+      {
+        "line": 109,
+        "title": "Limitaciones"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/SIGNAL_ASSET_EXTRACTION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Extracción de señales MAN_6"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/TABLET_ADMIN_IMPLEMENTATION_REPORT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "TABLET_ADMIN · estabilidad · SCAP — reporte de esta iteración"
+      },
+      {
+        "line": 19,
+        "title": "Identidades FAIL anteriores"
+      },
+      {
+        "line": 37,
+        "title": "Cambios deliberados de tests"
+      },
+      {
+        "line": 41,
+        "title": "Archivos fuente cambiados / nuevos"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/TABLET_ADMIN_SERVER_DEPLOY.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Actualización manual Owner del User Service"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/USER_AUTH_IMPLEMENTATION.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Entrega: usuarios centrales GBO"
+      },
+      {
+        "line": 3,
+        "title": "Resultado"
+      },
+      {
+        "line": 15,
+        "title": "Sincronización y login"
+      },
+      {
+        "line": 38,
+        "title": "Migración 7→8"
+      },
+      {
+        "line": 48,
+        "title": "Administración y despliegue"
+      },
+      {
+        "line": 68,
+        "title": "Validación"
+      },
+      {
+        "line": 116,
+        "title": "Pendientes de puesta en marcha"
+      },
+      {
+        "line": 133,
+        "title": "Lista exacta de archivos"
+      },
+      {
+        "line": 135,
+        "title": "Creados"
+      },
+      {
+        "line": 170,
+        "title": "Modificados"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/VALIDACION_ENTREGA.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Validación de entrega — 24/09/2026"
+      },
+      {
+        "line": 5,
+        "title": "Comandos ejecutados"
+      },
+      {
+        "line": 31,
+        "title": "Preservación del ZIP suministrado"
+      },
+      {
+        "line": 37,
+        "title": "Advertencias y límites"
+      },
+      {
+        "line": 44,
+        "title": "Reproducir y abrir"
+      }
+    ],
+    "historical_notice": false
+  },
+  {
+    "file": "docs/VERSIONCODE10_DIFF_AUDIT.md",
+    "headings": [
+      {
+        "line": 1,
+        "title": "Auditoría VERSIONCODE10"
+      }
+    ],
+    "historical_notice": false
+  }
+]

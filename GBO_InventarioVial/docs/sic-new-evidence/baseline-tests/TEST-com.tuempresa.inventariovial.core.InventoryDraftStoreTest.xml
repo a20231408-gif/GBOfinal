@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.core.InventoryDraftStoreTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-08T15:15:25.734Z" hostname="JULIAN" time="1.027">
+  <properties/>
+  <testcase name="partialTextPhotosAndRtkSurviveReopeningWhileOtherUsersAndFinalizedRecordsAreBlocked" classname="com.tuempresa.inventariovial.core.InventoryDraftStoreTest" time="1.02"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,36 @@
+{
+  "etapa": 0,
+  "codigos": 46,
+  "comprobaciones": [
+    "asfalto: 20 códigos; partición idéntica; curvas sin valores inventados",
+    "rigido: 19 códigos; partición idéntica; curvas sin valores inventados",
+    "no_pavimentado: 7 códigos; partición idéntica; curvas sin valores inventados"
+  ],
+  "excepciones_severidad": "VERIFICADAS",
+  "json": "VALIDOS",
+  "cambios_a_archivos_originales": [],
+  "archivos_originales_faltantes": [],
+  "boceto": {
+    "errors": [],
+    "results": [
+      {
+        "surface": "asfalto",
+        "rows": 3,
+        "result": "PCI no calculable: curvas pendientes de digitalizar."
+      },
+      {
+        "surface": "rigido",
+        "rows": 2,
+        "result": "PCI no calculable: curvas pendientes de digitalizar."
+      },
+      {
+        "surface": "no_pavimentado",
+        "rows": 3,
+        "result": "URCI no calculable: curvas pendientes de digitalizar."
+      }
+    ],
+    "mobileOverflow": false
+  },
+  "gradle": "NO_EJECUTADO_FASE_DOCUMENTAL",
+  "validacion_numerica_pci_urci": "PENDIENTE_EJEMPLO_RESUELTO_DEL_USUARIO"
+}

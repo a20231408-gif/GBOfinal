@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.AssetOrderingTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-08T16:53:27.888Z" hostname="JULIAN" time="0.093">
+  <properties/>
+  <testcase name="folderPlanUsesCurrentOrderAndRealPhotoIndexWithoutMutatingAnything" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.052"/>
+  <testcase name="fallbackIsExplicitAndDoesNotMixContractualAndGeometricOrigins" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.001"/>
+  <testcase name="tiesAreDeterministicAndRouteSibFamilyDefineCountersNotRoadbed" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.004"/>
+  <testcase name="selectedRouteIsMatchedBeforeNearerRoadAndContractualDataIsUntouched" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.02"/>
+  <testcase name="catalogUsesDetailClassesAndReportsUnknownsWithoutInventingSib" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.008"/>
+  <testcase name="invalidFixOrDistantPointClearsDerivedValuesButRetainsRecord" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.001"/>
+  <testcase name="retroactiveCulvertRenumbersOnlyItsFamilyAndKeepsIdentityAndPhotos" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.001"/>
+  <testcase name="mixedFamiliesUseSeparateCountersAndIgnoreCaptureTimeAndManualPr" classname="com.tuempresa.inventariovial.AssetOrderingTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

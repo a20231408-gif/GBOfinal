@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "owner": "PARALLEL_C_PAVIMENTOS",
+  "registry": {
+    "api": "PavementGeneratedFiles.records(context)",
+    "path": "filesDir/pavement/exports/manifest.json",
+    "atomic_write": true,
+    "fields": ["id", "sampleId", "surface", "category", "mimeType", "localPath", "sha256", "destinationUri", "createdAt", "photoId", "damageId"],
+    "retention_owner": "CORE must establish acknowledgment and cleanup policy; branch C does not delete completed exports"
+  },
+  "files": [
+    {"category": "FIELD", "mimeType": "application/pdf", "producer": "PavementPdf", "cloud_name": "HC_NNN.pdf", "local": "durable copy for SAF and existing pavement uploader"},
+    {"category": "GROUP_DATA", "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "producer": "PavementExcel", "cloud_name": "PAV_ASF|RIG|NPV.xlsx", "sheets": ["Fallas", "Resumen", "Detalle"], "iterations_visible": false, "iterations_internal": true},
+    {"category": "SAMPLE_DATA", "mimeType": "application/json", "producer": "PavementDriveUploader.nativeJson", "cloud_name": "M_NNN.json", "includes": ["sample identity", "date", "slab dimensions", "SIC supplement with origin", "damage UUID and geometry", "calculation snapshot"], "private_photo_paths_in_cloud": false},
+    {"category": "PHOTO", "mimeType": "image/jpeg", "producer": "existing pavement uploader and RequiredWatermark", "cloud_name": "NNN_DNNN.jpg", "link_fields": ["sampleId", "damageId", "photoId"], "originals": "pavement_damage_photos.localPath; original is not overwritten"},
+    {"category": "SIC_SIC14", "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "producer": "PavementSic", "cloud_route": "pending CORE adapter; not sent via an unsupported global category"},
+    {"category": "SIC_SIC14A", "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "producer": "PavementSic", "blocked_for_types": [7, 13], "reason": "Attached density note says 07-Huecos but attached type list uses 13-Huecos", "cloud_route": "pending CORE adapter"},
+    {"category": "SIC_SIC15", "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "producer": "PavementSic", "cloud_route": "pending CORE adapter"},
+    {"category": "SIC_SIC16", "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "producer": "PavementSic", "cloud_route": "pending CORE adapter"}
+  ],
+  "photo_capture": {"room_table": "pavement_damage_photos", "fields": ["id", "damageId", "localPath", "createdAt"], "sample_relation": "pavement_damages.sampleId", "managed_name_prefix": "PAVIMENTO_", "directory": "filesDir/images"},
+  "upload_protocol": {"existing_action": "uploadPavementFile", "protocol": 1, "unchanged_global_router": true},
+  "manual_pending_origin": "MANUAL_PENDING_EXTERNAL_SOURCE"
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ScapHumanDeliveryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-09T22:49:51.027Z" hostname="JULIAN" time="4.434">
+  <properties/>
+  <testcase name="capture10Then30Then20KmUsesP1P3P2AndHumanPathsWithoutChangingIdentities" classname="com.tuempresa.inventariovial.ScapHumanDeliveryTest" time="0.049"/>
+  <testcase name="preparationProjectsSavedScapGnssOnOfficialAxisAndKeepsParentContractualData" classname="com.tuempresa.inventariovial.ScapHumanDeliveryTest" time="1.334"/>
+  <testcase name="humanZipRetriesExactBytesKeepsPriorRevisionAndAcknowledgesOnlyMatchingPathsAndRevision" classname="com.tuempresa.inventariovial.ScapHumanDeliveryTest" time="3.045"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
