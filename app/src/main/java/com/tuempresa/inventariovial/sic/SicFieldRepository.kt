@@ -62,8 +62,8 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         if(s.format!=SicFieldFormat.SIC18A) {
             val r=InventoryRecordEntity(key,s.format.code,s.format.family,s.text("routeCode"),s.text("roadbedCode"),s.text("startPrCode"),
                 SicFieldState.number(s.text("startDistanceM")) ?: 0.0,s.text("endPrCode").ifBlank {null},SicFieldState.number(s.text("endDistanceM")),s.text("sideCode").ifBlank {null},
-                SicFieldState.number(s.text("_latitude")) ?: old?.latitude ?: if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) null else 0.0,
-                SicFieldState.number(s.text("_longitude")) ?: old?.longitude ?: if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) null else 0.0,
+                SicFieldState.number(s.text("_latitude")) ?: old?.latitude,
+                SicFieldState.number(s.text("_longitude")) ?: old?.longitude,
                 SicFieldState.number(s.text("_altitude")) ?: old?.altitudeM,SicFieldState.number(s.text("_accuracy")) ?: old?.gpsAccuracyM,s.text("surveyDate"),if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) s.values["observations"] ?: old?.observations else old?.observations,
                 if(finalize) "ACTIVE" else "DRAFT","PENDING","PENDING",old?.createdAt ?: now,now,
                 endLatitude=SicFieldState.number(s.text("_endLatitude")) ?: old?.endLatitude,endLongitude=SicFieldState.number(s.text("_endLongitude")) ?: old?.endLongitude,
@@ -111,13 +111,6 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         dao.saveSicExtension(SicExtensionEntity(key,s.format.code,JSONObject(s.values).toString(),s.sourceRecordId,owner,if(finalize) "COMPLETE" else "DRAFT"))
         if(finalize) {
             com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",key,now)
-            if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) {
-                val record=requireNotNull(dao.recordById(key))
-                if(record.latitude==null || record.longitude==null || record.endLatitude==null || record.endLongitude==null) {
-                    val pending=requireNotNull(db.automaticSyncDao().get("SIC/$key"))
-                    db.automaticSyncDao().put(pending.copy(state="PENDING_VALIDATION",error="Entrega pendiente de georreferenciación externa"))
-                }
-            }
         }
         else com.tuempresa.inventariovial.core.AutomaticSync.draft(db,"SIC",key)
         key

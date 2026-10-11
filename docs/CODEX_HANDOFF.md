@@ -2,6 +2,22 @@
 
 Fecha: 2026-10-11 (America/Lima)
 
+## Continuación: entrega técnica sin GPS
+
+La rama activa es ahora `codex/sincronizacion-sin-gps`, creada desde el checkpoint `85d0659`. El checkpoint anterior (`24e1830`, `d4e491d`, `85d0659`) conserva los cambios SIC-08/SIC-09 y el avance mezclado previo; no se descartó contenido.
+
+La tarea posterior permite entrega técnica sin coordenadas, recupera exclusivamente bloqueos GPS antiguos, excluye borradores y confirma recibos/IDs antes de sincronizar. Validación final: 39 pruebas Android focalizadas, assembleDebug y 60 pruebas locales del backend aprobadas. Las ejecuciones inicialmente fallidas también se conservaron. No se ejecutó la suite completa ni se volvió a validar físicamente la tablet.
+
+Entrega Prompt 1: se prepara un commit selectivo en esta rama. Incluye AutomaticDelivery/AutomaticSync, una línea de estado en el detalle existente, InventoryDao, SicFieldRepository, pruebas focalizadas y las fuentes completas del backend Drive necesarias para V3. El backend contenía implementación previa no registrada: se incorpora como base requerida, sin atribuir todas sus funcionalidades al Prompt 1. Los demás archivos anteriores se conservan fuera del commit. `buildSrc/src` sigue registrado en Git; configuración privada, applicationId y firma histórica sin cambios.
+
+Se conservan los resultados reportados de 39 pruebas Android y 60 pruebas backend; no se volvieron a ejecutar en esta preparación Git. La evidencia resumida sin datos privados se incluye en `sync-sin-gps-2026-10-11/VALIDACION.json`; APKs, caches, logs crudos y temporales permanecen locales. Las fixtures incluidas son sintéticas, con coordenadas nulas y fotografías generadas por las pruebas.
+
+Siguiente tarea: **edición segura de registros sincronizados** (Prompt 2). No se inicia hasta proteger esta entrega. La copia no tenía remoto Git al comenzar: la publicación de la rama requiere la URL autorizada de `origin` y comprobar el resultado del push.
+
+El endpoint local observado responde v6.2 sin protocolo 3. PRUEBA_FINAL existe, pero su separación de la raíz productiva no está confirmada. No hubo subidas ni despliegues. La prueba remota queda pendiente de carpeta/proyecto/URL aislados y autorización del responsable para crearlos/publicarlos. No cambiar servicio de usuarios.
+
+Informe detallado, resultados, paquete y pasos para tablet: [entrega sin GPS](sync-sin-gps-2026-10-11/ENTREGA.md) y [despliegue de pruebas](sync-sin-gps-2026-10-11/DESPLIEGUE_PRUEBAS.md). Estado histórico del checkpoint a continuación; sus restricciones de no modificar funcionalidades correspondían al punto de control anterior, antes de que se autorizara esta tarea.
+
 ## Estado protegido
 
 - Rama creada para este punto de recuperación: `codex/punto-control-2026-10-11`.

@@ -54,6 +54,8 @@ object SyncIntentPresentation {
                 Text("Revisión local: ${it.revision} · confirmada: ${it.syncedRevision}")
                 Text("Última confirmación: ${it.lastSyncedAt?.let {time->DateFormat.getDateTimeInstance().format(Date(time))} ?: "Aún no confirmada"}")
                 val prepared=it.preparedJson?.let(::JSONObject);val receipt=it.receiptJson?.let(::JSONObject)
+                if(prepared?.optJSONObject("georeferencing")?.optString("externalSubmetricStatus")=="PENDING")
+                    Text("Georreferenciación submétrica: pendiente",style=MaterialTheme.typography.bodySmall)
                 Text("Archivos preparados: ${prepared?.optJSONArray("files")?.length() ?: 0} · confirmados para esta revisión: ${if(it.syncedRevision==it.revision)receipt?.optJSONArray("files")?.length() ?: 0 else 0}")
                 receipt?.optString("logicalPath")?.takeIf {it.isNotBlank()}?.let {path->Text("Destino confirmado: $path")}
                 receipt?.optString("folderId")?.takeIf {it.isNotBlank()}?.let {folder->Text("https://drive.google.com/drive/folders/$folder")}

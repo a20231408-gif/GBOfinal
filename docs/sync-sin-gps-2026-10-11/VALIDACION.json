@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-11",
+  "branch": "codex/sincronizacion-sin-gps",
+  "source": "Resultados ya reportados del Prompt 1; sin nueva ejecucion en la preparacion Git",
+  "android": {
+    "tests": 39,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": [
+      {
+        "class": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic0809CaptureTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic0809ScreenTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "debugBuild": "BUILD SUCCESSFUL"
+  },
+  "backend": {
+    "tests": 60,
+    "passed": 60,
+    "failed": 0,
+    "skipped": 0,
+    "mode": "Servicios Drive simulados, JPEG y Excel sinteticos generados por Android"
+  },
+  "realDriveUpload": "PENDING",
+  "requires": "Despliegue aislado con syncProtocol=3, pathVersion=3 y technicalDeliveryWithoutGps=true",
+  "nextTask": "Edicion segura de registros sincronizados"
+}

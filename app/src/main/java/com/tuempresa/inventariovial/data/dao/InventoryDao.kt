@@ -180,6 +180,9 @@ interface InventoryDao {
     @Query("UPDATE inventory_records SET photoSyncStatus = CASE WHEN EXISTS (SELECT 1 FROM photos WHERE photos.recordId = inventory_records.id AND syncStatus != 'SYNCED') THEN 'PENDING' ELSE 'SYNCED' END WHERE id = :recordId")
     fun refreshRecordPhotoStatus(recordId: String)
 
+    @Query("UPDATE inventory_records SET excelSyncStatus='SYNCED' WHERE id=:recordId")
+    fun markTechnicalExcelSynced(recordId:String)
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertPhotos(photos: List<PhotoEntity>)
 

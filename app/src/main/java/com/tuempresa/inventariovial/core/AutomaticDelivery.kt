@@ -19,12 +19,21 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipInputStream
 
-interface AutomaticDriveTransport { fun supportsV3():Boolean; fun post(payload:JSONObject):JSONObject }
+interface AutomaticDriveTransport {
+    fun supportsV3():Boolean
+    fun supportsTechnicalDeliveryWithoutGps():Boolean = false
+    fun post(payload:JSONObject):JSONObject
+}
 class AutomaticDriveHttp:AutomaticDriveTransport {
     private val client=OkHttpClient.Builder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(180,TimeUnit.SECONDS).writeTimeout(180,TimeUnit.SECONDS).build()
-    override fun supportsV3()=client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).get().build()).execute().use {
-        it.isSuccessful && JSONObject(it.body?.string() ?: "{}").optInt("syncProtocol")>=3
+    private val capabilities:JSONObject by lazy {
+        client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).get().build()).execute().use {
+            if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
+            JSONObject(it.body?.string() ?: "{}")
+        }
     }
+    override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")>=3
+    override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
     private fun send(payload:JSONObject)=client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL)
         .post(JSONObject(payload.toString()).put("token",DriveConfig.API_TOKEN).toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()).execute().use {
         if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
@@ -48,12 +57,29 @@ class AutomaticDriveHttp:AutomaticDriveTransport {
 }
 
 object AutomaticDelivery {
+    /** Contractual PR ordering is not a GNSS fix and never populates coordinates. */
+    suspend fun technicalOrder(c:Context,r:com.tuempresa.inventariovial.data.entity.InventoryRecordEntity):Pair<Double,String> {
+        val reference=RoadReferenceRepository(c).loadFromAssets()
+        val matched=RoadAxisPositioner(reference,com.tuempresa.inventariovial.field.FieldSettings.load(c).matchConfig()).position(r)
+        val axis=(matched.axisMeasureM ?: r.axisMeasureM)?.takeIf {it.isFinite() && it>=0}
+        if(axis!=null)return axis to "GNSS_MAP_MATCH"
+        val position=ChainageCalculator(reference.prs).calculate(r)
+        return (position.chainageM?.takeIf {it.isFinite() && it>=0}
+            ?: throw SyncPending("Revisa el PR y la distancia de la ficha para ordenar la entrega técnica.")) to "CONTRACTUAL_PR"
+    }
+    fun georeferencing(r:com.tuempresa.inventariovial.data.entity.InventoryRecordEntity):JSONObject {
+        val available=r.latitude!=null && r.longitude!=null &&
+            (r.endPrCode==null || r.endLatitude!=null && r.endLongitude!=null)
+        return JSONObject().put("status",if(available) "COORDINATES_AVAILABLE" else "PENDING_EXTERNAL")
+            .put("externalSubmetricStatus","PENDING").put("captureSource",r.locationSource)
+    }
     suspend fun order(c:Context,db:InventoryDatabase,i:DriveSyncIntent):Pair<String,Double> {
         val r=if(i.kind=="SIC")db.inventoryDao().recordById(i.recordId) else if(i.kind=="SCAP")db.scapDao().snapshot(i.recordId)?.let {s->s.roadRecord?.copy(latitude=s.inspection.latitude ?: s.roadRecord.latitude,longitude=s.inspection.longitude ?: s.roadRecord.longitude)} else null
         if(r==null)return i.key to Double.MAX_VALUE
-        val axis=runCatching {RoadAxisPositioner(RoadReferenceRepository(c).loadFromAssets(),com.tuempresa.inventariovial.field.FieldSettings.load(c).matchConfig()).position(r).axisMeasureM}.getOrNull() ?: r.axisMeasureM
+        val routing=if(r.sicCode=="SIC-09")db.inventoryDao().snapshot(r.id)?.sicExtension?.sourceRecordId?.let {db.inventoryDao().recordById(it)} ?: r else r
+        val axis=runCatching {technicalOrder(c,routing).first}.getOrNull()
         val snapshot=db.inventoryDao().snapshot(r.id)
-        val family=snapshot?.let {RoadOrdering.orderAssetsForRoute(listOf(RouteDelivery.row(it))).single().assetFamily.folderLabel} ?: r.assetType
+        val family=snapshot?.let {RoadOrdering.orderAssetsForRoute(listOf(RouteDelivery.row(it))).singleOrNull()?.assetFamily?.folderLabel} ?: r.assetType
         return (r.routeCode+"/"+family) to (axis ?: Double.MAX_VALUE)
     }
     suspend fun validated(db:InventoryDatabase,i:DriveSyncIntent)=when(i.kind) {
@@ -98,24 +124,23 @@ object AutomaticDelivery {
             "SIC"->{
                 val s=requireNotNull(db.inventoryDao().snapshot(i.recordId))
                 val r=s.record
-                if(r.sicCode in setOf("SIC-08","SIC-09") &&
-                    (r.latitude==null || r.longitude==null || r.endLatitude==null || r.endLongitude==null))
-                    throw SyncPending("Entrega pendiente de georreferenciación externa. Ficha guardada localmente.")
                 val source=s.sicExtension?.sourceRecordId?.takeIf {r.sicCode=="SIC-09"}?.let {db.inventoryDao().snapshot(it)}
                 val routing=source?.record ?: r
                 if(source!=null)p.put("identityId",source.record.id)
-                val positioned=RoadAxisPositioner(RoadReferenceRepository(c).loadFromAssets(),com.tuempresa.inventariovial.field.FieldSettings.load(c).matchConfig()).position(routing)
-                val axis=positioned.axisMeasureM ?: routing.axisMeasureM ?: throw SyncPending("Pendiente de validación/ordenamiento: confirma ubicación sobre el eje vial.")
+                val (axis,orderSource)=technicalOrder(c,routing)
+                val geo=georeferencing(r)
                 val item=RouteDelivery.row(source ?: s);val asset=RoadOrdering.orderAssetsForRoute(listOf(item)).single()
                 if(asset.sibCode==null)throw SyncPending("Pendiente de clasificación SIB.")
                 p.put("routeCode",asset.routeCode).put("sibCode",asset.sibCode).put("family",asset.assetFamily.folderLabel).put("orderAxis",axis)
+                    .put("orderSource",orderSource).put("georeferencing",geo)
+                    .put("technicalDeliveryWithoutGps",orderSource=="CONTRACTUAL_PR" || geo.getString("status")=="PENDING_EXTERNAL")
                 val record=requireNotNull(db.inventoryDao().recordsForExport(null,r.routeCode).singleOrNull {it.record.id==r.id})
                 record.sic17?.bridgeCode?.let {p.put("bridgeCode",it)}
                 val formats=SicExportFormat.entries.filter {it.appliesTo(record)}
                 formats.forEach {format->
                     val f=File(directory,"${format.code}.xlsx")
                     f.outputStream().use {SicExcelWriter.write(it,listOf(record),format,ExportHeading())}
-                    rows.put(JSONObject().put("recordId",r.id).put("format",format.code).put("orderAxis",axis)
+                    rows.put(JSONObject().put("recordId",r.id).put("format",format.code).put("orderAxis",axis).put("orderSource",orderSource)
                         .put("base64",Base64.encodeToString(f.readBytes(),Base64.NO_WRAP)).put("sha256",sha256(f.readBytes())))
                 }
                 if(r.sicCode=="SIC-17") {
@@ -125,7 +150,7 @@ object AutomaticDelivery {
                         if(preview.missingRequired.isEmpty()) {
                             val bytes=java.io.ByteArrayOutputStream()
                             SicExcelWriter.writeMappedRow(bytes,format,r.routeCode,preview.columns,preview.values,if(format=="SIC-17A")setOf(7,8) else emptySet())
-                            rows.put(JSONObject().put("recordId",r.id).put("format",format).put("orderAxis",axis)
+                            rows.put(JSONObject().put("recordId",r.id).put("format",format).put("orderAxis",axis).put("orderSource",orderSource)
                                 .put("base64",Base64.encodeToString(bytes.toByteArray(),Base64.NO_WRAP)).put("sha256",sha256(bytes.toByteArray())))
                         }else pending.put(format+": "+preview.missingRequired.joinToString())
                     }
@@ -140,6 +165,8 @@ object AutomaticDelivery {
                 add("metadata",if(source!=null) "W_${sha256(r.id.toByteArray()).take(8)}.json" else "metadata.json","application/json",JSONObject().put("recordId",r.id).put("revision",i.revision)
                     .put("routeCode",r.routeCode).put("sicCode",r.sicCode).put("pr",r.startPrCode).put("distanceM",r.startDistanceM)
                     .put("latitude",r.latitude ?: JSONObject.NULL).put("longitude",r.longitude ?: JSONObject.NULL).put("surveyDate",r.surveyDate)
+                    .put("endLatitude",r.endLatitude ?: JSONObject.NULL).put("endLongitude",r.endLongitude ?: JSONObject.NULL)
+                    .put("georeferencing",geo).put("orderSource",orderSource).put("technicalValidationStatus","VALIDATED")
                     .put("observations",r.observations ?: JSONObject.NULL)
                     .put("photos",JSONArray(s.photos.filter {it.scapInspectionId==null}.map {photo->JSONObject()
                         .put("id",photo.id).put("category",photo.photoCategory).put("capturedAt",photo.capturedAt ?: JSONObject.NULL)
@@ -151,10 +178,12 @@ object AutomaticDelivery {
                 ScapDriveSync.reviewForUpload(s,ScapCatalog.load(c).forSnapshot(s),i.warningsConfirmed)
                 val layout=ScapHumanDelivery.prepare(c,db,s)
                 val r=requireNotNull(s.roadRecord)
-                val positioned=RoadAxisPositioner(RoadReferenceRepository(c).loadFromAssets(),com.tuempresa.inventariovial.field.FieldSettings.load(c).matchConfig()).position(r.copy(latitude=s.inspection.latitude ?: r.latitude,longitude=s.inspection.longitude ?: r.longitude))
+                val located=r.copy(latitude=s.inspection.latitude ?: r.latitude,longitude=s.inspection.longitude ?: r.longitude)
+                val (axis,orderSource)=technicalOrder(c,located)
                 p.put("identityId",s.inspection.roadRecordId).put("bridgeCode",s.inspection.bridgeCode)
                     .put("routeCode",layout.routeCode).put("sibCode","SIB-08").put("family","PUENTE")
-                    .put("orderAxis",positioned.axisMeasureM ?: r.axisMeasureM ?: throw SyncPending("Pendiente de ordenamiento del puente."))
+                    .put("orderAxis",axis).put("orderSource",orderSource).put("georeferencing",georeferencing(located))
+                    .put("technicalDeliveryWithoutGps",orderSource=="CONTRACTUAL_PR" || located.latitude==null || located.longitude==null)
                 val bundle=ScapDelivery.bundle(c,s,layout)
                 ZipInputStream(bundle.inputStream()).use {zip->
                     while(true) {
@@ -171,7 +200,7 @@ object AutomaticDelivery {
                     val f=File(directory,"${preview.format}.xlsx")
                     f.outputStream().use {ScapSicExporter.write(it,s,preview.format)}
                     rows.put(JSONObject().put("recordId",r.id).put("bridgeCode",s.inspection.bridgeCode).put("format",preview.format)
-                        .put("orderAxis",p.getDouble("orderAxis")).put("base64",Base64.encodeToString(f.readBytes(),Base64.NO_WRAP)).put("sha256",sha256(f.readBytes())))
+                        .put("orderAxis",p.getDouble("orderAxis")).put("orderSource",orderSource).put("base64",Base64.encodeToString(f.readBytes(),Base64.NO_WRAP)).put("sha256",sha256(f.readBytes())))
                 }
                 p.put("pendingSic",JSONArray(ScapSicExporter.previews(s).filter {it.missingRequired.isNotEmpty()}.map {it.format+": "+it.missingRequired.joinToString()}))
             }
@@ -205,6 +234,7 @@ object AutomaticDelivery {
                 }
             }
         }
+        if(i.kind!="PAVEMENT")p.put("technicalDeliveryVersion",1)
         p.put("sourceHash",sha256(source(db,i).toByteArray()))
         val content=contentHash(p)
         p.put("contentHash",content)
@@ -213,16 +243,24 @@ object AutomaticDelivery {
         return p
     }
     fun contentHash(p:JSONObject):String {
+        fun value(row:JSONObject,key:String):String = row.opt(key).let {if(it is Number)JSONObject.numberToString(it) else row.optString(key)}
         fun lines(array:JSONArray,keys:List<String>)=(0 until array.length()).map {n->
-            val row=array.getJSONObject(n);keys.joinToString("\t"){row.optString(it)}}.sorted().joinToString("\n")
+            val row=array.getJSONObject(n);keys.joinToString("\t"){value(row,it)}}.sorted().joinToString("\n")
         val header=listOf("key","revision","routeCode","sibCode","family","tramo","surface").joinToString("\t"){p.optString(it)}
+        val technical=if(p.optInt("technicalDeliveryVersion")==1) "\n"+listOf("technicalDeliveryVersion","orderAxis","orderSource","technicalDeliveryWithoutGps").joinToString("\t"){value(p,it)}+
+            "\t"+p.getJSONObject("georeferencing").getString("status")+"\t"+p.getJSONObject("georeferencing").getString("externalSubmetricStatus")+
+            "\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","orderAxis","orderSource")) else ""
         return sha256((header+"\n"+lines(p.getJSONArray("files"),listOf("key","path","mimeType","sha256"))+"\n"+
-            lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))).toByteArray())
+            lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical).toByteArray())
     }
     fun validAck(p:JSONObject,a:JSONObject):Boolean {
         if(!a.optBoolean("ok") || a.optInt("syncProtocol")!=3 || a.optInt("pathVersion")!=3 ||
             a.optString("key")!=p.getString("key") || a.optLong("revision")!=p.getLong("revision") ||
             a.optString("contentHash")!=p.getString("contentHash") || a.optString("folderId").isBlank())return false
+        if(p.optInt("technicalDeliveryVersion")==1 &&
+            (a.optString("technicalDeliveryStatus")!="DELIVERED" ||
+                a.optString("georeferencingStatus")!=p.getJSONObject("georeferencing").getString("status") ||
+                a.optString("externalGeoreferencingStatus")!="PENDING"))return false
         val expectedPrefix=if(p.getString("kind")=="PAVEMENT") "${p.getString("routeCode")}/EVALUACION_SUPERFICIAL/${p.getString("tramo")}/${p.getString("surface")}" else "${p.getString("routeCode")}/${p.getString("sibCode")}/"
         if(if(p.getString("kind")=="PAVEMENT") a.optString("logicalPath")!=expectedPrefix else !a.optString("logicalPath").startsWith(expectedPrefix))return false
         val files=a.optJSONArray("files") ?: return false;val expected=p.getJSONArray("files")
@@ -235,7 +273,9 @@ object AutomaticDelivery {
         val rows=p.getJSONArray("sicRows")
         return (0 until rows.length()).all {n->val e=rows.getJSONObject(n)
             (0 until aggregates.length()).any {k->val f=aggregates.getJSONObject(k)
-                f.optString("format")==e.getString("format") && f.optString("fileId").isNotBlank() && f.optString("logicalPath")=="${p.getString("routeCode")}/${p.getString("sibCode")}/${e.getString("format")}.xlsx" &&
+                f.optString("format")==e.getString("format") && f.optString("fileId").isNotBlank() &&
+                    (p.optInt("technicalDeliveryVersion")!=1 || f.optString("folderId").isNotBlank() && f.optString("sha256").matches(Regex("[a-f0-9]{64}"))) &&
+                    f.optString("logicalPath")=="${p.getString("routeCode")}/${p.getString("sibCode")}/${e.getString("format")}.xlsx" &&
                     f.optJSONArray("recordIds")?.let {ids->(0 until ids.length()).any {ids.getString(it)==e.getString("recordId")}}==true}}
     }
 }

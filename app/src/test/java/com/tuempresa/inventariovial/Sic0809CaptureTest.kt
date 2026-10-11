@@ -48,7 +48,7 @@ class Sic0809CaptureTest {
                 assertNull(record.latitude);assertNull(record.longitude);assertNull(record.endLatitude);assertNull(record.endLongitude)
                 assertEquals("ACTIVE",record.status);assertEquals("session",record.sessionId)
                 assertTrue(db.inventoryDao().track(record.id).isEmpty())
-                assertEquals("PENDING_VALIDATION",db.automaticSyncDao().get("SIC/${record.id}")!!.state)
+                assertEquals("QUEUED",db.automaticSyncDao().get("SIC/${record.id}")!!.state)
                 assertTrue(ServerPayload.encode(db.inventoryDao().snapshot(record.id)!!).getJSONObject("location").isNull("latitude"))
                 repo.save(record.id,saved.set("observations",notes+"\nCorrección"),"engineer",true)
                 assertEquals(notes+"\nCorrección",repo.load(record.id,format)!!.text("observations"))
@@ -136,13 +136,15 @@ class Sic0809CaptureTest {
             File(out,"comparacion.json").writeText(comparison.toString(2))
         } finally {db.close()}
     }
-    @Test fun automaticDeliveryWithoutGeoreferencingStaysPendingAndDoesNotInventData()=runBlocking {
+    @Test fun automaticDeliveryWithoutGeoreferencingPreparesTechnicalFilesAndDoesNotInventData()=runBlocking {
         val db=database();try {
             SicFieldRepository(db).save("local",fajaState(SicFieldFormat.SIC08),"engineer",true)
             val intent=db.automaticSyncDao().get("SIC/local")!!
             assertTrue(AutomaticDelivery.validated(db,intent))
-            val result=runCatching {AutomaticDelivery.prepare(context,db,intent)}
-            assertTrue(result.exceptionOrNull() is SyncPending)
+            val result=AutomaticDelivery.prepare(context,db,intent)
+            assertEquals("CONTRACTUAL_PR",result.getString("orderSource"))
+            assertEquals("PENDING_EXTERNAL",result.getJSONObject("georeferencing").getString("status"))
+            assertEquals("QUEUED",intent.state)
             assertEquals("ACTIVE",db.inventoryDao().recordById("local")!!.status)
             assertNull(db.inventoryDao().recordById("local")!!.latitude)
         } finally {db.close()}

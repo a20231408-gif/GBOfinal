@@ -1,0 +1,130 @@
+diff --git a/docs/sync-sin-gps-2026-10-11/before/Code.gs b/google-apps-script/Code.gs
+index b6d830f..8250344 100644
+--- a/docs/sync-sin-gps-2026-10-11/before/Code.gs
++++ b/google-apps-script/Code.gs
+@@ -24 +24,2 @@ function doGet() {
+-    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: 2, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING
++    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 2, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
++    technicalDeliveryWithoutGps: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), rootFolderId: ROOT_FOLDER_ID
+diff --git a/docs/sync-sin-gps-2026-10-11/before/SyncV3.gs b/google-apps-script/SyncV3.gs
+index a175596..1517fa6 100644
+--- a/docs/sync-sin-gps-2026-10-11/before/SyncV3.gs
++++ b/google-apps-script/SyncV3.gs
+@@ -106,0 +107,4 @@ function v3Store() {
++      // A technical delivery ordered by PR never claims geometric/submetric order.
++      // Keep assigned folder IDs/numbers stable; geometry reconciliation is a separate task.
++      const geometric=p.orderSource!=='CONTRACTUAL_PR';
++      const geometricPeers=peers.filter(b=>b.orderSource!=='CONTRACTUAL_PR');
+@@ -108 +112 @@ function v3Store() {
+-        if(p.kind!=='PAVEMENT' && peers.some(b=>b.orderAxis>p.orderAxis))SyncV3.reject('ORDERING_REQUIRED');
++        if(p.kind!=='PAVEMENT' && geometric && geometricPeers.some(b=>b.orderAxis>p.orderAxis))SyncV3.reject('ORDERING_REQUIRED');
+@@ -110 +114 @@ function v3Store() {
+-      }else if(p.kind!=='PAVEMENT' && peers.some(b=>b.sequence<sequence && b.orderAxis>p.orderAxis || b.sequence>sequence && b.orderAxis<p.orderAxis))SyncV3.reject('ORDERING_REQUIRED');
++      }else if(p.kind!=='PAVEMENT' && geometric && geometricPeers.some(b=>b.sequence<sequence && b.orderAxis>p.orderAxis || b.sequence>sequence && b.orderAxis<p.orderAxis))SyncV3.reject('ORDERING_REQUIRED');
+@@ -184 +188 @@ function v3Store() {
+-          metadata(bindingName,{identity,scope,family:p.family,sequence,orderAxis:p.orderAxis,folderId:folder.getId(),logicalPath});
++          metadata(bindingName,{identity,scope,family:p.family,sequence,orderAxis:p.orderAxis,orderSource:p.orderSource || 'GNSS_MAP_MATCH',folderId:folder.getId(),logicalPath});
+diff --git a/docs/sync-sin-gps-2026-10-11/before/SyncV3Core.js b/google-apps-script/SyncV3Core.js
+index 0310e25..3a5b195 100644
+--- a/docs/sync-sin-gps-2026-10-11/before/SyncV3Core.js
++++ b/google-apps-script/SyncV3Core.js
+@@ -12,0 +13,6 @@ var SyncV3 = (() => {
++    if(p.orderSource!=null && !['GNSS_MAP_MATCH','CONTRACTUAL_PR'].includes(p.orderSource))reject('INVALID_ORDER_SOURCE');
++    if(p.technicalDeliveryWithoutGps===true && (!p.georeferencing ||
++      !['PENDING_EXTERNAL','COORDINATES_AVAILABLE'].includes(p.georeferencing.status) ||
++      p.georeferencing.externalSubmetricStatus!=='PENDING'))reject('INVALID_GEOREFERENCING_STATE');
++    if(p.technicalDeliveryVersion===1 && (!p.georeferencing || !['PENDING_EXTERNAL','COORDINATES_AVAILABLE'].includes(p.georeferencing.status) ||
++       p.georeferencing.externalSubmetricStatus!=='PENDING' || !['GNSS_MAP_MATCH','CONTRACTUAL_PR'].includes(p.orderSource)))reject('INVALID_GEOREFERENCING_STATE');
+@@ -24 +30,2 @@ var SyncV3 = (() => {
+-        !Number.isFinite(row.orderAxis) || row.orderAxis<0 || !/^[a-f0-9]{64}$/.test(row.sha256))reject('INVALID_ROW');
++        !Number.isFinite(row.orderAxis) || row.orderAxis<0 || !/^[a-f0-9]{64}$/.test(row.sha256) ||
++        p.technicalDeliveryVersion===1 && (row.orderSource!==p.orderSource || row.orderAxis!==p.orderAxis))reject('INVALID_ROW');
+@@ -34,0 +42,2 @@ var SyncV3 = (() => {
++    const technical=p.technicalDeliveryVersion===1?'\n'+['technicalDeliveryVersion','orderAxis','orderSource','technicalDeliveryWithoutGps'].map(k=>String(p[k])).join('\t')+
++      '\t'+p.georeferencing.status+'\t'+p.georeferencing.externalSubmetricStatus+'\n'+lines(p.sicRows,['recordId','format','orderAxis','orderSource']):'';
+@@ -36 +45 @@ var SyncV3 = (() => {
+-      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256']);
++      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical;
+@@ -65 +74,2 @@ var SyncV3 = (() => {
+-      family:p.family,orderAxis:p.orderAxis,sicRows:p.sicRows.map(({workbook,...row})=>row)};
++      family:p.family,orderAxis:p.orderAxis,orderSource:p.orderSource || 'GNSS_MAP_MATCH',
++      georeferencing:p.georeferencing || null,sicRows:p.sicRows.map(({workbook,...row})=>row)};
+@@ -77 +87,2 @@ var SyncV3 = (() => {
+-        const sorted=sources.sort((a,b)=>a.orderAxis-b.orderAxis || a.recordId.localeCompare(b.recordId));
++        // Contractual PR and geometric axes have different origins; retain both sources.
++        const sorted=sources.sort((a,b)=>Number(a.orderSource==='CONTRACTUAL_PR')-Number(b.orderSource==='CONTRACTUAL_PR') || a.orderAxis-b.orderAxis || a.recordId.localeCompare(b.recordId));
+@@ -92,0 +104,4 @@ var SyncV3 = (() => {
++      receipt.technicalDeliveryStatus='DELIVERED';
++      receipt.georeferencingStatus=p.georeferencing?.status || 'UNASSESSED';
++      receipt.externalGeoreferencingStatus=p.georeferencing?.externalSubmetricStatus || 'UNASSESSED';
++      receipt.orderSource=next.orderSource;
+diff --git a/docs/sync-sin-gps-2026-10-11/before/SyncV3.test.cjs b/google-apps-script/SyncV3.test.cjs
+index bc6bf8d..e796dec 100644
+--- a/docs/sync-sin-gps-2026-10-11/before/SyncV3.test.cjs
++++ b/google-apps-script/SyncV3.test.cjs
+@@ -2,0 +3 @@ const {test}=require('node:test');const {spawnSync}=require('node:child_process'
++const core=require('./SyncV3Core.js');
+@@ -4 +5 @@ const PY=process.env.GBO_AUDIT_PYTHON || 'C:/Users/gerbc/.cache/codex-runtimes/c
+-const output=path.resolve(__dirname,'../docs/automatic-sync-v16/evidence');fs.mkdirSync(output,{recursive:true});
++const output=process.env.GBO_SYNC_TEST_OUTPUT || path.resolve(__dirname,'../docs/automatic-sync-v16/evidence');fs.mkdirSync(output,{recursive:true});
+@@ -87,0 +89,47 @@ test('foreign historical folder is never adopted or renamed silently',()=>{const
++
++function noGps(letter='A',axis=100) {
++  const p=payload(letter,1,0,axis);p.orderSource='CONTRACTUAL_PR';p.technicalDeliveryWithoutGps=true;p.technicalDeliveryVersion=1;
++  p.georeferencing={status:'PENDING_EXTERNAL',externalSubmetricStatus:'PENDING',captureSource:'UNAVAILABLE'};
++  p.sicRows.forEach(r=>r.orderSource=p.orderSource);
++  const metadata=Buffer.from(JSON.stringify({latitude:null,longitude:null,georeferencing:p.georeferencing}));
++  p.files[0].base64=metadata.toString('base64');p.files[0].sha256=hash(metadata);return p;
++}
++test('technical PR deliveries accept late earlier chainage without renaming existing folders',()=>{
++  const e=environment();const b=e.send(noGps('B',200));assert.equal(b.ok,true);
++  const a=e.send(noGps('A',100));assert.equal(a.ok,true);assert.notEqual(a.folderId,b.folderId);
++  const again=e.send(noGps('B',200));assert.equal(again.folderId,b.folderId);assert.equal(again.logicalPath,b.logicalPath);
++  assert.equal(a.technicalDeliveryStatus,'DELIVERED');assert.equal(a.georeferencingStatus,'PENDING_EXTERNAL');
++  assert.equal(a.externalGeoreferencingStatus,'PENDING');assert.equal(a.sicFiles[0].fileId,b.sicFiles[0].fileId);
++  assert.deepEqual([...a.sicFiles[0].recordIds],['bridge-A','bridge-B']);
++});
++test('geometric and contractual PR measures remain separate ordering sources',()=>{
++  const e=environment();assert.equal(e.send(noGps('A',10000)).ok,true);
++  assert.equal(e.send(payload('B',1,0,200)).ok,true);
++  const c=e.send(noGps('C',1));assert.equal(c.ok,true);
++  assert.deepEqual([...c.sicFiles[0].recordIds],['bridge-B','bridge-C','bridge-A']);
++});
++test('null GPS metadata and real Android photos/SIC-08/SIC-09 workbooks reach simulated Drive with stable IDs',()=>{
++  const e=environment();const receipts=[];
++  for(const format of ['SIC-08','SIC-09']) {
++    const p=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../docs/sync-sin-gps-2026-10-11/examples',format,'payload.json')));
++    assert.equal(p.contentHash,hash(core.canonical(p)),'Android and backend canonical hash must match');
++    const metadata=JSON.parse(Buffer.from(p.files.find(f=>f.key==='metadata').base64,'base64'));
++    assert.equal(metadata.latitude,null);assert.equal(metadata.longitude,null);
++    const a=e.send(p);assert.equal(a.ok,true,JSON.stringify(a));assert.equal(a.logicalPath.startsWith('PE-22A/SIB-02/FAJA '),true);
++    assert.equal(a.georeferencingStatus,'PENDING_EXTERNAL');assert.equal(a.externalGeoreferencingStatus,'PENDING');
++    const jpg=a.files.find(f=>f.key.startsWith('photo/'));assert.ok(jpg.fileId);assert.ok(jpg.folderId);
++    assert.equal(e.objects.get(jpg.fileId).getBlob().getBytes()[0],255);assert.ok(a.sicFiles[0].fileId);
++    const again=e.send(p);assert.equal(again.alreadyExists,true);assert.equal(again.folderId,a.folderId);
++    assert.deepEqual(JSON.parse(JSON.stringify(again.files)),JSON.parse(JSON.stringify(a.files)));
++    assert.equal(again.sicFiles[0].fileId,a.sicFiles[0].fileId);receipts.push({format,first:a,retry:again});
++  }
++  fs.writeFileSync(path.join(output,'no-gps-simulated-drive-receipts.json'),JSON.stringify({source:'Drive doubles, NOT real remote uploads',receipts},null,2));
++});
++test('technical hash protects delivery and georeferencing states against alteration',()=>{
++  const e=environment();const p=noGps();const commit=JSON.parse(JSON.stringify({...p,contentHash:hash(core.canonical(p))}));
++  commit.georeferencing.status='COORDINATES_AVAILABLE';assert.equal(e.context.commitRecordV3(commit).code,'CONTENT_HASH_MISMATCH');
++});
++test('invalid external georeferencing state is rejected before Drive delivery',()=>{
++  const e=environment();const p=noGps();p.georeferencing.externalSubmetricStatus='COMPLETE';
++  assert.equal(e.send(p).code,'INVALID_GEOREFERENCING_STATE');
++});
+diff --git a/docs/sync-sin-gps-2026-10-11/before/Code.test.cjs b/google-apps-script/Code.test.cjs
+index 8e7e7fc..a40d841 100644
+--- a/docs/sync-sin-gps-2026-10-11/before/Code.test.cjs
++++ b/google-apps-script/Code.test.cjs
+@@ -62,0 +63,8 @@ test('several photos share route and SIB and retry does not create another file'
++test('health only advertises no-GPS technical delivery when V3 engine, Drive and enable flag exist',()=>{
++  const e=environment();assert.equal(e.context.doGet().technicalDeliveryWithoutGps,false);
++  vm.runInContext('var SyncV3={}; var Drive={}; function v3Enabled(){return PropertiesService.getScriptProperties().getProperty("GBO_SYNC_V3_ENABLED")==="true";}',e.context);
++  assert.equal(e.context.doGet().technicalDeliveryWithoutGps,false);
++  e.properties.set('GBO_SYNC_V3_ENABLED','true');const health=e.context.doGet();
++  assert.equal(health.technicalDeliveryWithoutGps,true);assert.equal(health.syncProtocol,3);assert.equal(health.pathVersion,3);
++  assert.equal(typeof health.rootFolderId,'string');assert.ok(health.rootFolderId);
++});

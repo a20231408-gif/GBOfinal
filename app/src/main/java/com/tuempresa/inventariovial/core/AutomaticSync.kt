@@ -24,10 +24,24 @@ object AutomaticSync {
         val old=db.automaticSyncDao().get("$kind/$id") ?: return
         db.automaticSyncDao().put(old.copy(state=if(old.syncedRevision>0) "UPDATE_PENDING" else "DRAFT",preparedJson=null,error=null))
     }
+    /** Preserve identity/revision/receipts; recover only the previous GPS-only gate. */
+    suspend fun recoverGpsBlocked(db:InventoryDatabase):Int=db.withTransaction {
+        var count=0
+        for(old in db.automaticSyncDao().all()) {
+            if(old.state !in setOf("PENDING_VALIDATION","BLOCKED","ERROR") ||
+                old.error?.startsWith("Entrega pendiente de georreferenciación externa")!=true ||
+                !AutomaticDelivery.validated(db,old))continue
+            db.automaticSyncDao().put(old.copy(state=if(old.syncedRevision>0) "UPDATE_PENDING" else "QUEUED",
+                error=null,preparedJson=null,attempts=0))
+            count++
+        }
+        count
+    }
     /** Persistent drain also repairs an interruption between the Room commit and WorkManager enqueue. */
     fun wake(context:Context) {
         val c=context.applicationContext
         scope.launch {
+            recoverGpsBlocked(InventoryDatabase.getInstance(c))
             // Periodic work is a recovery mechanism; the immediate work handles ordinary closure.
             val periodic=PeriodicWorkRequestBuilder<AutomaticSyncWorker>(15,TimeUnit.MINUTES)
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build()
@@ -66,24 +80,38 @@ object AutomaticSync {
 
 class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWorker(context,params) {
     override suspend fun doWork():Result=withContext(Dispatchers.IO) {
-        val db=InventoryDatabase.getInstance(applicationContext);val dao=db.automaticSyncDao()
+        val retry=AutomaticSyncDrain.run(applicationContext,InventoryDatabase.getInstance(applicationContext),attempt=runAttemptCount)
+        if(retry)Result.retry() else Result.success()
+    }
+}
+
+/** Same drain for the WorkManager worker and focused transport/ACK regression tests. */
+object AutomaticSyncDrain {
+    suspend fun run(context:Context,db:InventoryDatabase,
+        transportFactory:()->AutomaticDriveTransport={AutomaticDriveHttp()},
+        configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0):Boolean {
+        AutomaticSync.recoverGpsBlocked(db)
+        val dao=db.automaticSyncDao()
         var retry=false
-        val pending=dao.all().filter {it.state in setOf("QUEUED","UPDATE_PENDING","UPLOADING","ERROR","UNCONFIGURED","PENDING_VALIDATION")}
-        val ordered=pending.map {it to AutomaticDelivery.order(applicationContext,db,it)}.sortedWith(compareBy({it.second.first},{it.second.second})).map {it.first}
+        val pending=dao.all().filter {it.state in setOf("QUEUED","UPDATE_PENDING","UPLOADING","ERROR","UNCONFIGURED","PENDING_VALIDATION") && AutomaticDelivery.validated(db,it)}
+        val ordered=pending.map {it to AutomaticDelivery.order(context,db,it)}.sortedWith(compareBy({it.second.first},{it.second.second},{it.first.key})).map {it.first}
         for(intent in ordered) {
             if(!AutomaticDelivery.validated(db,intent))continue
-            val configError=DriveUploadPolicy.configurationError()
-            if(configError!=null) {dao.state(intent.key,intent.revision,"UNCONFIGURED",configError);continue}
+            if(configurationError!=null) {dao.state(intent.key,intent.revision,"UNCONFIGURED",configurationError);continue}
             try {
-                val transport=AutomaticDriveHttp()
+                val transport=transportFactory()
                 if(!transport.supportsV3()) {dao.state(intent.key,intent.revision,"UNCONFIGURED","El servicio requiere syncProtocol 3. Se comprobará automáticamente de nuevo; la copia anterior se conserva.");continue}
-                val prepared=AutomaticDelivery.prepare(applicationContext,db,intent)
+                val prepared=AutomaticDelivery.prepare(context,db,intent)
                 dao.prepared(intent.key,intent.revision,prepared.toString())
+                if(prepared.optInt("technicalDeliveryVersion")==1 && !transport.supportsTechnicalDeliveryWithoutGps()) {
+                    dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend de Drive debe anunciar technicalDeliveryWithoutGps=true. Ficha y fotos conservadas; se comprobará automáticamente de nuevo.")
+                    continue
+                }
                 dao.state(intent.key,intent.revision,"UPLOADING",null)
                 if(!AutomaticDelivery.current(db,intent,prepared))continue
                 val ack=transport.post(prepared)
                 if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))
-                require(AutomaticDelivery.validAck(prepared,ack)) {"La confirmación no acredita todos los archivos, carpeta y revisión."}
+                if(!AutomaticDelivery.validAck(prepared,ack))throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
                 db.withTransaction {
                     if(AutomaticDelivery.current(db,intent,prepared)) {
                         dao.acknowledge(intent.key,intent.revision,System.currentTimeMillis(),ack.toString())
@@ -95,6 +123,10 @@ class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWork
                                 db.inventoryDao().photoById(id)?.let {photo->db.inventoryDao().updatePhotoMetadata(photo.copy(syncStatus="SYNCED",driveFileId=file.getString("fileId"),driveFolderId=file.getString("folderId")))}
                             }
                         }
+                        if(intent.kind=="SIC") {
+                            db.inventoryDao().refreshRecordPhotoStatus(intent.recordId)
+                            if(prepared.getJSONArray("sicRows").length()>0)db.inventoryDao().markTechnicalExcelSynced(intent.recordId)
+                        }
                         if(intent.kind=="SCAP")db.scapDao().inspection(intent.recordId)?.let {s->db.scapDao().syncState(s.id,s.updatedAt,"SYNCED")}
                     }
                 }
@@ -104,15 +136,15 @@ class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWork
                 val pending=e.code=="ORDERING_REQUIRED"
                 val state=if(pending)"PENDING_VALIDATION" else if(e.retryable)"ERROR" else "BLOCKED"
                 dao.state(intent.key,intent.revision,state,if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva.")
-                retry=retry || e.retryable && runAttemptCount<4
+                retry=retry || e.retryable && attempt<4
             }catch(_:IllegalArgumentException){
                 dao.state(intent.key,intent.revision,"BLOCKED","La ficha o los archivos requieren corrección antes de enviar. Revisa la validación del formato.")
             }catch(_:Exception){
                 dao.state(intent.key,intent.revision,"ERROR","No se confirmó la entrega. Archivos locales conservados; reintenta la comunicación.")
-                retry=retry || runAttemptCount<4
+                retry=retry || attempt<4
             }
         }
-        if(retry)Result.retry() else Result.success()
+        return retry
     }
 }
 class SyncPending(message:String):Exception(message)
