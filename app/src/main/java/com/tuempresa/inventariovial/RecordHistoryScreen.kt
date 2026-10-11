@@ -298,8 +298,8 @@ private fun HistoryRecordCard(
                         startSource = if (suggestion.pr == null) LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
                     }, { startSource = LocationSource.MANUAL_OVERRIDE })
                 FieldPrPanel(viewModel.field, route, roadbed)
-                OutlinedTextField(value = startPr, onValueChange = { startPr = it; startSource = LocationSource.edited(startSource, startSuggestion != null) }, label = { Text(if(record.sicCode=="SIC-22") "PR del elemento" else "PR inicio") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = startDistance, onValueChange = { startDistance = it; startSource = LocationSource.edited(startSource, startSuggestion != null) }, label = { Text(if(record.sicCode=="SIC-22") "Distancia desde PR (m)" else "Distancia inicio (m)") }, modifier = Modifier.fillMaxWidth())
+                com.tuempresa.inventariovial.field.ContractualPrField(value = startPr, onValueChange = { startPr = it; startSource = LocationSource.edited(startSource, startSuggestion != null) }, label = { Text(if(record.sicCode=="SIC-22") "PR del elemento" else "PR inicio") }, modifier = Modifier.fillMaxWidth())
+                com.tuempresa.inventariovial.field.PrDistanceField(value = startDistance, onValueChange = { startDistance = it; startSource = LocationSource.edited(startSource, startSuggestion != null) }, label = { Text(if(record.sicCode=="SIC-22") "Distancia desde PR (m)" else "Distancia inicio (m)") }, modifier = Modifier.fillMaxWidth())
                 if (com.tuempresa.inventariovial.validation.requiresEndLocation(record.sicCode, record.assetType, item.sic20?.classCode, item.sic23?.classCode)) {
                     LocationSuggestionPanel(reference, settings.matchConfig(), route, roadbed, record.endLatitude, record.endLongitude, record.endGpsAccuracyM, "fin",
                         { if (it != null && (endSource != LocationSource.MANUAL_OVERRIDE || (endSuggestion == null && record.endSuggestedPrCode == null))) endSuggestion = it }, { suggestion ->
@@ -311,11 +311,11 @@ private fun HistoryRecordCard(
                         }, { endSource = LocationSource.MANUAL_OVERRIDE })
                 }
                 if(record.sicCode!="SIC-22") {
-                OutlinedTextField(value = endPr, onValueChange = { endPr = it; endSource = LocationSource.edited(endSource, endSuggestion != null) }, label = { Text("PR fin") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = endDistance, onValueChange = { endDistance = it; endSource = LocationSource.edited(endSource, endSuggestion != null) }, label = { Text("Distancia fin (m)") }, modifier = Modifier.fillMaxWidth())
+                com.tuempresa.inventariovial.field.ContractualPrField(value = endPr, onValueChange = { endPr = it; endSource = LocationSource.edited(endSource, endSuggestion != null) }, label = { Text("PR fin") }, modifier = Modifier.fillMaxWidth())
+                com.tuempresa.inventariovial.field.PrDistanceField(value = endDistance, onValueChange = { endDistance = it; endSource = LocationSource.edited(endSource, endSuggestion != null) }, label = { Text("Distancia fin (m)") }, modifier = Modifier.fillMaxWidth())
                 }
                 OutlinedTextField(value = side, onValueChange = { side = it }, label = { Text("Lado") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = observations, onValueChange = { observations = it }, label = { Text("Observaciones") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = observations, onValueChange = { observations = it }, label = { Text("OBSERVACIONES") }, minLines=3, modifier = Modifier.fillMaxWidth())
                 editError?.let { ErrorText(it) }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Button(enabled = !saving, onClick = {

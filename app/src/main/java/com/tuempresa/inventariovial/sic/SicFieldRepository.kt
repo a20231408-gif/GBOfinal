@@ -13,8 +13,8 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         val r=dao.recordById(id) ?: return null
         val ext=dao.sicExtension(id)
         if(ext!=null && ext.formatCode==format.code) {
-            val values=ext.values()
-            val stored=if(r.observations!=null && format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09))
+            val values=mapOf("_latitude" to r.latitude?.toString().orEmpty(),"_longitude" to r.longitude?.toString().orEmpty(),"_accuracy" to r.gpsAccuracyM?.toString().orEmpty(),"_coordinateSource" to r.locationSource,"_gpsTimestamp" to r.gpsTimestamp?.toString().orEmpty())+ext.values()
+            val stored=if(r.observations!=null)
                 values+("observations" to r.observations) else values
             return inheritCurrent(SicFieldState(format,stored,ext.sourceRecordId))
         }
@@ -46,9 +46,17 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         sessionId:String?=null,expectedUpdatedAt:Long?=null):String = db.withTransaction {
         require(owner.isNotBlank()) {"Operador autenticado requerido"}
         val s=inheritCurrent(state)
+        require(s.text("_gpsError").isBlank()){s.text("_gpsError")}
         if(finalize) require(s.completion().canFinalize) {s.completion().issues.joinToString("\n") {"${it.field}: ${it.reason}"}}
         val key=if(s.format==SicFieldFormat.SIC18A) requireNotNull(s.sourceRecordId) else id
         val old=dao.recordById(key);val previous=dao.sicExtension(key)
+        if(s.format!=SicFieldFormat.SIC18A) {
+            val input=com.tuempresa.inventariovial.validation.ContractualLocationInput
+            for((field,historic) in listOf("startPrCode" to old?.startPrCode,"endPrCode" to old?.endPrCode))
+                require(input.acceptPr(s.text(field)) || historic==s.text(field)){"PR: máximo cuatro dígitos"}
+            for((field,historic) in listOf("startDistanceM" to old?.startDistanceM,"endDistanceM" to old?.endDistanceM))
+                require(input.acceptDistance(s.text(field)) || historic!=null && SicFieldState.number(s.text(field))==historic){"Distancia: máximo tres cifras enteras"}
+        }
         require(expectedUpdatedAt==null || old?.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste; conserva tus cambios y vuelve a abrirla."}
         require(old==null || old.sicCode==s.format.code || s.format==SicFieldFormat.SIC18A) {"Formato incompatible"}
         require(previous==null || previous.ownerUserId==owner) {"Ficha de otro operador"}
@@ -63,14 +71,14 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         if(s.format!=SicFieldFormat.SIC18A) {
             val r=InventoryRecordEntity(key,s.format.code,s.format.family,s.text("routeCode"),s.text("roadbedCode"),s.text("startPrCode"),
                 SicFieldState.number(s.text("startDistanceM")) ?: 0.0,s.text("endPrCode").ifBlank {null},SicFieldState.number(s.text("endDistanceM")),s.text("sideCode").ifBlank {null},
-                SicFieldState.number(s.text("_latitude")) ?: old?.latitude,
-                SicFieldState.number(s.text("_longitude")) ?: old?.longitude,
-                SicFieldState.number(s.text("_altitude")) ?: old?.altitudeM,SicFieldState.number(s.text("_accuracy")) ?: old?.gpsAccuracyM,s.text("surveyDate"),if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) s.values["observations"] ?: old?.observations else old?.observations,
+                if(s.text("_gpsExplicit")=="true") SicFieldState.number(s.text("_latitude")) else SicFieldState.number(s.text("_latitude")) ?: old?.latitude,
+                if(s.text("_gpsExplicit")=="true") SicFieldState.number(s.text("_longitude")) else SicFieldState.number(s.text("_longitude")) ?: old?.longitude,
+                if(s.text("_gpsExplicit")=="true") null else old?.altitudeM,if(s.text("_gpsExplicit")=="true") SicFieldState.number(s.text("_accuracy")) else old?.gpsAccuracyM,s.text("surveyDate"),s.values["observations"] ?: old?.observations,
                 if(finalize) "ACTIVE" else "DRAFT","PENDING","PENDING",old?.createdAt ?: now,now,
                 endLatitude=SicFieldState.number(s.text("_endLatitude")) ?: old?.endLatitude,endLongitude=SicFieldState.number(s.text("_endLongitude")) ?: old?.endLongitude,
                 endGpsAccuracyM=SicFieldState.number(s.text("_endAccuracy")) ?: old?.endGpsAccuracyM,
                 sessionId=old?.sessionId ?: sessionId,
-                gpsTimestamp=old?.gpsTimestamp,endGpsTimestamp=old?.endGpsTimestamp,gnssProvider=old?.gnssProvider ?: "TABLET",
+                gpsTimestamp=if(s.text("_gpsExplicit")=="true") s.text("_gpsTimestamp").toLongOrNull() else old?.gpsTimestamp,endGpsTimestamp=old?.endGpsTimestamp,gnssProvider=old?.gnssProvider ?: "TABLET",
                 gnssFixType=old?.gnssFixType,verticalAccuracyM=old?.verticalAccuracyM,satellites=old?.satellites,hdop=old?.hdop,
                 correctionAge=old?.correctionAge,isRtkFixed=old?.isRtkFixed ?: false,
                 segment=s.values["_segment"] ?: old?.segment,surveyDirection=s.values["_direction"] ?: old?.surveyDirection,
@@ -78,16 +86,23 @@ class SicFieldRepository(private val db:InventoryDatabase) {
                 matchedSegmentId=old?.matchedSegmentId,projectedLatitude=old?.projectedLatitude,projectedLongitude=old?.projectedLongitude,
                 endAxisMeasureM=old?.endAxisMeasureM,endDistanceToRoadAxisM=old?.endDistanceToRoadAxisM,
                 endMatchedSegmentId=old?.endMatchedSegmentId,endProjectedLatitude=old?.endProjectedLatitude,endProjectedLongitude=old?.endProjectedLongitude,
-                locationSource=if(s.text("_latitude").isNotBlank()) "TABLET_GNSS" else old?.locationSource ?: "CONTRACTUAL_PR_ONLY")
-            val stored=if(old!=null && s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) old.copy(
+                locationSource=if(s.text("_gpsExplicit")=="true") s.text("_coordinateSource").ifBlank{"CONTRACTUAL_PR_ONLY"} else old?.locationSource ?: "CONTRACTUAL_PR_ONLY")
+            val stored=if(old!=null) old.copy(
                 routeCode=r.routeCode,roadbedCode=r.roadbedCode,startPrCode=r.startPrCode,startDistanceM=r.startDistanceM,
-                endPrCode=r.endPrCode,endDistanceM=r.endDistanceM,surveyDate=r.surveyDate,observations=r.observations,
+                endPrCode=r.endPrCode,endDistanceM=r.endDistanceM,sideCode=if(s.values.containsKey("sideCode"))r.sideCode else old.sideCode,surveyDate=r.surveyDate,observations=r.observations,
                 latitude=r.latitude,longitude=r.longitude,altitudeM=r.altitudeM,gpsAccuracyM=r.gpsAccuracyM,
                 endLatitude=r.endLatitude,endLongitude=r.endLongitude,endGpsAccuracyM=r.endGpsAccuracyM,
                 status=r.status,photoSyncStatus=r.photoSyncStatus,excelSyncStatus=r.excelSyncStatus,
                 serverSyncStatus="PENDING",serverSyncError=null,updatedAt=now,
                 segment=r.segment,surveyDirection=r.surveyDirection,sessionId=old.sessionId,
-                locationSource=r.locationSource) else r
+                locationSource=r.locationSource,gpsTimestamp=r.gpsTimestamp,
+                gnssProvider=if(s.text("_gpsExplicit")=="true") "TABLET" else old.gnssProvider,
+                gnssFixType=if(s.text("_gpsExplicit")=="true")null else old.gnssFixType,
+                verticalAccuracyM=if(s.text("_gpsExplicit")=="true")null else old.verticalAccuracyM,
+                satellites=if(s.text("_gpsExplicit")=="true")null else old.satellites,
+                hdop=if(s.text("_gpsExplicit")=="true")null else old.hdop,
+                correctionAge=if(s.text("_gpsExplicit")=="true")null else old.correctionAge,
+                isRtkFixed=if(s.text("_gpsExplicit")=="true")false else old.isRtkFixed) else r
             if(old?.status=="ACTIVE") dao.updateRecord(stored) else dao.insertOrCompleteDraft(stored)
             if(photoPaths!=null) savePhotos(key,photoPaths,categories,captures,now)
         } else {

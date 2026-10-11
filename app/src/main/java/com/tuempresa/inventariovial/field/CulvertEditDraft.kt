@@ -9,7 +9,7 @@ import java.io.File
 
 /** Raw editing drafts for an ACTIVE culvert; never replace contractual Room data until finalization. */
 data class CulvertEditingDraft(val base:Sic18FormState,val extra:Map<String,String>,val photos:List<String>,val categories:Map<String,String>,
-    val captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),val baseRevision:Long?=null)
+    val captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),val baseRevision:Long?=null,val observations:String?=null)
 object CulvertEditDraft {
     private fun file(context:Context,id:String,owner:String):File {
         require(id.matches(Regex("[A-Za-z0-9_-]{1,100}")) && owner.isNotBlank())
@@ -24,7 +24,7 @@ object CulvertEditDraft {
             "crossSectionCode" to base.crossSectionCode,"dimension1M" to base.dimension1M,"dimension2M" to base.dimension2M,
             "structuralConditionCode" to base.structuralConditionCode,"functionalConditionCode" to base.functionalConditionCode,"sectionShape" to base.sectionShape,
             "structuralDamagePercent" to base.structuralDamagePercent,"functionalObstructionPercent" to base.functionalObstructionPercent)))
-            .put("baseRevision",draft.baseRevision ?: JSONObject.NULL).put("extra",JSONObject(draft.extra)).put("photos",JSONArray(draft.photos)).put("categories",JSONObject(draft.categories))
+            .put("observations",draft.observations ?: JSONObject.NULL).put("baseRevision",draft.baseRevision ?: JSONObject.NULL).put("extra",JSONObject(draft.extra)).put("photos",JSONArray(draft.photos)).put("categories",JSONObject(draft.categories))
             .put("captures",JSONObject().apply {draft.captures.forEach {(path,c)->
                 put(path,JSONObject().put("capturedAt",c.capturedAt ?: JSONObject.NULL).put("source",c.source).put("fix",c.fix?.let {f->
                     JSONObject().put("latitude",f.latitude).put("longitude",f.longitude).put("accuracy",f.horizontalAccuracy.takeIf {it.isFinite()} ?: JSONObject.NULL)
@@ -44,7 +44,7 @@ object CulvertEditDraft {
         return CulvertEditingDraft(Sic18FormState(b.getString("classCode"),b.getString("typeCode"),b.getString("spans"),b.getString("crossSectionCode"),b.getString("dimension1M"),b.getString("dimension2M"),b.getString("structuralConditionCode"),b.getString("functionalConditionCode"),sectionShape=b.optString("sectionShape"),structuralDamagePercent=b.optString("structuralDamagePercent"),functionalObstructionPercent=b.optString("functionalObstructionPercent")),
             map(j.getJSONObject("extra")),(0 until p.length()).map {p.getString(it)},map(j.getJSONObject("categories")),
             captures.keys().asSequence().associateWith {path->val c=captures.getJSONObject(path)
-                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(c.isNull("capturedAt"))null else c.getLong("capturedAt"),com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(c.optJSONObject("fix")),c.getString("source"))},baseRevision=if(j.isNull("baseRevision"))null else j.getLong("baseRevision"))
+                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(c.isNull("capturedAt"))null else c.getLong("capturedAt"),com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(c.optJSONObject("fix")),c.getString("source"))},baseRevision=if(j.isNull("baseRevision"))null else j.getLong("baseRevision"),observations=if(j.isNull("observations"))null else j.getString("observations"))
     }
     fun clear(context:Context,id:String,owner:String) {file(context,id,owner).delete()}
 }

@@ -66,6 +66,11 @@ object InventoryDraftStore {
         val id=r.recordId ?: UUID.randomUUID().toString()
         val old=db.inventoryDao().recordById(id)
         require(old==null || old.status=="DRAFT") { "La ficha ya está finalizada" }
+        val input=com.tuempresa.inventariovial.validation.ContractualLocationInput
+        require(input.acceptPr(r.startPrCode) || old?.startPrCode==r.startPrCode){"PR: máximo cuatro dígitos"}
+        require(r.endPrCode.isNullOrBlank() || input.acceptPr(r.endPrCode) || old?.endPrCode==r.endPrCode){"PR final: máximo cuatro dígitos"}
+        fun offset(text:String?,historic:Double?) = text.isNullOrBlank() || input.acceptDistance(text) || (historic!=null && text.replace(',', '.').toDoubleOrNull()==historic)
+        require(offset(r.startDistanceM,old?.startDistanceM) && offset(r.endDistanceM,old?.endDistanceM)){"Distancia: máximo tres cifras enteras"}
         val target=file(context,id)
         if(target.exists()) require(JSONObject(target.readText()).getString("owner")==user.id) { "Borrador de otro usuario" }
         val detail=when(val d=r.detail) {
@@ -92,10 +97,11 @@ object InventoryDraftStore {
         val now=System.currentTimeMillis()
         val record=InventoryRecordEntity(id,r.sicCode,r.assetType,r.routeCode,r.roadbedCode,r.startPrCode,
             r.startDistanceM.replace(',','.').toDoubleOrNull()?:0.0,r.endPrCode,r.endDistanceM?.replace(',','.')?.toDoubleOrNull(),r.sideCode,
-            r.latitude.takeIf {it.isFinite()}?:0.0,r.longitude.takeIf {it.isFinite()}?:0.0,r.location?.altitude,r.gpsAccuracyM?.toDouble(),
+            r.latitude.takeIf {it.isFinite()},r.longitude.takeIf {it.isFinite()},r.location?.altitude,r.gpsAccuracyM?.toDouble()?.takeIf{it.isFinite()},
             r.surveyDate,r.observations,"DRAFT","PENDING","PENDING",old?.createdAt?:now,now,
             endLatitude=r.endLocation?.latitude?:r.endLatitude,endLongitude=r.endLocation?.longitude?:r.endLongitude,endGpsAccuracyM=(r.endLocation?.horizontalAccuracy?:r.endGpsAccuracyM)?.toDouble(),
             locationSource=if(r.latitude.isFinite()&&r.longitude.isFinite())r.locationSource else "DRAFT_LOCATION_PENDING",
+            gpsTimestamp=r.location?.timestamp,gnssProvider=r.location?.provider?.name ?: "TABLET",isRtkFixed=r.location?.isRtkFixed ?: false,
             sessionId=r.sessionId,segment=r.segment,surveyDirection=r.direction,endLocationSource=r.endLocationSource,routeSource=r.routeSource)
         db.withTransaction {
             check(AuthGraph.get(context).sessions.requireUser().id==user.id)

@@ -51,13 +51,17 @@ import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
                 onSegment={change("_segment",it)},onRoute={change("routeCode",it);change("_routeSource",LocationSource.MANUAL_OVERRIDE);change("_locationSource",LocationSource.MANUAL_OVERRIDE);change("_endLocationSource",LocationSource.MANUAL_OVERRIDE)},
                 onRoadbed={manual("roadbedCode",it)},onDirection={change("_direction",it)})
         }
-        if(mutable) item {LegacyInitialGpsCapture {onFix(it,false)}}
-        if(format.hasEnd && mutable) item {
-            TrackCapturePanel(vm,trackRecordId,format.code,format.family,route,bed,state.text("startPrCode"),state.text("startDistanceM"),state.text("sideCode").ifBlank {null},fix,
-                onRecordId=onTrackId,onEndLocation={onFix(it,true)},segment=segment,direction=direction,prSource=source,
-                routeSource=state.text("_routeSource").ifBlank {"MANUAL"},suggestion=suggestion)
-        }
-        item {LocationSummaryCard(fix?.latitude,fix?.longitude,fix?.horizontalAccuracy?.toDouble(),"${state.text("startPrCode")} + ${state.text("startDistanceM")} m",route,source)}
+        item {OptionalDeviceGps(if(state.text("_gpsExplicit")=="true" || state.text("_latitude").isNotBlank()) {
+            val a=state.text("_latitude").toDoubleOrNull();val o=state.text("_longitude").toDoubleOrNull()
+            if(a!=null && o!=null) GeoLocation(a,o,state.text("_accuracy").toFloatOrNull() ?: Float.NaN,source=state.text("_coordinateSource"),timestamp=state.text("_gpsTimestamp").toLongOrNull() ?: 0) else null
+        } else fix,editable=mutable,onChange={gps->
+            onChange("_latitude",gps?.latitude?.toString().orEmpty());onChange("_longitude",gps?.longitude?.toString().orEmpty())
+            onChange("_coordinateSource",gps?.source ?: "CONTRACTUAL_PR_ONLY")
+            onChange("_accuracy",gps?.horizontalAccuracy?.takeIf{it.isFinite()}?.toString().orEmpty())
+            onChange("_gpsTimestamp",gps?.timestamp?.toString().orEmpty())
+            onChange("_gpsExplicit","true")
+            if(gps!=null) onFix(gps,false)
+        },onError={onChange("_gpsError",it.orEmpty())})}
         item {HorizontalDivider()}
         item {
             LegacyLocationSection(reference,settings.matchConfig(),route,bed,fix,state.text("startPrCode"),state.text("startDistanceM"),source,"inicio",
@@ -108,7 +112,7 @@ import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
             }
         }
         item {LegacyInventoryPhotos(format.code,paths,categories,editable=mutable,onPhotoMetadata=onMetadata,onChange=onPhotos)}
-        if(format.hasEnd && mutable) item {FinalLocationCapture(endFix) {onFix(it,true)}}
+        item {OutlinedTextField(state.text("observations"),{change("observations",it)},enabled=mutable,label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())}
         if(editable) item {LegacyInventoryReviewButton(loaded && !busy,onReview)}
         item {if(busy)LinearProgressIndicator(Modifier.fillMaxWidth());exportContent()}
     }

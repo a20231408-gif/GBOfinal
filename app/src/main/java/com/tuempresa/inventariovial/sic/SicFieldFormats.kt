@@ -79,8 +79,10 @@ data class SicFieldState(val format:SicFieldFormat,val values:Map<String,String>
         fun issue(label:String,reason:String,severity:ValidationIssue.Severity=ValidationIssue.Severity.BLOCKING_EXPORT) {
             issues+=ValidationIssue(label,reason,severity)
         }
+        if(text("_gpsError").isNotBlank()) issue("GPS",text("_gpsError"))
         for(f in format.fields) {
-            val v=text(f.key).trim()
+            val v=if(f.key in setOf("startPrCode","endPrCode","startDistanceM","endDistanceM"))text(f.key) else text(f.key).trim()
+            if(f.key in setOf("startDistanceM","endDistanceM") && com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(text(f.key))!=null && v.isNotBlank()) issue(f.label,"Distancia: máximo tres cifras enteras")
             if(v.isBlank()) {if(f.required) issue(f.label,"Falta completar",ValidationIssue.Severity.MISSING_USER_INPUT);continue}
             if(f.key=="typeCode" && v==ACCIDENT_TYPE_SOURCE_CONFLICT && format==SicFieldFormat.SIC34) {
                 issue("Tipo","Tipo pendiente de equivalencia contractual",ValidationIssue.Severity.UNRESOLVED_MAPPING);continue

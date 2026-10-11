@@ -157,11 +157,12 @@ class InventoryRepository(
         }
     }
 
-    suspend fun saveSupplementary(recordId: String, state: SupplementaryFormState) {
+    suspend fun saveSupplementary(recordId: String, state: SupplementaryFormState,expectedUpdatedAt:Long?=null) {
         check(state.format.enabled) { "Formato deshabilitado." }
         require(state.validate().isEmpty()) { state.validate().joinToString("\n") }
         database.withTransaction {
             val snapshot=dao.snapshot(recordId) ?: error("Registro inexistente.")
+            require(expectedUpdatedAt==null || snapshot.record.updatedAt==expectedUpdatedAt){"La ficha cambió desde que la abriste; conserva tus cambios y vuelve a abrirla."}
             require(snapshot.record.status=="ACTIVE") { "Solo se pueden editar registros activos." }
             if(state.format!=SupplementaryFormat.SIC18A) {
                 require(snapshot.record.sicCode=="SIC-17") { "El formato requiere un puente." }
@@ -178,6 +179,8 @@ class InventoryRepository(
                 SupplementaryFormat.SIC18A -> dao.saveSic18A(Sic18AEntity.from(recordId,state.values))
             }
             val revision=maxOf(System.currentTimeMillis(),snapshot.record.updatedAt+1)
+            state.values["observations"]?.let{dao.updateRecord(snapshot.record.copy(observations=it.ifBlank{null}))}
+            dao.markTechnicalExcelPending(recordId)
             dao.markServerPending(recordId,revision)
             com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",recordId,revision)
         }

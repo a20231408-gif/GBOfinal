@@ -125,5 +125,6 @@ internal fun sicMapping(s:ScapInspectionSnapshot,format:String)=when(format) {
 }
 
 @Composable private fun SicLocationNumber(label:String,value:String,decimal:Boolean,editable:Boolean,change:(String)->Unit) {
-    OutlinedTextField(value,change,label={Text(label)},enabled=editable,modifier=Modifier.fillMaxWidth(),keyboardOptions=KeyboardOptions(keyboardType=if(decimal) KeyboardType.Decimal else KeyboardType.Number))
+    if(decimal) com.tuempresa.inventariovial.field.PrDistanceField(value,change,label={Text(label)},enabled=editable)
+    else com.tuempresa.inventariovial.field.ContractualPrField(value,change,label={Text(label)},enabled=editable)
 }

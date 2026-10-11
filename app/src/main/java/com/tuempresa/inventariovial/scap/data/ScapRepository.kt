@@ -20,7 +20,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         val defaults=com.tuempresa.inventariovial.field.FieldSessionDefaults.location(session,routes=projectRoutes)
         // Technical draft: absent coordinates are not exported as an observed (0,0) location.
         db.inventoryDao().insertRecord(InventoryRecordEntity(roadId,"SCAP","PUENTE",defaults.route,defaults.roadbed,"",0.0,null,null,null,
-            0.0,0.0,null,null,LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),null,"DRAFT","PENDING","PENDING",now,now,
+            null,null,null,null,LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),null,"DRAFT","PENDING","PENDING",now,now,
             sessionId=sessionId,segment=defaults.segment.takeIf {it.isNotBlank()},surveyDirection=session?.direction))
         dao.insertInspection(ScapInspectionEntity(id,roadId,"","",now,now,operator,device,"DRAFT","PENDING",null,null,null,null,"MANUAL"))
         if(defaults.route.isNotBlank()) {
@@ -117,10 +117,10 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         require(roadbed in com.tuempresa.inventariovial.catalog.SicCatalogRepository.roadbedCodes) { "Selecciona una calzada del catálogo SIC." }
         require(pr.matches(Regex("[0-9]{1,4}"))) { "Código PR: de 1 a 4 dígitos." }
         val metres=requireNotNull(ScapNumbers.decimal(distance)) { "Ingresa la distancia desde PR." }
-        require(metres.isFinite() && metres>=0) { "Distancia no negativa." }
+        require(com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(distance)==null) { "Distancia: máximo tres cifras enteras." }
         require(endPr.isBlank()==endDistance.isBlank()) { "Completa ambos campos de ubicación final." }
         val end=if(endPr.isBlank()) null else requireNotNull(ScapNumbers.decimal(endDistance))
-        require(end==null || (endPr.matches(Regex("[0-9]{1,4}")) && end.isFinite() && end>=0)) { "Ubicación final inválida." }
+        require(end==null || (endPr.matches(Regex("[0-9]{1,4}")) && com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(endDistance)==null)) { "Ubicación final inválida." }
         daoRoad.updateRecord(road.copy(routeCode=route,roadbedCode=roadbed,startPrCode=pr.padStart(4,'0'),startDistanceM=metres,
             endPrCode=endPr.takeIf{it.isNotBlank()}?.padStart(4,'0'),endDistanceM=end,locationSource="SIC_CONFIRMED",
             updatedAt=maxOf(System.currentTimeMillis(),road.updatedAt+1)))

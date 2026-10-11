@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk=[34],qualifiers="w800dp-h1200dp-mdpi")
+@Config(sdk=[34],qualifiers="w800dp-h1200dp-mdpi",application=Application::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class FieldSessionFormsTest {
     private val models=androidx.lifecycle.ViewModelStore()
@@ -43,6 +43,9 @@ class FieldSessionFormsTest {
         try {androidx.work.WorkManager.getInstance(app)} catch(_:IllegalStateException) {
             androidx.work.WorkManager.initialize(app,androidx.work.Configuration.Builder().build())
         }
+        // This UI fixture checks the persisted outbox; transport tests drain it explicitly.
+        // Do not leave process-wide wake coroutines alive across Robolectric applications.
+        com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(app).syncContext=null
         return InventoryViewModel(app).also {vm->
             inventoryModel=vm
             models.put("inventory",vm)
@@ -133,5 +136,43 @@ class FieldSessionFormsTest {
         assertEquals("PE-3NG",runBlocking {vm.field.dao.recordById(id)}!!.routeCode)
         assertEquals("UC",runBlocking {vm.field.dao.recordById(id)}!!.roadbedCode)
         assertEquals(active,runBlocking {vm.field.dao.currentSession()})
+    }
+
+    @Test fun completedSharedCaptureWithoutGpsPreservesLongObservationsAndQueuesSameUuid() {
+        val vm=model();compose.setContent{MaterialTheme{Text("Prueba de guardado")}}
+        val active=start(vm,"PE-22A","CD")
+        val app=ApplicationProvider.getApplicationContext<Application>()
+        org.robolectric.Shadows.shadowOf(app).denyPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        val notes="Observación larga de señalización áéíóú\n".repeat(2000)
+        val r=com.tuempresa.inventariovial.model.form.InventorySaveRequest("SIC-21","HORIZONTAL_MARKS","PE-22A","CD","0010","125.500000","0011","999,75","D",Double.NaN,Double.NaN,null,"11/10/2026",notes,"",
+            com.tuempresa.inventariovial.model.form.SicFormDetail.Sic21(com.tuempresa.inventariovial.model.form.Sic21FormState("18","1","1","1")),photoPaths=emptyList(),recordId="shared-no-gps",sessionId=active.sessionId)
+        val saved=CompletableDeferred<String?>()
+        compose.runOnIdle{vm.saveRecord(r,{saved.complete(null)},{saved.complete(it)},warningsAccepted=true)}
+        compose.waitUntil(30_000){org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();saved.isCompleted}
+        assertNull(runBlocking{saved.await()})
+        val record=runBlocking{vm.field.dao.recordById("shared-no-gps")}!!
+        assertNull(record.latitude);assertNull(record.longitude);assertEquals(notes.trim(),record.observations);assertEquals("0010",record.startPrCode)
+        assertEquals(125.5,record.startDistanceM,0.0);assertEquals("ACTIVE",record.status);assertEquals(active.sessionId,record.sessionId)
+        val database=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(app)
+        assertEquals("QUEUED",runBlocking{database.automaticSyncDao().get("SIC/shared-no-gps")}!!.state)
+    }
+    @Test fun sharedOfflineDraftKeepsNullCoordinatesAndRawDecimalPrecision() {
+        val vm=model();compose.setContent{MaterialTheme{Text("Prueba de borrador")}}
+        val r=com.tuempresa.inventariovial.model.form.InventorySaveRequest("SIC-21","HORIZONTAL_MARKS","PE-22A","CD","0010","125,500000",null,null,"D",Double.NaN,Double.NaN,null,"11/10/2026","Observación del borrador","",
+            com.tuempresa.inventariovial.model.form.SicFormDetail.Sic21(com.tuempresa.inventariovial.model.form.Sic21FormState()),photoPaths=emptyList(),recordId="draft-null-gps")
+        val saved=CompletableDeferred<String?>()
+        compose.runOnIdle{vm.saveDraft(r,{saved.complete(null)},{saved.complete(it)})}
+        compose.waitUntil(30_000){org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();saved.isCompleted}
+        assertNull(runBlocking{saved.await()})
+        for(bad in listOf(r.copy(recordId="bad-pr-draft",startPrCode="00010"),r.copy(recordId="bad-offset-draft",startDistanceM="1234.50"))) {
+            val rejected=CompletableDeferred<String?>()
+            compose.runOnIdle{vm.saveDraft(bad,{rejected.complete(null)},{rejected.complete(it)})}
+            compose.waitUntil(30_000){org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();rejected.isCompleted}
+            assertNotNull(runBlocking{rejected.await()});assertNull(runBlocking{vm.field.dao.recordById(bad.recordId!!)})
+        }
+        val record=runBlocking{vm.field.dao.recordById("draft-null-gps")}!!
+        assertNull(record.latitude);assertNull(record.longitude);assertEquals("DRAFT",record.status)
+        val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(ApplicationProvider.getApplicationContext(),record.id)!!
+        assertEquals("125,500000",raw.getString("startDistanceM"));assertEquals("Observación del borrador",record.observations)
     }
 }

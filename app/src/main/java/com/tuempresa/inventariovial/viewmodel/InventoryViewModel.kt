@@ -199,11 +199,11 @@ class InventoryViewModel(
             SupplementaryFormat.SIC18A -> snapshot.sic18a?.values().orEmpty() + mapOf("classCode" to snapshot.sic18?.classCode.orEmpty(),
                 "typeCode" to snapshot.sic18?.typeCode.orEmpty(),"spans" to snapshot.sic18?.spans?.toString().orEmpty())
         }
-        return SupplementaryFormState(format,values)
+        return SupplementaryFormState(format,values+("observations" to snapshot.record.observations.orEmpty()))
     }
-    fun saveSupplementary(recordId: String,state: SupplementaryFormState,onSuccess: ()->Unit,onError: (String)->Unit) {
+    fun saveSupplementary(recordId: String,state: SupplementaryFormState,onSuccess: ()->Unit,onError: (String)->Unit,expectedUpdatedAt:Long?=null) {
         viewModelScope.launch {
-            try { repository.saveSupplementary(recordId,state);scheduleServerSync(getApplication());onSuccess() }
+            try { repository.saveSupplementary(recordId,state,expectedUpdatedAt);scheduleServerSync(getApplication());onSuccess() }
             catch(error:Exception) { onError(error.message ?: "No se pudo guardar el formato.") }
         }
     }
@@ -325,8 +325,10 @@ class InventoryViewModel(
         viewModelScope.launch {
             try {
                 require(record.routeCode.isNotBlank() && record.roadbedCode.isNotBlank()) { "Ruta y calzada son obligatorias." }
-                require(record.startDistanceM.isFinite() && record.startDistanceM >= 0) { "Distancia inicial inválida." }
-                require(record.sicCode=="SIC-22" || record.endDistanceM == null || (record.endDistanceM.isFinite() && record.endDistanceM >= 0)) { "Distancia final inválida." }
+                require(com.tuempresa.inventariovial.validation.ContractualLocationInput.prError(record.startPrCode)==null){"PR inicial inválido"}
+                require(com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(record.startDistanceM.toString())==null) { "Distancia inicial inválida." }
+                require(record.sicCode=="SIC-22" || record.endDistanceM == null || (com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(record.endDistanceM.toString())==null)) { "Distancia final inválida." }
+                require(record.sicCode=="SIC-22" || record.endPrCode.isNullOrBlank() || com.tuempresa.inventariovial.validation.ContractualLocationInput.prError(record.endPrCode)==null){"PR final inválido"}
                 if (record.sicCode == "SIC-23") {
                     Sic23FormState.locationError(record.routeCode, record.roadbedCode,
                         record.startPrCode, record.startDistanceM.toString(), record.endPrCode,
@@ -390,7 +392,7 @@ class InventoryViewModel(
                 com.tuempresa.inventariovial.field.SurveyPreferences(getApplication()).validate(request, field.reference.value.prs)?.let { error(it) }
                 val errors=CaptureValidation.errors(request)
                 require(errors.isEmpty()) { errors.joinToString("\n") { it.message } }
-                require(TrackCaptureService.activeRecordId.value==null || TrackCaptureService.activeRecordId.value!=request.recordId) { "Finaliza el recorrido antes de guardar." }
+
                 require(request.photoPaths.all { java.io.File(it).isFile }) { "No se encontró una fotografía." }
                 if(!warningsAccepted) {
                     val dimensions=withContext(Dispatchers.IO) { request.photoPaths.map { path ->
@@ -510,11 +512,11 @@ class InventoryViewModel(
 
 
                         latitude =
-                            request.latitude,
+                            request.latitude.takeIf {it.isFinite()},
 
 
                         longitude =
-                            request.longitude,
+                            request.longitude.takeIf {it.isFinite()},
 
 
                         altitudeM = request.location?.altitude?.takeIf { it.isFinite() },
@@ -565,7 +567,7 @@ class InventoryViewModel(
                         hdop = request.location?.hdop,
                         correctionAge = request.location?.correctionAge,
                         isRtkFixed = request.location?.isRtkFixed ?: false,
-                        locationSource = request.locationSource,
+                        locationSource = request.location?.source ?: if(request.latitude.isFinite()) request.locationSource else "CONTRACTUAL_PR_ONLY",
                         endLocationSource = request.endLocationSource,
                         sideSource = request.sideSource,
                         sessionId = request.sessionId,

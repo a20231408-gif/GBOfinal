@@ -21,7 +21,7 @@ object EngineeringEdits {
             signalCodeSource,signalDescription,signalObservation))}
         else -> error("Este editor requiere SIC-18 a SIC-22.")
     }
-    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null)=db.withTransaction {
+    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null,observations:String?=null,coordinateEdit:Boolean=false,coordinate:com.tuempresa.inventariovial.location.GeoLocation?=null)=db.withTransaction {
         val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
         require(expectedUpdatedAt==null || r.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste. Conserva tus cambios y vuelve a abrir la revisión actual."}
         require(r.status=="ACTIVE") {"Solo se pueden editar registros activos."}
@@ -29,7 +29,7 @@ object EngineeringEdits {
             r.endPrCode,r.endDistanceM?.toString(),r.sideCode,r.latitude ?: Double.NaN,r.longitude ?: Double.NaN,r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
         val unchangedLegacyType=detail is SicFormDetail.Sic22 && detail.state.typeCode==s.sic22?.typeCode && detail.state.typeCode in setOf("4","5","6")
         // NaN is only a validation sentinel; absent coordinates are never written or fabricated.
-        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {unchangedLegacyType && it.field=="typeCode"}
+        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {(unchangedLegacyType && it.field=="typeCode") || it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {
             is SicFormDetail.Sic17 -> with(detail.state) {dao.updateSic17(requireNotNull(s.sic17).copy(classCode=classCode,typeCode=typeCode,bridgeCode=bridgeCode,inventoriedCode=inventoriedCode,spans=spans.toIntOrNull(),dimension1LengthM=dimension1LengthM.replace(',','.').toDoubleOrNull(),dimension2LowerHeightM=dimension2LowerHeightM.replace(',','.').toDoubleOrNull(),structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,serviceTypeCode=serviceTypeCode,singularityCode=singularityCode,singularityName=singularityName,dimension3UpperHeightM=dimension3UpperHeightM.replace(',','.').toDoubleOrNull()))}
@@ -73,6 +73,21 @@ object EngineeringEdits {
             dao.refreshRecordPhotoStatus(id)
         }
         val revision=maxOf(System.currentTimeMillis(),r.updatedAt+1)
+        if(observations!=null || coordinateEdit) {
+            coordinate?.let{require(com.tuempresa.inventariovial.road.GeoMath.validCoordinate(it.latitude,it.longitude)){"Coordenadas inválidas"}}
+            val current=requireNotNull(dao.recordById(id))
+            dao.updateRecord(current.copy(observations=observations?.ifBlank{null} ?: if(observations==null)current.observations else null,
+                latitude=if(coordinateEdit)coordinate?.latitude else current.latitude,longitude=if(coordinateEdit)coordinate?.longitude else current.longitude,
+                gpsAccuracyM=if(coordinateEdit)coordinate?.horizontalAccuracy?.takeIf{it.isFinite()}?.toDouble() else current.gpsAccuracyM,
+                altitudeM=if(coordinateEdit)coordinate?.altitude else current.altitudeM,gpsTimestamp=if(coordinateEdit)coordinate?.timestamp else current.gpsTimestamp,
+                locationSource=if(coordinateEdit)coordinate?.source ?: "CONTRACTUAL_PR_ONLY" else current.locationSource,
+                gnssProvider=if(coordinateEdit)coordinate?.provider?.name ?: "TABLET" else current.gnssProvider,
+                gnssFixType=if(coordinateEdit)coordinate?.fixType else current.gnssFixType,
+                verticalAccuracyM=if(coordinateEdit)coordinate?.verticalAccuracy?.toDouble() else current.verticalAccuracyM,
+                satellites=if(coordinateEdit)coordinate?.satellites else current.satellites,hdop=if(coordinateEdit)coordinate?.hdop else current.hdop,
+                correctionAge=if(coordinateEdit)coordinate?.correctionAge else current.correctionAge,
+                isRtkFixed=if(coordinateEdit)coordinate?.isRtkFixed ?: false else current.isRtkFixed))
+        }
         dao.markServerPending(id,revision)
         dao.markTechnicalExcelPending(id)
         com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",id,revision)

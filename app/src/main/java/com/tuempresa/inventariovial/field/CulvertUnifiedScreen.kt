@@ -44,6 +44,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     val repo=remember(db) {SicFieldRepository(db)}
     val scope=rememberCoroutineScope()
     var snapshot by remember(id) {mutableStateOf<InventorySnapshot?>(null)}
+    var observations by remember(id){mutableStateOf("")}
     var openedRevision by remember(id) {mutableStateOf<Long?>(null)}
     var base by remember(id) {mutableStateOf(Sic18FormState())}
     var extra by remember(id) {mutableStateOf(initialExtra)}
@@ -61,25 +62,32 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     var conditionChange by remember {mutableStateOf<Sic18FormState?>(null)}
     var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
     LaunchedEffect(id) {try {
-        val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s;openedRevision=s.record.updatedAt
+        val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s;observations=s.record.observations.orEmpty();openedRevision=s.record.updatedAt
         base=(EngineeringEdits.form(s) as SicFormDetail.Sic18).state
         val saved=repo.load(id,SicFieldFormat.SIC18A)!!
         extra=saved.values+initialExtra
         extraComplete=initialExtra.isEmpty() && (s.sicExtension?.status=="COMPLETE" || s.sicExtension==null && s.sic18a!=null && saved.completion().canFinalize)
         paths=s.photos.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()
         val owner=vm.field.auth.sessions.requireUser().id
-        CulvertEditDraft.read(context,id,owner)?.let {draft->openedRevision=draft.baseRevision ?: openedRevision;base=draft.base;extra=draft.extra;paths=draft.photos;categories=draft.categories;captures=draft.captures;dirty=true;editingDraft=true;expanded=true;notice="Borrador de edición recuperado"}
+        CulvertEditDraft.read(context,id,owner)?.let {draft->openedRevision=draft.baseRevision ?: openedRevision;base=draft.base;observations=draft.observations ?: observations;extra=draft.extra;paths=draft.photos;categories=draft.categories;captures=draft.captures;dirty=true;editingDraft=true;expanded=true;notice="Borrador de edición recuperado"}
     } catch(e:Exception) {notice=e.message}}
     val required=InventoryElements.requiresCulvertDetail(base.structuralConditionCode,base.functionalConditionCode)
     val hasExtra=extra.any {it.key in culvertAdditionalKeys && it.value.isNotBlank()}
     val r=snapshot?.record
+    val coordinateEdited=extra["_gpsExplicit"]=="true"
+    val coordinate=if(coordinateEdited){
+        val a=extra["_latitude"]?.toDoubleOrNull();val o=extra["_longitude"]?.toDoubleOrNull()
+        if(a!=null && o!=null) com.tuempresa.inventariovial.location.GeoLocation(a,o,extra["_accuracy"]?.toFloatOrNull() ?: Float.NaN,
+            source=extra["_coordinateSource"] ?: "MANUAL_COORDINATES",timestamp=extra["_gpsTimestamp"]?.toLongOrNull() ?: 0) else null
+    } else r?.let{record->if(record.latitude!=null && record.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(record.latitude,record.longitude,record.gpsAccuracyM?.toFloat() ?: Float.NaN,source=record.locationSource,timestamp=record.gpsTimestamp ?: 0) else null}
+
     val extraState=SicFieldState(SicFieldFormat.SIC18A,(r?.let {SicFieldRepository.core(it)} ?: emptyMap())+extra+mapOf("classCode" to base.classCode,"typeCode" to base.typeCode,"spans" to base.spans),id)
     fun baseIssues():List<ValidationIssue> {
         val record=r ?: return listOf(ValidationIssue("Alcantarilla","Cargando datos",ValidationIssue.Severity.MISSING_USER_INPUT))
         val request=InventorySaveRequest(record.sicCode,record.assetType,record.routeCode,record.roadbedCode,record.startPrCode,record.startDistanceM.toString(),record.endPrCode,record.endDistanceM?.toString(),record.sideCode,record.latitude ?: Double.NaN,record.longitude ?: Double.NaN,record.gpsAccuracyM?.toFloat(),record.surveyDate,record.observations.orEmpty(),"",SicFormDetail.Sic18(base),photoPaths=paths)
-        return CaptureValidation.errors(request,validateLocation=record.latitude!=null || record.longitude!=null).map {ValidationIssue(it.field,it.message,ValidationIssue.Severity.MISSING_USER_INPUT)}
+        return CaptureValidation.errors(request,validateLocation=record.latitude!=null || record.longitude!=null).filterNot{it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}.map {ValidationIssue(it.field,it.message,ValidationIssue.Severity.MISSING_USER_INPUT)}
     }
-    val completion=CompletionResult(baseIssues()+if(required)extraState.completion().issues else emptyList())
+    val completion=CompletionResult(baseIssues()+(if(extra["_gpsError"].isNullOrBlank())emptyList() else listOf(ValidationIssue("GPS",extra["_gpsError"].orEmpty(),ValidationIssue.Severity.MISSING_USER_INPUT)))+(if(required)extraState.completion().issues else emptyList()))
     fun leave() {if(dirty)exit=true else onBack()}
     fun save(finalize:Boolean,after:(()->Unit)?=null) {
         if(busy || r==null)return
@@ -87,13 +95,13 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
         scope.launch {try {
             val owner=vm.field.auth.sessions.requireUser().id
             if(!finalize) {
-                CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures,baseRevision=openedRevision))
+                CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures,baseRevision=openedRevision,observations=observations))
                 editingDraft=true
                 notice="✓ Borrador guardado en tablet"
             } else {
                 require(completion.canFinalize) {"Completa los pendientes antes de finalizar"}
                 db.withTransaction {
-                    EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures,expectedUpdatedAt=openedRevision)
+                    EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate)
                     if(!extraComplete && hasExtra) repo.save(id,extraState,owner,required)
                 }
                 CulvertEditDraft.clear(context,id,owner)
@@ -112,7 +120,11 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
                 val survey=remember(context) {SurveyPreferences(context)}
                 SurveyHeader(survey,record.segment.orEmpty(),record.routeCode,record.roadbedCode,record.surveyDirection ?: "INCREASING",{},{},{},{})
             }
-            item {LocationSummaryCard(record.latitude,record.longitude,record.gpsAccuracyM,"${record.startPrCode} + ${record.startDistanceM} m",record.routeCode,record.locationSource)}
+            item {OptionalDeviceGps(coordinate,editable=!busy,onChange={gps->
+                extra=extra+mapOf("_gpsExplicit" to "true","_latitude" to gps?.latitude?.toString().orEmpty(),"_longitude" to gps?.longitude?.toString().orEmpty(),
+                    "_accuracy" to gps?.horizontalAccuracy?.takeIf{it.isFinite()}?.toString().orEmpty(),"_coordinateSource" to (gps?.source ?: "CONTRACTUAL_PR_ONLY"),"_gpsTimestamp" to gps?.timestamp?.toString().orEmpty())
+                dirty=true;review=false
+            },onError={extra=extra+("_gpsError" to it.orEmpty())})}
             item {Text("PR ${record.startPrCode} + ${record.startDistanceM} m · ${record.surveyDate}")}
         }
         if(snapshot!=null) {
@@ -130,7 +142,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             }
             if(expanded && (required || hasExtra)) item {CulvertSupplementFields(extra,!extraComplete && !busy) {extra=it;dirty=true;review=false;files=emptyList()}}
             item {CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->if(!busy){paths=p;categories=c;dirty=true;files=emptyList()}}}
-            r?.observations?.takeIf {it.isNotBlank()}?.let {item {com.tuempresa.inventariovial.SectionTitle("Registro");Text(it)}}
+            item {OutlinedTextField(observations,{observations=it;dirty=true;review=false},enabled=!busy,label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())}
             item {LegacyInventoryReviewButton(!busy) {review=true}}
             item {
                 if(editingDraft)Text("Finaliza el borrador de edición para exportar los cambios")

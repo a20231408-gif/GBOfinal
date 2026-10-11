@@ -1,0 +1,134 @@
+{
+  "base": "433b958831aa58f935fc5ff7941ab31a435911f5",
+  "branch": "codex/formularios-sic-3",
+  "androidTests": 44,
+  "failures": 0,
+  "suites": [
+    {
+      "suite": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "incompleteDraftsAreNeverDeliveredEvenWithOldGpsError",
+        "offlineQueueAndNullCoordinatesSurviveReopenThenBothFormatsDeliverPhotoAndExcel",
+        "recoverFourGpsOnlyBlocksPreservesRevisionAndPreviousReceipts",
+        "workManagerKeepsOfflineDrainEnqueuedWithNetworkConstraintAndSafeBackoff",
+        "oldBackendCannotReceiveNoGpsFilesAndQueueIsConserved",
+        "lostResponseRetriesSameRevisionAndIdsWithoutCreatingAnotherDelivery",
+        "incompleteBackendReceiptKeepsQueueAndPhotosUnconfirmed"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.ContractualFields3ScreenTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "fourthIntegerDistanceRejectedAndDecimalPrecisionPreserved",
+        "fifthPrDigitAndInvalidPasteShowImmediateErrorAndKeepZeros",
+        "deniedPermissionGpsCollapsedOptionalManualAndClear",
+        "historicalInvalidValueDisplayedWithoutSilentTruncation"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.ContractualForms3Test",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "allExtensionLocationsRejectFourIntegerDigits",
+        "criticalAndAccidentObservationsPersistEditAndReopen",
+        "fullRoadCatalogueDoesNotBypassOffsetLimit",
+        "dimensionsDoNotReceiveOffsetLimit",
+        "historicalGpsIsPreservedUntilExplicitlyCleared",
+        "offsetsKeepPrecisionAndBothSeparators",
+        "manualGpsIsNotCertifiedOrSubmetric",
+        "coordinatePairsAreOptionalButNeverPartiallyValid",
+        "observationsReachDriveMetadataWithoutChangingContractualColumns",
+        "scapSicOffsetsUseSameLimitsWithoutConstrainingFullProgressive",
+        "prPreservesLeadingZerosRejectsPasteAndFifthDigit",
+        "noGpsAndDeniedPermissionAllowTechnicalValidation"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.FieldSessionFormsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "sharedOfflineDraftKeepsNullCoordinatesAndRawDecimalPrecision",
+        "manualChangeSavedAsDraftSurvivesReopenAndNextFormReturnsToSessionDefaults",
+        "completedSharedCaptureWithoutGpsPreservesLongObservationsAndQueuesSameUuid",
+        "bothSessionChoicesReachSignalsAssetsAndAllStandaloneSicFormsAfterReturningHome"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.Sic0809CaptureTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "editingObservationsPreservesHistoricalGnssMetadataTrackAndStableIdentity",
+        "offlineRecordsWithNullCoordinatesAndLongObservationsPersistReopenAndEditIndependently",
+        "historicalLinkedWidthsKeepTheirOwnValuesAndCanFinalizeWithDraftParent",
+        "technicalValidationIsIndependentAndObservationsAreOptional",
+        "migration16to17PreservesEveryHistoricalTableAndAllowsNullCoordinates",
+        "automaticDeliveryWithoutGeoreferencingPreparesTechnicalFilesAndDoesNotInventData",
+        "officialWorkbooksKeepExactColumnsAndObservationsUseCompanionWithNullMetadata"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "staleLocalFormCannotOverwriteNewerConditionOrPhotos",
+        "lostAckThenEditReplaysExactPredecessorWithoutConflictingWithOwnDelivery",
+        "conditionAndProgressiveEditsKeepIdentityConfirmedBaseAndGenerateActualPayloads",
+        "missingBackendConfirmationCannotMarkAnEditSynced",
+        "editDuringUploadRetainsLateAckAsBaseAndThenDeliversNewerRevision",
+        "photoCategoryAddAndRemovePreserveOriginalFilesAndExistingPhotoUuid",
+        "pendingEditAndConfirmedIdentitySurviveDatabaseReopening",
+        "rejectionDuringAnotherSaveKeepsLatestLocalRevisionInConflict",
+        "nonblankButChangedFolderIdentityCannotAcknowledgeAnUpdate",
+        "operatorConflictPersistsLocalEditAndCannotBeClearedByAnotherSave"
+      ]
+    }
+  ],
+  "assembleDebug": "PASSED",
+  "apkSha256": "c057f12524659e208e3906d34793966107561358286f928c9cbf063da003931e",
+  "versionCode": 16,
+  "applicationId": "com.tuempresa.inventariovial",
+  "remoteDrive": "NOT_RUN",
+  "backend": "UNCHANGED",
+  "fullSuite": "NOT_RUN",
+  "physicalValidation": "PENDING",
+  "latestFollowUp": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "assembleDebug": "PASSED",
+    "log": "final-isolated.log",
+    "includes": [
+      "draft persistence limits",
+      "historical side/source/timestamp preservation",
+      "isolated Robolectric Application"
+    ]
+  },
+  "testCountMeaning": "44 distinct cases approved across focused runs; final affected selection: 27",
+  "initialFailuresPreserved": [
+    "build-initial.log",
+    "persistence-final.log",
+    "persistence-ui-final.log"
+  ],
+  "signerSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+}

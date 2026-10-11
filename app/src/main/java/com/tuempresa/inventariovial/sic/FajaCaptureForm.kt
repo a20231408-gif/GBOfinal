@@ -36,6 +36,17 @@ fun FajaCaptureForm(state:SicFieldState,editable:Boolean,notice:String?,onChange
                     SicFieldInput(state.format.fields.single {it.key=="roadbedCode"},state.text("roadbedCode"),{onChange("roadbedCode",it)},editable)
             }
         }
+        item {
+            val a=state.text("_latitude").toDoubleOrNull();val o=state.text("_longitude").toDoubleOrNull()
+            val fix=if(a!=null && o!=null) com.tuempresa.inventariovial.location.GeoLocation(a,o,state.text("_accuracy").toFloatOrNull() ?: Float.NaN,
+                source=state.text("_coordinateSource").ifBlank{"TABLET_GNSS"},timestamp=state.text("_gpsTimestamp").toLongOrNull() ?: 0) else null
+            OptionalDeviceGps(fix,editable,onChange={gps->
+                onChange("_latitude",gps?.latitude?.toString().orEmpty());onChange("_longitude",gps?.longitude?.toString().orEmpty())
+                onChange("_accuracy",gps?.horizontalAccuracy?.takeIf{it.isFinite()}?.toString().orEmpty())
+                onChange("_coordinateSource",gps?.source ?: "CONTRACTUAL_PR_ONLY");onChange("_gpsTimestamp",gps?.timestamp?.toString().orEmpty())
+                onChange("_gpsExplicit","true")
+            },onError={onChange("_gpsError",it.orEmpty())})
+        }
         state.format.fields.filter {it.key !in setOf("routeCode","roadbedCode")}.forEach {field ->
             item {SicFieldInput(field,state.text(field.key),{onChange(field.key,it)},editable)}
         }

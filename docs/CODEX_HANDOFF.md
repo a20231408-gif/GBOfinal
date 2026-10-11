@@ -1,3 +1,19 @@
+# Estado vigente — Prompt 3, 2026-10-11
+
+Rama `codex/formularios-sic-3`, copia aislada backend-v3-pruebas, desde 2B `433b958831aa58f935fc5ff7941ab31a435911f5`. Checkpoint local consultable con `git log -1`; sin push, merge ni cambio de copia operativa.
+
+Capturas SIC simplificadas: sin recorrido/GPS obligatorio, una sección opcional plegable, entrada manual sin certificación GNSS, coordenadas null y preservación histórica. PR hasta cuatro dígitos y distancia hasta tres cifras enteras, rechazo rojo inmediato y sin recortes; decimales conservados. OBSERVACIONES finales multilinea y persistentes en el mismo UUID y editores/borradores; contratos Excel intactos. SCAP solo adopta límites en su bloque UBICACIÓN SIC; dimensiones/CHAINAGE, pavimentos, PCI/URCI, mapa/KMZ y orden/numeración permanecen. Room 17 y Apps Script sin cambios. Ruta/calzada siguen heredadas de sesión en nuevas fichas; históricos conservan las propias.
+
+Aprobadas **44 pruebas Android focalizadas** (18 nuevas + 26 de regresión) y **assembleDebug**, 0 fallos/omisiones. Última selección afectada: 27 aprobadas + assembleDebug. Dos fallos intermedios de aislamiento Application/WorkManager en Robolectric conservados, corregidos en fixtures sin cambiar servicios productivos. Sin suite completa ni pruebas backend nuevas. Primeras 31 aprobadas y compilación inicialmente fallida conservadas localmente. [Evidencia y SHA APK](formularios-sic-3/VALIDACION.json), [entrega](formularios-sic-3/ENTREGA.md), [matriz de 28 casos y checklist](formularios-sic-3/MATRIZ_SIC.md). Firma Debug comprobada idéntica; applicationId/versionCode 16 sin cambios. No APK instalada.
+
+Pendientes: prueba física completa de las familias y panel/observaciones; subida real del esquema V3/pathVersion 4 con IDs/archivos verificados. No se ejecutó verificación remota ni publicación Apps Script ni uso de Drive productivo en Prompt 3. Protocolo de entrega 3/jerarquía 4 y control de revisiones 2B conservados; endpoint aislado conocido aún pathVersion 3. Servicio de usuarios y server.local.properties conservados.
+
+Sin commit quedan avances preexistentes SCAP/proguard/herramientas/resultados, logs locales y diez JSON regenerados por regresiones bajo docs/edicion-sincronizados-2b (originales protegidos en 433b958). No se descartaron. Checkpoint excluye propiedades privadas, tokens, keystores, APK/caches/logs crudos. Detener cambios para revisión; Prompt 4 NO iniciado. No cambiar SIC-18A técnico, cálculos, materiales, fotografías, dashboard, navegación, Excel ni backend.
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
 # Estado vigente — Prompt 2B, 2026-10-11
 
 Rama `codex/edicion-sincronizados-2b` en copia aislada backend-v3-pruebas, desde 2A `99b15aae88b2e69cb28a4715c87acb854fe6e12b`. Checkpoint funcional consultable con `git log -1`. Sin push ni merge; copia operativa y modificaciones anteriores preservadas.

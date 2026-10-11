@@ -139,7 +139,7 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
         }
         if(d.geometry=="SLABS") Field("Losas afectadas, separadas por coma",slabs){slabs=it}
         if(d.geometry != "GLOBAL") Field("Ancho de fisura (mm), si aplica",crack){crack=it}
-        Field("Observación",observation){observation=it}
+        OutlinedTextField(observation,{observation=it},label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())
         Text("Un daño de frontera se asigna a la muestra de la izquierda o de adelante. En una junta, 21 y 33: selecciona ambas losas afectadas.", style = MaterialTheme.typography.bodySmall)
         if(error.isNotEmpty()) Text(error,color=MaterialTheme.colorScheme.error)
     }

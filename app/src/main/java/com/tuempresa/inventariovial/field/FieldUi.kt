@@ -213,9 +213,10 @@ fun SupplementaryScreen(viewModel: InventoryViewModel,record: InventoryRecordEnt
                 } else OutlinedTextField(value,{state=state.copy(values=state.values+(field.key to it))},label={Text(field.label)},
                     readOnly=field.key=="bridgeCode",modifier=Modifier.fillMaxWidth())
             }
+            OutlinedTextField(state.values["observations"].orEmpty(),{state=state.copy(values=state.values+("observations" to it))},label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())
             if(format==SupplementaryFormat.SIC18A) Sic18AExportButton(record,state)
             if(editing) Button(enabled=!saving,onClick={saving=true;viewModel.saveSupplementary(record.id,state,
-                {saving=false;error=null;if(format==SupplementaryFormat.SIC18A){registered=true;editing=false}else onBack()},{saving=false;error=it})}) {Text("Guardar ${format.title}")}
+                {saving=false;error=null;if(format==SupplementaryFormat.SIC18A){registered=true;editing=false}else onBack()},{saving=false;error=it},expectedUpdatedAt=record.updatedAt)}) {Text("Guardar ${format.title}")}
         }
         error?.let {ErrorText(it)}
     }

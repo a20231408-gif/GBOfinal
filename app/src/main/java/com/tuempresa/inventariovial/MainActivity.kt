@@ -702,7 +702,7 @@ fun SignalizationFormScreen(
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
     var location by remember { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
-        GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,timestamp=it.gpsTimestamp ?: 0)
+        GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
     }) }
     val prReference by inventoryViewModel.field.reference.collectAsState()
     val prSettings by inventoryViewModel.field.settings.collectAsState()
@@ -794,6 +794,7 @@ fun SignalizationFormScreen(
         mutableStateOf(false)
     }
 
+    var gpsInputError by remember {mutableStateOf<String?>(null)}
     var locationError by remember {
         mutableStateOf<String?>(null)
     }
@@ -896,55 +897,9 @@ fun SignalizationFormScreen(
     }
 
 
-    val locationPermissionLauncher =
-        rememberLauncherForActivityResult(
-            contract =
-                ActivityResultContracts
-                    .RequestMultiplePermissions()
-        ) { permissions ->
 
-            val fineGranted =
-                permissions[
-                    Manifest.permission
-                        .ACCESS_FINE_LOCATION
-                ] == true
 
-            val coarseGranted =
-                permissions[
-                    Manifest.permission
-                        .ACCESS_COARSE_LOCATION
-                ] == true
 
-            if (
-                fineGranted ||
-                coarseGranted
-            ) {
-
-                captureLocation()
-
-            } else {
-
-                locationError =
-                    "Debes permitir el acceso a la ubicación."
-            }
-        }
-
-    LaunchedEffect(signalizationType) {
-        if(draftRecord != null) return@LaunchedEffect
-        if (hasLocationPermission()) {
-
-            captureLocation()
-
-        } else {
-
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
-    }
 
     val takePictureLauncher =
         rememberLauncherForActivityResult(
@@ -968,22 +923,7 @@ fun SignalizationFormScreen(
 
                 photoError = null
 
-                if (location == null && hasLocationPermission()) {
 
-                    captureLocation()
-
-                } else if (location == null) {
-
-                    locationPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission
-                                .ACCESS_FINE_LOCATION,
-
-                            Manifest.permission
-                                .ACCESS_COARSE_LOCATION
-                        )
-                    )
-                }
 
             } else {
 
@@ -1055,7 +995,7 @@ fun SignalizationFormScreen(
         }
 
 
-    fun currentDraftRequest()=InventorySaveRequest(
+    fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(
         sicCode=signalizationType.sicCode,assetType=signalizationType.name,routeCode=route,roadbedCode=roadbed,
         startPrCode=startPr,startDistanceM=startDistance,endPrCode=endPr,endDistanceM=endDistance,
         sideCode=codeFromOption(side),latitude=latitude ?: Double.NaN,longitude=longitude ?: Double.NaN,
@@ -1064,7 +1004,7 @@ fun SignalizationFormScreen(
         detail=if(signalizationType==SignalizationType.VERTICAL) SicFormDetail.Sic22(sic22State) else SicFormDetail.Sic21(sic21State),location=location,endLocation=endLocation,locationSource=locationSource,
         endLocationSource=endLocationSource,routeSource=routeSource,sideSource=sideSource,
         sessionId=draftRecord?.sessionId ?: fieldSession?.sessionId,segment=segment,direction=direction,
-        photoCaptures=photoCaptures,photoCategories=emptyMap())
+        photoCaptures=photoCaptures,photoCategories=emptyMap()) }
     var draftNotice by remember { mutableStateOf("") }
     LaunchedEffect(draftRecord?.id) {
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
@@ -1094,13 +1034,13 @@ fun SignalizationFormScreen(
     LaunchedEffect(capturedPhotos,photoCaptures) {
         if(capturedPhotos.isNotEmpty() || draftId!=null) {
             kotlinx.coroutines.delay(400)
-            inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
+            if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
         }
     }
 
     com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
         title="Registrar ${signalizationType.title}",subtitle="${signalizationType.sicCode} · ${signalizationType.subtitle}",
-        onSaveDraft={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
+        onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
         onBack=onBack,draftNotice=draftNotice
     ) {
         item {
@@ -1110,20 +1050,10 @@ fun SignalizationFormScreen(
                 onRoadbed={ roadbed=it; locationSource=LocationSource.edited(locationSource, startSuggestion != null); endLocationSource=LocationSource.edited(endLocationSource, endSuggestion != null) }, onDirection={ direction=it })
         }
         item {
-            com.tuempresa.inventariovial.field.LegacyInitialGpsButton(locating, { if(hasLocationPermission()) captureLocation() else locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)) }, if(signalizationType==SignalizationType.VERTICAL) "Actualizar GPS del elemento" else "Actualizar GPS inicial")
-        }
-
-        if (requiresEndLocation(signalizationType.sicCode, signalizationType.name)) {
-            item {
-                TrackCapturePanel(inventoryViewModel,draftId,"SIC-21",signalizationType.name,route,roadbed,startPr,startDistance,codeFromOption(side),location,
-                    onRecordId = { draftId=it }, onEndLocation = { endLocation=it }, segment=segment, direction=direction, prSource=locationSource, routeSource=routeSource, suggestion=startSuggestion)
-            }
-        }
-
-        // GNSS summary; calculations and acquisition remain in their existing handlers.
-        item {
-            com.tuempresa.inventariovial.core.LocationSummaryCard(latitude,longitude,gpsAccuracy?.toDouble(),
-                "$startPr + $startDistance m",route,locationSource)
+            com.tuempresa.inventariovial.field.OptionalDeviceGps(location,onChange={fix->
+                location=fix;latitude=fix?.latitude;longitude=fix?.longitude;gpsAccuracy=fix?.horizontalAccuracy
+                locationSource=fix?.source ?: "CONTRACTUAL_PR_ONLY"
+            },onError={gpsInputError=it})
         }
 
         locationError?.let { error ->
@@ -1141,19 +1071,7 @@ fun SignalizationFormScreen(
         item {
 
             SectionTitle(if(signalizationType==SignalizationType.VERTICAL) "Ubicación del elemento" else "Ubicación inicio")
-            LocationSuggestionPanel(prReference, prSettings.matchConfig(), route, roadbed,
-                latitude, longitude, gpsAccuracy?.toDouble(), if(signalizationType==SignalizationType.VERTICAL) "elemento" else "inicio", { if (it != null && (locationSource != LocationSource.MANUAL_OVERRIDE || (startSuggestion == null && draftRecord?.suggestedRouteCode == null && draftRecord?.suggestedPrCode == null))) startSuggestion = it }, { suggestion ->
-                    startSuggestion = suggestion
-                    route = suggestion.suggestedRouteCode ?: route
-                    segment = inventoryViewModel.field.projectRoutes.find(route)?.segmentCode.orEmpty()
-                    routeSource = LocationSource.GNSS_CONFIRMED
-                    suggestion.pr?.let { startPr = it.suggestedPrCode; startDistance = it.distanceText }
-                    locationSource = if (suggestion.pr == null) LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
-                }, { locationSource = LocationSource.MANUAL_OVERRIDE; routeSource = LocationSource.MANUAL_OVERRIDE })
-            FieldPrPanel(inventoryViewModel.field, route, roadbed)
-            if (locationSource in setOf(PrEntrySource.CONFIRMED, LocationSource.GNSS_CONFIRMED, LocationSource.GNSS_PR_CONFIRMED)) Text("Inicio: sugerencia GNSS confirmada")
-
-            OutlinedTextField(
+            com.tuempresa.inventariovial.field.ContractualPrField(
                 value = startPr,
                 onValueChange = {
                     locationSource = LocationSource.edited(locationSource, startSuggestion != null)
@@ -1174,7 +1092,7 @@ fun SignalizationFormScreen(
                     Modifier.height(10.dp)
             )
 
-            OutlinedTextField(
+            com.tuempresa.inventariovial.field.PrDistanceField(
                 value = startDistance,
                 onValueChange = {
                     locationSource = LocationSource.edited(locationSource, startSuggestion != null)
@@ -1195,18 +1113,7 @@ fun SignalizationFormScreen(
         item {
 
             SectionTitle("Ubicación fin")
-                LocationSuggestionPanel(prReference, prSettings.matchConfig(), route, roadbed,
-                    endLocation?.latitude, endLocation?.longitude, endLocation?.horizontalAccuracy?.toDouble(), "fin",
-                    { if (it != null && (endLocationSource != LocationSource.MANUAL_OVERRIDE || (endSuggestion == null && draftRecord?.endSuggestedPrCode == null))) endSuggestion = it }, { suggestion ->
-                        if (route == suggestion.suggestedRouteCode) {
-                            endSuggestion = suggestion
-                            suggestion.pr?.let { endPr = it.suggestedPrCode; endDistance = it.distanceText }
-                            endLocationSource = if (suggestion.pr == null) LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
-                        }
-                    }, { endLocationSource = LocationSource.MANUAL_OVERRIDE })
-                if (endLocationSource in setOf(PrEntrySource.CONFIRMED, LocationSource.GNSS_CONFIRMED, LocationSource.GNSS_PR_CONFIRMED)) Text("Fin: sugerencia GNSS confirmada")
-
-            OutlinedTextField(
+            com.tuempresa.inventariovial.field.ContractualPrField(
                 value = endPr,
                 onValueChange = {
                     endLocationSource = LocationSource.edited(endLocationSource, endSuggestion != null)
@@ -1227,7 +1134,7 @@ fun SignalizationFormScreen(
                     Modifier.height(10.dp)
             )
 
-            OutlinedTextField(
+            com.tuempresa.inventariovial.field.PrDistanceField(
                 value = endDistance,
                 onValueChange = {
                     endLocationSource = LocationSource.edited(endLocationSource, endSuggestion != null)
@@ -1305,35 +1212,7 @@ fun SignalizationFormScreen(
             HorizontalDivider()
         }
 
-        item {
 
-            SectionTitle("Registro")
-
-            Text(
-                text =
-                    "Fecha: $registrationDate"
-            )
-
-            Spacer(
-                modifier =
-                    Modifier.height(10.dp)
-            )
-
-            OutlinedTextField(
-                value = observations,
-                onValueChange = {
-                    observations = it
-                },
-                label = {
-                    Text(
-                        "Observaciones adicionales"
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
-            )
-        }
 
         // Shared photograph capture.
         item {
@@ -1346,9 +1225,7 @@ fun SignalizationFormScreen(
                 photoPath = capturedPhotos.lastOrNull()
                 photoCaptured = capturedPhotos.isNotEmpty()
             }
-            if (requiresEndLocation(signalizationType.sicCode, signalizationType.name)) {
-                FinalLocationCapture(endLocation) { endLocation = it }
-            }
+
         }
         if (
             photoCaptured &&
@@ -1413,9 +1290,39 @@ fun SignalizationFormScreen(
 
 
         item {
-            photoGpsWarning?.let { Text(it) }
+
             PhotoStampPanel(capturedPhotos,PhotoStampData(route,roadbed,"$startPr + $startDistance m",location,
                 location?.timestamp ?: System.currentTimeMillis(),fieldSession?.operator.orEmpty(),signalizationType.title),stampedPaths, photoCaptures = photoCaptures) { stampedPaths=it }
+        }
+        item {
+
+            SectionTitle("Registro")
+
+            Text(
+                text =
+                    "Fecha: $registrationDate"
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(10.dp)
+            )
+
+            OutlinedTextField(
+                value = observations,
+                onValueChange = {
+                    observations = it
+                },
+                label = {
+                    Text(
+                        "OBSERVACIONES"
+                    )
+                },
+                minLines = 3,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
+            )
         }
         formError?.let { error ->
 
@@ -1431,11 +1338,7 @@ fun SignalizationFormScreen(
 
                     when {
 
-                        latitude == null ||
-                                longitude == null -> {
-                            formError =
-                                "Debes obtener la ubicación GPS."
-                        }
+                        gpsInputError != null -> { formError=gpsInputError }
 
                         route.trim().isEmpty() -> {
                             formError =
@@ -1544,9 +1447,9 @@ fun SignalizationFormScreen(
                                                     side
                                                 ),
 
-                                            latitude = latitude!!,
+                                            latitude = latitude ?: Double.NaN,
 
-                                            longitude = longitude!!,
+                                            longitude = longitude ?: Double.NaN,
 
                                             gpsAccuracyM =
                                                 gpsAccuracy,
@@ -1818,7 +1721,7 @@ fun AssetFormScreen(
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
     var location by remember { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
-        GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,timestamp=it.gpsTimestamp ?: 0)
+        GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
     }) }
     val prReference by inventoryViewModel.field.reference.collectAsState()
     val prSettings by inventoryViewModel.field.settings.collectAsState()
@@ -1908,6 +1811,7 @@ fun AssetFormScreen(
         mutableStateOf(false)
     }
 
+    var gpsInputError by remember {mutableStateOf<String?>(null)}
     var locationError by remember {
         mutableStateOf<String?>(null)
     }
@@ -1992,56 +1896,10 @@ fun AssetFormScreen(
     }
 
 
-    val locationPermissionLauncher =
-        rememberLauncherForActivityResult(
-            contract =
-                ActivityResultContracts
-                    .RequestMultiplePermissions()
-        ) { permissions ->
-
-            val fineGranted =
-                permissions[
-                    Manifest.permission
-                        .ACCESS_FINE_LOCATION
-                ] == true
-
-            val coarseGranted =
-                permissions[
-                    Manifest.permission
-                        .ACCESS_COARSE_LOCATION
-                ] == true
-
-            if (
-                fineGranted ||
-                coarseGranted
-            ) {
-
-                captureLocation()
-
-            } else {
-
-                locationError =
-                    "Debes permitir el acceso a la ubicación."
-            }
-        }
 
 
-    LaunchedEffect(assetType) {
-        if(draftRecord != null) return@LaunchedEffect
-        if (hasLocationPermission()) {
 
-            captureLocation()
 
-        } else {
-
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
-    }
 
 
     val takePictureLauncher =
@@ -2066,22 +1924,7 @@ fun AssetFormScreen(
 
                 photoError = null
 
-                if (location == null && hasLocationPermission()) {
 
-                    captureLocation()
-
-                } else if (location == null) {
-
-                    locationPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission
-                                .ACCESS_FINE_LOCATION,
-
-                            Manifest.permission
-                                .ACCESS_COARSE_LOCATION
-                        )
-                    )
-                }
 
             } else {
 
@@ -2194,11 +2037,7 @@ fun AssetFormScreen(
 
                     when {
 
-                        latitude == null ||
-                                longitude == null -> {
-                            formError =
-                                "Debes obtener la ubicación GPS."
-                        }
+                        gpsInputError != null -> { formError=gpsInputError }
 
                         route.trim().isEmpty() -> {
                             formError =
@@ -2438,9 +2277,9 @@ fun AssetFormScreen(
                                                     null
                                                 },
 
-                                            latitude = latitude!!,
+                                            latitude = latitude ?: Double.NaN,
 
-                                            longitude = longitude!!,
+                                            longitude = longitude ?: Double.NaN,
 
                                             gpsAccuracyM =
                                                 gpsAccuracy,
@@ -2483,7 +2322,7 @@ fun AssetFormScreen(
                     }
     }
 
-    fun currentDraftRequest()=InventorySaveRequest(
+    fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(
         sicCode=assetType.sicCode,assetType=when(assetType) { RoadAssetType.BRIDGE->"PUENTE";RoadAssetType.CULVERT->"ALCANTARILLA";RoadAssetType.DITCH->"DRENAJE";RoadAssetType.RIGHT_OF_WAY->sic23State.assetName;else->assetType.name },routeCode=route,roadbedCode=roadbed,
         startPrCode=startPr,startDistanceM=startDistance,endPrCode=endPr,endDistanceM=endDistance,
         sideCode=codeFromOption(side),latitude=latitude ?: Double.NaN,longitude=longitude ?: Double.NaN,
@@ -2492,7 +2331,7 @@ fun AssetFormScreen(
         detail=when(assetType) { RoadAssetType.RIGHT_OF_WAY->SicFormDetail.Sic23(sic23State);RoadAssetType.BRIDGE->SicFormDetail.Sic17(sic17State);RoadAssetType.CULVERT->SicFormDetail.Sic18(sic18State);RoadAssetType.DITCH->SicFormDetail.Sic19(sic19State);else->SicFormDetail.Sic20(sic20State) },location=location,endLocation=endLocation,locationSource=locationSource,
         endLocationSource=endLocationSource,routeSource=routeSource,sideSource=sideSource,
         sessionId=draftRecord?.sessionId ?: fieldSession?.sessionId,segment=segment,direction=direction,
-        photoCaptures=photoCaptures,photoCategories=photoCategories)
+        photoCaptures=photoCaptures,photoCategories=photoCategories) }
     var draftNotice by remember { mutableStateOf("") }
     LaunchedEffect(draftRecord?.id) {
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
@@ -2526,13 +2365,13 @@ fun AssetFormScreen(
     LaunchedEffect(capturedPhotos,photoCaptures) {
         if(capturedPhotos.isNotEmpty() || draftId!=null) {
             kotlinx.coroutines.delay(400)
-            inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
+            if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
         }
     }
 
     com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
         title="Registrar ${assetType.title}",subtitle="${assetType.sicCode} · ${assetType.subtitle}",
-        onSaveDraft={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
+        onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
         onBack={if(assetType==RoadAssetType.CULVERT && culvertExtraDirty) showCulvertExit=true else onBack()},draftNotice=draftNotice,
         draftErrors={culvertDraftError?.let {ErrorText(it)}}
     ) {
@@ -2544,21 +2383,10 @@ fun AssetFormScreen(
                 onRoadbed={ roadbed=it; locationSource=LocationSource.edited(locationSource, startSuggestion != null); endLocationSource=LocationSource.edited(endLocationSource, endSuggestion != null) }, onDirection={ direction=it })
         }
         item {
-            com.tuempresa.inventariovial.field.LegacyInitialGpsButton(locating, { if(hasLocationPermission()) captureLocation() else locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)) }, "Actualizar GPS inicial")
-        }
-
-        if (requiresEndLocation(assetType.sicCode, assetType.name,
-            sic20Class=if(assetType.sicCode=="SIC-20") sic20State.classCode else null, sic23Class=sic23State.classCode)) {
-            item {
-                TrackCapturePanel(inventoryViewModel,draftId,assetType.sicCode,assetType.name,route,roadbed,startPr,startDistance,codeFromOption(side),location,
-                    onRecordId = { draftId=it }, onEndLocation = { endLocation=it }, segment=segment, direction=direction, prSource=locationSource, routeSource=routeSource, suggestion=startSuggestion)
-            }
-        }
-
-        // GNSS summary; calculations and acquisition remain in their existing handlers.
-        item {
-            com.tuempresa.inventariovial.core.LocationSummaryCard(latitude,longitude,gpsAccuracy?.toDouble(),
-                "$startPr + $startDistance m",route,locationSource)
+            com.tuempresa.inventariovial.field.OptionalDeviceGps(location,onChange={fix->
+                location=fix;latitude=fix?.latitude;longitude=fix?.longitude;gpsAccuracy=fix?.horizontalAccuracy
+                locationSource=fix?.source ?: "CONTRACTUAL_PR_ONLY"
+            },onError={gpsInputError=it})
         }
 
         locationError?.let { error ->
@@ -2689,35 +2517,7 @@ fun AssetFormScreen(
             HorizontalDivider()
         }
 
-        item {
 
-            SectionTitle("Registro")
-
-            Text(
-                text =
-                    "Fecha: $registrationDate"
-            )
-
-            Spacer(
-                modifier =
-                    Modifier.height(10.dp)
-            )
-
-            OutlinedTextField(
-                value = observations,
-                onValueChange = {
-                    observations = it
-                },
-                label = {
-                    Text(
-                        "Observaciones adicionales"
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
-            )
-        }
 
         if(assetType==RoadAssetType.CULVERT) item {
             CulvertPhotos(capturedPhotos,photoCategories,onPhotoMetadata={path,metadata->photoCaptures=photoCaptures+(path to metadata)}) {paths,categories->capturedPhotos=paths;photoCategories=categories;photoPath=paths.lastOrNull();photoCaptured=paths.isNotEmpty()}
@@ -2776,10 +2576,7 @@ fun AssetFormScreen(
                 photoPath = capturedPhotos.lastOrNull()
                 photoCaptured = capturedPhotos.isNotEmpty()
             }
-            if (requiresEndLocation(assetType.sicCode, assetType.name,
-                sic20Class=if(assetType.sicCode=="SIC-20") sic20State.classCode else null, sic23Class=sic23State.classCode)) {
-                FinalLocationCapture(endLocation) { endLocation = it }
-            }
+
         }
         if (
             photoCaptured &&
@@ -2846,9 +2643,39 @@ fun AssetFormScreen(
 
 
         item {
-            photoGpsWarning?.let { Text(it) }
+
             PhotoStampPanel(capturedPhotos,PhotoStampData(route,roadbed,"$startPr + $startDistance m",location,
                 location?.timestamp ?: System.currentTimeMillis(),fieldSession?.operator.orEmpty(),assetType.title),stampedPaths, photoCaptures = photoCaptures) { stampedPaths=it }
+        }
+        item {
+
+            SectionTitle("Registro")
+
+            Text(
+                text =
+                    "Fecha: $registrationDate"
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(10.dp)
+            )
+
+            OutlinedTextField(
+                value = observations,
+                onValueChange = {
+                    observations = it
+                },
+                label = {
+                    Text(
+                        "OBSERVACIONES"
+                    )
+                },
+                minLines = 3,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
+            )
         }
         formError?.let { error ->
 
@@ -2867,7 +2694,7 @@ fun AssetFormScreen(
     androidx.activity.compose.BackHandler(enabled=assetType==RoadAssetType.CULVERT && culvertExtraDirty) {showCulvertExit=true}
     if(showCulvertExit) androidx.compose.material3.AlertDialog(onDismissRequest={showCulvertExit=false},title={Text("Guardar cambios")},
         text={Text("Conserva el detalle de condición mala como borrador antes de volver.")},
-        confirmButton={TextButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it){showCulvertExit=false;onBack()}},{culvertDraftError=it})}) {Text("Guardar borrador y volver")}},
+        confirmButton={TextButton(onClick={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it){showCulvertExit=false;onBack()}},{culvertDraftError=it})}) {Text("Guardar borrador y volver")}},
         dismissButton={TextButton(onClick={showCulvertExit=false}) {Text("Seguir editando")}})
 
 }

@@ -10,7 +10,6 @@ import com.tuempresa.inventariovial.ChoiceSelector
 @Composable
 fun SurveyHeader(preferences: SurveyPreferences, segment: String, route: String, roadbed: String, direction: String,
     onSegment: (String)->Unit, onRoute: (String)->Unit, onRoadbed: (String)->Unit, onDirection: (String)->Unit) {
-    var reset by remember { mutableStateOf(false) }
     Column(verticalArrangement=Arrangement.spacedBy(10.dp)) {
         Text("Ruta",style=MaterialTheme.typography.titleMedium)
         ChoiceSelector(preferences.projectRoutes.routeCodes,route) {
@@ -25,10 +24,6 @@ fun SurveyHeader(preferences: SurveyPreferences, segment: String, route: String,
         ChoiceSelector(listOf("Creciente", "Decreciente"),if(direction=="DECREASING") "Decreciente" else "Creciente") {
             onDirection(if(it=="Decreciente") "DECREASING" else "INCREASING")
         }
-        OutlinedButton(onClick={reset=true}) {Text("Iniciar otro recorrido")}
+
     }
-    if(reset) AlertDialog(onDismissRequest={reset=false},title={Text("Nuevo recorrido")},
-        text={Text("Reinicia la comprobación de continuidad para regresar a una ruta o cambiar de sentido. Los registros guardados se conservan.")},
-        confirmButton={TextButton(onClick={preferences.reset();reset=false}){Text("Reiniciar continuidad")}},
-        dismissButton={TextButton(onClick={reset=false}){Text("Cancelar")}})
 }

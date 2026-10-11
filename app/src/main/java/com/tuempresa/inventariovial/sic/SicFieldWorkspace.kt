@@ -123,7 +123,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
                 paths=snapshot.photos.sortedBy {it.photoIndex}.map {it.localPath}
                 categories=if(independent) snapshot.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()
                     else snapshot.photos.associate {it.localPath to (it.photoCategory ?: "GENERAL")}
-                if(snapshot.record.locationSource!="CONTRACTUAL_PR_ONLY" && snapshot.record.latitude!=null && snapshot.record.longitude!=null) fix=GeoLocation(snapshot.record.latitude,snapshot.record.longitude,snapshot.record.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,snapshot.record.altitudeM)
+                if(snapshot.record.locationSource!="CONTRACTUAL_PR_ONLY" && snapshot.record.latitude!=null && snapshot.record.longitude!=null) fix=GeoLocation(snapshot.record.latitude,snapshot.record.longitude,snapshot.record.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,snapshot.record.altitudeM,source=snapshot.record.locationSource,timestamp=snapshot.record.gpsTimestamp ?: 0)
                 snapshot.record.endLatitude?.let {endFix=GeoLocation(it,snapshot.record.endLongitude!!,snapshot.record.endGpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY)}
 
             } else {
@@ -207,7 +207,9 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
 }
 
 @Composable internal fun SicFieldInput(field:SicField,value:String,onChange:(String)->Unit,enabled:Boolean) {
-    if(field.options.isNotEmpty()) SicCodeDropdown(field,value,onChange,enabled)
+    if(field.key in setOf("startPrCode","endPrCode")) com.tuempresa.inventariovial.field.ContractualPrField(value,onChange,label={Text(field.label)},enabled=enabled)
+    else if(field.key in setOf("startDistanceM","endDistanceM")) com.tuempresa.inventariovial.field.PrDistanceField(value,onChange,label={Text(field.label)},enabled=enabled)
+    else if(field.options.isNotEmpty()) SicCodeDropdown(field,value,onChange,enabled)
     else OutlinedTextField(value,onChange,readOnly=!enabled,label={Text(field.label)},singleLine=field.key!="description",minLines=if(field.key=="description")3 else 1,
         keyboardOptions=KeyboardOptions(keyboardType=if(field.kind in setOf(CellKind.DECIMAL,CellKind.INTEGER))KeyboardType.Decimal else KeyboardType.Text),modifier=Modifier.fillMaxWidth())
 }

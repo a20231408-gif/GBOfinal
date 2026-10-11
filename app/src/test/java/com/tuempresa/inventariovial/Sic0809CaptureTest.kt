@@ -28,7 +28,7 @@ internal fun fajaState(format:SicFieldFormat)=SicFieldState(format,mapOf(
     if(format==SicFieldFormat.SIC08) mapOf("typeCode" to "1","directionCode" to "C")
     else mapOf("usefulWidthM" to "3.2567","totalWidthM" to "4.9876"))
 
-@RunWith(RobolectricTestRunner::class) @Config(sdk=[34])
+@RunWith(RobolectricTestRunner::class) @Config(sdk=[34],application=android.app.Application::class)
 class Sic0809CaptureTest {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
     private fun database()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()

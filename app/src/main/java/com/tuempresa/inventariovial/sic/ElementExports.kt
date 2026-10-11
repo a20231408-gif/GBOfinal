@@ -27,7 +27,7 @@ object ElementExports {
             catch(e:Exception) {atomic.failWrite(stream);throw e}
             GeneratedFile("${format.code}_$id",id,parent.assetType,format.code,target.absolutePath,SicExcelWriter.XLSX_MIME,target.lastModified(),"LOCAL")
         }
-        if(parent.sicCode in setOf("SIC-08","SIC-09") && !parent.observations.isNullOrBlank()) {
+        if(!parent.observations.isNullOrBlank()) {
             val report=File(dir,"${parent.sicCode}_${id}_observaciones.html")
             report.writeText(ObservationReport.render(listOf(parent)))
             generated+GeneratedFile("${parent.sicCode}_${id}_observaciones",id,parent.assetType,"OBSERVACIONES",report.absolutePath,"text/html",report.lastModified(),"LOCAL")

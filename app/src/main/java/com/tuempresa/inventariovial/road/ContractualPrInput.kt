@@ -8,6 +8,7 @@ object ContractualPrInput {
         normalizedRoadCode(it.routeCode) == normalizedRoadCode(route) && normalizedRoadCode(it.roadbedCode) == normalizedRoadCode(bed)
     }
     fun valid(pr: String, distance: String, prs: List<RoadPr>, route: String, bed: String): Boolean {
+        if (com.tuempresa.inventariovial.validation.ContractualLocationInput.prError(pr)!=null || com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(distance)!=null) return false
         if (catalog(prs, route, bed).isEmpty()) return SurveyOrder.chainage(pr, distance) != null
         val metres = distance.trim().replace(',', '.').toDoubleOrNull()
         return pr.trim().matches(Regex("[0-9]{1,4}")) && metres != null && metres.isFinite() && metres >= 0

@@ -10,7 +10,7 @@ data class QualityConfig(val maxAccuracyM: Double = 1.0,val maxAgeMs: Long = 30_
 data class PhotoDimensions(val width: Int,val height: Int)
 
 object CaptureValidation {
-    fun errors(request: InventorySaveRequest, validateLocation: Boolean = true): List<ValidationError> = buildList {
+    fun errors(request: InventorySaveRequest, validateLocation: Boolean = request.latitude.isFinite() || request.longitude.isFinite()): List<ValidationError> = buildList {
         val request=pointCapture(request)
         (request.detail as? SicFormDetail.Sic22)?.let {
             if(it.state.typeCode !in com.tuempresa.inventariovial.catalog.SicCatalogRepository.newSic22Types)
@@ -42,11 +42,11 @@ object CaptureValidation {
         }
         if(request.routeCode.isBlank()) add(ValidationError("routeCode","Ruta obligatoria."))
         if(request.roadbedCode.isBlank()) add(ValidationError("roadbedCode","Calzada obligatoria."))
-        if(!request.startPrCode.trim().matches(Regex("[0-9]{1,4}"))) add(ValidationError("startPrCode","PR inicial: de 1 a 4 dígitos."))
-        fun distance(value: String?) = value?.trim()?.replace(',','.')?.toDoubleOrNull()?.let { it.isFinite() && it>=0 }==true
+        if(ContractualLocationInput.prError(request.startPrCode)!=null) add(ValidationError("startPrCode","PR inicial: de 1 a 4 dígitos."))
+        fun distance(value: String?) = value!=null && ContractualLocationInput.distanceError(value)==null
         if(!distance(request.startDistanceM)) add(ValidationError("startDistanceM","Distancia inicial inválida."))
         if(request.endPrCode.isNullOrBlank()!=request.endDistanceM.isNullOrBlank()) add(ValidationError("endPrCode","Completa ambos campos de ubicación final."))
-        if(!request.endPrCode.isNullOrBlank() && (!request.endPrCode.trim().matches(Regex("[0-9]{1,4}")) || !distance(request.endDistanceM))) add(ValidationError("endDistanceM","Ubicación final inválida."))
+        if(!request.endPrCode.isNullOrBlank() && (ContractualLocationInput.prError(request.endPrCode)!=null || !distance(request.endDistanceM))) add(ValidationError("endDistanceM","Ubicación final inválida."))
         if(validateLocation && !GeoMath.validCoordinate(request.latitude,request.longitude)) add(ValidationError("location","Coordenadas inválidas."))
         if((request.endLatitude==null)!=(request.endLongitude==null) || request.endLatitude?.let { !GeoMath.validCoordinate(it,request.endLongitude ?: Double.NaN) }==true) add(ValidationError("endLocation","Coordenadas finales inválidas."))
         if(request.sideCode!=null && request.sideCode !in setOf("D","I","S")) add(ValidationError("side","Lado inválido."))
@@ -60,12 +60,6 @@ object CaptureValidation {
     fun warnings(request: InventorySaveRequest, data: RoadReferenceData, now: Long,
         photos: List<PhotoDimensions> = emptyList(),quality: QualityConfig = QualityConfig(),matchConfig: MatchConfig = MatchConfig()): List<ValidationWarning> = buildList {
         val request=pointCapture(request)
-        val accuracy=request.location?.horizontalAccuracy ?: request.gpsAccuracyM
-        if(accuracy==null || !accuracy.isFinite() || accuracy>quality.maxAccuracyM)
-            add(ValidationWarning("GPS_ACCURACY","Precisión GNSS insuficiente o desconocida; umbral ${quality.maxAccuracyM} m."))
-        val timestamp=request.location?.timestamp
-        if(timestamp==null || now-timestamp !in 0..quality.maxAgeMs) add(ValidationWarning("GPS_STALE","La posición GNSS es antigua o no tiene hora válida."))
-        if(requiresEndLocation(request) && (request.endLatitude==null || request.endLongitude==null)) add(ValidationWarning("MISSING_END_GPS","Falta GPS final del elemento lineal."))
         if(request.photoPaths.isEmpty()) add(ValidationWarning("MISSING_PHOTO","El registro no tiene fotografías."))
         if(photos.any { minOf(it.width,it.height)<quality.minPhotoEdgePx }) add(ValidationWarning("SMALL_PHOTO","Una fotografía tiene resolución pequeña o no puede leerse."))
         val prs=ContractualPrInput.catalog(data.prs, request.routeCode, request.roadbedCode)

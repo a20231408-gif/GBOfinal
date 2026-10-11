@@ -78,20 +78,14 @@ fun LegacyInventoryFormScaffold(title:String,subtitle:String,onSaveDraft:()->Uni
     onPr:(String)->Unit,onDistance:(String)->Unit,field:FieldController?=null,editable:Boolean=true) {
     Column {
         SectionTitle(if(endpoint=="inicio") "Ubicación inicio" else "Ubicación fin")
-        LocationSuggestionPanel(reference,config,route,roadbed,location?.latitude,location?.longitude,
-            location?.horizontalAccuracy?.toDouble(),endpoint,onSuggestion,
-            {if(editable)onConfirm(it)},{if(editable)onEdit()})
-        if(endpoint=="inicio" && field!=null) FieldPrPanel(field,route,roadbed)
-        if(source in setOf(PrEntrySource.CONFIRMED,LocationSource.GNSS_CONFIRMED,LocationSource.GNSS_PR_CONFIRMED))
-            Text("${if(endpoint=="inicio") "Inicio" else "Fin"}: sugerencia GNSS confirmada")
         val initial=endpoint=="inicio"
-        OutlinedTextField(value=pr,onValueChange=onPr,readOnly=!editable,
+        ContractualPrField(value=pr,onValueChange=onPr,readOnly=!editable,
             label={Text(if(ContractualPrInput.catalog(reference.prs,route,roadbed).isEmpty())
                 if(initial) "Kilómetro de progresiva inicial (PR)" else "Kilómetro de progresiva final (PR)"
                 else if(initial) "Código PR inicial" else "Código PR final")},
             placeholder={Text("4 dígitos, ej. 0010")},modifier=Modifier.fillMaxWidth())
         Spacer(Modifier.height(10.dp))
-        OutlinedTextField(value=distance,onValueChange=onDistance,readOnly=!editable,
+        PrDistanceField(value=distance,onValueChange=onDistance,readOnly=!editable,
             label={Text(if(ContractualPrInput.catalog(reference.prs,route,roadbed).isEmpty())
                 if(initial) "Metros desde el kilómetro inicial" else "Metros desde el kilómetro final"
                 else if(initial) "Metros desde el PR inicial" else "Metros desde el PR final")},
