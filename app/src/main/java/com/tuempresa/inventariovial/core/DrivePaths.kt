@@ -26,18 +26,15 @@ object DrivePaths {
     }
     fun inventory(context: Context, folder: PlannedAssetFolder, photoCategory: String? = null): String {
         val a=folder.asset
-        val family=when(a.assetFamily.name) {
-            "SENALIZACION_VERTICAL" -> "SENALIZACION_VERTICAL"
-            "SENALIZACION_HORIZONTAL" -> "SENALIZACION_HORIZONTAL"
-            else -> a.assetFamily.mapFolder
-        }
-        val prefix=if(a.assetFamily.name=="SENALIZACION_VERTICAL") "SENAL" else DriveAssetPathRouter.component(a.assetFamily.folderLabel)
-        val name=element(context,a.routeCode,family,prefix,a.recordId)
-        return DriveAssetPathRouter.path(AssetPathRequest(a.routeCode,family,name,photoCategory?.let(::category)))
+        val family=DriveInventorySchema.familyPath(a.assetFamily)
+        val bound=DriveInventorySchema.receipt(context,a.recordId)?.optString("logicalPath")
+        val path=bound ?: "${DriveAssetPathRouter.component(a.routeCode)}/$family/${DriveInventorySchema.elementLabel(a.assetFamily)} UUID_${a.recordId}"
+        return path+(photoCategory?.let { "/"+DriveInventorySchema.category(it) } ?: "")
     }
     fun bridge(context: Context,s: ScapInspectionSnapshot): String {
         val route=s.values()["route"]?.takeIf { it.isNotBlank() } ?: s.roadRecord?.routeCode.orEmpty()
-        return DriveAssetPathRouter.path(AssetPathRequest(route,"PUENTES",element(context,route,"PUENTES","PUENTE",s.inspection.roadRecordId)))
+        return DriveInventorySchema.receipt(context,s.inspection.roadRecordId)?.optString("logicalPath")
+            ?: "$route/PUENTES/PUENTE UUID_${s.inspection.roadRecordId}"
     }
     fun pavement(context: Context,s: PavementSampleEntity,category: String?=null): String {
         val surface=when(s.surface) {"ASPHALT"->"ASFALTICO";"RIGID"->"RIGIDO";else->"NO_PAVIMENTADO"}

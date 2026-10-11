@@ -119,7 +119,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         finally{busy=false}
     }}){Text("Preparar entrega SCAP")}
     layout?.let {delivery->
-        Text("${delivery.shortCode} · ${delivery.routeCode}/SIB-08/PUENTE N (el servidor confirma el número)")
+        Text("${delivery.shortCode} · ${delivery.routeCode}/PUENTES/PUENTE N (el servidor confirma el número)")
         Text((listOf("SCAP.xlsx","manifest.json")+delivery.photoPaths.values+delivery.sketchPaths.values).joinToString("\n"))
         Text("Las revisiones anteriores se conservan en REVISIONES.")
     }
@@ -137,7 +137,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
     warningAction?.let{action->AlertDialog(onDismissRequest={warningAction=null},title={Text(if(action=="UPLOAD")"Confirmar subida SCAP" else "Exportar ficha incompleta")},
         text={Column {
             Text("Pendientes: ${completeness.pending.size}. Puedes completar la ficha posteriormente en gabinete.")
-            if(action=="UPLOAD")Text("Destino: RUTA/SIB-08/PUENTE N. El servicio confirma el orden y conserva las revisiones.")
+            if(action=="UPLOAD")Text("Destino: RUTA/PUENTES/PUENTE N. El servicio confirma el orden y conserva las revisiones.")
             TextButton(onClick={warningAction=null;completeness.pending.firstOrNull()?.let(onCompleteMissing)}){Text("Revisar pendientes")}
         }},confirmButton={TextButton(onClick={warningAction=null;if(action=="UPLOAD")uploadConfirmed() else export("SCAP")}){Text(if(action=="UPLOAD")"Subir de todos modos" else "Exportar de todos modos")}},
         dismissButton={TextButton(onClick={warningAction=null}){Text("Cancelar")}})}
@@ -157,4 +157,3 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
     TextButton(onClick={sicDiagnostic=!sicDiagnostic}) {Text("Diagnóstico técnico SIC")}
     message?.let{Text(it)}
 }
-

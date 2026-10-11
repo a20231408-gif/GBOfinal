@@ -17,8 +17,8 @@ data class ScapBridgeRow(val snapshot: ScapInspectionSnapshot, val record: Inven
 /** Presentation only: neither UUID nor contractual bridgeCode is replaced by P-N. */
 data class ScapHumanLayout(val routeCode: String, val elementFolder: String, val shortCode: String,
     val bridgeIdentity: String, val photoPaths: Map<String, String>, val sketchPaths: Map<String, String>) {
-    val sibCode get() = "SIB-08"
-    val path get() = "$routeCode/$sibCode/$elementFolder"
+    val sibCode get() = "SIB-08" // Historical parser only; V4 never uses this in paths.
+    val path get() = "$routeCode/PUENTES/$elementFolder"
     fun json() = JSONObject().put("routeCode", routeCode).put("sibCode", sibCode)
         .put("elementFolder", elementFolder).put("shortCode", shortCode).put("bridgeIdentity", bridgeIdentity)
         .put("photoPaths", JSONObject(photoPaths.toSortedMap())).put("sketchPaths", JSONObject(sketchPaths.toSortedMap()))
@@ -78,7 +78,7 @@ object ScapHumanDelivery {
         }
         val current = rows.single { it.snapshot.inspection.id == snapshot.inspection.id }
         require(current.snapshot.inspection.updatedAt == snapshot.inspection.updatedAt) { "La ficha cambió; prepara nuevamente la entrega." }
-        require(current.record.axisMeasureM != null) { "Confirma una ubicación GNSS válida sobre la ruta antes de preparar la entrega." }
+        require(ChainageCalculator().calculate(current.record).chainageM != null) { "Completa PR y distancia para la entrega técnica." }
         plan(rows).getValue(snapshot.inspection.id)
     }
 }

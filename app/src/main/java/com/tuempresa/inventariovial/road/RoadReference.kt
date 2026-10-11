@@ -70,10 +70,7 @@ object RoadOrdering {
         val sorted = records.filter { it.record.status != "DRAFT" }.map { item ->
             val r = item.record
             SequencedRecord(item, null, calculator.calculate(r))
-        }.sortedWith(compareBy<SequencedRecord> { normalizedRoadCode(it.item.record.routeCode) }
-            .thenBy { normalizedRoadCode(it.item.record.roadbedCode) }
-            .thenBy { it.position.chainageM ?: Double.POSITIVE_INFINITY }
-            .thenBy { it.item.record.createdAt }.thenBy { it.item.record.id })
+        }.sortedWith { a,b -> InventoryTechnicalOrder.comparator.compare(a.item.record,b.item.record) }
         val counters = mutableMapOf<Pair<String, String>, Int>()
         return sorted.map {
             val r = it.item.record

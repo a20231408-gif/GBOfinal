@@ -139,6 +139,12 @@ class InventoryViewModel(
     val history: StateFlow<List<InventoryRecordWithPhotos>> = sequencedHistory.map { rows -> rows.map { it.item } }
         .stateIn(viewModelScope,SharingStarted.WhileSubscribed(5_000),emptyList())
 
+    val orderingHistory = combine(repository.observeHistory(),database.pavementDao().observeSamples(),database.scapDao().observeInspections()) { core,samples,_ ->
+        val bridges=database.scapDao().allSnapshots().mapNotNull(com.tuempresa.inventariovial.road.InventoryOrderingProjection::bridge)
+        val pavement=samples.flatMap {sample->com.tuempresa.inventariovial.road.InventoryOrderingProjection.pavement(sample,database.pavementDao().damages(sample.id))}
+        (core.filter {it.record.sicCode!="SCAP"}+ (bridges+pavement).map {snapshot -> com.tuempresa.inventariovial.delivery.RouteDelivery.row(snapshot)}).distinctBy {it.record.id}
+    }.stateIn(viewModelScope,SharingStarted.WhileSubscribed(5_000),emptyList())
+
     private val axisStorage = RoadAxisStorage(database.inventoryDao())
     private val _axisFeedback = MutableStateFlow<String?>(null)
     val axisFeedback = _axisFeedback.asStateFlow()

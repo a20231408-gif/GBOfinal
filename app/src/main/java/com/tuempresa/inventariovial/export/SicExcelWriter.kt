@@ -87,10 +87,7 @@ object SicExcelWriter {
         val groups = records.groupBy { it.record.routeCode }.toSortedMap()
         val used = mutableSetOf<String>()
         val sheets = groups.entries.map { (route, rows) ->
-            Triple(sheetName(route, used), route, rows.sortedWith(compareBy<InventoryRecordForExport>(
-                { it.record.roadbedCode },
-                { (it.record.startPrCode.toDoubleOrNull() ?: 0.0) * 1000 + it.record.startDistanceM },
-                { it.record.createdAt }, { it.record.id })))
+            Triple(sheetName(route, used), route, rows.sortedWith { a,b -> com.tuempresa.inventariovial.road.InventoryTechnicalOrder.comparator.compare(a.record,b.record) })
         }
         ZipOutputStream(output).use { zip ->
             fun entry(path: String, body: String) {

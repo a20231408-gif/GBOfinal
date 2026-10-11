@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-11",
+  "branch": "codex/drive-familias-2a",
+  "baseCommit": "2bac1be62c29cd64c15f54b853912b5306f58d26",
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "android": {
+    "tests": 15,
+    "failures": 0,
+    "suites": [
+      {
+        "name": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.DriveFamilies2ATest",
+        "tests": "8",
+        "failures": "0",
+        "errors": "0"
+      }
+    ],
+    "log": "android-checkpoint.log"
+  },
+  "backend": {
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "kind": "LOCAL_DRIVE_DOUBLES_NOT_REMOTE",
+    "log": "backend-checkpoint-final.log"
+  },
+  "debug": {
+    "result": "BUILD_SUCCESSFUL",
+    "validationBuild": false,
+    "applicationId": "com.tuempresa.inventariovial",
+    "versionCode": 16,
+    "sha256": "0e0c66faf3a077303c7a90c95966d5e928caa14b1470f39d9a48ade31d202e14",
+    "privateConfigurationChecks": {
+      "DRIVE_WEB_APP_URL_matches_private_test_configuration": true,
+      "DRIVE_API_TOKEN_matches_private_test_configuration": true,
+      "user_service_configuration_unchanged": true
+    },
+    "installed": false
+  },
+  "remoteSchema4": {
+    "executed": false,
+    "testRootFolderId": "1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk",
+    "deploymentRequired": true
+  },
+  "fullSuiteExecuted": false,
+  "prompt2BStarted": false
+}

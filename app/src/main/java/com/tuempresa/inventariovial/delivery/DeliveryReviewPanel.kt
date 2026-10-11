@@ -37,7 +37,7 @@ fun DeliveryReviewPanel(vm: InventoryViewModel, route: String) {
                 finally { busy = false }
             } }) { Text(if (busy) "Preparando…" else "PREPARAR ENTREGA") }
             prepared?.let { delivery ->
-                delivery.plan.folders.groupBy { it.asset.sibCode }.forEach { (sib, folders) ->
+                delivery.plan.folders.groupBy { com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(it.asset.assetFamily) }.forEach { (sib, folders) ->
                     Text(sib.orEmpty(), style = MaterialTheme.typography.titleMedium)
                     folders.forEach { folder ->
                         Text("${folder.asset.folderName} · ${folder.photos.size} fotos + metadata.json")

@@ -36,7 +36,7 @@ class RouteDelivery(private val context: Context, private val db: InventoryDatab
                 .flatMap {it.photos.filter {p->p.scapInspectionId==null}.map {p->p.copy(recordId=root.record.id)}})
         }
         val plan = DrivePathPlanner.plan(planRows, ChainageCalculator(reference.prs), policy)
-        require(plan.folders.all { it.plannedPath != null }) { "Hay familias sin SIB o carpetas válidas. Revisa las advertencias antes de entregar." }
+        require(plan.folders.all { it.plannedPath != null }) { "Hay familias sin clasificación o carpetas válidas. Revisa las advertencias antes de entregar." }
         val identity = fingerprint(snapshots, policy)
         val previous = dao.deliveries(route).firstOrNull { it.status != "PREPARED" }
         if (previous != null) {
@@ -141,7 +141,8 @@ class RouteDelivery(private val context: Context, private val db: InventoryDatab
 
     suspend fun snapshots(route: String) = dao.activeSnapshots().filter { normalizedRoadCode(it.record.routeCode) == route && it.record.sicCode != "SCAP" }
     companion object {
-        fun row(s: InventorySnapshot) = InventoryRecordWithPhotos(s.record, s.photos.filter { it.scapInspectionId == null }, s.sic23, s.sic18, s.sic20, s.sic19, s.sic18a, s.sicExtension)
+
+        fun row(s: InventorySnapshot) = InventoryRecordWithPhotos(s.record, s.photos.filter { it.scapInspectionId == null }, s.sic23, s.sic18, s.sic20, s.sic19, s.sic18a, s.sicExtension, s.sic21)
         fun fingerprint(snapshots: List<InventorySnapshot>, policy: DeliveryNamingPolicy): String = sha256((policy.name + snapshots.sortedBy { it.record.id }.joinToString {
             it.copy(record = it.record.copy(photoSyncStatus = "", excelSyncStatus = "", serverSyncStatus = "", serverSyncError = null),
                 photos = it.photos.filter { p -> p.scapInspectionId == null }.sortedBy { p -> p.id }.map { p ->

@@ -8,6 +8,7 @@ import com.tuempresa.inventariovial.data.database.InventoryDatabase
 import com.tuempresa.inventariovial.road.ChainageCalculator
 import com.tuempresa.inventariovial.road.*
 import com.tuempresa.inventariovial.field.FieldSettings
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -19,7 +20,10 @@ class LocalKmlExport(private val context: Context,private val database: Inventor
         val reference = if (routeCode == null) allReference else allReference.forSelectedRoute(routeCode)
         val dao = database.inventoryDao()
         RoadAxisStorage(dao).refresh(allReference, FieldSettings.load(context).matchConfig(), routeCode)
-        val snapshots=dao.activeSnapshots().filter { it.record.sicCode != "SCAP" &&
+        val core=dao.activeSnapshots().filter { it.record.sicCode!="SCAP" }
+        val bridges=database.scapDao().allSnapshots().mapNotNull(InventoryOrderingProjection::bridge)
+        val pavement=database.pavementDao().observeSamples().first().flatMap {sample->InventoryOrderingProjection.pavement(sample,database.pavementDao().damages(sample.id))}
+        val snapshots=(core+bridges+pavement).distinctBy {it.record.id}.filter { it.record.sicCode != "SCAP" &&
             (routeCode == null || normalizedRoadCode(it.record.routeCode) == normalizedRoadCode(routeCode)) }
         require(snapshots.isNotEmpty() || reference.segments.isNotEmpty()) { "No hay registros ni eje para exportar." }
         val inspectors = snapshots.mapNotNull { it.record.sessionId }.distinct().mapNotNull { id ->
@@ -28,7 +32,9 @@ class LocalKmlExport(private val context: Context,private val database: Inventor
         val directory=File(context.cacheDir,"kml").apply { mkdirs() }
         val resources = if (kmz) KmlMapImages.resources() else emptyMap()
         val kml = KmlExporter.render(snapshots, calculator, reference,
-            iconHref = if (kmz) "marker.png" else null, inspectors = inspectors)
+            iconHref = if (kmz) "marker.png" else null, inspectors = inspectors, remotePaths=snapshots.mapNotNull {snapshot ->
+                com.tuempresa.inventariovial.core.DriveInventorySchema.receipt(context,snapshot.record.id)?.optString("logicalPath")?.let {snapshot.record.id to it}
+            }.toMap())
         File(directory,"inventario-${UUID.randomUUID()}.${if (kmz) "kmz" else "kml"}").apply {
             if (kmz) outputStream().use { KmlExporter.writeKmz(it, kml, resources) } else writeText(kml,Charsets.UTF_8)
         }

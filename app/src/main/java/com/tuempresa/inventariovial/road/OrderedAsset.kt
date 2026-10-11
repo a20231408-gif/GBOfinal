@@ -14,18 +14,19 @@ data class OrderedAsset(
     val sequence: Int,
     val orderSource: AssetOrderSource,
     val fallbackPosition: RoadPosition,
-    val warnings: List<String>
+    val warnings: List<String>,
+    val remoteLogicalPath:String? = null
 ) {
     val recordId get() = item.record.id
-    val shortCode get() = "${assetFamily.abbreviation}-$sequence"
-    val folderName get() = "${assetFamily.folderLabel} $sequence"
+    val shortCode get() = remoteLogicalPath?.substringAfterLast(' ')?.toIntOrNull()?.let {"${assetFamily.abbreviation}-$it"} ?: "${assetFamily.abbreviation}-${recordId.take(8)}"
+    val folderName get() = remoteLogicalPath?.substringAfterLast('/') ?: "${assetFamily.folderLabel} UUID_$recordId"
 }
 
 internal fun orderedAssets(records: List<InventoryRecordWithPhotos>, calculator: ChainageCalculator): List<OrderedAsset> {
     val rows = records.filter { it.record.status == "ACTIVE" && it.record.sicCode != "SCAP" }.map { item ->
         val r = item.record
         val family = AssetPresentationCatalog.resolve(item)
-        val sib = runCatching { DriveFolderRouter.resolveSib(r.sicCode, r.assetType) }.getOrNull()
+        val sib: String? = null // Retained DTO field for historical consumers; never used for V4 routing.
         val axis = r.axisMeasureM?.takeIf { it.isFinite() && it >= 0 }
         val fallback = calculator.calculate(r)
         OrderedAsset(item, normalizedRoadCode(r.routeCode), sib, family, axis, 0,
@@ -34,14 +35,10 @@ internal fun orderedAssets(records: List<InventoryRecordWithPhotos>, calculator:
                 else -> AssetOrderSource.CREATED_AT_FALLBACK }, fallback,
             buildList {
                 if (family == AssetFamily.OTROS) add("Familia sin abreviatura configurada: ${r.sicCode} / ${r.assetType}; se usa ELM.")
-                if (sib == null) add("SIB no configurado: ${r.sicCode} / ${r.assetType}.")
+                if (r.latitude == null || r.longitude == null) add("Sin coordenadas verificadas: permanece en el inventario ordenado, sin punto geográfico.")
                 if (r.routeCode.isBlank()) add("Ruta no seleccionada.")
             })
-    }.sortedWith(compareBy<OrderedAsset> { it.routeCode }
-        // Geometric and contractual origins differ: unmatched records follow matched records.
-        .thenBy { it.orderSource.ordinal }
-        .thenBy { it.axisMeasureM ?: it.fallbackPosition.chainageM?.takeIf(Double::isFinite) ?: Double.POSITIVE_INFINITY }
-        .thenBy { it.item.record.createdAt }.thenBy { it.recordId })
+    }.sortedWith { a,b -> InventoryTechnicalOrder.comparator.compare(a.item.record,b.item.record) }
     val counters = mutableMapOf<Triple<String, String?, AssetFamily>, Int>()
     return rows.map { row ->
         val key = Triple(row.routeCode, row.sibCode, row.assetFamily)

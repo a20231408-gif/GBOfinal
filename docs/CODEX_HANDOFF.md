@@ -1,3 +1,23 @@
+# Estado vigente — Prompt 2A, 2026-10-11
+
+Rama: `codex/drive-familias-2a` en worktree aislado backend-v3-pruebas. Base: `2bac1be62c29cd64c15f54b853912b5306f58d26`; hash de checkpoint funcional consultable con `git log -1`. No se subió esta rama ni se mezcló con main. Copia operativa y cambios anteriores conservados.
+
+Implementación local completa: nuevas rutas por familia sin SIB, UUID/número remoto durable bajo ScriptLock, categorías existentes con N fotos, Excel por ruta/SIC en EXCEL_SIC, SIC-08/09 independientes, paquetes SCAP individuales, pavimentos y familias secundarias incluidos en orden/mapa/KMZ. Orden numérico separado de identidad y GPS; sin geometría no se inventa un punto. syncProtocol 3, pathVersion 4. Historial SIB y columnas Room intactos; migración preparada, no ejecutada.
+
+Aprobadas: 15 Android (8 nuevas + 7 sin GPS) y 15 backend locales; assembleDebug con configuración real de pruebas, sin flag validation. 39 Android/60 backend del Prompt 1 son resultados históricos reportados, no repetidos. Logs iniciales fallidos y resultados finales conservados localmente. Ver [entrega y pendientes](drive-familias-2a/ENTREGA.md) y [VALIDACION.json](drive-familias-2a/VALIDACION.json).
+
+Actualización del estado remoto histórico: Prompt 1 sí comprobó una subida real SIC-08 sin GPS, fotos y Excel con descarga/IDs y reintento estable bajo SIB-02. Raíz aislada verificada: `1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk` (GBO_TEST_V3_20261011). No confundir con el endpoint operativo antiguo ni con PRUEBA_FINAL. Esa verificación no acredita el esquema 4. Backend de pruebas pendiente de desplegar el paquete compatible pathVersion 4; Android conserva cola UNCONFIGURED hasta entonces. Ninguna escritura remota o despliegue en 2A.
+
+Pendientes: publicación por responsable exclusivamente en proyecto de pruebas, GET/capacidades y diagnóstico seguro del token, prueba real mínima de nuevas familias/IDs/Excel/reintento y prueba física secundaria. Restricciones: no producción, no servicio de usuarios, no APK sobre tablet de campo, no firma/applicationId/versionCode cambiados, no migración ni borrado automático, no suite completa. Siguiente tarea funcional: Prompt 2B edición segura de sincronizados, todavía NO iniciado.
+
+Sin commit se conservan los archivos preexistentes de proguard, SCAP templates/maps y herramientas/resultados V3, más logs locales 2A. No incluirlos en una entrega 2A por atribución automática. Credenciales/configuraciones privadas y APK/cachés excluidos.
+
+---
+
+## Historial de puntos de control anteriores
+
+Los estados siguientes son históricos; para decisiones actuales prevalece el estado vigente de arriba.
+
 # GBO Inventario Vial — punto de control
 
 Fecha: 2026-10-11 (America/Lima)

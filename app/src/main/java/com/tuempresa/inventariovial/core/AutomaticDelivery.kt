@@ -22,6 +22,8 @@ import java.util.zip.ZipInputStream
 interface AutomaticDriveTransport {
     fun supportsV3():Boolean
     fun supportsTechnicalDeliveryWithoutGps():Boolean = false
+
+    fun supportsFamilyPaths():Boolean = false
     fun post(payload:JSONObject):JSONObject
 }
 class AutomaticDriveHttp:AutomaticDriveTransport {
@@ -32,7 +34,8 @@ class AutomaticDriveHttp:AutomaticDriveTransport {
             JSONObject(it.body?.string() ?: "{}")
         }
     }
-    override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")>=3
+    override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")==3
+    override fun supportsFamilyPaths()=supportsV3() && capabilities.optInt("pathVersion")==4 && capabilities.optBoolean("stableFamilyNumbering")
     override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
     private fun send(payload:JSONObject)=client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL)
         .post(JSONObject(payload.toString()).put("token",DriveConfig.API_TOKEN).toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()).execute().use {
@@ -76,7 +79,7 @@ object AutomaticDelivery {
     suspend fun order(c:Context,db:InventoryDatabase,i:DriveSyncIntent):Pair<String,Double> {
         val r=if(i.kind=="SIC")db.inventoryDao().recordById(i.recordId) else if(i.kind=="SCAP")db.scapDao().snapshot(i.recordId)?.let {s->s.roadRecord?.copy(latitude=s.inspection.latitude ?: s.roadRecord.latitude,longitude=s.inspection.longitude ?: s.roadRecord.longitude)} else null
         if(r==null)return i.key to Double.MAX_VALUE
-        val routing=if(r.sicCode=="SIC-09")db.inventoryDao().snapshot(r.id)?.sicExtension?.sourceRecordId?.let {db.inventoryDao().recordById(it)} ?: r else r
+        val routing=r
         val axis=runCatching {technicalOrder(c,routing).first}.getOrNull()
         val snapshot=db.inventoryDao().snapshot(r.id)
         val family=snapshot?.let {RoadOrdering.orderAssetsForRoute(listOf(RouteDelivery.row(it))).singleOrNull()?.assetFamily?.folderLabel} ?: r.assetType
@@ -102,19 +105,19 @@ object AutomaticDelivery {
     suspend fun prepare(c:Context,db:InventoryDatabase,i:DriveSyncIntent):JSONObject {
         if(!validated(db,i))throw SyncPending("Valida o confirma el cierre antes de enviar.")
         val directory=File(c.filesDir,"automatic_drive/${sha256(i.key.toByteArray())}/${i.revision}").apply {check(isDirectory || mkdirs())}
-        val cache=File(directory,"prepared.json")
+        val cache=File(directory,"prepared-path4.json")
         if(cache.isFile) {
             val stored=JSONObject(cache.readText())
             if(current(db,i,stored))return stored
             throw SyncPending("La ficha cambió; guarda y valida la revisión actual.")
         }
         val files=JSONArray();val rows=JSONArray()
-        val p=JSONObject().put("action","commitRecordV3").put("syncProtocol",3).put("pathVersion",3)
+        val p=JSONObject().put("action","commitRecordV3").put("syncProtocol",3).put("pathVersion",4)
             .put("key",i.key).put("kind",i.kind).put("recordId",i.recordId).put("revision",i.revision)
             .put("baseRevision",i.syncedRevision).put("origin",i.origin).put("warningsConfirmed",i.warningsConfirmed)
             .put("files",files).put("sicRows",rows).put("removeMissingOwnedFiles",true)
         fun add(key:String,path:String,mime:String,bytes:ByteArray,aggregate:Boolean=false) {
-            require(path.split('/').all {FileNameComplianceValidator.safeComponent(it) && it.length<=20}) {"Nombre de entrega inválido: $path"}
+            require(path.split('/').all {FileNameComplianceValidator.safeComponent(it) && it.length<=80}) {"Nombre de entrega inválido: $path"}
             require(bytes.isNotEmpty()) {"Archivo vacío: $path"}
             val copy=File(directory,"file_${sha256(key.toByteArray())}");copy.writeBytes(bytes)
             files.put(JSONObject().put("key",key).put("path",path).put("mimeType",mime)
@@ -124,14 +127,13 @@ object AutomaticDelivery {
             "SIC"->{
                 val s=requireNotNull(db.inventoryDao().snapshot(i.recordId))
                 val r=s.record
-                val source=s.sicExtension?.sourceRecordId?.takeIf {r.sicCode=="SIC-09"}?.let {db.inventoryDao().snapshot(it)}
-                val routing=source?.record ?: r
-                if(source!=null)p.put("identityId",source.record.id)
-                val (axis,orderSource)=technicalOrder(c,routing)
+                val source:com.tuempresa.inventariovial.data.entity.InventorySnapshot? = null
+                val (axis,orderSource)=technicalOrder(c,r)
                 val geo=georeferencing(r)
-                val item=RouteDelivery.row(source ?: s);val asset=RoadOrdering.orderAssetsForRoute(listOf(item)).single()
-                if(asset.sibCode==null)throw SyncPending("Pendiente de clasificación SIB.")
-                p.put("routeCode",asset.routeCode).put("sibCode",asset.sibCode).put("family",asset.assetFamily.folderLabel).put("orderAxis",axis)
+                val item=RouteDelivery.row(s);val asset=RoadOrdering.orderAssetsForRoute(listOf(item)).single()
+                if(asset.assetFamily==AssetFamily.OTROS)throw SyncPending("Pendiente de clasificación de familia.")
+                p.put("routeCode",asset.routeCode).put("familyPath",DriveInventorySchema.familyPath(asset.assetFamily))
+                    .put("family",DriveInventorySchema.elementLabel(asset.assetFamily)).put("orderAxis",axis)
                     .put("orderSource",orderSource).put("georeferencing",geo)
                     .put("technicalDeliveryWithoutGps",orderSource=="CONTRACTUAL_PR" || geo.getString("status")=="PENDING_EXTERNAL")
                 val record=requireNotNull(db.inventoryDao().recordsForExport(null,r.routeCode).singleOrNull {it.record.id==r.id})
@@ -157,16 +159,18 @@ object AutomaticDelivery {
                     p.put("pendingSic",pending)
                 }
                 s.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.forEachIndexed {n,photo->
-                    val name=if(source!=null) "W${sha256(r.id.toByteArray()).take(6)}_%03d_F%02d.jpg".format(n+1,n+1) else "%03d_F%02d.jpg".format(n+1,n+1)
+                    val name="F_${sha256(photo.id.toByteArray()).take(16)}.jpg"
                     val target=File(directory,name)
                     DeliveryJpeg.copy(File(photo.originalPath.ifBlank {photo.localPath}),target,photo)
-                    add("photo/${photo.id}","${DrivePaths.category(photo.photoCategory).code}/$name","image/jpeg",target.readBytes())
+                    add("photo/${photo.id}","${DriveInventorySchema.category(photo.photoCategory)}/$name","image/jpeg",target.readBytes())
                 }
                 add("metadata",if(source!=null) "W_${sha256(r.id.toByteArray()).take(8)}.json" else "metadata.json","application/json",JSONObject().put("recordId",r.id).put("revision",i.revision)
                     .put("routeCode",r.routeCode).put("sicCode",r.sicCode).put("pr",r.startPrCode).put("distanceM",r.startDistanceM)
                     .put("latitude",r.latitude ?: JSONObject.NULL).put("longitude",r.longitude ?: JSONObject.NULL).put("surveyDate",r.surveyDate)
                     .put("endLatitude",r.endLatitude ?: JSONObject.NULL).put("endLongitude",r.endLongitude ?: JSONObject.NULL)
                     .put("georeferencing",geo).put("orderSource",orderSource).put("technicalValidationStatus","VALIDATED")
+                    .put("pathVersion",4).put("familyPath",p.getString("familyPath")).put("identityId",r.id)
+                    .put("sourceRecordId",s.sicExtension?.sourceRecordId ?: JSONObject.NULL)
                     .put("observations",r.observations ?: JSONObject.NULL)
                     .put("photos",JSONArray(s.photos.filter {it.scapInspectionId==null}.map {photo->JSONObject()
                         .put("id",photo.id).put("category",photo.photoCategory).put("capturedAt",photo.capturedAt ?: JSONObject.NULL)
@@ -181,7 +185,7 @@ object AutomaticDelivery {
                 val located=r.copy(latitude=s.inspection.latitude ?: r.latitude,longitude=s.inspection.longitude ?: r.longitude)
                 val (axis,orderSource)=technicalOrder(c,located)
                 p.put("identityId",s.inspection.roadRecordId).put("bridgeCode",s.inspection.bridgeCode)
-                    .put("routeCode",layout.routeCode).put("sibCode","SIB-08").put("family","PUENTE")
+                    .put("routeCode",layout.routeCode).put("familyPath","PUENTES").put("family","PUENTE")
                     .put("orderAxis",axis).put("orderSource",orderSource).put("georeferencing",georeferencing(located))
                     .put("technicalDeliveryWithoutGps",orderSource=="CONTRACTUAL_PR" || located.latitude==null || located.longitude==null)
                 val bundle=ScapDelivery.bundle(c,s,layout)
@@ -189,11 +193,23 @@ object AutomaticDelivery {
                     while(true) {
                         val e=zip.nextEntry ?: break
                         if(e.isDirectory)continue
-                        val metadata=if(e.name=="manifest.json") "manifest.json" else e.name
+                        val metadata=if(e.name.startsWith("fotos/")) {
+                            val photoId=layout.photoPaths.entries.single {it.value==e.name}.key
+                            val photo=s.photos.single {it.id==photoId}
+                            DriveInventorySchema.category(photo.photoCategory)+"/F_${sha256(photo.id.toByteArray()).take(16)}.jpg"
+                        } else "SCAP/${s.inspection.id}/"+e.name
                         val key=when {e.name.startsWith("fotos/")->"photo/"+layout.photoPaths.entries.single {it.value==e.name}.key
                             e.name.startsWith("croquis/")->"sketch/"+layout.sketchPaths.entries.single {it.value==e.name}.key
                             else->e.name}
-                        add(key,metadata,when {e.name.endsWith(".jpg")->"image/jpeg";e.name.endsWith(".png")->"image/png";e.name.endsWith(".xlsx")->SicExcelWriter.XLSX_MIME;else->"application/json"},if(e.name=="manifest.json")JSONObject(zip.readBytes().toString(Charsets.UTF_8)).apply {remove("logicalPath");remove("delivery");put("pathVersion",3);put("destinationAuthority","SERVER_ACK");put("revision",i.revision)}.toString().toByteArray() else zip.readBytes())
+                        add(key,metadata,when {e.name.endsWith(".jpg")->"image/jpeg";e.name.endsWith(".png")->"image/png";e.name.endsWith(".xlsx")->SicExcelWriter.XLSX_MIME;else->"application/json"},if(e.name=="manifest.json")JSONObject(zip.readBytes().toString(Charsets.UTF_8)).apply {remove("logicalPath");remove("delivery");put("pathVersion",4);put("familyPath","PUENTES");put("pathsRelativeTo","BRIDGE_FOLDER");put("destinationAuthority","SERVER_ACK");put("revision",i.revision)
+                            optJSONArray("files")?.let { entries -> for(n in 0 until entries.length()) {
+                                val f=entries.getJSONObject(n);val oldPath=f.optString("path")
+                                if(oldPath.startsWith("fotos/")) {
+                                    val photo=s.photos.single {layout.photoPaths[it.id]==oldPath}
+                                    f.put("path",DriveInventorySchema.category(photo.photoCategory)+"/F_${sha256(photo.id.toByteArray()).take(16)}.jpg")
+                                } else f.put("path","SCAP/${s.inspection.id}/"+oldPath)
+                            } }
+}.toString().toByteArray() else zip.readBytes())
                     }
                 }
                 ScapSicExporter.previews(s).filter {it.missingRequired.isEmpty()}.forEach {preview->
@@ -210,7 +226,7 @@ object AutomaticDelivery {
                 val result=PavementCalculator(c).calculate(s,damages)
                 val data=PavementExportSample(s,damages,result)
                 val surface=when(s.surface) {"ASPHALT"->"ASFALTICO";"RIGID"->"RIGIDO";else->"NO_PAVIMENTADO"}
-                p.put("routeCode",s.ruta).put("tramo",s.tramo).put("surface",surface)
+                p.put("routeCode",s.ruta).put("tramo",s.tramo).put("surface",surface).put("family","MUESTRA")
                 val pdf=File(directory,"HC_${s.muestra.toString().padStart(3,'0')}.pdf")
                 pdf.outputStream().use {PavementPdf.write(it,data,photos)}
                 add("field","HOJAS_CAMPO/${pdf.name}","application/pdf",pdf.readBytes())
@@ -227,14 +243,29 @@ object AutomaticDelivery {
                 }}
                 PavementSicFormat.entries.filter {it.surface==s.surface}.forEach {format->
                     if(PavementSic.status(s,damages,format).complete) {
-                        val f=File(directory,"${format.label}.xlsx")
-                        f.outputStream().use {PavementSic.write(it,s,damages,format)}
-                        add("sic/${format.label}","DATOS_APP/${f.name}",SicExcelWriter.XLSX_MIME,f.readBytes())
+                        for(damage in damages) {
+                            val status=PavementSic.status(s,listOf(damage),format)
+                            val row=status.rows.single();val values=row.values
+                            val f=File(directory,"${format.label}_${damage.id}.xlsx")
+                            f.outputStream().use {PavementSic.write(it,s,listOf(damage),format)}
+                            rows.put(JSONObject().put("recordId",s.id+"_"+damage.id).put("format",format.label)
+                                .put("roadbedCode",s.calzada).put("direction","INCREASING")
+                                .put("startPrNumber",values[3].toString().toInt()).put("startDistanceM",values[4])
+                                .put("orderAxis",values[3].toString().toInt()*1000.0+(values[4] as Number).toDouble()).put("orderSource","CONTRACTUAL_PR")
+                                .put("base64",Base64.encodeToString(f.readBytes(),Base64.NO_WRAP)).put("sha256",sha256(f.readBytes())))
+                        }
                     }
                 }
             }
         }
-        if(i.kind!="PAVEMENT")p.put("technicalDeliveryVersion",1)
+        if(i.kind!="PAVEMENT") {
+            val r=if(i.kind=="SIC")requireNotNull(db.inventoryDao().recordById(i.recordId)) else requireNotNull(db.scapDao().snapshot(i.recordId)?.roadRecord)
+            p.put("technicalDeliveryVersion",1).put("roadbedCode",r.roadbedCode)
+                .put("direction",InventoryTechnicalOrder.direction(r)).put("startPrNumber",r.startPrCode.toInt())
+                .put("startDistanceM",r.startDistanceM)
+            for(n in 0 until rows.length()) rows.getJSONObject(n).put("roadbedCode",r.roadbedCode)
+                .put("direction",InventoryTechnicalOrder.direction(r)).put("startPrNumber",r.startPrCode.toInt()).put("startDistanceM",r.startDistanceM)
+        }
         p.put("sourceHash",sha256(source(db,i).toByteArray()))
         val content=contentHash(p)
         p.put("contentHash",content)
@@ -246,36 +277,37 @@ object AutomaticDelivery {
         fun value(row:JSONObject,key:String):String = row.opt(key).let {if(it is Number)JSONObject.numberToString(it) else row.optString(key)}
         fun lines(array:JSONArray,keys:List<String>)=(0 until array.length()).map {n->
             val row=array.getJSONObject(n);keys.joinToString("\t"){value(row,it)}}.sorted().joinToString("\n")
-        val header=listOf("key","revision","routeCode","sibCode","family","tramo","surface").joinToString("\t"){p.optString(it)}
+        val header=listOf("key","revision","routeCode","familyPath","family","tramo","surface","identityId","roadbedCode","direction","startPrNumber","startDistanceM").joinToString("\t"){value(p,it)}
         val technical=if(p.optInt("technicalDeliveryVersion")==1) "\n"+listOf("technicalDeliveryVersion","orderAxis","orderSource","technicalDeliveryWithoutGps").joinToString("\t"){value(p,it)}+
             "\t"+p.getJSONObject("georeferencing").getString("status")+"\t"+p.getJSONObject("georeferencing").getString("externalSubmetricStatus")+
             "\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","orderAxis","orderSource")) else ""
         return sha256((header+"\n"+lines(p.getJSONArray("files"),listOf("key","path","mimeType","sha256"))+"\n"+
-            lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical).toByteArray())
+            lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical+"\npathVersion=4\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","roadbedCode","direction","startPrNumber","startDistanceM"))).toByteArray())
     }
     fun validAck(p:JSONObject,a:JSONObject):Boolean {
-        if(!a.optBoolean("ok") || a.optInt("syncProtocol")!=3 || a.optInt("pathVersion")!=3 ||
+        if(!a.optBoolean("ok") || a.optInt("syncProtocol")!=3 || a.optInt("pathVersion")!=4 ||
             a.optString("key")!=p.getString("key") || a.optLong("revision")!=p.getLong("revision") ||
             a.optString("contentHash")!=p.getString("contentHash") || a.optString("folderId").isBlank())return false
         if(p.optInt("technicalDeliveryVersion")==1 &&
             (a.optString("technicalDeliveryStatus")!="DELIVERED" ||
                 a.optString("georeferencingStatus")!=p.getJSONObject("georeferencing").getString("status") ||
                 a.optString("externalGeoreferencingStatus")!="PENDING"))return false
-        val expectedPrefix=if(p.getString("kind")=="PAVEMENT") "${p.getString("routeCode")}/EVALUACION_SUPERFICIAL/${p.getString("tramo")}/${p.getString("surface")}" else "${p.getString("routeCode")}/${p.getString("sibCode")}/"
-        if(if(p.getString("kind")=="PAVEMENT") a.optString("logicalPath")!=expectedPrefix else !a.optString("logicalPath").startsWith(expectedPrefix))return false
+        val expectedPrefix=if(p.getString("kind")=="PAVEMENT") "${p.getString("routeCode")}/EVALUACION_SUPERFICIAL/${p.getString("tramo")}/${p.getString("surface")}" else "${p.getString("routeCode")}/${p.getString("familyPath")}/"
+        if(if(p.getString("kind")=="PAVEMENT") !a.optString("logicalPath").matches(Regex(Regex.escape(expectedPrefix)+"/MUESTRA [1-9][0-9]*")) else !a.optString("logicalPath").startsWith(expectedPrefix))return false
+        if(p.getString("kind")!="PAVEMENT" && !a.optString("logicalPath").matches(Regex(Regex.escape(expectedPrefix+p.getString("family"))+" [1-9][0-9]*")))return false
         val files=a.optJSONArray("files") ?: return false;val expected=p.getJSONArray("files")
         val ack=(0 until files.length()).map {files.optJSONObject(it) ?: return false}
         if(ack.map {it.optString("key")}.toSet().size!=ack.size || ack.size!=expected.length())return false
         if(!(0 until expected.length()).all {n->val e=expected.getJSONObject(n);val r=ack.singleOrNull {it.optString("key")==e.getString("key")}
             r!=null && r.optString("sha256")==e.getString("sha256") && r.optString("fileId").isNotBlank() && r.optString("folderId").isNotBlank() &&
-                r.optString("requestedPath")==e.getString("path") && r.optString("logicalPath").startsWith(a.getString("logicalPath")+"/")})return false
+                r.optString("requestedPath")==e.getString("path") && (if(p.getString("kind")=="PAVEMENT") r.optString("logicalPath").startsWith(a.getString("logicalPath")+"/") else r.optString("logicalPath")==a.getString("logicalPath")+"/"+e.getString("path"))})return false
         val aggregates=a.optJSONArray("sicFiles") ?: return false
         val rows=p.getJSONArray("sicRows")
         return (0 until rows.length()).all {n->val e=rows.getJSONObject(n)
             (0 until aggregates.length()).any {k->val f=aggregates.getJSONObject(k)
                 f.optString("format")==e.getString("format") && f.optString("fileId").isNotBlank() &&
                     (p.optInt("technicalDeliveryVersion")!=1 || f.optString("folderId").isNotBlank() && f.optString("sha256").matches(Regex("[a-f0-9]{64}"))) &&
-                    f.optString("logicalPath")=="${p.getString("routeCode")}/${p.getString("sibCode")}/${e.getString("format")}.xlsx" &&
+                    f.optString("logicalPath")=="${p.getString("routeCode")}/EXCEL_SIC/${e.getString("format")}.xlsx" &&
                     f.optJSONArray("recordIds")?.let {ids->(0 until ids.length()).any {ids.getString(it)==e.getString("recordId")}}==true}}
     }
 }

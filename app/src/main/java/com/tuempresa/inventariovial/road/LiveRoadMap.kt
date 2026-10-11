@@ -33,6 +33,8 @@ fun LiveRoadMap(reference: RoadReferenceData, routeCode: String, assets: List<Or
     val segments = remember(reference, routeCode) {
         reference.segments.filter { normalizedRoadCode(it.routeCode) == normalizedRoadCode(routeCode) }
     }
+    val pendingGeometry=assets.count { it.item.record.latitude==null || it.item.record.longitude==null }
+    if(pendingGeometry>0) Text("$pendingGeometry elementos en el inventario ordenado sin coordenadas verificadas; georreferenciación externa pendiente.")
     if (segments.isEmpty()) {
         Text("No hay geometría local para $routeCode.", color = MaterialTheme.colorScheme.error)
         return
@@ -213,7 +215,7 @@ private fun SelectedAssetPreview(asset: OrderedAsset, labelColor: Color) {
     Text(asset.axisMeasureM?.let { String.format(Locale.US, "Eje: %.3f km", it / 1000.0) } ?: "Eje: sin matching", color = labelColor)
     Text(record.distanceToRoadAxisM?.let { String.format(Locale.US, "Distancia al eje: %.1f m", it) } ?: "Distancia al eje: no determinada")
     Text("GPS: ${String.format(Locale.US, "%.9f, %.9f", record.latitude, record.longitude)} · ±${record.gpsAccuracyM ?: "?"} m")
-    Text("Carpeta prevista: ${asset.sibCode ?: "SIB ?"}/${asset.folderName}")
+    Text("Familia Drive: ${com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(asset.assetFamily)} · número confirmado por el servidor")
     bitmap?.let { Image(it.asImageBitmap(), "Foto principal ${asset.shortCode}", Modifier.fillMaxWidth().heightIn(max = 280.dp), contentScale = ContentScale.Fit) }
     if (photo != null) Text("Foto ${photo.photoIndex} · ${photo.photoCategory ?: "sin categoría"} · EXIF/metadata vinculados al UUID ${photo.id}", style = MaterialTheme.typography.bodySmall)
 }

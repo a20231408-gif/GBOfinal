@@ -40,13 +40,14 @@ class AutomaticSyncWithoutGpsTest {
         var posts=0;var mutations=0;var loseFirstAck=false;var invalidAck=false;var capable=true
         val receipts=mutableMapOf<String,JSONObject>()
         override fun supportsV3()=true
+        override fun supportsFamilyPaths()=true
         override fun supportsTechnicalDeliveryWithoutGps()=capable
         override fun post(payload:JSONObject):JSONObject {
             posts++
             val key=payload.getString("key")+"/"+payload.getLong("revision")
             val receipt=receipts.getOrPut(key) {
                 mutations++
-                val prefix="${payload.getString("routeCode")}/${payload.getString("sibCode")}/FAJA $mutations"
+                val prefix="${payload.getString("routeCode")}/${payload.getString("familyPath")}/${payload.getString("family")} $mutations"
                 val files=JSONArray();val rows=payload.getJSONArray("sicRows");val aggregates=JSONArray()
                 val expected=payload.getJSONArray("files")
                 for(n in 0 until expected.length()) {
@@ -59,10 +60,10 @@ class AutomaticSyncWithoutGpsTest {
                     val r=rows.getJSONObject(n)
                     aggregates.put(JSONObject().put("format",r.getString("format")).put("fileId","excel-${r.getString("format")}")
                         .put("folderId","sib-folder").put("sha256","a".repeat(64))
-                        .put("logicalPath","${payload.getString("routeCode")}/${payload.getString("sibCode")}/${r.getString("format")}.xlsx")
+                        .put("logicalPath","${payload.getString("routeCode")}/EXCEL_SIC/${r.getString("format")}.xlsx")
                         .put("recordIds",JSONArray(listOf(r.getString("recordId")))))
                 }
-                JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",3)
+                JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4)
                     .put("key",payload.getString("key")).put("revision",payload.getLong("revision"))
                     .put("contentHash",payload.getString("contentHash")).put("folderId","folder-$mutations")
                     .put("logicalPath",prefix).put("files",files).put("sicFiles",aggregates)
@@ -96,7 +97,7 @@ class AutomaticSyncWithoutGpsTest {
                     assertTrue(m.isNull("latitude"));assertTrue(m.isNull("longitude"))
                     val stored=d.inventoryDao().photoById("photo-${i.recordId}")!!
                     assertEquals("SYNCED",stored.syncStatus);assertNotNull(stored.driveFileId);assertNull(stored.photoLatitude)
-                    val root=File("../docs/sync-sin-gps-2026-10-11/examples/${i.recordId}").apply {mkdirs()}
+                    val root=File("../docs/drive-familias-2a/examples/${i.recordId}").apply {mkdirs()}
                     val exported=JSONObject(p.toString());val outFiles=exported.getJSONArray("files")
                     for(n in 0 until outFiles.length()) {val f=outFiles.getJSONObject(n);f.put("base64",android.util.Base64.encodeToString(File(f.getString("localFile")).readBytes(),android.util.Base64.NO_WRAP));f.remove("localFile")}
                     File(root,"payload.json").writeText(exported.toString(2))

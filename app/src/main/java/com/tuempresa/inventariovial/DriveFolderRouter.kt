@@ -1,5 +1,7 @@
 package com.tuempresa.inventariovial
 
+/** Historical Release-15 job metadata only. V4 delivery never calls this resolver. */
+
 object DriveFolderRouter {
 
     fun resolveSib(

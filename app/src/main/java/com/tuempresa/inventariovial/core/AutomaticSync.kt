@@ -101,6 +101,10 @@ object AutomaticSyncDrain {
             try {
                 val transport=transportFactory()
                 if(!transport.supportsV3()) {dao.state(intent.key,intent.revision,"UNCONFIGURED","El servicio requiere syncProtocol 3. Se comprobará automáticamente de nuevo; la copia anterior se conserva.");continue}
+                if(!transport.supportsFamilyPaths()) {
+                    dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend requiere pathVersion 4 y stableFamilyNumbering=true. No se envió contenido; la cola se conserva.")
+                    continue
+                }
                 val prepared=AutomaticDelivery.prepare(context,db,intent)
                 dao.prepared(intent.key,intent.revision,prepared.toString())
                 if(prepared.optInt("technicalDeliveryVersion")==1 && !transport.supportsTechnicalDeliveryWithoutGps()) {
@@ -114,6 +118,7 @@ object AutomaticSyncDrain {
                 if(!AutomaticDelivery.validAck(prepared,ack))throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
                 db.withTransaction {
                     if(AutomaticDelivery.current(db,intent,prepared)) {
+                        DriveInventorySchema.remember(context,prepared,ack)
                         dao.acknowledge(intent.key,intent.revision,System.currentTimeMillis(),ack.toString())
                         val files=ack.getJSONArray("files")
                         for(n in 0 until files.length()) {

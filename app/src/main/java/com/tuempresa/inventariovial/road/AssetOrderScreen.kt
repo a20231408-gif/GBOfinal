@@ -24,7 +24,7 @@ import java.util.Locale
 
 @Composable
 fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
-    val history by viewModel.history.collectAsState()
+    val history by viewModel.orderingHistory.collectAsState()
     val reference by viewModel.field.reference.collectAsState()
     val referenceError by viewModel.field.referenceError.collectAsState()
     val busy by viewModel.axisBusy.collectAsState()
@@ -34,7 +34,7 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
     val orderData = remember(history, reference, route) {
         buildAssetOrderUiData(history, reference, route)
     }
-    val rows = orderData.rows
+    val rows = orderData.rows.map {com.tuempresa.inventariovial.core.DriveInventorySchema.bind(LocalContext.current,it)}
     val folders = orderData.folders
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -64,7 +64,7 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
             } else {
                 ChoiceSelector(routeCodes, route) { if (!exporting) route = it }
             }
-            Text("Orden por posición sobre eje. La numeración es independiente por ruta, SIB y familia.")
+            Text("Orden por posición sobre eje. El orden técnico es independiente del número estable asignado por Drive.")
             Text("El mapa funciona sin Internet con los ejes incluidos en la app y se actualiza al guardar nuevos registros.")
             orderData.error?.let {
                 Text("No se pudo preparar toda la vista de orden: $it", color = MaterialTheme.colorScheme.error)
@@ -110,7 +110,7 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
             val r = asset.item.record
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("${asset.shortCode} · ${asset.assetFamily.label} · ${asset.sibCode ?: "SIB no configurado"}", style = MaterialTheme.typography.titleMedium)
+                    Text("${asset.shortCode} · ${asset.assetFamily.label} · ${com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(asset.assetFamily)}", style = MaterialTheme.typography.titleMedium)
                     Text(asset.axisMeasureM?.let { String.format(Locale.US, "Posición sobre eje: %.3f km", it / 1000) } ?: "Posición sobre eje no determinada")
                     Text(r.distanceToRoadAxisM?.let { String.format(Locale.US, "Distancia al eje: %.1f m", it) } ?: "Distancia al eje: no determinada")
                     Text("PR ingresado: ${r.startPrCode} + ${r.startDistanceM} m")
@@ -167,4 +167,3 @@ internal fun buildAssetOrderUiData(
         error = planResult.exceptionOrNull()?.message
     )
 }
-

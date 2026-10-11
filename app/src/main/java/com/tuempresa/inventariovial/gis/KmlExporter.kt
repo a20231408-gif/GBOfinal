@@ -14,7 +14,7 @@ object KmlExporter {
     @Suppress("UNUSED_PARAMETER")
     fun render(snapshots: List<InventorySnapshot>, calculator: ChainageCalculator = ChainageCalculator(),
         reference: RoadReferenceData = RoadReferenceData(), legendHref: String? = null, iconHref: String? = null,
-        inspectors: Map<String, String> = emptyMap()): String = buildString {
+        inspectors: Map<String, String> = emptyMap(), remotePaths:Map<String,String> = emptyMap()): String = buildString {
         append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>Inventario vial</name>")
         append("<description>${xml("Posición geométrica sobre eje; el PR contractual se conserva. Leyenda: " + KmlPresentation.legend.joinToString("; ") { it.text })}</description>")
         AssetFamily.entries.forEach { family ->
@@ -38,8 +38,8 @@ object KmlExporter {
         val active = snapshots.filter { it.record.status == "ACTIVE" && it.record.sicCode != "SCAP" }
         val byId = active.associateBy { it.record.id }
         val ordered = RoadOrdering.orderAssetsForRoute(active.map { s ->
-            InventoryRecordWithPhotos(s.record, s.photos, s.sic23, s.sic18, s.sic20, s.sic19, s.sic18a)
-        }, calculator)
+            InventoryRecordWithPhotos(s.record, s.photos, s.sic23, s.sic18, s.sic20, s.sic19, s.sic18a, s.sicExtension, s.sic21)
+        }, calculator).map {it.copy(remoteLogicalPath=remotePaths[it.recordId])}
         val routes = (ordered.map { it.routeCode } + reference.segments.map { normalizedRoadCode(it.routeCode) }).distinct().sorted()
         routes.forEach { route ->
             append("<Folder><name>RUTA ${xml(route)}</name><Folder><name>EJE</name>")
@@ -62,7 +62,7 @@ object KmlExporter {
                 }
             }
             append("</Folder>")
-            listOf("PUENTES", "ALCANTARILLAS", "CUNETAS", "BADENES", "SEÑALIZACIÓN", "OTROS").forEach { folder ->
+            ordered.filter { it.routeCode==route }.map { it.assetFamily.mapFolder }.distinct().forEach { folder ->
                 append("<Folder><name>${xml(folder)}</name>")
                 ordered.filter { it.routeCode == route && it.assetFamily.mapFolder == folder }.forEach { asset ->
                     appendAsset(byId.getValue(asset.recordId), asset, calculator, inspectors)
@@ -78,7 +78,10 @@ object KmlExporter {
         calculator: ChainageCalculator, inspectors: Map<String, String>) {
             val r=snapshot.record
             // Records awaiting external georeferencing have no invented map geometry.
-            if(r.latitude==null || r.longitude==null)return
+            if(r.latitude==null || r.longitude==null) {
+                append("<Folder><name>${xml(asset.shortCode)}</name><description>${xml("UUID=${r.id}; SIC=${r.sicCode}; PR=${r.startPrCode}+${r.startDistanceM}; sin geometría verificada; georreferenciación externa pendiente")}</description></Folder>")
+                return
+            }
             require(GeoMath.validCoordinate(r.latitude,r.longitude)) { "Coordenada inválida: ${r.id}" }
             val position=calculator.calculate(r)
             val condition=snapshot.sic17?.structuralConditionCode ?: snapshot.sic18?.structuralConditionCode ?:
@@ -91,7 +94,7 @@ object KmlExporter {
                 "lado" to r.sideCode,"latitud" to r.latitude.toString(),"longitud" to r.longitude.toString(),
                 "condicion" to condition,"fecha" to r.surveyDate,"origenUbicacion" to r.locationSource)
             fields.putAll(linkedMapOf("shortCode" to asset.shortCode, "assetFamily" to asset.assetFamily.name,
-                "SIB" to asset.sibCode.orEmpty(), "routeCode" to r.routeCode, "roadbedCode" to r.roadbedCode,
+                "driveFamily" to com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(asset.assetFamily), "driveLogicalPath" to asset.remoteLogicalPath, "routeCode" to r.routeCode, "roadbedCode" to r.roadbedCode,
                 "manualPrCode" to r.startPrCode, "manualDistanceM" to r.startDistanceM.toString(),
                 "manualEndPrCode" to r.endPrCode.orEmpty(), "manualEndDistanceM" to r.endDistanceM?.toString().orEmpty(),
                 "startPrSource" to r.locationSource, "endPrSource" to r.endLocationSource,

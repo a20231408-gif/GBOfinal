@@ -19,7 +19,7 @@ object DrivePathPlanner {
             var sequence = 0
             routeAssets.sortedWith(compareBy<OrderedAsset> { it.axisMeasureM == null }
                 .thenBy { it.axisMeasureM ?: it.fallbackPosition.chainageM ?: Double.POSITIVE_INFINITY }
-                .thenBy { it.sibCode.orEmpty() }.thenBy { it.assetFamily.name }.thenBy { it.recordId }).forEach { asset ->
+                .thenBy { it.item.record.roadbedCode }.thenBy { it.assetFamily.name }.thenBy { it.recordId }).forEach { asset ->
                 asset.item.photos.filter { it.scapInspectionId == null }.sortedWith(compareBy({ it.photoIndex }, { it.id })).forEach {
                     sequenceByPhoto[it.id] = ++sequence
                 }
@@ -28,8 +28,8 @@ object DrivePathPlanner {
         val folders = ordered.map { asset ->
             warnings += asset.warnings.map { "${asset.recordId}: $it" }
             val route = asset.routeCode
-            val path = if (asset.sibCode != null && FileNameComplianceValidator.safeComponent(route) && FileNameComplianceValidator.safeComponent(asset.folderName))
-                "$route/${asset.sibCode}/${asset.folderName}" else null
+            val path = if (FileNameComplianceValidator.safeComponent(route))
+                "$route/${com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(asset.assetFamily)}/${com.tuempresa.inventariovial.core.DriveInventorySchema.elementLabel(asset.assetFamily)} UUID_${asset.recordId}" else null
             if (path == null) warnings += "${asset.recordId}: ruta de carpetas no planificable."
             val photos = if (path == null) emptyList() else asset.item.photos.filter { it.scapInspectionId == null }.sortedWith(compareBy({ it.photoIndex }, { it.id }))
                 .map { photo ->
@@ -37,7 +37,7 @@ object DrivePathPlanner {
                     val sequence = sequenceByPhoto.getValue(photo.id)
                     val name = DeliveryPhotoNameBuilder.build(sequence, photo.photoIndex, asset, policy)
                     FileNameComplianceValidator.warning(name)?.let { warnings += it }
-                    PlannedPhoto(photo.id, photo.recordId, photo.photoIndex, photo.localPath, name, "$path/$name", sequence)
+                    PlannedPhoto(photo.id, photo.recordId, photo.photoIndex, photo.localPath, name, "$path/${com.tuempresa.inventariovial.core.DriveInventorySchema.category(photo.photoCategory)}/$name", sequence)
                 }
             PlannedAssetFolder(asset, path, photos)
         }

@@ -1,0 +1,142 @@
+{
+  "source": "LOCAL DRIVE DOUBLES, NOT REMOTE",
+  "b": {
+    "ok": true,
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC/culvert-a",
+    "revision": 1000,
+    "contentHash": "2fd9b9eb559474e1302591f49404af9f80bea99a4f271706e2d27d22b32e32c9",
+    "folderId": "folder-6",
+    "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1",
+    "files": [
+      {
+        "key": "photo/photo-culvert-a",
+        "sha256": "d1759f99cae765367d744d2e80967c8462a792b1ad9b26c8f3213da41403db5b",
+        "fileId": "file-11",
+        "folderId": "folder-10",
+        "requestedPath": "ENTRADA/F_1e29ca1f0b749dbb.jpg",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/F_1e29ca1f0b749dbb.jpg"
+      },
+      {
+        "key": "metadata",
+        "sha256": "4023ca71b83a5049be9aadfdee40aae69bcbca568e7c67b498d7fb58e6e4a54a",
+        "fileId": "file-12",
+        "folderId": "folder-6",
+        "requestedPath": "metadata.json",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1/metadata.json"
+      }
+    ],
+    "sicFiles": [
+      {
+        "format": "SIC-18",
+        "fileId": "file-14",
+        "folderId": "folder-13",
+        "logicalPath": "PE-22A/EXCEL_SIC/SIC-18.xlsx",
+        "sha256": "b5c720440e110cc5c162ec63d4f15cec924995989ebb7985551e8a7c896b148b",
+        "recordIds": [
+          "culvert-a"
+        ]
+      }
+    ],
+    "retainedSicFormats": [],
+    "alreadyExists": false,
+    "technicalDeliveryStatus": "DELIVERED",
+    "georeferencingStatus": "PENDING_EXTERNAL",
+    "externalGeoreferencingStatus": "PENDING",
+    "orderSource": "CONTRACTUAL_PR"
+  },
+  "a": {
+    "ok": true,
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC/culvert-b",
+    "revision": 1001,
+    "contentHash": "54b10a5f6dbacd3f804b56ee095d8eb0beba0f6b95f6aa583839ce307056695b",
+    "folderId": "folder-19",
+    "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 2",
+    "files": [
+      {
+        "key": "photo/photo-culvert-b",
+        "sha256": "d1759f99cae765367d744d2e80967c8462a792b1ad9b26c8f3213da41403db5b",
+        "fileId": "file-24",
+        "folderId": "folder-23",
+        "requestedPath": "ENTRADA/F_4aa649b894206ead.jpg",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 2/ENTRADA/F_4aa649b894206ead.jpg"
+      },
+      {
+        "key": "metadata",
+        "sha256": "12297378f9c0ad1712e99c762fff76ccf90005dfd518038ebdd242a17b4eb61a",
+        "fileId": "file-25",
+        "folderId": "folder-19",
+        "requestedPath": "metadata.json",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 2/metadata.json"
+      }
+    ],
+    "sicFiles": [
+      {
+        "format": "SIC-18",
+        "fileId": "file-14",
+        "folderId": "folder-13",
+        "logicalPath": "PE-22A/EXCEL_SIC/SIC-18.xlsx",
+        "sha256": "7abd4e5a70100673fd813fe12d149678103f546b4fb08315bbfa7bf8ffac8bd6",
+        "recordIds": [
+          "culvert-b",
+          "culvert-a"
+        ]
+      }
+    ],
+    "retainedSicFormats": [],
+    "alreadyExists": false,
+    "technicalDeliveryStatus": "DELIVERED",
+    "georeferencingStatus": "PENDING_EXTERNAL",
+    "externalGeoreferencingStatus": "PENDING",
+    "orderSource": "CONTRACTUAL_PR"
+  },
+  "retry": {
+    "ok": true,
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC/culvert-a",
+    "revision": 1000,
+    "contentHash": "2fd9b9eb559474e1302591f49404af9f80bea99a4f271706e2d27d22b32e32c9",
+    "folderId": "folder-6",
+    "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1",
+    "files": [
+      {
+        "key": "photo/photo-culvert-a",
+        "sha256": "d1759f99cae765367d744d2e80967c8462a792b1ad9b26c8f3213da41403db5b",
+        "fileId": "file-11",
+        "folderId": "folder-10",
+        "requestedPath": "ENTRADA/F_1e29ca1f0b749dbb.jpg",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/F_1e29ca1f0b749dbb.jpg"
+      },
+      {
+        "key": "metadata",
+        "sha256": "4023ca71b83a5049be9aadfdee40aae69bcbca568e7c67b498d7fb58e6e4a54a",
+        "fileId": "file-12",
+        "folderId": "folder-6",
+        "requestedPath": "metadata.json",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1/metadata.json"
+      }
+    ],
+    "sicFiles": [
+      {
+        "format": "SIC-18",
+        "fileId": "file-14",
+        "folderId": "folder-13",
+        "logicalPath": "PE-22A/EXCEL_SIC/SIC-18.xlsx",
+        "sha256": "b5c720440e110cc5c162ec63d4f15cec924995989ebb7985551e8a7c896b148b",
+        "recordIds": [
+          "culvert-a"
+        ]
+      }
+    ],
+    "retainedSicFormats": [],
+    "alreadyExists": true,
+    "technicalDeliveryStatus": "DELIVERED",
+    "georeferencingStatus": "PENDING_EXTERNAL",
+    "externalGeoreferencingStatus": "PENDING",
+    "orderSource": "CONTRACTUAL_PR"
+  }
+}

@@ -1,0 +1,189 @@
+diff --git a/google-apps-script/Code.gs b/google-apps-script/Code.gs
+index 8250344..21b3474 100644
+--- a/google-apps-script/Code.gs
++++ b/google-apps-script/Code.gs
+@@ -24 +24 @@ function doGet() {
+-    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 2, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
++    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
+@@ -73,0 +74,3 @@ function doPost(e) {
++    if (typeof SyncV3 !== "undefined" && v3Enabled()) {
++      return jsonResponse({ok:false,code:"LEGACY_UPLOAD_DISABLED",error:"Usa syncProtocol 3 y pathVersion 4 para entregas nuevas."});
++    }
+diff --git a/google-apps-script/SyncV3.gs b/google-apps-script/SyncV3.gs
+index 1517fa6..561d01d 100644
+--- a/google-apps-script/SyncV3.gs
++++ b/google-apps-script/SyncV3.gs
+@@ -63 +63 @@ function v3Store() {
+-  function unpackWorkbook(bytes) {
++  function unpackWorkbook(bytes,dataStartRow=14) {
+@@ -71 +71 @@ function v3Store() {
+-    const rows=all.filter(r=>Number(/\br="(\d+)"/.exec(r)[1])>=14);
++    const rows=all.filter(r=>Number(/\br="(\d+)"/.exec(r)[1])>=dataStartRow);
+@@ -75 +75 @@ function v3Store() {
+-    return {parts,sheet,rows,signature};
++    return {parts,sheet,rows,signature,dataStartRow};
+@@ -80 +80 @@ function v3Store() {
+-      if(b.getName()==='xl/workbook.xml')return Utilities.newBlob(b.getDataAsString().replace(/(!\$A\$\d+:\$[A-Z]+\$)\d+/g,(_,start)=>start+(13+rowCount)),'application/xml',b.getName());
++      if(b.getName()==='xl/workbook.xml')return Utilities.newBlob(b.getDataAsString().replace(/(!\$A\$\d+:\$[A-Z]+\$)\d+/g,(_,start)=>start+((book.dataStartRow || 14)-1+rowCount)),'application/xml',b.getName());
+@@ -101,2 +101,3 @@ function v3Store() {
+-      const bindingName='binding_'+hash(identity)+'.json';const previousBinding=read(bindingName);
+-      const scope=p.kind==='PAVEMENT'?p.routeCode+'/EVALUACION_SUPERFICIAL/'+p.tramo+'/'+p.surface:p.routeCode+'/'+p.sibCode;
++      const bindingName=(p.pathVersion===4?'binding_v4_':'binding_')+hash(identity)+'.json';let previousBinding=read(bindingName);
++      if(p.pathVersion===4 && read('binding_'+hash(identity)+'.json'))SyncV3.reject('HISTORICAL_MIGRATION_REQUIRED');
++      const scope=p.kind==='PAVEMENT'?p.routeCode+'/EVALUACION_SUPERFICIAL/'+p.tramo+'/'+p.surface:p.routeCode+'/'+(p.pathVersion===4?p.familyPath:p.sibCode);
+@@ -107,8 +108,9 @@ function v3Store() {
+-      // A technical delivery ordered by PR never claims geometric/submetric order.
+-      // Keep assigned folder IDs/numbers stable; geometry reconciliation is a separate task.
+-      const geometric=p.orderSource!=='CONTRACTUAL_PR';
+-      const geometricPeers=peers.filter(b=>b.orderSource!=='CONTRACTUAL_PR');
+-      if(!previousBinding || changed) {
+-        if(p.kind!=='PAVEMENT' && geometric && geometricPeers.some(b=>b.orderAxis>p.orderAxis))SyncV3.reject('ORDERING_REQUIRED');
+-        sequence=Math.max(0,...peers.map(b=>b.sequence))+1;
+-      }else if(p.kind!=='PAVEMENT' && geometric && geometricPeers.some(b=>b.sequence<sequence && b.orderAxis>p.orderAxis || b.sequence>sequence && b.orderAxis<p.orderAxis))SyncV3.reject('ORDERING_REQUIRED');
++      if(p.pathVersion===4) {
++        sequence=SyncV3.allocateNumber(scope,p.family,identity,bindings.filter(b=>b.pathVersion===4));
++      } else if(!previousBinding || changed) sequence=Math.max(0,...peers.map(b=>b.sequence))+1;
++      if(p.pathVersion===4 && changed)SyncV3.reject('IDENTITY_RELOCATION_REQUIRES_MIGRATION');
++      // Reserve UUID/number before creating a folder. Interrupted allocation can be resumed by its owner.
++      if(p.pathVersion===4 && !previousBinding) {
++        previousBinding={pathVersion:4,identity,scope,family:p.family,sequence,folderId:null,logicalPath:scope+'/'+p.family+' '+sequence};
++        jsonFile(bindingName,previousBinding).setDescription('gbo-v3-metadata:'+bindingName);
++      }
+@@ -117 +119 @@ function v3Store() {
+-      if(p.kind!=='PAVEMENT') {
++      if(p.pathVersion===4 || p.kind!=='PAVEMENT') {
+@@ -119 +121 @@ function v3Store() {
+-        if(previousBinding)folder=DriveApp.getFolderById(previousBinding.folderId);
++        if(previousBinding?.folderId)folder=DriveApp.getFolderById(previousBinding.folderId);
+@@ -122,2 +124,3 @@ function v3Store() {
+-          if(matches.length)SyncV3.reject('HISTORICAL_BINDING_REQUIRED');
+-          folder=target.createFolder(name);folder.setDescription('gbo-v3-owner:'+identity);
++          if(matches.length>1)SyncV3.reject('DUPLICATE_REMOTE_FOLDER');
++          if(matches.length && matches[0].getDescription()!=='gbo-v3-owner:'+identity)SyncV3.reject('HISTORICAL_BINDING_REQUIRED');
++          folder=matches[0] || target.createFolder(name);folder.setDescription('gbo-v3-owner:'+identity);
+@@ -126,0 +130,5 @@ function v3Store() {
++      // Durable reservation while ScriptLock is held: failed delivery retries retain the UUID number.
++      if(p.pathVersion===4 && !previousBinding.folderId) {
++        previousBinding={...previousBinding,folderId:folder.getId(),logicalPath};
++        jsonFile(bindingName,previousBinding).setDescription('gbo-v3-metadata:'+bindingName);
++      }
+@@ -188,2 +196,2 @@ function v3Store() {
+-          metadata(bindingName,{identity,scope,family:p.family,sequence,orderAxis:p.orderAxis,orderSource:p.orderSource || 'GNSS_MAP_MATCH',folderId:folder.getId(),logicalPath});
+-          if(p.kind!=='PAVEMENT' && previousBinding && changed){
++          metadata(bindingName,{pathVersion:p.pathVersion,identity,scope,family:p.family,sequence,orderAxis:p.orderAxis,orderSource:p.orderSource || 'GNSS_MAP_MATCH',folderId:folder.getId(),logicalPath});
++          if(p.pathVersion===3 && p.kind!=='PAVEMENT' && previousBinding && changed){
+diff --git a/google-apps-script/SyncV3Core.js b/google-apps-script/SyncV3Core.js
+index 3a5b195..b399a1d 100644
+--- a/google-apps-script/SyncV3Core.js
++++ b/google-apps-script/SyncV3Core.js
+@@ -4,0 +5,28 @@ var SyncV3 = (() => {
++  const families={
++    PUENTE:['PUENTES',['SIC-17','SIC-17A','SIC-17B']], ALCANTARILLA:['ALCANTARILLAS',['SIC-18','SIC-18A']],
++    CUNETA:['CUNETAS',['SIC-19']], CANAL:['CANALES',['SIC-19']], 'BAJADA DE AGUA':['BAJADAS_AGUA',['SIC-19']],
++    'ZANJA DE DRENAJE':['ZANJAS_DRENAJE',['SIC-19']], 'ZANJA DE CORONACION':['ZANJAS_CORONACION',['SIC-19']],
++    'CUNETA DE BANQUETA':['CUNETAS_BANQUETA',['SIC-19']], BADEN:['BADENES',['SIC-20']], MURO:['MUROS',['SIC-20']], TUNEL:['TUNELES',['SIC-20']],
++    MARCA:['SENALIZACION_Y_SEGURIDAD_VIAL/MARCAS',['SIC-21']], TACHA:['SENALIZACION_Y_SEGURIDAD_VIAL/TACHAS',['SIC-21']],
++    DISPOSITIVO:['SENALIZACION_Y_SEGURIDAD_VIAL/SEGURIDAD_VIAL',['SIC-21']], SENAL:['SENALIZACION_VERTICAL',['SIC-22']],
++    'DERECHO DE VIA':['DERECHO_DE_VIA',['SIC-23']], 'ZONA URBANA':['ZONAS_URBANAS',['SIC-23']], 'PUNTO ESPECIFICO':['PUNTOS_ESPECIFICOS',['SIC-23']], CANTERA:['CANTERAS',['SIC-23']],
++    FAJA:['FAJAS_CALZADA',['SIC-08']], 'ANCHO FAJA':['ANCHOS_FAJA',['SIC-09']],
++    'PUNTO CRITICO':['PUNTOS_CRITICOS',['SIC-13']], ACCIDENTE:['ACCIDENTES',['SIC-34']]
++  };
++  const aggregateScope=p=>p.pathVersion===4?p.routeCode+'/EXCEL_SIC':p.routeCode+'/'+p.sibCode;
++  const decreasing=d=>['D','DECRECIENTE','DESCENDING','REVERSE','DECREASING'].includes(d);
++  const measure=r=>(r.startPrNumber*1000+r.startDistanceM)*(decreasing(r.direction)?-1:1);
++  const compareText=(a,b)=>a===b?0:a<b?-1:1;
++  const normalized=s=>String(s).trim().toUpperCase();
++  function compareTechnical(a,b) {
++    return compareText(normalized(a.roadbedCode),normalized(b.roadbedCode)) || compareText(normalized(a.direction),normalized(b.direction)) ||
++      measure(a)-measure(b) || compareText(a.recordId,b.recordId);
++  }
++  function allocateNumber(scope,family,identity,bindings) {
++    const previous=bindings.find(b=>b.identity===identity);
++    if(previous) {
++      if(previous.scope!==scope || previous.family!==family)reject('IDENTITY_RELOCATION_REQUIRES_MIGRATION');
++      return previous.sequence;
++    }
++    return Math.max(0,...bindings.filter(b=>b.scope===scope && b.family===family).map(b=>b.sequence))+1;
++  }
+@@ -6 +34 @@ var SyncV3 = (() => {
+-    if(!p || p.syncProtocol!==3 || p.pathVersion!==3 || !['SIC','SCAP','PAVEMENT'].includes(p.kind) ||
++    if(!p || p.syncProtocol!==3 || ![3,4].includes(p.pathVersion) || !['SIC','SCAP','PAVEMENT'].includes(p.kind) ||
+@@ -10,3 +38,13 @@ var SyncV3 = (() => {
+-      p.files.length>80 || !Array.isArray(p.sicRows) || p.sicRows.length>12)reject('INVALID_REQUEST');
+-    if(p.kind==='PAVEMENT') {if(!component(p.tramo) || !['ASFALTICO','RIGIDO','NO_PAVIMENTADO'].includes(p.surface))reject('INVALID_LOCATION');}
+-    else if(!/^SIB-\d{2}$/.test(p.sibCode) || !component(p.family) || !Number.isFinite(p.orderAxis) || p.orderAxis<0)reject('ORDERING_REQUIRED');
++      p.files.length>80 || !Array.isArray(p.sicRows) || p.sicRows.length>200)reject('INVALID_REQUEST');
++    if(p.kind==='PAVEMENT') {if(p.pathVersion===4 && p.family!=='MUESTRA')reject('INVALID_FAMILY_LOCATION');if(!component(p.tramo) || !['ASFALTICO','RIGIDO','NO_PAVIMENTADO'].includes(p.surface))reject('INVALID_LOCATION');}
++    else if(p.pathVersion===4) {
++      const family=families[p.family];
++      if(!family || p.familyPath!==family[0] || p.sibCode!=null || !Number.isFinite(p.orderAxis) || p.orderAxis<0 ||
++        typeof p.roadbedCode!=='string' || typeof p.direction!=='string' || !Number.isSafeInteger(p.startPrNumber) || p.startPrNumber<0 ||
++        !Number.isFinite(p.startDistanceM) || p.startDistanceM<0 || p.identityId!=null && !component(p.identityId))reject('INVALID_FAMILY_LOCATION');
++      if(p.kind==='SCAP' && p.family!=='PUENTE')reject('INVALID_SCAP_FAMILY');
++      if(p.sicRows.some(r=>!family[1].includes(r.format)))reject('SIC_FAMILY_MISMATCH');
++    } else if(!/^SIB-\d{2}$/.test(p.sibCode) || !component(p.family) || !Number.isFinite(p.orderAxis) || p.orderAxis<0)reject('ORDERING_REQUIRED');
++    const existing=store.get(p.key);
++    if(p.pathVersion===3 && (!existing || existing.revision!==p.revision))reject('LEGACY_READ_ONLY');
++    if(p.pathVersion===4 && existing && (existing.pathVersion || 3)!==4)reject('HISTORICAL_MIGRATION_REQUIRED');
+@@ -22 +60 @@ var SyncV3 = (() => {
+-         f.path.split('/').some(s=>!component(s) || s.length>20) || !/^[a-f0-9]{64}$/.test(f.sha256))reject('INVALID_FILE');
++         f.path.split('/').some(s=>!component(s) || s.length>80 || p.pathVersion===4 && /^SIB(?:[-_ ]|$)/i.test(s)) || !/^[a-f0-9]{64}$/.test(f.sha256))reject('INVALID_FILE');
+@@ -29 +67,5 @@ var SyncV3 = (() => {
+-      if(!/^SIC-(08|09|13|17|17A|17B|18|18A|19|20|21|22|23|34)$/.test(row.format) || !component(row.recordId) ||
++      if(p.pathVersion===4 && (p.kind==='PAVEMENT'?!row.recordId.startsWith(p.recordId+'_'):row.recordId!==(p.identityId || p.recordId)))reject('ROW_OWNER_MISMATCH');
++      if(p.pathVersion===4 && (!Number.isSafeInteger(row.startPrNumber) || row.startPrNumber<0 || !Number.isFinite(row.startDistanceM) || row.startDistanceM<0 || typeof row.direction!=='string' || typeof row.roadbedCode!=='string'))reject('INVALID_TECHNICAL_ROW');
++      if(p.kind==='PAVEMENT' && !({ASFALTICO:['SIC-14','SIC-14A'],RIGIDO:['SIC-15'],NO_PAVIMENTADO:['SIC-16']}[p.surface] || []).includes(row.format))reject('SIC_SURFACE_MISMATCH');
++      if(p.pathVersion===4 && p.kind!=='PAVEMENT' && ['roadbedCode','direction','startPrNumber','startDistanceM'].some(k=>row[k]!==p[k]))reject('ROW_ORDER_MISMATCH');
++      if(!/^SIC-(08|09|13|14|14A|15|16|17|17A|17B|18|18A|19|20|21|22|23|34)$/.test(row.format) || !component(row.recordId) ||
+@@ -34 +76 @@ var SyncV3 = (() => {
+-      row.workbook=store.unpackWorkbook(bytes);
++      row.workbook=store.unpackWorkbook(bytes, /^SIC-(14|14A|15|16)$/.test(row.format)?3:14);
+@@ -44,2 +86,2 @@ var SyncV3 = (() => {
+-    return ['key','revision','routeCode','sibCode','family','tramo','surface'].map(k=>p[k]==null?'':String(p[k])).join('\t')+'\n'+
+-      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical;
++    return (p.pathVersion===4?['key','revision','routeCode','familyPath','family','tramo','surface','identityId','roadbedCode','direction','startPrNumber','startDistanceM']:['key','revision','routeCode','sibCode','family','tramo','surface']).map(k=>p[k]==null?'':String(p[k])).join('\t')+'\n'+
++      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical+(p.pathVersion===4?'\npathVersion=4\n'+lines(p.sicRows,['recordId','format','roadbedCode','direction','startPrNumber','startDistanceM']):'');
+@@ -48 +90 @@ var SyncV3 = (() => {
+-  function mergeSheet(template, rows) {
++  function mergeSheet(template, rows, start=14) {
+@@ -52 +94 @@ var SyncV3 = (() => {
+-    const header=(sheetData[1].match(/<row\b[^>]*>[\s\S]*?<\/row>/g)||[]).filter(r=>Number(/\br="(\d+)"/.exec(r)[1])<14).join('');
++    const header=(sheetData[1].match(/<row\b[^>]*>[\s\S]*?<\/row>/g)||[]).filter(r=>Number(/\br="(\d+)"/.exec(r)[1])<start).join('');
+@@ -55 +97 @@ var SyncV3 = (() => {
+-      return xml.replace(/\br="(\d+)"/,`r="${i+14}"`).replace(/\br="([A-Z]+)\d+"/g,(_,col)=>`r="${col}${i+14}"`);
++      return xml.replace(/\br="(\d+)"/,`r="${i+start}"`).replace(/\br="([A-Z]+)\d+"/g,(_,col)=>`r="${col}${i+start}"`);
+@@ -58 +100 @@ var SyncV3 = (() => {
+-      .replace(/(<dimension ref="[^"]*:[A-Z]+)\d+("\s*\/?>)/,(_,a,b)=>a+(13+rows.length)+b);
++      .replace(/(<dimension ref="[^"]*:[A-Z]+)\d+("\s*\/?>)/,(_,a,b)=>a+(start-1+rows.length)+b);
+@@ -73 +115 @@ var SyncV3 = (() => {
+-      revision:p.revision,contentHash:p.contentHash,routeCode:p.routeCode,sibCode:p.sibCode,tramo:p.tramo,surface:p.surface,
++      revision:p.revision,contentHash:p.contentHash,pathVersion:p.pathVersion,routeCode:p.routeCode,sibCode:p.sibCode,familyPath:p.familyPath,tramo:p.tramo,surface:p.surface,
+@@ -77 +119 @@ var SyncV3 = (() => {
+-    if(missing.length && (old.routeCode!==p.routeCode || old.sibCode!==p.sibCode))reject('LOCATION_RECONCILIATION_REQUIRED');
++    if(missing.length && (aggregateScope(old)!==aggregateScope(p)))reject('LOCATION_RECONCILIATION_REQUIRED');
+@@ -84,2 +126,8 @@ var SyncV3 = (() => {
+-      for(const scope of new Set([p.routeCode+'/'+p.sibCode,...(old?[old.routeCode+'/'+old.sibCode]:[])])) {
+-        const sources=future.filter(x=>x.routeCode+'/'+x.sibCode===scope).flatMap(x=>(x.sicRows || []).filter(r=>r.format===format));
++      for(const scope of new Set([aggregateScope(p),...(old?[aggregateScope(old)]:[])])) {
++        let sources=future.filter(x=>aggregateScope(x)===scope).flatMap(x=>(x.sicRows || []).filter(r=>r.format===format)
++          .map(r=>({...r,ownerRevision:x.revision,ownerKey:x.key})));
++        if(p.pathVersion===4) {
++          const latest=new Map();
++          sources.forEach(r=>{const old=latest.get(r.recordId);if(!old || r.ownerRevision>old.ownerRevision || r.ownerRevision===old.ownerRevision && r.ownerKey>old.ownerKey)latest.set(r.recordId,r);});
++          sources=[...latest.values()];
++        }
+@@ -88 +136 @@ var SyncV3 = (() => {
+-        const sorted=sources.sort((a,b)=>Number(a.orderSource==='CONTRACTUAL_PR')-Number(b.orderSource==='CONTRACTUAL_PR') || a.orderAxis-b.orderAxis || a.recordId.localeCompare(b.recordId));
++        const sorted=sources.sort(p.pathVersion===4?compareTechnical:(a,b)=>a.orderAxis-b.orderAxis || a.recordId.localeCompare(b.recordId));
+@@ -90 +138 @@ var SyncV3 = (() => {
+-          const books=sorted.map(r=>store.unpackWorkbook(store.decode(r.base64)));
++          const books=sorted.map(r=>store.unpackWorkbook(store.decode(r.base64), /^SIC-(14|14A|15|16)$/.test(r.format)?3:14));
+@@ -92 +140 @@ var SyncV3 = (() => {
+-          const bytes=store.packWorkbook(books[0],mergeSheet(books[0].sheet,books.map(b=>b.rows[0])),sorted.length);
++          const bytes=store.packWorkbook(books[0],mergeSheet(books[0].sheet,books.map(b=>b.rows[0]),books[0].dataStartRow || 14),sorted.length);
+@@ -102 +150 @@ var SyncV3 = (() => {
+-      const receipt={ok:true,syncProtocol:3,pathVersion:3,key:p.key,revision:p.revision,contentHash:p.contentHash,
++      const receipt={ok:true,syncProtocol:3,pathVersion:p.pathVersion,key:p.key,revision:p.revision,contentHash:p.contentHash,
+@@ -112 +160 @@ var SyncV3 = (() => {
+-  return {commit,validate,mergeSheet,reject,component,canonical};
++  return {commit,validate,mergeSheet,reject,component,canonical,families,aggregateScope,compareTechnical,allocateNumber};

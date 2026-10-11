@@ -11,5 +11,6 @@ data class InventoryRecordWithPhotos(
     @Relation(parentColumn = "id", entityColumn = "recordId") val sic20: Sic20Entity? = null,
     @Relation(parentColumn = "id", entityColumn = "recordId") val sic19: Sic19Entity? = null,
     @Relation(parentColumn = "id", entityColumn = "recordId") val sic18a: Sic18AEntity? = null,
-    @Relation(parentColumn="id",entityColumn="recordId") val sicExtension:SicExtensionEntity? = null
+    @Relation(parentColumn="id",entityColumn="recordId") val sicExtension:SicExtensionEntity? = null,
+    @Relation(parentColumn="id",entityColumn="recordId") val sic21:Sic21Entity? = null
 )
