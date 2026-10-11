@@ -80,7 +80,7 @@ fun RecordHistoryScreen(
 
     val elementRecords=visibleRecords.map {it.item.record}
     val elementExtensions=visibleRecords.mapNotNull {it.item.sicExtension}
-    val records=visibleRecords.filter {com.tuempresa.inventariovial.sic.InventoryElements.parentId(it.item.record,elementExtensions,elementRecords)==it.item.record.id}
+    val records=visibleRecords // SIC-08 and SIC-09 reopen by their own UUID.
 
     var extension by remember {mutableStateOf<Pair<String,com.tuempresa.inventariovial.sic.SicFieldFormat>?>(null)}
     extension?.let {(id,format)->com.tuempresa.inventariovial.sic.InventoryElementWorkspace(viewModel,format,id) {extension=null};return}
@@ -205,7 +205,6 @@ private fun HistoryRecordCard(
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(if(record.sicCode in setOf("SIC-08","SIC-09","SIC-13","SIC-34","SIC-18")) com.tuempresa.inventariovial.sic.InventoryElements.title(record.sicCode) else record.assetType, style = MaterialTheme.typography.titleLarge)
             Text(record.sicCode,style=MaterialTheme.typography.bodySmall)
-            if(record.sicCode=="SIC-08") Text("SIC-08 ${if(item.sicExtension?.status=="COMPLETE") "✓" else "Pendiente"} · SIC-09 ${if(fajaWidths.any {it.sicExtension?.status=="COMPLETE"}) "✓" else "Pendiente"}")
             Text("${row.asset?.shortCode ?: "Sin número operativo"} · ${row.position.chainageM?.let { String.format(java.util.Locale.US,"%.2f m",it) } ?: "Posición no determinada"}")
             Text(when(row.position.source) {
                 com.tuempresa.inventariovial.road.PositionSource.AXIS_GEOMETRY -> "Posición geométrica sobre eje (GNSS)"
@@ -228,6 +227,7 @@ private fun HistoryRecordCard(
                 Text("Dimensión 1: ${detail.dimension1M ?: "Sin dato"} m · Dimensión 2: ${detail.dimension2M?.let { "$it m" } ?: "No aplica / sin dato"}")
             }
             Text("Fotos: ${item.photos.size} · Pendientes: ${item.photos.count { it.syncStatus != "SYNCED" }}")
+            com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",record.id,record.status=="ACTIVE")
             DriveUploadPolicy.configurationError()?.let { Text("Drive · SIN CONFIGURAR: $it") }
             item.photos.sortedBy { it.photoIndex }.forEach { photo ->
                 Text("Foto ${photo.photoIndex} · ${DriveUploadPolicy.statusLabel(photo.syncStatus)}")
@@ -271,7 +271,7 @@ private fun HistoryRecordCard(
                     val v=d.values()[f.key].orEmpty();Text("${f.label}: ${f.options.find {it.substringBefore(" - ")==v} ?: v}")
                 }
             }
-            if(record.status=="ACTIVE" && record.sicCode in listOf("SIC-18","SIC-19","SIC-20","SIC-21","SIC-22")) OutlinedButton(onClick=onTechnical) {Text(if(record.sicCode=="SIC-18") "Abrir alcantarilla / exportar formatos" else "Editar ficha técnica y fotografías")}
+            if(record.status=="ACTIVE" && record.sicCode in listOf("SIC-17","SIC-18","SIC-19","SIC-20","SIC-21","SIC-22","SIC-23")) OutlinedButton(onClick=onTechnical) {Text(if(record.sicCode=="SIC-18") "Abrir alcantarilla / exportar formatos" else "Editar ficha técnica y fotografías")}
             if(com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(record.sicCode)!=null) {
                 OutlinedButton(onClick=onTechnical) {Text(if(record.status=="DRAFT") "Editar borrador" else "Ver ficha / exportar")}
             } else if (!editing) {

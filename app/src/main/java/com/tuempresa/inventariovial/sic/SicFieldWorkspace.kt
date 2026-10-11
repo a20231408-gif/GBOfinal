@@ -41,57 +41,36 @@ fun SicCodeDropdown(field:SicField,value:String,onChange:(String)->Unit,enabled:
 @Composable
 fun InventoryElementWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:String?=null,onBack:()->Unit) {
     when(format) {
-        SicFieldFormat.SIC08,SicFieldFormat.SIC09 -> FajaWorkspace(vm,recordId,onBack)
+        SicFieldFormat.SIC08,SicFieldFormat.SIC09 -> FajaWorkspace(vm,format,recordId,onBack)
         SicFieldFormat.SIC18A -> if(recordId!=null) CulvertUnifiedScreen(vm,recordId,onBack=onBack) else Text("Selecciona una alcantarilla desde el historial")
         else -> SicFieldWorkspace(vm,format,recordId,onBack)
     }
 }
 
 @Composable
-fun FajaWorkspace(vm:InventoryViewModel,recordId:String?=null,onBack:()->Unit) {
+fun FajaWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:String?=null,onBack:()->Unit) {
+    require(format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09))
     val context=LocalContext.current
     val db=remember(context) {InventoryDatabase.getInstance(context)}
     val records by db.inventoryDao().observeAllRecords().collectAsState(initial=emptyList())
-    val extensions by db.inventoryDao().observeSicExtensions().collectAsState(initial=emptyList())
-    var selected by rememberSaveable(recordId) {mutableStateOf(recordId)}
-    var creating by rememberSaveable {mutableStateOf(false)}
-    var ready by remember(recordId) {mutableStateOf(recordId==null)}
-    var standaloneWidths by rememberSaveable(recordId) {mutableStateOf(false)}
-    LaunchedEffect(recordId) {
-        if(recordId!=null) {
-            val record=db.inventoryDao().recordById(recordId)
-            val source=db.inventoryDao().sicExtension(recordId)?.sourceRecordId
-            val parent=source?.let {db.inventoryDao().recordById(it)}
-            val grouped=record!=null && parent!=null && InventoryElements.parentId(record,listOfNotNull(db.inventoryDao().sicExtension(recordId)),listOf(record,parent))==parent.id
-            selected=if(grouped) parent!!.id else recordId
-            standaloneWidths=record?.sicCode=="SIC-09" && !grouped
-            ready=true
-        }
-    }
-    if(!ready) {Text("Cargando faja…");return}
+    var selected by rememberSaveable(format,recordId) {mutableStateOf(recordId)}
+    var creating by rememberSaveable(format,recordId) {mutableStateOf(false)}
     if(creating || selected!=null) {
-        val legacy=standaloneWidths || records.find {it.id==selected}?.sicCode=="SIC-09"
-        SicFieldWorkspace(vm,if(legacy) SicFieldFormat.SIC09 else SicFieldFormat.SIC08,selected) {selected=null;creating=false;if(recordId!=null)onBack()}
+        SicFieldWorkspace(vm,format,selected) {selected=null;creating=false;if(recordId!=null)onBack()}
         return
     }
     BackHandler(onBack=onBack)
-    val fajas=InventoryElements.group(records.filter {it.sicCode in setOf("SIC-08","SIC-09") && it.status in setOf("ACTIVE","DRAFT")},extensions)
+    val visible=records.filter {it.sicCode==format.code && it.status in setOf("ACTIVE","DRAFT")}
     LazyColumn(Modifier.fillMaxSize().padding(horizontal=24.dp),contentPadding=PaddingValues(vertical=24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
-        item {OutlinedButton(onClick=onBack) {Text("Volver")};Text("Fajas",style=MaterialTheme.typography.headlineMedium);Text("SIC-08 · SIC-09",style=MaterialTheme.typography.bodySmall)}
-        item {Button(onClick={creating=true}) {Text("+ Nueva faja")}}
-        if(fajas.isEmpty()) item {Text("Todavía no hay fajas guardadas")}
-        items(fajas,key={it.record.id}) {element->
-            val ext=extensions.find {it.recordId==element.record.id}
-            val values=ext?.values().orEmpty()
-            val type=SicFieldFormat.fajaTypes.find {it.code==values["typeCode"]}?.name.orEmpty()
-            val direction=SicFieldFormat.directions.find {it.code==values["directionCode"]}?.name.orEmpty()
+        item {OutlinedButton(onClick=onBack) {Text("Volver")};Text(format.code,style=MaterialTheme.typography.headlineMedium);Text(format.title)}
+        item {Button(onClick={creating=true}) {Text("Nuevo registro")}}
+        if(visible.isEmpty()) item {Text("Todavía no hay registros guardados")}
+        items(visible,key={it.id}) {record->
             Card(Modifier.fillMaxWidth()) {Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                Text("Faja ${values["faja"].orEmpty()} · $type · $direction",style=MaterialTheme.typography.titleLarge)
-                Text("${element.record.routeCode} · ${element.record.roadbedCode}")
-                Text("PR ${element.record.startPrCode}+${element.record.startDistanceM} → ${element.record.endPrCode.orEmpty()}+${element.record.endDistanceM ?: ""}")
-                if(element.record.sicCode=="SIC-09") Text("Anchos históricos sin vínculo · datos conservados")
-                else Text("Características · ${if(ext?.status=="COMPLETE") "✓" else "Pendiente"} · Anchos · ${if(element.children.any {child->extensions.any {it.recordId==child.id && it.status=="COMPLETE"}}) "✓" else "Pendiente"}")
-                OutlinedButton(onClick={selected=element.record.id}) {Text("Abrir")}
+                Text("${record.routeCode} · ${record.roadbedCode}",style=MaterialTheme.typography.titleLarge)
+                Text("PR ${record.startPrCode}+${record.startDistanceM} → ${record.endPrCode.orEmpty()}+${record.endDistanceM ?: ""}")
+                Text(if(record.status=="DRAFT") "Borrador" else "Guardado")
+                OutlinedButton(onClick={selected=record.id}) {Text("Abrir")}
             }}
         }
     }
@@ -104,10 +83,9 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     val db=remember(context) {InventoryDatabase.getInstance(context)}
     val repo=remember(db) {SicFieldRepository(db)}
     val scope=rememberCoroutineScope()
-    val extensions by db.inventoryDao().observeSicExtensions().collectAsState(initial=emptyList())
     val session by vm.field.session.collectAsState()
     val survey=remember(context) {com.tuempresa.inventariovial.field.SurveyPreferences(context)}
-    val faja=format==SicFieldFormat.SIC08
+    val independent=format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)
     var id by rememberSaveable(format,recordId) {mutableStateOf(recordId ?: UUID.randomUUID().toString())}
     var trackRecordId by rememberSaveable(format,recordId) {mutableStateOf(recordId)}
     var source by rememberSaveable(format,recordId) {mutableStateOf<String?>(null)}
@@ -116,27 +94,21 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     var formSessionId by rememberSaveable(format,recordId) {mutableStateOf<String?>(null)}
     var complete by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var dirty by rememberSaveable(format,recordId) {mutableStateOf(false)}
-    var widthId by rememberSaveable(format,recordId) {mutableStateOf(UUID.randomUUID().toString())}
-    var widthRaw by rememberSaveable(format,recordId) {mutableStateOf("{}")}
-    var widthComplete by rememberSaveable(format,recordId) {mutableStateOf(false)}
-    var widthExpanded by rememberSaveable(format,recordId) {mutableStateOf(recordId==null)}
     var review by rememberSaveable {mutableStateOf(false)}
     var exit by remember {mutableStateOf(false)}
     var busy by remember {mutableStateOf(false)}
     var notice by remember {mutableStateOf<String?>(null)}
     var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
     var paths by rememberSaveable {mutableStateOf<List<String>>(emptyList())}
+    var photosChanged by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var categories by remember {mutableStateOf<Map<String,String>>(emptyMap())}
     var captures by remember {mutableStateOf<Map<String,PhotoCaptureMetadata>>(emptyMap())}
     var fix by remember {mutableStateOf<GeoLocation?>(null)}
     var endFix by remember {mutableStateOf<GeoLocation?>(null)}
     fun values(json:String)=JSONObject(json).let {j->j.keys().asSequence().associateWith {j.getString(it)}}
     val state=SicFieldState(format,values(raw),source)
-    val widths=values(widthRaw)
-    val widthState=SicFieldState(SicFieldFormat.SIC09,state.values.filterKeys {it in SicFieldRepository.sharedKeys || it=="faja"}+widths,id)
-    val widthStarted=widths.values.any {it.isNotBlank()}
-    val completion=CompletionResult(state.completion().issues+if(faja && widthStarted) widthState.completion().issues else emptyList())
-    val editable=!complete || faja && !widthComplete
+    val completion=state.completion()
+    val editable=true // Completed records keep their UUID; changes must be validated again.
     fun change(key:String,value:String) {raw=JSONObject(values(raw)+(key to value)).toString();dirty=true;review=false;files=emptyList()}
     LaunchedEffect(id) {
         if(!loaded) try {
@@ -147,27 +119,23 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
                 val snapshot=db.inventoryDao().snapshot(id)!!
                 formSessionId=snapshot.record.sessionId
                 paths=snapshot.photos.sortedBy {it.photoIndex}.map {it.localPath}
-                categories=snapshot.photos.associate {it.localPath to (it.photoCategory ?: "GENERAL")}
-                if(snapshot.record.locationSource!="CONTRACTUAL_PR_ONLY") fix=GeoLocation(snapshot.record.latitude,snapshot.record.longitude,snapshot.record.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,snapshot.record.altitudeM)
+                categories=if(independent) snapshot.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()
+                    else snapshot.photos.associate {it.localPath to (it.photoCategory ?: "GENERAL")}
+                if(snapshot.record.locationSource!="CONTRACTUAL_PR_ONLY" && snapshot.record.latitude!=null && snapshot.record.longitude!=null) fix=GeoLocation(snapshot.record.latitude,snapshot.record.longitude,snapshot.record.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,snapshot.record.altitudeM)
                 snapshot.record.endLatitude?.let {endFix=GeoLocation(it,snapshot.record.endLongitude!!,snapshot.record.endGpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY)}
-                if(faja) {
-                    val children=db.inventoryDao().observeSicExtensions().first().filter {it.formatCode=="SIC-09" && it.sourceRecordId==id}
-                    (children.firstOrNull {it.status=="DRAFT"} ?: children.firstOrNull())?.let {child->
-                        widthId=child.recordId;widthRaw=JSONObject(child.values().filterKeys {it in setOf("usefulWidthM","totalWidthM")}).toString();widthComplete=child.status=="COMPLETE"
-                    }
-                }
+
             } else {
                 val initial=mutableMapOf("surveyDate" to LocalDate.now().format(SicFieldFormat.dateFormatter))
                 val captureSession=db.inventoryDao().currentSession()
                 val existingRecord=db.inventoryDao().recordById(id)
                 formSessionId=if(existingRecord!=null) existingRecord.sessionId else captureSession?.sessionId
                 val location=com.tuempresa.inventariovial.field.FieldSessionDefaults.location(captureSession,existingRecord,vm.field.projectRoutes)
-                existingRecord?.let {initial.putAll(SicFieldRepository.core(it))}
+                existingRecord?.let {initial.putAll(SicFieldRepository.core(it));initial["observations"]=it.observations.orEmpty()}
                 initial["routeCode"]=location.route;initial["roadbedCode"]=location.roadbed
                 val prior=if(existingRecord==null) com.tuempresa.inventariovial.field.FieldSessionDefaults.matchingPosition(captureSession,survey.last()) else null
                 prior?.let {initial["startPrCode"]=it.pr;initial["startDistanceM"]=it.distance.toString()}
-                initial["_direction"]=location.direction
-                initial["_segment"]=location.segment
+                initial["_direction"]=existingRecord?.surveyDirection ?: location.direction
+                initial["_segment"]=existingRecord?.segment ?: location.segment
                 raw=JSONObject(initial).toString()
             }
             loaded=true
@@ -180,12 +148,10 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
         scope.launch {try {
             val owner=vm.field.auth.sessions.requireUser().id
             if(finalize) require(completion.canFinalize) {"Revisa los pendientes antes de finalizar"}
-            if(faja) repo.saveFaja(id,state,widthId,widths,owner,finalize,paths,captures)
-            else repo.save(id,state,owner,finalize,paths,categories=categories,captures=captures,sessionId=formSessionId)
+            repo.save(id,state,owner,finalize,if(independent && !photosChanged)null else paths,categories=categories,captures=captures,sessionId=formSessionId)
             complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
-            widthComplete=db.inventoryDao().sicExtension(widthId)?.status=="COMPLETE"
             trackRecordId=id
-            dirty=false;review=false;notice=if(finalize) "✓ Finalizado · guardado en tablet" else "✓ Borrador guardado en tablet"
+            dirty=false;photosChanged=false;review=false;notice=if(finalize) "✓ Finalizado · guardado en tablet" else "✓ Borrador guardado en tablet"
             if(finalize) {
                 if(com.tuempresa.inventariovial.tracking.TrackCaptureService.activeRecordId.value==id)vm.field.stopTrack()
                 survey.remember(com.tuempresa.inventariovial.field.SurveyPosition(
@@ -197,28 +163,41 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     }
     BackHandler(enabled=!busy) {leave()}
     if(!loaded) {Text(notice ?: "Cargando ficha…");return}
-    LegacySicElementForm(vm,state,editable,!complete,busy,loaded,notice,fix,endFix,paths,categories,
-        widths,widthId,widthComplete,widthExpanded,extensions.filter {it.formatCode=="SIC-09" && it.sourceRecordId==id},trackRecordId,
+    val exportContent:@Composable ()->Unit = {
+        if(independent) {
+            val intents by db.automaticSyncDao().observe().collectAsState(initial=emptyList())
+            val sync=intents.find {it.key=="SIC/$id"}
+            Text(when {
+                dirty -> "Cambios sin guardar"
+                !complete -> "Borrador local"
+                sync?.state=="SYNCED" -> "Sincronizado"
+                sync?.state=="PENDING_VALIDATION" -> "Entrega pendiente de completar"
+                else -> "Guardado local · sincronización pendiente"
+            },style=MaterialTheme.typography.bodySmall)
+        } else com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",id,complete && !dirty)
+        if(complete) Button(enabled=!busy && !dirty,onClick={busy=true;scope.launch {try {
+            files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading)
+            notice="Exportación preparada"
+        } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar")}
+        GeneratedElementFiles(files) {notice=it}
+    }
+    if(independent) FajaCaptureForm(state,!busy,notice,onChange=::change,onDraft={save(false)},onBack=::leave,
+        onSave={if(completion.canFinalize)save(true) else notice=completion.issues.joinToString("\n") {"${it.field}: ${it.reason}"}},
+        photoContent={com.tuempresa.inventariovial.field.LegacyInventoryPhotos(format.code,paths,categories,editable=!busy,captureLocation=false,
+            onPhotoMetadata={path,metadata->captures=captures+(path to metadata)},
+            onChange={p,c->paths=p;categories=c;photosChanged=true;dirty=true;files=emptyList()})},exportContent=exportContent)
+    else LegacySicElementForm(vm,state,editable,true,busy,loaded,notice,fix,endFix,paths,categories,
+        emptyMap(),"",false,false,emptyList(),trackRecordId,
         onChange=::change,onFix={location,end->
             if(end)endFix=location else fix=location
             val metadata=if(end)mapOf("_endLatitude" to location.latitude.toString(),"_endLongitude" to location.longitude.toString(),"_endAccuracy" to location.horizontalAccuracy.toString(),"_endGpsTimestamp" to location.timestamp.toString())
                 else mapOf("_latitude" to location.latitude.toString(),"_longitude" to location.longitude.toString(),"_accuracy" to location.horizontalAccuracy.toString(),"_altitude" to location.altitude.toString(),"_gpsTimestamp" to location.timestamp.toString())
             raw=JSONObject(values(raw)+metadata).toString();dirty=true;review=false;files=emptyList()
         },onPhotos={p,c->paths=p;categories=c;dirty=true;files=emptyList()},onMetadata={path,metadata->captures=captures+(path to metadata)},
-        onWidthChange={key,value->widthRaw=JSONObject(values(widthRaw)+(key to value)).toString();dirty=true;review=false;files=emptyList()},
-        onWidthSelect={selected->if(!dirty) {
-            val child=extensions.single {it.recordId==selected};widthId=child.recordId;widthRaw=JSONObject(child.values().filterKeys {it in setOf("usefulWidthM","totalWidthM")}).toString();widthComplete=child.status=="COMPLETE"
-        }},onExpandWidths={widthExpanded=true},onTrackId={id=it;trackRecordId=it;save(false)},
-        onDraft={if(editable)save(false)},onBack=::leave,onReview={review=true}) {
-        if(complete) Button(enabled=!busy && !dirty,onClick={busy=true;scope.launch {try {
-            files=ElementExports.prepare(context,db,id,vm.localExport.savedHeading)
-            notice="Se generaron ${files.size} formatos para esta ${if(faja) "faja" else "ficha"}"
-        } catch(e:Exception) {notice=e.message} finally {busy=false}}}) {Text("Exportar")}
-        GeneratedElementFiles(files) {notice=it}
-    }
+        onWidthChange={_,_->},onWidthSelect={},onExpandWidths={},onTrackId={id=it;trackRecordId=it;save(false)},
+        onDraft={if(editable)save(false)},onBack=::leave,onReview={review=true},exportContent=exportContent)
     if(review) com.tuempresa.inventariovial.field.LegacyRecordReviewDialog(
-        format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))}+
-            if(faja)listOf("Ancho útil" to widthState.text("usefulWidthM"),"Ancho total" to widthState.text("totalWidthM")) else emptyList(),
+        format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))},
         paths.map(::File),completion,enabled=!busy,onConfirm={save(true)},onDismiss={review=false})
     if(exit) AlertDialog(onDismissRequest={exit=false},title={Text("Guardar cambios")},text={Text("Conserva los cambios como borrador antes de volver")},confirmButton={TextButton(enabled=!busy,onClick={save(false){exit=false;onBack()}}) {Text("Guardar borrador y volver")}},dismissButton={TextButton(onClick={exit=false}) {Text("Seguir editando")}})
 }

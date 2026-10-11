@@ -149,6 +149,7 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                     Text("Fallas en pavimentos",style=MaterialTheme.typography.titleLarge)
                     Text("${surface.label} · ${sample.tramo} · muestra ${sample.muestra}",style=MaterialTheme.typography.bodyMedium)
                 }
+                if(!editable && sample.inspectorUserId==userId) TextButton(onClick={scope.launch {runCatching {repo.reopenSample(sample.id)}.onFailure {message=it.message.orEmpty()}}}) {Text("Reabrir para corregir")}
                 if (editable) Button(onClick = { closeConfirm = true },colors=ButtonDefaults.buttonColors(containerColor=MaterialTheme.colorScheme.surface,contentColor=MaterialTheme.colorScheme.primary)) { Text("Cierre") }
             }
         }

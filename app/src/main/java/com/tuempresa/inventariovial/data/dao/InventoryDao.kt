@@ -45,11 +45,12 @@ interface InventoryDao {
     // Derived data only; a concurrent route/GNSS edit must not receive a stale projection.
     @Query("""UPDATE inventory_records SET axisMeasureM=:axis, distanceToRoadAxisM=:distance,
         roadMatchConfidence=:confidence, matchedSegmentId=:segmentId, projectedLatitude=:projectedLat,
-        projectedLongitude=:projectedLon WHERE id=:id AND routeCode=:route AND latitude=:lat
-        AND longitude=:lon AND gpsAccuracyM IS :accuracy""")
-    suspend fun updateAxisPosition(id: String, route: String, lat: Double, lon: Double, accuracy: Double?,
+        projectedLongitude=:projectedLon WHERE id=:id AND routeCode=:route AND latitude IS :lat
+        AND longitude IS :lon AND gpsAccuracyM IS :accuracy""")
+    suspend fun updateAxisPosition(id: String, route: String, lat: Double?, lon: Double?, accuracy: Double?,
         axis: Double?, distance: Double?, confidence: Double?, segmentId: String?, projectedLat: Double?, projectedLon: Double?): Int
 
+    @Update suspend fun updateSic17(detail:Sic17Entity)
     @Update suspend fun updateSic21(detail:Sic21Entity)
     @Update suspend fun updateSic22(detail:Sic22Entity)
     @Update suspend fun updateSic18(detail:Sic18Entity)

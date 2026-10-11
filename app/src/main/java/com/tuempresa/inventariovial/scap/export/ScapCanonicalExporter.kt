@@ -62,7 +62,7 @@ internal class ScapCanonicalExporter(private val template:()->InputStream,fieldM
             // Derived formulas belong to the source and must remain intact.
             if(w.formula(sheet,ref)==null) w.set(sheet,ref,value)
         }
-        val common=s.values()+mapOf("bridgeName" to s.inspection.bridgeName,"bridgeCode" to s.inspection.bridgeCode,
+        val common=s.values()+mapOf("categoryName" to (s.values()["categoryName"] ?: s.values()["bridgeName"] ?: s.inspection.bridgeName),"bridgeName" to s.inspection.bridgeName,"bridgeCode" to s.inspection.bridgeCode,
             "latitude" to (s.values()["latitude"] ?: s.inspection.latitude?.toString().orEmpty()),
             "longitude" to (s.values()["longitude"] ?: s.inspection.longitude?.toString().orEmpty()))
         fun put(f:Field,ref:String,values:Map<String,String>) {

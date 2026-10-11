@@ -56,6 +56,10 @@ fun ScapFields(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,sec
         ScapFieldTarget(owner,field.key) {
         val value=values[field.key].orEmpty()
         val label=if(field.key=="secondaryCharacteristic" && values["category"]=="ALCANTARILLA") "Ojos / Vanos" else field.label
+        if(owner=="inspection" && section=="A" && field.key=="categoryName") {
+            OutlinedTextField(values["categoryName"] ?: values["bridgeName"] ?: s.inspection.bridgeName,onValueChange={},label={Text("Nombre / categoría")},readOnly=true,modifier=Modifier.fillMaxWidth())
+            return@ScapFieldTarget
+        }
         val enabled=editable && ScapFieldPolicy.enabled(field,values) && field.visible(values)
         val onChange:(String)->Unit={v->
             if(v==ScapFieldPolicy.NOT_APPLICABLE && ScapFieldPolicy.hasDependents(field.key,kind,values)) confirmKey=field.key

@@ -77,6 +77,8 @@ object KmlExporter {
     private fun StringBuilder.appendAsset(snapshot: InventorySnapshot, asset: OrderedAsset,
         calculator: ChainageCalculator, inspectors: Map<String, String>) {
             val r=snapshot.record
+            // Records awaiting external georeferencing have no invented map geometry.
+            if(r.latitude==null || r.longitude==null)return
             require(GeoMath.validCoordinate(r.latitude,r.longitude)) { "Coordenada inválida: ${r.id}" }
             val position=calculator.calculate(r)
             val condition=snapshot.sic17?.structuralConditionCode ?: snapshot.sic18?.structuralConditionCode ?:

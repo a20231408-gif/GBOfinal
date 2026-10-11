@@ -254,7 +254,7 @@ class PavementParallelCTest {
             old.execSQL("INSERT INTO pavement_damages (id,sampleId,correlativo,surface,code,name,severity,geometry,createdAt) VALUES ('d','s',1,'RIGID',22,'Esquina','A','SLABS',1)")
             old.execSQL("INSERT INTO pavement_damage_photos VALUES ('p','d','/unchanged.jpg',1)");old.execSQL("INSERT INTO user_cache VALUES ('keep','u','Inspector','OPERATOR',1,'cipher',1,1,1)");old.version=12
         }
-        val db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_12_13, InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).build()
+        val db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_12_13, InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).addMigrations(*allInventoryMigrations()).build()
         try { val s=db.pavementDao().sample("s")!!;assertEquals("immutable",s.calculationSnapshot);assertEquals(4.0,s.slabLengthM!!,0.0);assertEquals(2.5,s.slabWidthM!!,0.0);assertEquals("H",db.pavementDao().damage("d")!!.severity);assertEquals("/unchanged.jpg",db.pavementDao().photos("d").single().localPath)
             db.openHelper.readableDatabase.query("SELECT id FROM user_cache").use{assertTrue(it.moveToFirst());assertEquals("keep",it.getString(0))}
         } finally {db.close();context.deleteDatabase(name)}

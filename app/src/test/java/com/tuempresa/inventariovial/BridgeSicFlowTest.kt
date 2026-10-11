@@ -168,7 +168,7 @@ class BridgeSicFlowTest {
             insert("photos",mapOf("id" to "photo","recordId" to "road","originalPath" to "/original/historical.jpg","scapInspectionId" to "inspection"))
             old.version=11
         }
-        val db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_11_12,InventoryDatabase.MIGRATION_12_13, InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).build()
+        val db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_11_12,InventoryDatabase.MIGRATION_12_13, InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).addMigrations(*allInventoryMigrations()).build()
         try {
             val s=db.scapDao().snapshot("inspection")!!
             assertEquals("0042",s.roadRecord!!.startPrCode);assertEquals(123.4,s.roadRecord!!.startDistanceM,0.0)

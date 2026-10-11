@@ -30,7 +30,7 @@ import com.tuempresa.inventariovial.pavement.PavementSectionEntity
 
 @Database(
     entities = [
-        UserCacheEntity::class, UserSyncStateEntity::class, LocalLoginStateEntity::class, AuditLogEntity::class,
+        com.tuempresa.inventariovial.core.DriveSyncIntent::class, UserCacheEntity::class, UserSyncStateEntity::class, LocalLoginStateEntity::class, AuditLogEntity::class,
         InventoryRecordEntity::class,
         SicExtensionEntity::class, PhotoEntity::class, FieldPrEntity::class, DeliveryBatchEntity::class,
         Sic17Entity::class,
@@ -49,13 +49,15 @@ import com.tuempresa.inventariovial.pavement.PavementSectionEntity
         PavementSampleEntity::class, PavementDamageEntity::class, PavementDamagePhotoEntity::class, PavementSectionEntity::class
     ],
 
-    version = 15,
+    version = 17,
 
     exportSchema = true
 )
 abstract class InventoryDatabase :
     RoomDatabase() {
 
+    var syncContext: Context? = null
+    abstract fun automaticSyncDao(): com.tuempresa.inventariovial.core.AutomaticSyncDao
     abstract fun userDao(): UserDao
     abstract fun auditDao(): AuditDao
 
@@ -67,6 +69,26 @@ abstract class InventoryDatabase :
 
 
     companion object {
+        /** Only nullability changes. Every existing value, UUID and foreign key is retained. */
+        val MIGRATION_16_17 = object : Migration(16,17) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""CREATE TABLE IF NOT EXISTS `inventory_records_nullable` (`id` TEXT NOT NULL, `sicCode` TEXT NOT NULL, `assetType` TEXT NOT NULL, `routeCode` TEXT NOT NULL, `roadbedCode` TEXT NOT NULL, `startPrCode` TEXT NOT NULL, `startDistanceM` REAL NOT NULL, `endPrCode` TEXT, `endDistanceM` REAL, `sideCode` TEXT, `latitude` REAL, `longitude` REAL, `altitudeM` REAL, `gpsAccuracyM` REAL, `surveyDate` TEXT NOT NULL, `observations` TEXT, `status` TEXT NOT NULL, `photoSyncStatus` TEXT NOT NULL, `excelSyncStatus` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `endLatitude` REAL, `endLongitude` REAL, `endGpsAccuracyM` REAL, `locationSource` TEXT NOT NULL DEFAULT 'MANUAL', `sideSource` TEXT NOT NULL DEFAULT 'MANUAL', `sessionId` TEXT, `gpsTimestamp` INTEGER, `endGpsTimestamp` INTEGER, `gnssProvider` TEXT NOT NULL DEFAULT 'TABLET', `gnssFixType` TEXT, `verticalAccuracyM` REAL, `satellites` INTEGER, `hdop` REAL, `correctionAge` REAL, `isRtkFixed` INTEGER NOT NULL DEFAULT 0, `serverSyncStatus` TEXT NOT NULL DEFAULT 'PENDING', `serverSyncError` TEXT, `segment` TEXT, `surveyDirection` TEXT, `axisMeasureM` REAL, `distanceToRoadAxisM` REAL, `roadMatchConfidence` REAL, `matchedSegmentId` TEXT, `projectedLatitude` REAL, `projectedLongitude` REAL, `endLocationSource` TEXT NOT NULL DEFAULT 'MANUAL', `routeSource` TEXT NOT NULL DEFAULT 'MANUAL', `suggestedRouteCode` TEXT, `suggestedPrCode` TEXT, `suggestedDistanceFromPrM` REAL, `routeMatchDistanceM` REAL, `routeMatchConfidence` REAL, `routeMatchAmbiguous` INTEGER NOT NULL DEFAULT 0, `endSuggestedPrCode` TEXT, `endSuggestedDistanceFromPrM` REAL, `endAxisMeasureM` REAL, `endDistanceToRoadAxisM` REAL, `endMatchedSegmentId` TEXT, `endProjectedLatitude` REAL, `endProjectedLongitude` REAL, PRIMARY KEY(`id`))""")
+                db.execSQL("""INSERT INTO inventory_records_nullable (`id`,`sicCode`,`assetType`,`routeCode`,`roadbedCode`,`startPrCode`,`startDistanceM`,`endPrCode`,`endDistanceM`,`sideCode`,`latitude`,`longitude`,`altitudeM`,`gpsAccuracyM`,`surveyDate`,`observations`,`status`,`photoSyncStatus`,`excelSyncStatus`,`createdAt`,`updatedAt`,`endLatitude`,`endLongitude`,`endGpsAccuracyM`,`locationSource`,`sideSource`,`sessionId`,`gpsTimestamp`,`endGpsTimestamp`,`gnssProvider`,`gnssFixType`,`verticalAccuracyM`,`satellites`,`hdop`,`correctionAge`,`isRtkFixed`,`serverSyncStatus`,`serverSyncError`,`segment`,`surveyDirection`,`axisMeasureM`,`distanceToRoadAxisM`,`roadMatchConfidence`,`matchedSegmentId`,`projectedLatitude`,`projectedLongitude`,`endLocationSource`,`routeSource`,`suggestedRouteCode`,`suggestedPrCode`,`suggestedDistanceFromPrM`,`routeMatchDistanceM`,`routeMatchConfidence`,`routeMatchAmbiguous`,`endSuggestedPrCode`,`endSuggestedDistanceFromPrM`,`endAxisMeasureM`,`endDistanceToRoadAxisM`,`endMatchedSegmentId`,`endProjectedLatitude`,`endProjectedLongitude`) SELECT `id`,`sicCode`,`assetType`,`routeCode`,`roadbedCode`,`startPrCode`,`startDistanceM`,`endPrCode`,`endDistanceM`,`sideCode`,`latitude`,`longitude`,`altitudeM`,`gpsAccuracyM`,`surveyDate`,`observations`,`status`,`photoSyncStatus`,`excelSyncStatus`,`createdAt`,`updatedAt`,`endLatitude`,`endLongitude`,`endGpsAccuracyM`,`locationSource`,`sideSource`,`sessionId`,`gpsTimestamp`,`endGpsTimestamp`,`gnssProvider`,`gnssFixType`,`verticalAccuracyM`,`satellites`,`hdop`,`correctionAge`,`isRtkFixed`,`serverSyncStatus`,`serverSyncError`,`segment`,`surveyDirection`,`axisMeasureM`,`distanceToRoadAxisM`,`roadMatchConfidence`,`matchedSegmentId`,`projectedLatitude`,`projectedLongitude`,`endLocationSource`,`routeSource`,`suggestedRouteCode`,`suggestedPrCode`,`suggestedDistanceFromPrM`,`routeMatchDistanceM`,`routeMatchConfidence`,`routeMatchAmbiguous`,`endSuggestedPrCode`,`endSuggestedDistanceFromPrM`,`endAxisMeasureM`,`endDistanceToRoadAxisM`,`endMatchedSegmentId`,`endProjectedLatitude`,`endProjectedLongitude` FROM inventory_records""")
+                db.execSQL("DROP TABLE inventory_records")
+                db.execSQL("ALTER TABLE inventory_records_nullable RENAME TO inventory_records")
+                listOf("routeCode","sicCode","surveyDate").forEach { column ->
+                    db.execSQL("CREATE INDEX IF NOT EXISTS index_inventory_records_$column ON inventory_records (`$column`)")
+                }
+            }
+        }
+
+        val MIGRATION_15_16 = object : Migration(15,16) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""CREATE TABLE IF NOT EXISTS drive_sync_outbox (`key` TEXT NOT NULL PRIMARY KEY, kind TEXT NOT NULL, recordId TEXT NOT NULL,
+                revision INTEGER NOT NULL, syncedRevision INTEGER NOT NULL, state TEXT NOT NULL, origin TEXT NOT NULL, warningsConfirmed INTEGER NOT NULL,
+                lastSyncedAt INTEGER, error TEXT, receiptJson TEXT, preparedJson TEXT, attempts INTEGER NOT NULL)""")
+            }
+        }
         val MIGRATION_14_15 = object : Migration(14,15) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("""CREATE TABLE IF NOT EXISTS sic_extension_details (
@@ -89,7 +111,7 @@ abstract class InventoryDatabase :
                 db.execSQL("ALTER TABLE sic22_details ADD COLUMN signalObservation TEXT NOT NULL DEFAULT ''")
             }
         }
-        /** Pavimentos se incorpora sobre la base final v11 sin reutilizar números de migración previos. */
+        /** Pavimentos se incorpora sobre la base final v11 sin reutilizar nÃºmeros de migraciÃ³n previos. */
         val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("""CREATE TABLE IF NOT EXISTS pavement_samples (
@@ -184,9 +206,10 @@ abstract class InventoryDatabase :
                             InventoryDatabase::class.java,
                             "inventario_vial.db"
                         )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
                             .build()
 
+                    instance.syncContext = context.applicationContext
                     INSTANCE = instance
 
                     instance

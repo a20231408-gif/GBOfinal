@@ -1,6 +1,6 @@
 package com.tuempresa.inventariovial
 
-import android.util.Log
+import kotlinx.coroutines.launch
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +22,8 @@ import com.tuempresa.inventariovial.field.InventoryPhotoReview
 
 @Composable
 fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
+    val syncContext=androidx.compose.ui.platform.LocalContext.current
+    val syncScope=rememberCoroutineScope()
     val exporter = viewModel.localExport
     val state by exporter.state.collectAsState()
     val history by viewModel.history.collectAsState()
@@ -116,28 +118,12 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
                 enabled = !locked,
                 onClick = {
 
-                    SicExportUploader.upload(
-                        prepared.file
-                    ) { success, message ->
-
-                        if (success) {
-
-                            Log.d(
-                                "SIC_UPLOAD",
-                                "Excel enviado al Drive"
-                            )
-
-                        } else {
-
-                            Log.e(
-                                "SIC_UPLOAD",
-                                message ?: "Error subiendo Excel"
-                            )
-
-                        }
-
+                    syncScope.launch {
+                        pickerMessage=runCatching {
+                            selectedItems.forEach {com.tuempresa.inventariovial.core.AutomaticSync.manual(syncContext,"SIC",it.record.id)}
+                            "Registros programados. Drive consolida con las otras tablets sin reemplazar sus filas."
+                        }.getOrElse {it.message}
                     }
-
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

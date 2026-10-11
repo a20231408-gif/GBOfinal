@@ -50,56 +50,18 @@ object DriveDeliveryRetry {
 
 @Composable
 fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val history by vm.history.collectAsState()
-    val deliveries by remember(context) { InventoryDatabase.getInstance(context).inventoryDao().observeAllDeliveries() }
-        .collectAsState(initial = emptyList())
-    val db=remember(context) { InventoryDatabase.getInstance(context) }
-    val scap by db.scapDao().observeInspections().collectAsState(initial=emptyList())
-    val samples by db.pavementDao().observeSamples().collectAsState(initial=emptyList())
-    var refresh by remember { mutableIntStateOf(0) }
-    LaunchedEffect(Unit) { while(true) { kotlinx.coroutines.delay(2000);refresh++ } }
-    val pavementStates=remember(samples,refresh) { samples.filter { it.status=="CLOSED" }.map { DriveReceiptStore.state(context,it) } }
-    val photos = history.filter { it.record.status == "ACTIVE" && it.record.sicCode != "SCAP" }
-        .flatMap { it.photos }.filter { it.scapInspectionId == null }
-    val states = (photos.map { it.syncStatus } + deliveries.map { it.status } + scap.filter { i -> i.status=="COMPLETE" && history.any { it.record.id==i.roadRecordId && it.record.status in setOf("ACTIVE","DRAFT") } }.map { it.syncStatus } + pavementStates)
-    val counts = SyncOverview.counts(states)
-    var notice by remember { mutableStateOf<String?>(null) }
-    var showDetails by remember { mutableStateOf(false) }
-    var refreshing by remember { mutableStateOf(false) }
-    val times = DriveSyncClock.timestamps(context)
-    fun displayTime(time: Long): String = if (time <= 0) "Aún no registrado" else DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(time))
-    fun enqueue(batches: List<DeliveryBatchEntity>, retry: Boolean) {
-        scope.launch {
-            refreshing = true
-            notice = try {
-                val count=UnifiedSyncAdapter.enqueue(context,retry)
-                if(count==0) "No hay entregas autorizadas pendientes. Revisa las fichas preparadas." else "$count entregas programadas para cuando haya Internet."
-            } catch (e: Exception) { e.message ?: "No se pudo programar el reintento." }
-            refreshing = false
+    val context=LocalContext.current;val scope=rememberCoroutineScope()
+    val db=remember(context){InventoryDatabase.getInstance(context)}
+    val intents by db.automaticSyncDao().observe().collectAsState(emptyList())
+    var message by remember {mutableStateOf<String?>(null)}
+    AlertDialog(onDismissRequest=onClose,title={Text("Centro de sincronización")},text={
+        Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+            AutomaticSyncSummary()
+            Text("Guardado en tablet y confirmación en Drive se muestran por separado.")
+            Button(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,false)} registros programados."}.getOrElse {it.message}}}) {Text("Sincronizar ahora")}
+            OutlinedButton(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,true)} reintentos programados."}.getOrElse {it.message}}}) {Text("Reintentar errores")}
+            intents.forEach {i->AutomaticSyncPanel(i.kind,i.recordId,validated=i.state!="DRAFT",compact=false)}
+            message?.let {Text(it)}
         }
-    }
-    AlertDialog(onDismissRequest=onClose, title={Text("Centro de sincronización")},
-        text={Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-            val pending = states.count { SyncOverview.status(it) == UserSyncState.PENDIENTE }
-            val errors = states.count { SyncOverview.status(it) == UserSyncState.ERROR }
-            Text(if(pending == 0 && errors == 0 && states.none {SyncOverview.status(it)==UserSyncState.SUBIENDO} && states.all {SyncOverview.status(it) == UserSyncState.SINCRONIZADO}) "TODO SINCRONIZADO" else "Pendientes: $pending · Subiendo: ${states.count { SyncOverview.status(it)==UserSyncState.SUBIENDO }} · Errores: $errors")
-            Text("Último intento de entrega SIC: ${displayTime(times.first)}")
-            Text("Última entrega SIC correcta: ${displayTime(times.second)}")
-            Text("✓ Guardado en tablet")
-            Text("Inventario/SIC: ${deliveries.size} · SCAP: ${scap.size} · Pavimentos: ${pavementStates.size}")
-            if (deliveries.any { it.status == "PREPARED" }) Text("Hay entregas preparadas que requieren confirmación antes de enviar.")
-            if (deliveries.any { it.status == "BLOCKED" }) Text("Hay entregas que requieren revisión. No se reintentarán sin corregir la causa.", color=MaterialTheme.colorScheme.error)
-            DriveUploadPolicy.configurationError()?.let { Text(it, color=MaterialTheme.colorScheme.error) }
-            Button(enabled=!refreshing, onClick={enqueue(deliveries, false)}) { Text("Sincronizar ahora") }
-            OutlinedButton(enabled=!refreshing && states.any {it == "ERROR"},onClick={enqueue(deliveries, true)}) { Text("Reintentar errores") }
-            TextButton(onClick={showDetails=!showDetails}) { Text(if(showDetails) "Ocultar detalles" else "Ver detalles") }
-            if(showDetails) {
-                UserSyncState.entries.forEach { state -> Text("${state.label}: ${counts[state] ?: 0}") }
-                deliveries.take(6).forEach { batch -> Text("${batch.routeCode}: ${SyncOverview.status(batch.status).label}" + (batch.error?.let { " · $it" } ?: "")) }
-                Text("SCAP requiere revisión vigente; Pavimentos requiere cierre. Los borradores permanecen locales.", style=MaterialTheme.typography.bodySmall)
-            }
-            notice?.let {Text(it)}
-        }}, confirmButton={TextButton(onClick=onClose) {Text("Cerrar")}})
+    },confirmButton={TextButton(onClick=onClose){Text("Cerrar")}})
 }

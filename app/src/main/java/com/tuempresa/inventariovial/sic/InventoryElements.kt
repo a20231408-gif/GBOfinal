@@ -12,11 +12,13 @@ data class InventoryDestination(val title:String,val subtitle:String,val family:
 /** Presentation aggregation uses explicit UUID relationships, never proximity or labels. */
 object InventoryElements {
     val dashboard = listOf(
-        InventoryElementEntry("Fajas", "SIC-08 · SIC-09", "CALZADA Y FAJAS", SicFieldFormat.SIC08),
+        InventoryElementEntry("Fajas de las calzadas", "SIC-08", "CALZADA Y FAJAS", SicFieldFormat.SIC08),
+        InventoryElementEntry("Ancho de las fajas", "SIC-09", "CALZADA Y FAJAS", SicFieldFormat.SIC09),
         InventoryElementEntry("Puntos críticos", "SIC-13", "SEGURIDAD VIAL", SicFieldFormat.SIC13),
         InventoryElementEntry("Accidentes", "SIC-34", "SEGURIDAD VIAL", SicFieldFormat.SIC34))
     val home:List<InventoryDestination> = listOf(
-        InventoryDestination("Fajas","SIC-08 · SIC-09","CALZADA Y FAJAS",format=SicFieldFormat.SIC08),
+        InventoryDestination("Fajas de las calzadas","SIC-08","CALZADA Y FAJAS",format=SicFieldFormat.SIC08),
+        InventoryDestination("Ancho de las fajas","SIC-09","CALZADA Y FAJAS",format=SicFieldFormat.SIC09),
         InventoryDestination("Señalización y seguridad","SIC-21 · SIC-22","SEGURIDAD VIAL",asset=RoadAssetType.SIGNALIZATION),
         InventoryDestination("Puntos críticos","SIC-13","SEGURIDAD VIAL",format=SicFieldFormat.SIC13),
         InventoryDestination("Accidentes","SIC-34","SEGURIDAD VIAL",format=SicFieldFormat.SIC34),
@@ -28,7 +30,8 @@ object InventoryElements {
         InventoryDestination("Derecho de vía","SIC-23","DERECHO DE VÍA",asset=RoadAssetType.RIGHT_OF_WAY),
         InventoryDestination("Puentes","SIC-17 · SCAP","PUENTES",asset=RoadAssetType.BRIDGE))
     fun title(code: String) = when(code) {
-        "SIC-08", "SIC-09" -> "Faja"
+        "SIC-08" -> "Fajas de las calzadas"
+        "SIC-09" -> "Ancho de las fajas"
         "SIC-13" -> "Punto crítico"
         "SIC-34" -> "Accidente / zona de accidentabilidad"
         "SIC-18", "SIC-18A" -> "Alcantarilla"

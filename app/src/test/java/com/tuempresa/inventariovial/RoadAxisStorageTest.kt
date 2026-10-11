@@ -49,7 +49,7 @@ class RoadAxisStorageTest {
             old.execSQL("INSERT INTO photos (id,recordId,photoIndex,localPath,isPrimary,syncStatus,createdAt) VALUES ('photo','old',1,'/keep.jpg',1,'SYNCED',11)")
             old.version = 8
         }
-        var db = Room.databaseBuilder(context, InventoryDatabase::class.java, name).addMigrations(InventoryDatabase.MIGRATION_8_9,InventoryDatabase.MIGRATION_9_10, InventoryDatabase.MIGRATION_10_11).build()
+        var db = Room.databaseBuilder(context, InventoryDatabase::class.java, name).addMigrations(InventoryDatabase.MIGRATION_8_9,InventoryDatabase.MIGRATION_9_10, InventoryDatabase.MIGRATION_10_11).addMigrations(*allInventoryMigrations()).build()
         try {
             val before = db.inventoryDao().snapshot("old")!!
             assertNull(before.record.axisMeasureM)

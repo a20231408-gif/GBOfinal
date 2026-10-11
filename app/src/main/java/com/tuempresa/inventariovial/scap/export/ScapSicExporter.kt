@@ -12,6 +12,18 @@ data class ScapSicPreview(val format:String,val columns:List<SicColumn>,val valu
     val missingRequired:List<String>,val missingOptional:List<String>,val pending:List<String>)
 
 object ScapSicExporter {
+    fun writeConsolidated(output:OutputStream,snapshots:List<ScapInspectionSnapshot>,format:String) {
+        val latest=snapshots.groupBy {it.inspection.roadRecordId}.values.map {it.maxBy {s->s.inspection.updatedAt}}
+        val ordered=latest.sortedWith(compareBy({it.roadRecord?.routeCode.orEmpty()}, {it.roadRecord?.axisMeasureM ?: Double.MAX_VALUE}, {it.inspection.roadRecordId}))
+        val rows=ordered.map {s->val bytes=java.io.ByteArrayOutputStream();write(bytes,s,format)
+            (s.roadRecord?.routeCode ?: s.values()["route"].orEmpty()) to bytes.toByteArray()}
+        SicConsolidatedWorkbook.write(output,rows)
+    }
+    fun supplement(r:com.tuempresa.inventariovial.data.entity.InventorySnapshot,format:String):ScapSicPreview {
+        val manual=if(format=="SIC-17A")r.sic17a?.values().orEmpty() else r.sic17b?.values().orEmpty()
+        val values=manual+mapOf("bridgeCode" to (manual["bridgeCode"].takeUnless {it.isNullOrBlank()} ?: r.sic17?.bridgeCode.orEmpty()))
+        return preview(ScapSicMapping(format,r.record.id,values.map {(key,value)->ScapMappedField("MANUAL_SIC",key,if(key=="wearingSurface")value.substringBefore(" - ") else value,ScapMappingStatus.DIRECT,"Captura SIC existente")},emptyList()))
+    }
     private val accepted=setOf(ScapMappingStatus.DIRECT,ScapMappingStatus.TRANSFORM)
     fun previews(s:ScapInspectionSnapshot)=listOf(ScapToSicMapper.mapToSic17(s),ScapToSicMapper.mapToSic17A(s),ScapToSicMapper.mapToSic17B(s)).map(::preview)
     fun preview(mapping:ScapSicMapping):ScapSicPreview {

@@ -341,6 +341,7 @@ class InventoryViewModel(
                         endMatchedSegmentId = record.endMatchedSegmentId, endProjectedLatitude = record.endProjectedLatitude,
                         endProjectedLongitude = record.endProjectedLongitude))
                     axisStorage.persist(positionRecord(current))
+                    if(current.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",current.id,current.updatedAt)
                 }
                 }
                 scheduleServerSync(getApplication())
@@ -1147,7 +1148,7 @@ class InventoryViewModel(
                 // Local save has committed; scheduling can be retried from Home.
                 com.tuempresa.inventariovial.core.InventoryDraftStore.completed(getApplication(),recordId)
                 com.tuempresa.inventariovial.field.SurveyPreferences(getApplication()).remember(request)
-                _driveFeedback.value="Guardado localmente. Prepara y revisa la entrega de la ruta antes de sincronizar Drive."
+                _driveFeedback.value="Guardado localmente. Envío automático programado; las condiciones de ubicación/ordenamiento se comprobarán antes de la entrega."
                 runCatching { scheduleServerSync(getApplication()) }
                 lastSavedRecord=record
                 onSuccess()

@@ -143,7 +143,7 @@ class RouteDeliveryTest {
                     val photo = PhotoEntity("demo-photo-${index + 1}-${photoIndex + 1}", r.id, photoIndex + 1,
                         original().absolutePath, photoIndex == 0, null, null, null, "PENDING", now,
                         description = "Imagen sintética para validar entrega; sin evidencia de campo.")
-                    val fix = GeoLocation(r.latitude + photoIndex * .00001, r.longitude, .8f, 321.25, timestamp = now)
+                    val fix = GeoLocation(requireNotNull(r.latitude) + photoIndex * .00001, requireNotNull(r.longitude), .8f, 321.25, timestamp = now)
                     db.inventoryDao().insertPhoto(PhotoCaptureMetadata(now, fix).applyTo(photo))
                 }
             }

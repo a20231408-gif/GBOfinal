@@ -12,7 +12,12 @@ class SicFieldRepository(private val db:InventoryDatabase) {
     suspend fun load(id:String,format:SicFieldFormat):SicFieldState? {
         val r=dao.recordById(id) ?: return null
         val ext=dao.sicExtension(id)
-        if(ext!=null && ext.formatCode==format.code) return inheritCurrent(SicFieldState(format,ext.values(),ext.sourceRecordId))
+        if(ext!=null && ext.formatCode==format.code) {
+            val values=ext.values()
+            val stored=if(r.observations!=null && format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09))
+                values+("observations" to r.observations) else values
+            return inheritCurrent(SicFieldState(format,stored,ext.sourceRecordId))
+        }
         if(format==SicFieldFormat.SIC18A) {
             val s=dao.snapshot(id) ?: return null
             val parent=s.sic18 ?: return null
@@ -23,7 +28,7 @@ class SicFieldRepository(private val db:InventoryDatabase) {
     suspend fun inheritCurrent(s:SicFieldState):SicFieldState {
         if(s.format==SicFieldFormat.SIC09 && s.sourceRecordId!=null) {
             val parent=dao.sicExtension(s.sourceRecordId)
-            if(parent?.formatCode=="SIC-08") return s.copy(values=s.values+parent.values().filterKeys {it in sharedKeys || it=="faja"})
+            if(parent?.formatCode=="SIC-08") return s.copy(values=parent.values().filterKeys {it in sharedKeys || it=="faja"}+s.values)
         }
         if(s.format!=SicFieldFormat.SIC18A) return s
         val p=s.sourceRecordId?.let {dao.snapshot(it)} ?: return s
@@ -44,25 +49,45 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         if(finalize) require(s.completion().canFinalize) {s.completion().issues.joinToString("\n") {"${it.field}: ${it.reason}"}}
         val key=if(s.format==SicFieldFormat.SIC18A) requireNotNull(s.sourceRecordId) else id
         val old=dao.recordById(key);val previous=dao.sicExtension(key)
+        require(old==null || old.sicCode==s.format.code || s.format==SicFieldFormat.SIC18A) {"Formato incompatible"}
         require(previous==null || previous.ownerUserId==owner) {"Ficha de otro operador"}
-        require(previous==null || previous.status!="COMPLETE") {"La ficha ya está finalizada"}
-        require(old==null || s.format==SicFieldFormat.SIC18A || old.status=="DRAFT") {"La ficha ya está finalizada"}
+        
+        require(old==null || old.status in setOf("ACTIVE","DRAFT")) {"Registro anulado."}
         if(s.sourceRecordId!=null) {
             val parent=requireNotNull(dao.recordById(s.sourceRecordId)) {"Registro fuente inexistente"}
-            require(parent.status=="ACTIVE" || !finalize && s.format==SicFieldFormat.SIC09 && parent.status=="DRAFT") {"El registro fuente debe estar activo"}
+            require(parent.status=="ACTIVE" || s.format==SicFieldFormat.SIC09 && parent.status=="DRAFT") {"El registro fuente debe estar activo"}
             require(parent.sicCode==if(s.format==SicFieldFormat.SIC18A) "SIC-18" else "SIC-08") {"Relación incompatible"}
         }
         val now=maxOf(System.currentTimeMillis(),(old?.updatedAt ?: 0)+1)
         if(s.format!=SicFieldFormat.SIC18A) {
             val r=InventoryRecordEntity(key,s.format.code,s.format.family,s.text("routeCode"),s.text("roadbedCode"),s.text("startPrCode"),
                 SicFieldState.number(s.text("startDistanceM")) ?: 0.0,s.text("endPrCode").ifBlank {null},SicFieldState.number(s.text("endDistanceM")),s.text("sideCode").ifBlank {null},
-                SicFieldState.number(s.text("_latitude")) ?: old?.latitude ?: 0.0,SicFieldState.number(s.text("_longitude")) ?: old?.longitude ?: 0.0,
-                SicFieldState.number(s.text("_altitude")) ?: old?.altitudeM,SicFieldState.number(s.text("_accuracy")) ?: old?.gpsAccuracyM,s.text("surveyDate"),null,
+                SicFieldState.number(s.text("_latitude")) ?: old?.latitude ?: if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) null else 0.0,
+                SicFieldState.number(s.text("_longitude")) ?: old?.longitude ?: if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) null else 0.0,
+                SicFieldState.number(s.text("_altitude")) ?: old?.altitudeM,SicFieldState.number(s.text("_accuracy")) ?: old?.gpsAccuracyM,s.text("surveyDate"),if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) s.values["observations"] ?: old?.observations else old?.observations,
                 if(finalize) "ACTIVE" else "DRAFT","PENDING","PENDING",old?.createdAt ?: now,now,
                 endLatitude=SicFieldState.number(s.text("_endLatitude")) ?: old?.endLatitude,endLongitude=SicFieldState.number(s.text("_endLongitude")) ?: old?.endLongitude,
                 endGpsAccuracyM=SicFieldState.number(s.text("_endAccuracy")) ?: old?.endGpsAccuracyM,
-                locationSource=if(s.text("_latitude").isNotBlank()) "TABLET_GNSS" else old?.locationSource ?: "CONTRACTUAL_PR_ONLY",sessionId=sessionId ?: old?.sessionId)
-            dao.insertOrCompleteDraft(r)
+                sessionId=old?.sessionId ?: sessionId,
+                gpsTimestamp=old?.gpsTimestamp,endGpsTimestamp=old?.endGpsTimestamp,gnssProvider=old?.gnssProvider ?: "TABLET",
+                gnssFixType=old?.gnssFixType,verticalAccuracyM=old?.verticalAccuracyM,satellites=old?.satellites,hdop=old?.hdop,
+                correctionAge=old?.correctionAge,isRtkFixed=old?.isRtkFixed ?: false,
+                segment=s.values["_segment"] ?: old?.segment,surveyDirection=s.values["_direction"] ?: old?.surveyDirection,
+                axisMeasureM=old?.axisMeasureM,distanceToRoadAxisM=old?.distanceToRoadAxisM,roadMatchConfidence=old?.roadMatchConfidence,
+                matchedSegmentId=old?.matchedSegmentId,projectedLatitude=old?.projectedLatitude,projectedLongitude=old?.projectedLongitude,
+                endAxisMeasureM=old?.endAxisMeasureM,endDistanceToRoadAxisM=old?.endDistanceToRoadAxisM,
+                endMatchedSegmentId=old?.endMatchedSegmentId,endProjectedLatitude=old?.endProjectedLatitude,endProjectedLongitude=old?.endProjectedLongitude,
+                locationSource=if(s.text("_latitude").isNotBlank()) "TABLET_GNSS" else old?.locationSource ?: "CONTRACTUAL_PR_ONLY")
+            val stored=if(old!=null && s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) old.copy(
+                routeCode=r.routeCode,roadbedCode=r.roadbedCode,startPrCode=r.startPrCode,startDistanceM=r.startDistanceM,
+                endPrCode=r.endPrCode,endDistanceM=r.endDistanceM,surveyDate=r.surveyDate,observations=r.observations,
+                latitude=r.latitude,longitude=r.longitude,altitudeM=r.altitudeM,gpsAccuracyM=r.gpsAccuracyM,
+                endLatitude=r.endLatitude,endLongitude=r.endLongitude,endGpsAccuracyM=r.endGpsAccuracyM,
+                status=r.status,photoSyncStatus=r.photoSyncStatus,excelSyncStatus=r.excelSyncStatus,
+                serverSyncStatus="PENDING",serverSyncError=null,updatedAt=now,
+                segment=r.segment,surveyDirection=r.surveyDirection,sessionId=old.sessionId,
+                locationSource=r.locationSource) else r
+            if(old?.status=="ACTIVE") dao.updateRecord(stored) else dao.insertOrCompleteDraft(stored)
             if(photoPaths!=null) savePhotos(key,photoPaths,categories,captures,now)
         } else {
             require(old?.sicCode=="SIC-18" && old.status=="ACTIVE") {"SIC-18A requiere una alcantarilla activa"}
@@ -84,6 +109,17 @@ class SicFieldRepository(private val db:InventoryDatabase) {
             dao.markServerPending(key,now);dao.refreshRecordPhotoStatus(key)
         }
         dao.saveSicExtension(SicExtensionEntity(key,s.format.code,JSONObject(s.values).toString(),s.sourceRecordId,owner,if(finalize) "COMPLETE" else "DRAFT"))
+        if(finalize) {
+            com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",key,now)
+            if(s.format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) {
+                val record=requireNotNull(dao.recordById(key))
+                if(record.latitude==null || record.longitude==null || record.endLatitude==null || record.endLongitude==null) {
+                    val pending=requireNotNull(db.automaticSyncDao().get("SIC/$key"))
+                    db.automaticSyncDao().put(pending.copy(state="PENDING_VALIDATION",error="Entrega pendiente de georreferenciación externa"))
+                }
+            }
+        }
+        else com.tuempresa.inventariovial.core.AutomaticSync.draft(db,"SIC",key)
         key
     }
     private suspend fun savePhotos(id:String,paths:List<String>,categories:Map<String,String>,captures:Map<String,PhotoCaptureMetadata>,now:Long) {
@@ -103,11 +139,10 @@ class SicFieldRepository(private val db:InventoryDatabase) {
     suspend fun saveFaja(id:String,characteristics:SicFieldState,widthId:String,widths:Map<String,String>,owner:String,finalize:Boolean,
         photoPaths:List<String>?=null,captures:Map<String,PhotoCaptureMetadata> = emptyMap()):String = db.withTransaction {
         require(characteristics.format==SicFieldFormat.SIC08)
-        if(dao.recordById(id)?.status!="ACTIVE") save(id,characteristics,owner,finalize,photoPaths,captures=captures)
-        else require(dao.sicExtension(id)?.ownerUserId==owner) {"Ficha de otro operador"}
+        save(id,characteristics,owner,finalize,photoPaths,captures=captures)
         if(widths.values.any {it.isNotBlank()} || dao.recordById(widthId)!=null) {
             val width=fromFaja(id).copy(values=fromFaja(id).values+widths.filterKeys {it in setOf("usefulWidthM","totalWidthM")})
-            if(dao.sicExtension(widthId)?.status!="COMPLETE") save(widthId,width,owner,finalize && width.completion().canFinalize)
+            save(widthId,width,owner,finalize && width.completion().canFinalize)
         }
         id
     }

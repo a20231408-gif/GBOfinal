@@ -56,6 +56,7 @@ import com.tuempresa.inventariovial.pavement.*
             Text("${sample.tramo.ifBlank { "Borrador" }} · muestra ${sample.muestra}")
             Text("${PavementHistory.dateLabel(sample.fecha)} · ${sample.inspectorNombre}")
             Text("Estado: ${PavementHistory.statusLabel(sample.status)}")
+            com.tuempresa.inventariovial.core.AutomaticSyncPanel("PAVEMENT",sample.id,sample.status=="CLOSED",compact=true)
             TextButton(onClick={onOpen(sample.id)}) { Text(if(PavementHistory.canContinue(sample,userId)) "Continuar" else "Ver") }
         }
     }

@@ -28,7 +28,10 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         OutlinedButton(enabled=!saving,onClick=onBack) {Text("Volver")}
         Text("Editar ficha técnica",style=MaterialTheme.typography.headlineMedium)
+        com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",id,true)
         when(val d=detail) {
+            is SicFormDetail.Sic17 -> Sic17Fields(d.state) {detail=SicFormDetail.Sic17(it)}
+            is SicFormDetail.Sic23 -> Sic23Fields(d.state) {detail=SicFormDetail.Sic23(it)}
             is SicFormDetail.Sic18 -> {Sic18Fields(d.state) {detail=SicFormDetail.Sic18(it)};CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->paths=p;categories=c}}
             is SicFormDetail.Sic19 -> Sic19Fields(d.state) {detail=SicFormDetail.Sic19(it)}
             is SicFormDetail.Sic20 -> Sic20Fields(d.state) {detail=SicFormDetail.Sic20(it)}
@@ -39,6 +42,7 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
             }
             else -> Text("Cargando ficha…")
         }
+        if(detail!=null && detail !is SicFormDetail.Sic18) com.tuempresa.inventariovial.core.InventoryElementPhotos(paths,true,{paths=it},{path,metadata->captures=captures+(path to metadata)})
         error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
         Button(enabled=detail!=null && !saving,onClick={val d=detail ?: return@Button;saving=true;scope.launch {
             try {EngineeringEdits.save(db,id,d,paths,categories,captures);onBack()} catch(e:Exception){error=e.message} finally {saving=false}

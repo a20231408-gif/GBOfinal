@@ -88,7 +88,7 @@ class PavementModuleTest {
             old.execSQL("INSERT INTO user_cache VALUES ('keep','inspector','Inspector','OPERATOR',1,'cipher',1,1,1)")
             old.version=10
         }
-        val db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_10_11,InventoryDatabase.MIGRATION_11_12,InventoryDatabase.MIGRATION_12_13, InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).build()
+        val db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_10_11,InventoryDatabase.MIGRATION_11_12,InventoryDatabase.MIGRATION_12_13, InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).addMigrations(*allInventoryMigrations()).build()
         try {
             assertNull(db.pavementDao().sample("missing"))
             db.openHelper.readableDatabase.query("SELECT username FROM user_cache WHERE id='keep'").use{assertTrue(it.moveToFirst());assertEquals("inspector",it.getString(0))}

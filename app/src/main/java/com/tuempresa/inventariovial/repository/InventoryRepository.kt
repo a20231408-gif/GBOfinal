@@ -55,6 +55,7 @@ class InventoryRepository(
             dao.insertSic17(detail)
 
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
 
@@ -72,6 +73,7 @@ class InventoryRepository(
             dao.insertSic18(detail)
 
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
 
@@ -89,6 +91,7 @@ class InventoryRepository(
             dao.insertSic19(detail)
 
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
 
@@ -106,6 +109,7 @@ class InventoryRepository(
             dao.insertSic20(detail)
 
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
 
@@ -123,6 +127,7 @@ class InventoryRepository(
             dao.insertSic21(detail)
 
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
 
@@ -140,6 +145,7 @@ class InventoryRepository(
             dao.insertSic22(detail)
 
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
     suspend fun saveSic23(record: InventoryRecordEntity, detail: Sic23Entity, photos: List<PhotoEntity>) {
@@ -147,6 +153,7 @@ class InventoryRepository(
             dao.insertOrCompleteDraft(record)
             dao.insertSic23(detail)
             dao.insertPhotos(photos)
+            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
         }
     }
 
@@ -170,7 +177,9 @@ class InventoryRepository(
                 SupplementaryFormat.SIC17B -> dao.saveSic17B(Sic17BEntity.from(recordId,state.values))
                 SupplementaryFormat.SIC18A -> dao.saveSic18A(Sic18AEntity.from(recordId,state.values))
             }
-            dao.markServerPending(recordId,maxOf(System.currentTimeMillis(),snapshot.record.updatedAt+1))
+            val revision=maxOf(System.currentTimeMillis(),snapshot.record.updatedAt+1)
+            dao.markServerPending(recordId,revision)
+            com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",recordId,revision)
         }
     }
 }

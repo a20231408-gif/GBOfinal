@@ -54,12 +54,12 @@ class IntegratedMigration12To14Test {
             old.version=12
         }
         fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name)
-            .addMigrations(InventoryDatabase.MIGRATION_12_13,InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).allowMainThreadQueries().build()
+            .addMigrations(InventoryDatabase.MIGRATION_12_13,InventoryDatabase.MIGRATION_13_14,InventoryDatabase.MIGRATION_14_15).addMigrations(*allInventoryMigrations()).allowMainThreadQueries().build()
         try {
             val room=open()
             try {
                 val db=room.openHelper.writableDatabase
-                assertEquals(15,db.version)
+                assertEquals(17,db.version)
                 for((table,columns) in expected) db.query("SELECT * FROM `$table`").use { c ->
                     assertTrue("Lost table $table",c.moveToFirst())
                     for((col,value) in columns) assertEquals("$table.$col",if(table=="pavement_damages" && col=="severity") "H" else value,c.getString(c.getColumnIndexOrThrow(col)))
@@ -73,7 +73,7 @@ class IntegratedMigration12To14Test {
                 }
             } finally { room.close() }
             val reopened=open()
-            try { assertEquals(15,reopened.openHelper.readableDatabase.version) } finally { reopened.close() }
+            try { assertEquals(17,reopened.openHelper.readableDatabase.version) } finally { reopened.close() }
         } finally { context.deleteDatabase(name) }
     }
 }

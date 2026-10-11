@@ -48,7 +48,7 @@ class InventoryElementFlowTest {
             assertEquals(1,grouped.size);assertEquals("faja",grouped.single().record.id);assertEquals("width",grouped.single().children.single().id)
             assertEquals("faja",repo.load("width",SicFieldFormat.SIC09)!!.sourceRecordId)
             val files=ElementExports.prepare(context,db,"faja",ExportHeading())
-            assertEquals(setOf("SIC-08","SIC-09"),files.map {it.fileType}.toSet());assertTrue(files.all {it.recordId=="faja"})
+            assertEquals(setOf("SIC-08"),files.map {it.fileType}.toSet());assertTrue(files.all {it.recordId=="faja"})
         } finally {db.close();context.deleteDatabase(name)}
     }
     @Test fun rawWidthsAndPartialCharacteristicsRemainDraftsWithoutDuplicatingTheirParent()=runBlocking {
@@ -80,7 +80,7 @@ class InventoryElementFlowTest {
             assertEquals(2,groups.size);assertEquals(2,groups.single {it.record.id=="faja"}.children.size)
             assertEquals("legacy",groups.single {it.record.id=="legacy"}.record.id)
             assertEquals(original,db.inventoryDao().observeSicExtensions().first())
-            assertEquals(2,ElementExports.prepare(context,db,"faja",ExportHeading()).size)
+            assertEquals(1,ElementExports.prepare(context,db,"faja",ExportHeading()).size)
         } finally {db.close()}
     }
     @Test fun culvertNormalRequiresOneFormatBadConditionRequiresAdditionalDetailAndOneIdentity()=runBlocking {
@@ -106,7 +106,7 @@ class InventoryElementFlowTest {
             EngineeringEdits.save(db,id,SicFormDetail.Sic18(base.copy(structuralConditionCode="2")),emptyList(),emptyMap())
             val current=db.inventoryDao().snapshot(id)!!
             assertEquals(saved,current.sic18a)
-            assertEquals("No requerido · antecedente conservado",InventoryElements.culvertDetailStatus(current.sic18!!,current.sic18a,current.sicExtension))
+            assertEquals("No requerido Â· antecedente conservado",InventoryElements.culvertDetailStatus(current.sic18!!,current.sic18a,current.sicExtension))
             assertEquals(listOf("SIC-18"),ElementExports.prepare(context,db,id,ExportHeading()).map {it.fileType})
         } finally {db.close()}
     }
@@ -157,7 +157,7 @@ class InventoryElementFlowTest {
             val state=faja().copy(format=SicFieldFormat.SIC13,values=faja().values+mapOf("sideCode" to "D","classCode" to "15","_latitude" to "-12.2","_longitude" to "-77.3","_accuracy" to "2.5"))
             SicFieldRepository(db).save("critical",state,"operator",true,listOf("/original/clean.jpg"))
             val s=db.inventoryDao().snapshot("critical")!!
-            assertEquals(-12.2,s.record.latitude,0.0);assertEquals("TABLET_GNSS",s.record.locationSource)
+            assertEquals(-12.2,requireNotNull(s.record.latitude),0.0);assertEquals("TABLET_GNSS",s.record.locationSource)
             assertEquals("/original/clean.jpg",s.photos.single().localPath);assertEquals("GENERAL",s.photos.single().photoCategory)
         } finally {db.close()}
     }

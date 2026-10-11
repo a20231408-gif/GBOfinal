@@ -27,7 +27,7 @@ fun CulvertPhotos(paths:List<String>,categories:Map<String,String>,onPhotoMetada
 
 /** Extracted SIC-18 camera/category/preview block; only the existing category policy varies. */
 @Composable
-fun LegacyInventoryPhotos(sicCode:String,paths:List<String>,categories:Map<String,String>,editable:Boolean=true,onPhotoMetadata: (String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata)->Unit = {_,_->},onChange:(List<String>,Map<String,String>)->Unit) {
+fun LegacyInventoryPhotos(sicCode:String,paths:List<String>,categories:Map<String,String>,editable:Boolean=true,captureLocation:Boolean=true,onPhotoMetadata: (String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata)->Unit = {_,_->},onChange:(List<String>,Map<String,String>)->Unit) {
     val context=LocalContext.current;val scope=rememberCoroutineScope()
     val categoryOptions = PhotoCategoryPolicy.categories(sicCode).associate {
         it.key to "${if(it.contractualName == "PANORAMICA") "FOTO" else "FOTO DE"} ${it.label.uppercase(java.util.Locale.ROOT)}"
@@ -42,7 +42,7 @@ fun LegacyInventoryPhotos(sicCode:String,paths:List<String>,categories:Map<Strin
         cameraPath?.let { path -> if(ok) {
             attach(path)
             onPhotoMetadata(path, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(System.currentTimeMillis(), null))
-            com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.capture(context) { metadata ->
+            if(captureLocation) com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.capture(context) { metadata ->
                 onPhotoMetadata(path, metadata)
                 if (metadata.fix == null) error="Fotografía guardada sin GNSS propio disponible."
             }

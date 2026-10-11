@@ -42,7 +42,7 @@ class PrSuggestionStorageTest {
             old.execSQL("INSERT INTO photos (id,recordId,photoIndex,localPath,isPrimary,syncStatus,createdAt) VALUES ('photo','old',1,'/keep.jpg',1,'SYNCED',11)")
             old.version = 9
         }
-        val db = Room.databaseBuilder(context, InventoryDatabase::class.java, name).addMigrations(InventoryDatabase.MIGRATION_9_10, InventoryDatabase.MIGRATION_10_11).build()
+        val db = Room.databaseBuilder(context, InventoryDatabase::class.java, name).addMigrations(InventoryDatabase.MIGRATION_9_10, InventoryDatabase.MIGRATION_10_11).addMigrations(*allInventoryMigrations()).build()
         try {
             val snapshot = db.inventoryDao().snapshot("old")!!
             assertEquals("0042", snapshot.record.startPrCode)

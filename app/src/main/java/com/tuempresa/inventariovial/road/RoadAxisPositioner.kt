@@ -22,6 +22,7 @@ fun RoadReferenceData.forSelectedRouteAndRoadbed(routeCode: String, roadbedCode:
 /** Uses the existing matcher and the initial GNSS fix for point and linear assets. */
 class RoadAxisPositioner(private val reference: RoadReferenceData, private val config: MatchConfig = MatchConfig()) {
     fun position(record: InventoryRecordEntity): InventoryRecordEntity {
+        if(record.latitude==null || record.longitude==null) return record
         val match = record.gpsAccuracyM?.let {
             LinearReferenceEngine(reference.forSelectedRouteAndRoadbed(record.routeCode, record.roadbedCode), config)
                 .locate(record.latitude, record.longitude, it)

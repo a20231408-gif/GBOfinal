@@ -36,6 +36,7 @@ object DeliveryMetadata {
                 "projectedLatitude" to r.projectedLatitude, "projectedLongitude" to r.projectedLongitude,
                 "matchedSegmentId" to r.matchedSegmentId, "endAxisMeasureM" to r.endAxisMeasureM,
                 "endProjectedLatitude" to r.endProjectedLatitude, "endProjectedLongitude" to r.endProjectedLongitude),
+            "observations" to r.observations,
             "recordLocation" to json("latitude" to r.latitude, "longitude" to r.longitude,
                 "altitude" to r.altitudeM, "accuracy" to r.gpsAccuracyM),
             "photos" to JSONArray(photos))

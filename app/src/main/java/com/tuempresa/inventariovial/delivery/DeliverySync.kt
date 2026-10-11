@@ -70,7 +70,7 @@ object DeliverySync {
                 uploadingPhoto = payload.optString("photoId").takeIf { payload.getString("kind") == "photo" }
                 uploadingPhoto?.let { dao.setPhotoSyncStatus(it, "UPLOADING") }
                 val response = transport.post(payload)
-                if (!response.optBoolean("ok") || response.optString("sha256") != payload.getString("sha256") || response.optString("fileId").isBlank() || response.optString("folderId").isBlank() || response.optInt("protocol")!=1 || response.optString("deliveryId")!=id || response.optString("fileName")!=payload.getString("fileName")) {
+                if (!response.optBoolean("ok") || response.optString("sha256") != payload.getString("sha256") || response.optString("fileId").isBlank() || response.optString("folderId").isBlank() || response.optInt("protocol")!=1 || response.optInt("pathVersion")!=payload.optInt("pathVersion") || response.optString("logicalPath")!=payload.optString("logicalPath") || response.optString("deliveryId")!=id || response.optString("fileName")!=payload.getString("fileName")) {
                     val retryable = response.optBoolean("retryable", false)
                     val message = if (retryable) "Drive pendiente de reintento." else "Drive rechazó la entrega. Revisa configuración o conflicto de versión."
                     if (payload.getString("kind") == "photo") dao.setPhotoSyncStatus(payload.getString("photoId"), "ERROR")

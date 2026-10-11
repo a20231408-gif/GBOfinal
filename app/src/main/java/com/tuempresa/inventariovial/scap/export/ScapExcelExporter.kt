@@ -42,7 +42,7 @@ class ScapExcelExporter(private val template:()->InputStream, fieldMap:String,
         // Client-approved abbreviations in the exported header.
         w.set(1,"H13","Dpto. Político:")
         w.set(1,"H15","Dpto. Vial")
-        val common=s.values()+mapOf("bridgeName" to s.inspection.bridgeName,"bridgeCode" to s.inspection.bridgeCode)
+        val common=s.values()+mapOf("categoryName" to (s.values()["categoryName"] ?: s.values()["bridgeName"] ?: s.inspection.bridgeName),"bridgeName" to s.inspection.bridgeName,"bridgeCode" to s.inspection.bridgeCode)
         fun put(field:Field,ref:String,values:Map<String,String>) {
             val rule=field.visible
             val visible=if(rule==null) true else if("!=" in rule) values[rule.substringBefore("!=")]!=rule.substringAfter("!=") else values[rule.substringBefore('=')]==rule.substringAfter('=')

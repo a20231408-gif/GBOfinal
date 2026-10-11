@@ -99,16 +99,13 @@ class SicUiParityTest {
     }
     @Test fun fajaUsesLegacyFlowWithOne08And09FormAndProducesScreenshot() {
         newForm(SicFieldFormat.SIC08)
-        capture("B_Faja_SIC08_09","Registrar Faja")
-        scroll("Características de faja");compose.onNodeWithText("Características de faja").assertExists()
-        scroll("Ancho de faja");compose.onNodeWithText("Ancho de faja").assertExists()
-        scroll("Revisar y finalizar");compose.onNodeWithText("Revisar y finalizar").performClick()
-        compose.onNodeWithText("Verificar registro antes de guardar").assertExists()
-        compose.onNodeWithText("Confirmar y guardar").assertIsNotEnabled()
-        screenshot("F_Faja_revision_legacy")
-        compose.onNodeWithText("Revisar",useUnmergedTree=true).performClick()
-        scroll("Registrar Faja")
-        compose.onNodeWithText("Registrar Faja").assertExists()
+        compose.onNodeWithText("SIC-08").assertExists()
+        compose.onNodeWithText(SicFieldFormat.SIC08.title).assertExists()
+        screenshot("B_Faja_SIC08_independiente")
+        scroll("OBSERVACIONES");compose.onNodeWithText("OBSERVACIONES").assertExists()
+        scroll("Guardar registro");compose.onNodeWithText("Guardar registro").performClick()
+        compose.onNodeWithText("Ancho útil (m)").assertDoesNotExist()
+        compose.onNodeWithText("Iniciar otro recorrido").assertDoesNotExist()
     }
     @Test fun criticalPointUsesLegacyFlowAndProducesScreenshot() {
         newForm(SicFieldFormat.SIC13)
@@ -130,13 +127,7 @@ class SicUiParityTest {
         compose.onAllNodesWithText("Seleccionar")[0].performClick()
         compose.onNodeWithText(catalog.routeCodes.first()).performClick()
         compose.onNodeWithText("${catalog.routes.first().itemLabel} · ${catalog.routes.first().segmentCode}").assertExists()
-        scroll("Sentido de las progresivas")
-        compose.onNodeWithText("Decreciente").performClick().assertIsSelected()
-        compose.onNodeWithText("Iniciar otro recorrido").performClick()
-        compose.onNodeWithText("Nuevo recorrido").assertExists()
-        compose.onNodeWithText("Reiniciar continuidad").assertExists()
-        compose.onNodeWithText("Cancelar").performClick()
-        compose.onNodeWithText("Decreciente").assertIsSelected()
+        compose.onNodeWithText("Iniciar otro recorrido").assertDoesNotExist()
     }
     @Test fun leavingAndReopeningLegacyFajaKeepsUuidRawFieldsDirectionAndJoinedWidths() {
         val vm=InventoryViewModel(app)
@@ -147,27 +138,23 @@ class SicUiParityTest {
             if(open)SicFieldWorkspace(vm,SicFieldFormat.SIC08,recordId) {open=false} else Text("Ficha cerrada")
         }}}
         waitForLoadedForm()
-        scroll("Sentido de las progresivas");compose.onNodeWithText("Decreciente").performClick()
-        scroll("Características de faja")
+        scroll("Faja")
         compose.onNode(hasSetTextAction() and hasText("Faja")).performTextInput("7")
-        scroll("Ancho útil (m)")
-        compose.onNode(hasSetTextAction() and hasText("Ancho útil (m)")).performTextInput("3,")
+        scroll("OBSERVACIONES")
+        compose.onNodeWithTag("sic-observations").performTextInput("Notas completas")
         scroll("Guardar borrador");compose.onNodeWithText("Guardar borrador").performClick()
         compose.waitUntil(10000) {compose.onAllNodesWithText("✓ Borrador guardado en tablet").fetchSemanticsNodes().isNotEmpty()}
         val records=runBlocking {vm.field.dao.observeAllRecords().first()}
         val parent=records.single {it.sicCode=="SIC-08"}
-        val width=records.single {it.sicCode=="SIC-09"}
-        runBlocking {assertEquals("DECREASING",vm.field.dao.sicExtension(parent.id)!!.values()["_direction"])}
+        assertEquals(1,records.size)
         compose.onNodeWithText("← Volver").performClick();compose.onNodeWithText("Ficha cerrada").assertExists()
         compose.runOnIdle {recordId=parent.id;open=true}
         waitForLoadedForm()
-        scroll("Sentido de las progresivas");compose.onNodeWithText("Decreciente").assertIsSelected()
-        scroll("Características de faja");compose.onNode(hasSetTextAction() and hasText("Faja")).assertTextContains("7")
-        scroll("Ancho útil (m)");compose.onNode(hasSetTextAction() and hasText("Ancho útil (m)")).assertTextContains("3,")
+        scroll("Faja");compose.onNode(hasSetTextAction() and hasText("Faja")).assertTextContains("7")
+        scroll("OBSERVACIONES");compose.onNodeWithTag("sic-observations").assertTextContains("Notas completas")
         runBlocking {
-            assertEquals(parent.id,vm.field.dao.sicExtension(width.id)!!.sourceRecordId)
             assertEquals(parent.id,vm.field.dao.recordById(parent.id)!!.id)
-            assertEquals(2,vm.field.dao.observeAllRecords().first().size)
+            assertEquals(1,vm.field.dao.observeAllRecords().first().size)
         }
     }
     @Test fun sic18aDestinationOpensCulvertLegacyFormWithoutIndependentHeaderOrWorkspace() {
@@ -197,9 +184,9 @@ class SicUiParityTest {
             SicFieldRepository(db).saveFaja("joined-faja",state,"joined-width",mapOf("usefulWidthM" to "3","totalWidthM" to "4"),"parity-owner",false)
         }
         compose.setContent {InventarioVialTheme {Surface {InventoryElementWorkspace(vm,SicFieldFormat.SIC09,"joined-width") {}}}}
-        compose.waitUntil(10000) {compose.onAllNodesWithText("Registrar Faja").fetchSemanticsNodes().isNotEmpty()}
+        compose.waitUntil(10000) {compose.onAllNodesWithText("SIC-09").fetchSemanticsNodes().isNotEmpty()}
         compose.onNodeWithTag("legacy-inventory-form").assertExists()
-        compose.onNodeWithText("SIC-08 · SIC-09").assertExists()
+        compose.onNodeWithText("SIC-09").assertExists();compose.onNodeWithText("SIC-08").assertDoesNotExist()
         scroll("Ancho útil (m)");compose.onNode(hasSetTextAction() and hasText("Ancho útil (m)")).assertTextContains("3")
         runBlocking {assertEquals("joined-faja",dao.sicExtension("joined-width")!!.sourceRecordId);assertEquals(2,dao.observeAllRecords().first().size)}
     }

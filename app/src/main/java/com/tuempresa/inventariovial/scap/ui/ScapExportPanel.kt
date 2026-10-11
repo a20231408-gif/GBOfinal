@@ -72,7 +72,10 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                 file=target
                 val saved=controller.savedSnapshot(s.inspection.id)
                 if(format=="SCAP") ScapDelivery.writeExcel(context,saved,target)
-                else withContext(Dispatchers.IO){target.outputStream().use{ScapSicExporter.write(it,saved,format)}}
+                else withContext(Dispatchers.IO){val all=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).scapDao().allSnapshots()
+                    val valid=all.filter {it.inspection.status=="COMPLETE" && it.roadRecord?.status in setOf("ACTIVE","DRAFT") && ScapSicExporter.previews(it).single {p->p.format==format}.missingRequired.isEmpty()}
+                    require(valid.isNotEmpty()) {"No hay puentes validados para este formato."}
+                    target.outputStream().use{ScapSicExporter.writeConsolidated(it,valid,format)}}
                 preparedRevision=if(format=="SCAP")saved.inspection.updatedAt else null
                 prepared=target.absolutePath;message="Elige dónde guardar $format.";launcher.launch(target.name)
             } catch(e:CancellationException){file?.delete();throw e}
@@ -103,7 +106,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
     review.warnings.forEach{Text("• $it",style=MaterialTheme.typography.bodySmall)}
     Button(enabled=ready && !busy && prepared==null && exportErrors.isEmpty(),onClick={if(completeness.pending.isNotEmpty())warningAction="EXPORT" else export("SCAP")}){Text("Exportar SCAP")}
     val configurationError=DriveUploadPolicy.configurationError()
-    Text("Drive SCAP: " + if(configurationError!=null) "NO CONFIGURADO" else DriveUploadPolicy.statusLabel(s.inspection.syncStatus))
+    com.tuempresa.inventariovial.core.AutomaticSyncPanel("SCAP",s.inspection.id,s.inspection.status=="COMPLETE")
     Text(if(s.values("completion")["excelRevision"]==s.inspection.updatedAt.toString())"✓ Excel generado para esta revisión" else "Excel: pendiente para esta revisión")
     s.values("drive")["message"]?.takeIf{it.isNotBlank()}?.let{Text(it)}
     Text("Se enviarán la ficha Excel, las fotografías originales limpias y los croquis. Cada versión queda identificada por puente e inspección.",style=MaterialTheme.typography.bodySmall)
@@ -112,29 +115,29 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         busy=true
         try {layout=ScapHumanDelivery.prepare(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),controller.savedSnapshot(s.inspection.id))}
         catch(e:CancellationException){throw e}
-        catch(e:Exception){layout=null;message="Entrega sin ubicación completa: se usará el respaldo SCAP v1 existente, bajo SCAP y la identidad del puente o inspección. Los campos faltantes permanecen vacíos."}
+        catch(e:Exception){layout=null;message="Pendiente de validación/ordenamiento. Completa la ubicación antes de entregar."}
         finally{busy=false}
     }}){Text("Preparar entrega SCAP")}
     layout?.let {delivery->
-        Text("${delivery.shortCode} · ${com.tuempresa.inventariovial.core.DrivePaths.bridge(context,s)}")
+        Text("${delivery.shortCode} · ${delivery.routeCode}/SIB-08/PUENTE N (el servidor confirma el número)")
         Text((listOf("SCAP.xlsx","manifest.json")+delivery.photoPaths.values+delivery.sketchPaths.values).joinToString("\n"))
         Text("Las revisiones anteriores se conservan en REVISIONES.")
     }
     fun uploadConfirmed() {scope.launch {
         busy=true
-        try {ScapDriveSync.enqueue(context,controller.savedSnapshot(s.inspection.id),layout,warningsConfirmed=true);message="SCAP en cola. Se enviará cuando haya conexión."}
+        try {com.tuempresa.inventariovial.core.AutomaticSync.manual(context,"SCAP",s.inspection.id,warnings=true);message="SCAP en cola. Se enviará cuando haya conexión."}
         catch(e:CancellationException){throw e}
         catch(e:Exception){message="No se pudo programar SCAP: ${e.message}"}
         finally{busy=false}
     }}
     OutlinedButton(enabled=ready && !busy && configurationError==null && exportErrors.isEmpty() &&
-        s.inspection.syncStatus !in setOf("QUEUED","UPLOADING","SYNCED"),onClick={
+        s.inspection.status=="COMPLETE",onClick={
         warningAction="UPLOAD"
     }){Text(if(s.inspection.syncStatus=="ERROR") "Reintentar subida SCAP" else "Subir SCAP a Drive")}
     warningAction?.let{action->AlertDialog(onDismissRequest={warningAction=null},title={Text(if(action=="UPLOAD")"Confirmar subida SCAP" else "Exportar ficha incompleta")},
         text={Column {
             Text("Pendientes: ${completeness.pending.size}. Puedes completar la ficha posteriormente en gabinete.")
-            if(action=="UPLOAD")Text(if(layout==null)"Destino: respaldo SCAP v1 por identidad del puente/inspección." else "Destino: ${layout!!.path}. Se conserva el contrato SCAP v2 y sus revisiones.")
+            if(action=="UPLOAD")Text("Destino: RUTA/SIB-08/PUENTE N. El servicio confirma el orden y conserva las revisiones.")
             TextButton(onClick={warningAction=null;completeness.pending.firstOrNull()?.let(onCompleteMissing)}){Text("Revisar pendientes")}
         }},confirmButton={TextButton(onClick={warningAction=null;if(action=="UPLOAD")uploadConfirmed() else export("SCAP")}){Text(if(action=="UPLOAD")"Subir de todos modos" else "Exportar de todos modos")}},
         dismissButton={TextButton(onClick={warningAction=null}){Text("Cancelar")}})}
@@ -146,7 +149,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                 if(p.missingRequired.isNotEmpty()) Text("Exportación bloqueada. Faltan: ${p.missingRequired.joinToString()}.",color=MaterialTheme.colorScheme.error)
                 if(p.missingOptional.isNotEmpty()) Text("Se exportan vacíos: ${p.missingOptional.joinToString()}.")
                 if(sicDiagnostic) p.pending.forEach{Text("• $it",style=MaterialTheme.typography.bodySmall)}
-                Text("Completa los datos de captura en DATOS PARA SIC. Los pendientes contractuales se identifican en el diagnóstico técnico.",style=MaterialTheme.typography.bodySmall)
+                Text("El Excel local incluye todos los puentes cerrados válidos, con una hoja por ruta. Completa los datos de captura en DATOS PARA SIC. Los pendientes contractuales se identifican en el diagnóstico técnico.",style=MaterialTheme.typography.bodySmall)
                 OutlinedButton(enabled=ready && !busy && prepared==null && p.missingRequired.isEmpty(),onClick={export(p.format)}){Text("Guardar ${p.format}")}
             }
         }

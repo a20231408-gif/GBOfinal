@@ -103,7 +103,7 @@ object PavementDriveUploader {
                         com.tuempresa.inventariovial.core.PhotoCategory.GENERAL,"{}"))
                 val name = "%03d_D%03d.jpg".format(sequence, damage.code)
                 val copy = File(directory, name)
-                marked.copyTo(copy, overwrite = true)
+                com.tuempresa.inventariovial.core.DeliveryJpeg.copy(marked,copy)
                 uploads += UploadFile("PHOTO", copy, "image/jpeg", photo.id, damage.id)
             }
         }
@@ -188,7 +188,7 @@ object PavementDriveUploader {
 
     private fun PavementSampleEntity.routeReady() = ruta.isNotBlank() && tramo.isNotBlank()
 
-    private fun nativeJson(
+    internal fun nativeJson(
         sample: PavementSampleEntity,
         damages: List<PavementDamageEntity>,
         result: PavementResult,

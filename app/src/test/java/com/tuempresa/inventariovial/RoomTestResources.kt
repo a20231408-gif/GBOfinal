@@ -1,0 +1,10 @@
+package com.tuempresa.inventariovial
+
+/** Room 2.8 exposes close() without implementing java.io.Closeable. */
+internal inline fun <T:androidx.room.RoomDatabase,R> T.use(block:(T)->R):R = try {block(this)} finally {close()}
+
+/** Historical fixtures must register the chain through the current production schema. */
+internal fun allInventoryMigrations()=with(com.tuempresa.inventariovial.data.database.InventoryDatabase) {arrayOf(
+    MIGRATION_1_2,MIGRATION_2_3,MIGRATION_3_4,MIGRATION_4_5,MIGRATION_5_6,MIGRATION_6_7,
+    MIGRATION_7_8,MIGRATION_8_9,MIGRATION_9_10,MIGRATION_10_11,MIGRATION_11_12,MIGRATION_12_13,
+    MIGRATION_13_14,MIGRATION_14_15,MIGRATION_15_16,MIGRATION_16_17)}

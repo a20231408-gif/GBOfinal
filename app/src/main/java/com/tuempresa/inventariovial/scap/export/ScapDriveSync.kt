@@ -31,40 +31,9 @@ object ScapDriveSync {
         require(completion.pending.isEmpty() || warningsConfirmed) {"Confirma la subida con datos pendientes."}
         return completion
     }
-    suspend fun enqueue(context: Context, snapshot: ScapInspectionSnapshot, reviewedLayout: ScapHumanLayout? = null,warningsConfirmed:Boolean=false) {
-        DriveUploadPolicy.requireConfiguration()
-        val db = InventoryDatabase.getInstance(context)
-        val inspection = snapshot.inspection
-        val catalog=com.tuempresa.inventariovial.scap.catalog.ScapCatalog.load(context).forSnapshot(snapshot)
-        val completion=reviewForUpload(snapshot,catalog,warningsConfirmed)
-        val layout = if(reviewedLayout!=null)ScapHumanDelivery.prepare(context,db,snapshot) else null
-        require(reviewedLayout == layout) {"El orden cambió; prepara y revisa nuevamente la entrega SCAP."}
-        val request = OneTimeWorkRequestBuilder<ScapDriveWorker>()
-            .setInputData(workDataOf("inspectionId" to inspection.id))
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).build()
-        // APPEND_OR_REPLACE retains edits queued while an earlier revision is being sent.
-        // A second job is harmless: it exits if the current revision has a verified ACK.
-        db.withTransaction {
-            require(db.inventoryDao().recordById(inspection.roadRecordId)?.status in setOf("ACTIVE","DRAFT")) {"Comprueba que el registro padre no esté anulado."}
-            require(db.scapDao().inspection(inspection.id)?.updatedAt == inspection.updatedAt) {"La ficha cambió; prepara nuevamente la entrega."}
-            if(layout!=null)db.scapDao().putValue(ScapFieldValueEntity(inspection.id, "delivery", "layout", layout.json().toString(), "REVIEWED"))
-            else db.scapDao().deleteValue(inspection.id,"delivery","layout")
-            db.scapDao().putValue(ScapFieldValueEntity(inspection.id,"delivery","reviewed","true","REVIEWED"))
-            db.scapDao().putValue(ScapFieldValueEntity(inspection.id,"completion","status",if(completion.pending.isEmpty())"COMPLETE" else "INCOMPLETE","REVIEWED"))
-            db.scapDao().putValue(ScapFieldValueEntity(inspection.id,"completion","uploadedWithWarnings",completion.pending.isNotEmpty().toString(),"REVIEWED"))
-            db.scapDao().putValue(ScapFieldValueEntity(inspection.id, "delivery", "revision", inspection.updatedAt.toString(), "REVIEWED"))
-            db.scapDao().syncState(inspection.id, inspection.updatedAt, "QUEUED")
-        }
-        try {
-            withContext(Dispatchers.IO) {
-                WorkManager.getInstance(context).enqueueUniqueWork("scap-drive-${inspection.id}",
-                    ExistingWorkPolicy.APPEND_OR_REPLACE, request).result.get()
-            }
-        } catch (e: Exception) {
-            db.scapDao().syncState(inspection.id, inspection.updatedAt, "ERROR")
-            throw e
-        }
+    suspend fun enqueue(context:Context,snapshot:ScapInspectionSnapshot,reviewedLayout:ScapHumanLayout?=null,warningsConfirmed:Boolean=false) {
+        reviewForUpload(snapshot,com.tuempresa.inventariovial.scap.catalog.ScapCatalog.load(context).forSnapshot(snapshot),warningsConfirmed)
+        com.tuempresa.inventariovial.core.AutomaticSync.manual(context,"SCAP",snapshot.inspection.id,warningsConfirmed)
     }
 
     fun validAck(json: JSONObject, s: ScapInspectionSnapshot, hash: String, expectedLogicalPath:String?=s.values("delivery")["logicalPath"]): Boolean {
@@ -111,69 +80,13 @@ object ScapDriveSync {
     }
 }
 
-class ScapDriveWorker(context: Context, parameters: WorkerParameters): CoroutineWorker(context, parameters) {
-    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        val id = inputData.getString("inspectionId") ?: return@withContext Result.failure()
-        val db = InventoryDatabase.getInstance(applicationContext)
-        val dao = db.scapDao()
-        val snapshot = dao.snapshot(id) ?: return@withContext Result.failure()
-        val revision = snapshot.inspection.updatedAt
-        if (snapshot.inspection.syncStatus == "SYNCED") return@withContext Result.success()
-        suspend fun state(value: String, message: String = "") {
-            db.withTransaction {
-                if (dao.syncState(id, revision, value) == 1)
-                    dao.putValue(ScapFieldValueEntity(id, "drive", "message", message, "SYNC"))
-            }
-        }
-        if (DriveUploadPolicy.configurationError() != null) {
-            state("ERROR", "Drive no configurado."); return@withContext Result.failure()
-        }
-        try {
-            require(ScapDriveSync.authorized(db,snapshot)) {"La entrega requiere un registro activo y una revisión vigente."}
-            state("UPLOADING")
-            val layout = ScapHumanLayout.saved(snapshot)
-            require(layout == null || snapshot.values("delivery")["revision"] == revision.toString()) {"La entrega requiere una nueva revisión."}
-            val file = ScapDelivery.bundle(applicationContext, snapshot, layout)
-            val hash = ScapDelivery.sha256(file)
-            require(ScapDriveSync.authorized(db,snapshot)) {"La ficha cambió o fue anulada antes del envío."}
-            val response = ScapDriveClient.upload(snapshot, file, hash)
-            val logicalPath=if(layout!=null) com.tuempresa.inventariovial.core.DrivePaths.bridge(applicationContext,snapshot) else null
-            val ackValid = ScapDriveSync.validAck(response, snapshot, hash,logicalPath)
-            if (BuildConfig.DEBUG) {
-                Log.d("ScapDrive",
-                    "ackOk=${response.optBoolean("ok")} ackValid=$ackValid retryable=${response.optBoolean("retryable", false)} " +
-                        "stage=${response.optString("stage")} fileCount=${response.optInt("fileCount", -1)} error=${response.optString("error").take(160)}")
-                Log.d("ScapDrive",
-                    "drivePath=${response.optString("path")} configuredRootFolderId=${response.optString("configuredRootFolderId")} " +
-                        "scapRootFolderId=${response.optString("scapRootFolderId")} routeFolderId=${response.optString("routeFolderId")} " +
-                        "sibFolderId=${response.optString("sibFolderId")} bridgeFolderId=${response.optString("bridgeFolderId")} " +
-                        "folderId=${response.optString("folderId")} fileId=${response.optString("fileId")}")
-            }
-            if (!ackValid) {
-                val retry = response.optBoolean("retryable", false)
-                state(if (retry) "QUEUED" else "ERROR", if (retry) "Drive ocupado; se reintentará automáticamente." else
-                    "El servidor no confirmó SCAP. Comprueba que publicaste el script actualizado y su configuración.")
-                return@withContext if (retry) Result.retry() else Result.failure()
-            }
-            val current = ScapDriveSync.acknowledge(db, snapshot, response, hash,logicalPath)
-            // Also remove an acknowledged old revision after concurrent local edits.
-            com.tuempresa.inventariovial.core.DriveReceiptStore.file(applicationContext,file.absolutePath,hash,response.getString("fileId"))
-            if (current) {
-                state("SYNCED")
-                if (BuildConfig.DEBUG) Log.d("ScapDrive", "syncStatus=SYNCED revision=$revision protocol=${if(layout==null)1 else 2}")
-                // The remote immutable package is complete. Capture originals remain untouched.
-                Result.success()
-            } else {
-                if (BuildConfig.DEBUG) Log.d("ScapDrive", "ackValid=true newerRevisionPending=true revision=$revision")
-                Result.retry() // A newer saved revision still needs delivery.
-            }
-        } catch (e: CancellationException) { throw e }
-        catch (e: IOException) {
-            state("QUEUED", "Conexión interrumpida; se reintentará automáticamente."); Result.retry()
-        } catch (e: Exception) {
-            state("ERROR", "No se pudo preparar SCAP. Revisa los archivos locales y los pendientes de exportación.")
-            Result.failure()
-        }
+class ScapDriveWorker(context:Context,parameters:WorkerParameters):CoroutineWorker(context,parameters) {
+    override suspend fun doWork():Result {
+        val id=inputData.getString("inspectionId") ?: return Result.failure()
+        val db=InventoryDatabase.getInstance(applicationContext)
+        if(db.scapDao().inspection(id)?.status!="COMPLETE")return Result.success()
+        com.tuempresa.inventariovial.core.AutomaticSync.manual(applicationContext,"SCAP",id,false)
+        return Result.success()
     }
 }
 

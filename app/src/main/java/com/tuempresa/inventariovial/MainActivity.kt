@@ -701,8 +701,8 @@ fun SignalizationFormScreen(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
-    var location by remember { mutableStateOf(draftRecord?.let {
-        GeoLocation(it.latitude,it.longitude,it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,timestamp=it.gpsTimestamp ?: 0)
+    var location by remember { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
+        GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,timestamp=it.gpsTimestamp ?: 0)
     }) }
     val prReference by inventoryViewModel.field.reference.collectAsState()
     val prSettings by inventoryViewModel.field.settings.collectAsState()
@@ -1817,8 +1817,8 @@ fun AssetFormScreen(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
-    var location by remember { mutableStateOf(draftRecord?.let {
-        GeoLocation(it.latitude,it.longitude,it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,timestamp=it.gpsTimestamp ?: 0)
+    var location by remember { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
+        GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,timestamp=it.gpsTimestamp ?: 0)
     }) }
     val prReference by inventoryViewModel.field.reference.collectAsState()
     val prSettings by inventoryViewModel.field.settings.collectAsState()

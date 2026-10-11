@@ -38,7 +38,7 @@ class LocationSuggestionTest {
         assertEquals(setOf("R", "OTHER"), result.candidates.map { it.routeCode }.toSet())
         val manual = testRecord().copy(latitude = .00001, routeCode = "")
         val saved = manual.withSuggestions(result)
-        assertEquals(manual.latitude, saved.latitude, 0.0)
+        assertEquals(requireNotNull(manual.latitude), requireNotNull(saved.latitude), 0.0)
         assertTrue(saved.routeMatchAmbiguous)
         assertEquals("", saved.routeCode)
     }

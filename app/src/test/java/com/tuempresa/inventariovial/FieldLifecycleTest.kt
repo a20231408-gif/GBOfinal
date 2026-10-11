@@ -62,7 +62,7 @@ class FieldLifecycleTest {
                 val output=ByteArrayOutputStream();SicExcelWriter.write(output,listOf(item),format,ExportHeading())
                 val workbook=TemplateWorkbook(output.toByteArray().inputStream())
                 workbook.parts.keys.filter {it.endsWith(".xml")}.forEach {workbook.document(it)}
-                assertEquals(0.005,item.record.longitude,0.0)
+                assertEquals(0.005,requireNotNull(item.record.longitude),0.0)
             }
             val culvert=rows.single {it.record.id=="culvert"}; assertEquals(0.8,culvert.sic18!!.dimension2M!!,0.0)
             assertNull(SicExportFormat.SIC18.values(culvert)[9])

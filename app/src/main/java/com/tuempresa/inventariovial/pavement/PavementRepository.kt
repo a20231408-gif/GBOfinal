@@ -31,7 +31,8 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
         val sample=requireNotNull(dao.sample(id))
         require(sample.inspectorUserId==user.id) { "Solo el inspector creador puede completar el SIC." }
         require(dao.damage(damageId)?.sampleId==id) { "Daño ajeno a la muestra." }
-        dao.saveSample(sample.copy(sicDataJson=PavementSic.update(sample,format,damageId,values),updatedAt=System.currentTimeMillis()))
+        dao.saveSample(sample.copy(sicDataJson=PavementSic.update(sample,format,damageId,values),updatedAt=maxOf(System.currentTimeMillis(),sample.updatedAt+1)))
+        if(sample.status=="CLOSED")com.tuempresa.inventariovial.core.AutomaticSync.request(db,"PAVEMENT",id,requireNotNull(dao.sample(id)).updatedAt)
     }
     suspend fun newSample(surface: PavementSurface): String = db.withTransaction {
         val user = sessions.requireUser()
@@ -77,7 +78,15 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
         val sample = editable(id)
         require(sample.anchoM > 0 && sample.largoM > 0 && sample.tramo.isNotBlank()) { "Guarda primero la cabecera." }
         val snapshot=calculator?.calculate(sample,dao.damages(id))?.let{PavementResultJson.encode(it)}
-        dao.saveSample(sample.copy(status="CLOSED",updatedAt=System.currentTimeMillis(),calculationSnapshot=snapshot))
+        val revision=maxOf(System.currentTimeMillis(),sample.updatedAt+1)
+        dao.saveSample(sample.copy(status="CLOSED",updatedAt=revision,calculationSnapshot=snapshot))
+        com.tuempresa.inventariovial.core.AutomaticSync.request(db,"PAVEMENT",id,revision)
+    }
+    suspend fun reopenSample(id:String)=db.withTransaction {
+        val user=sessions.requireUser();val s=requireNotNull(dao.sample(id))
+        require(s.inspectorUserId==user.id) {"Solo el inspector creador puede editar esta muestra."}
+        dao.saveSample(s.copy(status="DRAFT",updatedAt=maxOf(System.currentTimeMillis(),s.updatedAt+1)))
+        com.tuempresa.inventariovial.core.AutomaticSync.draft(db,"PAVEMENT",id)
     }
     suspend fun deleteDamage(damage: PavementDamageEntity) = db.withTransaction {
         val stored=requireNotNull(dao.damage(damage.id)) { "El daño ya no existe." }

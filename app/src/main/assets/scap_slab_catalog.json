@@ -943,7 +943,7 @@
   "sourceSha256": "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57",
   "fields": [
     {
-      "key": "bridgeName",
+      "key": "categoryName",
       "section": "A",
       "owner": "inspection",
       "labelCell": "H10",

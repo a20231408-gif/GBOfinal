@@ -18,9 +18,9 @@ fun DriveStatusPanel(vm:InventoryViewModel) {
         Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
             Text("Drive · ${if(configError==null) "Configuración disponible" else "SIN CONFIGURAR"}",style=MaterialTheme.typography.titleMedium)
             configError?.let{Text(it,color=MaterialTheme.colorScheme.error)}
-            Text(listOf("PENDIENTE","PROGRAMADA","SUBIENDO","SINCRONIZADA","ERROR").joinToString(" · "){"$it: ${counts[it] ?: 0}"})
+            Text("Las fotografías se confirman junto con la revisión de su ficha.")
             if(feedback!=null && feedback!=configError)Text(feedback.orEmpty())
-            Text("Estos estados corresponden a fotos SIC. SCAP permanece local.",style=MaterialTheme.typography.bodySmall)
+            com.tuempresa.inventariovial.core.AutomaticSyncSummary()
         }
     }
 }

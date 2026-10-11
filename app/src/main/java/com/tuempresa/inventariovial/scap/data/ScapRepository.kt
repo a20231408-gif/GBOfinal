@@ -28,6 +28,9 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
             dao.putValue(ScapFieldValueEntity(id,"inspection","segment",defaults.segment,"SESSION_DEFAULT"))
         }
         if(defaults.roadbed.isNotBlank()) dao.putValue(ScapFieldValueEntity(id,"inspection","sic17.roadbedCode",defaults.roadbed,"SESSION_DEFAULT"))
+        dao.putValue(ScapFieldValueEntity(id,"inspection","categoryName","PUENTE","NEW_INSPECTION_DEFAULT"))
+        dao.putValue(ScapFieldValueEntity(id,"inspection","nameContractVersion","1","NEW_INSPECTION_DEFAULT"))
+        dao.putValue(ScapFieldValueEntity(id,"inspection","routeType","Nacional","NEW_INSPECTION_DEFAULT"))
         bridgeType?.let {dao.putValue(ScapFieldValueEntity(id,"inspection",ScapBridgeType.FIELD,it.name,"USER_SELECTED"))}
         if(bridgeType!=null) ensureBridgeDefaults(id)
         id
@@ -49,7 +52,14 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         if (owner == "inspection" && key == "segment") projectRoutes?.find(s.values()["route"])?.let {
             require(value == it.segmentCode) { "El tramo se deriva de la ruta." }
         }
+        require(!(owner=="inspection" && key=="categoryName") || value=="PUENTE") {"La categoría A es PUENTE."}
         dao.putValue(ScapFieldValueEntity(id,owner,key,value,source))
+        if(owner=="inspection" && key=="singularityName") {
+            if(!s.values().containsKey("categoryName"))dao.putValue(ScapFieldValueEntity(id,owner,"categoryName",s.values()["bridgeName"] ?: s.inspection.bridgeName,"HISTORICAL_A_PRESERVED"))
+            dao.putValue(ScapFieldValueEntity(id,owner,"nameContractVersion","1","EXPLICIT_B_EDIT"))
+            dao.putValue(ScapFieldValueEntity(id,owner,"bridgeName",value,source))
+            dao.updateInspection(s.inspection.copy(bridgeName=value))
+        }
         if (owner == "inspection" && key == "route") projectRoutes?.find(value)?.let {
             dao.putValue(ScapFieldValueEntity(id,owner,"segment",it.segmentCode,"PROJECT_ROUTE"))
         }
@@ -301,7 +311,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
     suspend fun addSketch(id:String,type:String,path:String)=db.withTransaction {
         editable(id);require(type in SKETCH_TYPES);dao.insertSketch(ScapSketchEntity(uuid(),id,type,path));dao.touch(id,System.currentTimeMillis())
     }
-    suspend fun reopen(id:String)=db.withTransaction {requireNotNull(dao.inspection(id));dao.touch(id,System.currentTimeMillis())}
+    suspend fun reopen(id:String)=db.withTransaction {requireNotNull(dao.inspection(id));dao.touch(id,System.currentTimeMillis());com.tuempresa.inventariovial.core.AutomaticSync.draft(db,"SCAP",id)}
     /** Flushes a draft without applying completion/export validation. Raw input stays in scap_values. */
     suspend fun markExcelGenerated(id:String,revision:Long)=db.withTransaction {
         val s=dao.snapshot(id) ?: return@withTransaction
@@ -328,12 +338,15 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         dao.putValue(ScapFieldValueEntity(id,"inspection","sicLocation.$key",value,if(key in setOf("startPrCode","endPrCode","startDistanceM","endDistanceM")) "MANUAL_PENDING_SIC3" else "MANUAL_SIC"))
         dao.touch(id,System.currentTimeMillis())
     }
-    suspend fun complete(id:String)=db.withTransaction {
+    suspend fun complete(id:String,warningsConfirmed:Boolean=false)=db.withTransaction {
         val s=editable(id);val review=ScapValidation.review(s,catalog.forSnapshot(s))
         require(review.errors.isEmpty()) {review.errors.joinToString("\n")}
         val completion=ScapCompletion.assess(s,catalog.forSnapshot(s))
         dao.putValue(ScapFieldValueEntity(id,"completion","status",if(completion.pending.isEmpty())"COMPLETE" else "INCOMPLETE","REVIEW"))
-        dao.updateInspection(s.inspection.copy(status="COMPLETE",syncStatus="PENDING",updatedAt=maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1)))
+        require(completion.pending.isEmpty() || warningsConfirmed) {"Confirma el cierre con datos pendientes."}
+        val revision=maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1)
+        dao.updateInspection(s.inspection.copy(status="COMPLETE",syncStatus="PENDING",updatedAt=revision))
+        com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SCAP",id,revision,warningsConfirmed)
     }
     private fun knownElement(snapshot:ScapInspectionSnapshot,code:String?)=code==null || catalog.forSnapshot(snapshot).element(code)!=null ||
         snapshot.elements.any{it.element.elementCode==code && snapshot.values(it.element.id)["elementSource"]=="MANUAL"}

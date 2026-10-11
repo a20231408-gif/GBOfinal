@@ -10,6 +10,8 @@ import java.util.UUID
 
 object EngineeringEdits {
     fun form(s:InventorySnapshot):SicFormDetail = when(s.record.sicCode) {
+        "SIC-17" -> with(requireNotNull(s.sic17)) {SicFormDetail.Sic17(Sic17FormState(classCode,typeCode,bridgeCode.orEmpty(),inventoriedCode,spans?.toString().orEmpty(),dimension1LengthM?.toString().orEmpty(),dimension2LowerHeightM?.toString().orEmpty(),structuralConditionCode,functionalConditionCode,serviceTypeCode,singularityCode,singularityName.orEmpty(),dimension3UpperHeightM?.toString().orEmpty()))}
+        "SIC-23" -> with(requireNotNull(s.sic23)) {SicFormDetail.Sic23(Sic23FormState(classCode,typeCode.orEmpty(),widthM?.toString().orEmpty(),description))}
         "SIC-18" -> with(requireNotNull(s.sic18)) {SicFormDetail.Sic18(Sic18FormState(classCode,typeCode,spans?.toString().orEmpty(),crossSectionCode,dimension1M?.toString().orEmpty(),dimension2M?.toString().orEmpty(),structuralConditionCode,functionalConditionCode,sectionShape=sectionShape.orEmpty()))}
         "SIC-19" -> with(requireNotNull(s.sic19)) {SicFormDetail.Sic19(Sic19FormState(classCode,typeCode,crossSectionCode,structuralConditionCode,functionalConditionCode,structuralCriterion.orEmpty()))}
         "SIC-20" -> with(requireNotNull(s.sic20)) {SicFormDetail.Sic20(Sic20FormState(classCode,typeCode,dimension1M?.toString().orEmpty(),dimension2M?.toString().orEmpty(),structuralConditionCode,functionalConditionCode.orEmpty(),wallLengthMeters?.toString().orEmpty()))}
@@ -23,11 +25,14 @@ object EngineeringEdits {
         val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
         require(r.status=="ACTIVE") {"Solo se pueden editar registros activos."}
         val request=InventorySaveRequest(r.sicCode,r.assetType,r.routeCode,r.roadbedCode,r.startPrCode,r.startDistanceM.toString(),
-            r.endPrCode,r.endDistanceM?.toString(),r.sideCode,r.latitude,r.longitude,r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
+            r.endPrCode,r.endDistanceM?.toString(),r.sideCode,requireNotNull(r.latitude),requireNotNull(r.longitude),r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
         val unchangedLegacyType=detail is SicFormDetail.Sic22 && detail.state.typeCode==s.sic22?.typeCode && detail.state.typeCode in setOf("4","5","6")
         val errors=CaptureValidation.errors(request).filterNot {unchangedLegacyType && it.field=="typeCode"}
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {
+            is SicFormDetail.Sic17 -> with(detail.state) {dao.updateSic17(requireNotNull(s.sic17).copy(classCode=classCode,typeCode=typeCode,bridgeCode=bridgeCode,inventoriedCode=inventoriedCode,spans=spans.toIntOrNull(),dimension1LengthM=dimension1LengthM.replace(',','.').toDoubleOrNull(),dimension2LowerHeightM=dimension2LowerHeightM.replace(',','.').toDoubleOrNull(),structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,serviceTypeCode=serviceTypeCode,singularityCode=singularityCode,singularityName=singularityName,dimension3UpperHeightM=dimension3UpperHeightM.replace(',','.').toDoubleOrNull()))}
+            is SicFormDetail.Sic23 -> with(detail.state) {dao.updateSic23(requireNotNull(s.sic23).copy(classCode=classCode,typeCode=typeCode.ifBlank {null},widthM=if(usesWidth)widthM.replace(',','.').toDoubleOrNull() else null,description=description))}
+
             is SicFormDetail.Sic18 -> with(detail.state) {
                 val old=requireNotNull(s.sic18)
                 dao.updateSic18(old.copy(classCode=classCode,typeCode=typeCode,spans=spans.toInt(),crossSectionCode=crossSectionCode,
@@ -47,7 +52,7 @@ object EngineeringEdits {
             }
             else -> error("Detalle incompatible")
         }
-        if(detail is SicFormDetail.Sic18) {
+        run {
             var nextIndex=(s.photos.maxOfOrNull {it.photoIndex} ?: 0)+1
             for(photo in s.photos) {
                 if(photo.localPath !in paths) dao.deleteLocalPhoto(photo.id,id)
@@ -55,13 +60,15 @@ object EngineeringEdits {
             }
             paths.filter {path->s.photos.none {it.localPath==path}}.forEach {path->
                 val index=nextIndex++
-                require(categories[path] in EngineeringConditions.culvertPhotos.keys) {"Selecciona categoría fotográfica."}
+                require(detail !is SicFormDetail.Sic18 || categories[path] in EngineeringConditions.culvertPhotos.keys) {"Selecciona categoría fotográfica."}
                 // Keep existing names/paths intact. Null names use the same legacy Drive filename fallback.
                 val photo=PhotoEntity(UUID.randomUUID().toString(),id,index,path,false,null,null,null,"PENDING",System.currentTimeMillis(),photoCategory=categories[path])
                 dao.insertPhoto((captures[path] ?: com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.fromOriginal(path)).applyTo(photo))
             }
             dao.refreshRecordPhotoStatus(id)
         }
-        dao.markServerPending(id,System.currentTimeMillis())
+        val revision=maxOf(System.currentTimeMillis(),r.updatedAt+1)
+        dao.markServerPending(id,revision)
+        com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",id,revision)
     }
 }

@@ -235,7 +235,8 @@ private class MapProjector(points: List<RoadPolylinePoint>, width: Float, height
     private val ox = ((width - drawnW) / 2.0).toFloat()
     private val oy = ((height - drawnH) / 2.0).toFloat()
 
-    fun project(latitude: Double, longitude: Double): Offset? {
+    fun project(latitude: Double?, longitude: Double?): Offset? {
+        if(latitude==null || longitude==null)return null
         if (!GeoMath.validCoordinate(latitude, longitude)) return null
         val x = (longitude * cosLat - minX) * scale + ox
         val y = (maxY - latitude) * scale + oy

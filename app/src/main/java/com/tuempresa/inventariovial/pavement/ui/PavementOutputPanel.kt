@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.first
     com.tuempresa.inventariovial.core.RecordReviewSection("Revisión de muestra",
         listOf("Muestra" to s.muestra.toString(),"Progresiva" to "${s.prInicial} – ${s.prFinal}"),reviewPhotos,
         com.tuempresa.inventariovial.core.CompletionResult(result.pending.map {com.tuempresa.inventariovial.core.ValidationIssue("PCI/URCI",it,com.tuempresa.inventariovial.core.ValidationIssue.Severity.BLOCKING_EXPORT)}))
-    Text("✓ Guardado en tablet · ☁ ${com.tuempresa.inventariovial.core.SyncOverview.status(com.tuempresa.inventariovial.core.DriveReceiptStore.state(context,s)).label}")
+    com.tuempresa.inventariovial.core.AutomaticSyncPanel("PAVEMENT",s.id,s.status=="CLOSED")
     HorizontalDivider()
     Text("${if(s.surface=="UNSURFACED")"URCI" else "PCI"}: ${result.index?.toString()?:"no calculable"} ${result.rating.orEmpty()}")
     if(result.pending.isNotEmpty()) {
@@ -53,8 +53,8 @@ import kotlinx.coroutines.flow.first
     Row{TextButton(enabled=!busy,onClick={pdf.launch("Pavimentos-${s.muestra}.pdf")}){Text("Reporte PDF")};TextButton(enabled=!busy,onClick={excel.launch("Pavimentos-${s.surface}.xlsx")}){Text("Excel de superficie")}}
     Button(enabled=!busy && s.status=="CLOSED", onClick={scope.launch {
         busy=true; message="Sincronizando pavimentos con Drive…"
-        runCatching { PavementDriveUploader.uploadSample(context,repo,s,damages) }
-            .onSuccess { message=it.message }
+        runCatching { com.tuempresa.inventariovial.core.AutomaticSync.manual(context,"PAVEMENT",s.id) }
+            .onSuccess { message="Trabajo programado para cuando haya conexión." }
             .onFailure { message="Drive: ${it.message ?: "no se pudo completar la entrega"}" }
         busy=false
     }}, modifier=Modifier.fillMaxWidth()) { Text("Subir muestra a Drive") }

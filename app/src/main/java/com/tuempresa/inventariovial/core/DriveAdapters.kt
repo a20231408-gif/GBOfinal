@@ -49,37 +49,29 @@ object PavementSyncAdapter {
 }
 
 class PavementSyncWorker(context:Context,params:WorkerParameters):CoroutineWorker(context,params) {
-    override suspend fun doWork():Result=withContext(Dispatchers.IO) {
+    override suspend fun doWork():Result {
+        val id=inputData.getString("sampleId") ?: return Result.failure()
         val db=InventoryDatabase.getInstance(applicationContext)
-        val s=inputData.getString("sampleId")?.let { db.pavementDao().sample(it) } ?: return@withContext Result.failure()
-        if(s.status!="CLOSED") return@withContext Result.failure()
-        if(DriveReceiptStore.state(applicationContext,s)=="SYNCED") return@withContext Result.success()
-        try {
-            DriveReceiptStore.sample(applicationContext,s,"UPLOADING")
-            PavementDriveUploader.uploadSample(applicationContext,PavementRepository(db,AuthSessionManager()),s,db.pavementDao().damages(s.id))
-            // Uploader records SYNCED only after every file has a valid ACK.
-            Result.success()
-        } catch(e:CancellationException) { throw e }
-        catch(e:Exception) {
-            DriveReceiptStore.sample(applicationContext,s,"ERROR")
-            if(runAttemptCount<4) Result.retry() else Result.failure()
-        }
+        if(db.pavementDao().sample(id)?.status!="CLOSED")return Result.success()
+        AutomaticSync.manual(applicationContext,"PAVEMENT",id)
+        return Result.success()
     }
 }
 
 object UnifiedSyncAdapter {
     suspend fun enqueue(context:Context,retryOnly:Boolean):Int=withContext(Dispatchers.IO) {
-        val db=InventoryDatabase.getInstance(context)
-        var count=0
-        db.inventoryDao().observeAllDeliveries().first().filter { if(retryOnly) it.status=="ERROR" else it.status in setOf("QUEUED","ERROR") }
-            .forEach { DriveDeliveryRetry.enqueue(context,it,it.status=="ERROR").result.get();count++ }
-        db.scapDao().allSnapshots().filter {
-            it.roadRecord?.status in setOf("ACTIVE","DRAFT") && it.inspection.status=="COMPLETE" && it.inspection.syncStatus in (if(retryOnly) setOf("ERROR") else setOf("QUEUED","ERROR","PENDING")) &&
-                it.values("delivery")["revision"]==it.inspection.updatedAt.toString() && ScapHumanLayout.saved(it)!=null
-        }.forEach { ScapDriveSync.enqueue(context,it,ScapHumanLayout.saved(it));count++ }
-        db.pavementDao().observeSamples().first().filter { it.status=="CLOSED" && DriveReceiptStore.state(context,it) in
-            (if(retryOnly) setOf("ERROR") else setOf("PENDING","QUEUED","ERROR")) }
-            .forEach { PavementSyncAdapter.enqueue(context,it,retryOnly);count++ }
+        val db=InventoryDatabase.getInstance(context);var count=0
+        val previous=db.automaticSyncDao().all().associateBy {it.key}
+        val candidates=buildList {
+            db.inventoryDao().activeSnapshots().filter {it.record.sicCode!="SCAP"}.forEach {add("SIC" to it.record.id)}
+            db.scapDao().allSnapshots().filter {it.inspection.status=="COMPLETE"}.forEach {add("SCAP" to it.inspection.id)}
+            db.pavementDao().observeSamples().first().filter {it.status=="CLOSED"}.forEach {add("PAVEMENT" to it.id)}
+        }
+        for((kind,id) in candidates) {
+            val old=previous["$kind/$id"]
+            if(old?.state=="SYNCED" || retryOnly && old?.state!="ERROR")continue
+            AutomaticSync.manual(context,kind,id,old?.warningsConfirmed ?: false);count++
+        }
         count
     }
 }

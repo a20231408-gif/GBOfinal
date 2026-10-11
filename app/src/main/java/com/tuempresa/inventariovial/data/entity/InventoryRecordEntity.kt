@@ -50,9 +50,9 @@ data class InventoryRecordEntity(
     // GPS
     // =====================================================
 
-    val latitude: Double,
+    val latitude: Double?,
 
-    val longitude: Double,
+    val longitude: Double?,
 
     val altitudeM: Double?,
 

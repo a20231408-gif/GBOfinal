@@ -20,7 +20,8 @@ data class PrSuggestionResult(val suggestion: PrSuggestion? = null, val message:
 /** A PR code is an identifier, never an inferred kilometre. Contractual roadbed stays independent of EJE. */
 class PrSuggestionEngine(private val reference: RoadReferenceData, private val config: MatchConfig = MatchConfig(),
     private val chainageToleranceM: Double = 5.0) {
-    fun suggest(routeCode: String, roadbedCode: String, latitude: Double, longitude: Double, accuracy: Double?): PrSuggestionResult {
+    fun suggest(routeCode: String, roadbedCode: String, latitude: Double?, longitude: Double?, accuracy: Double?): PrSuggestionResult {
+        if(latitude==null || longitude==null) return PrSuggestionResult()
         if (reference.prs.isEmpty()) return PrSuggestionResult()
         val route = normalizedRoadCode(routeCode)
         val bed = normalizedRoadCode(roadbedCode)

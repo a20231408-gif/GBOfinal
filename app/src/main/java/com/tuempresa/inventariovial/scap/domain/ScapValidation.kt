@@ -67,7 +67,7 @@ object ScapValidation {
     fun review(s:ScapInspectionSnapshot,catalog:ScapCatalog):ScapReview {
         val errors=mutableListOf<String>();val pending=mutableListOf<String>();val common=s.values()
         for(key in listOf("bridgeName","bridgeCode","route","progressive")) if(common[key].isNullOrBlank())
-            pending+="Falta ${catalog.fields.first {it.key==key}.label}."
+            pending+="Falta ${(catalog.fields.firstOrNull {it.key==key}?.label ?: if(key=="bridgeName") "Nombre propio del puente" else key)}."
         if(s.inspection.createdBy.isBlank()) pending+="Inspector no identificado."
         if(catalog.bridgeType==null && (s.inspection.latitude==null || s.inspection.longitude==null)) pending+="Ubicación GNSS sin capturar; las coordenadas UTM manuales se conservan sin conversión."
         if(s.spans.isEmpty()) pending+="Agrega al menos un tramo."

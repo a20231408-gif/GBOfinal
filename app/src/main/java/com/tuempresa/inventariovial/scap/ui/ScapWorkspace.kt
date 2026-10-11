@@ -78,6 +78,7 @@ fun ScapWorkspace(vm:InventoryViewModel,onBack:()->Unit) {
                     Column(Modifier.padding(16.dp)) {
                         Text(i.bridgeName.ifBlank {"Puente sin nombre"},style=MaterialTheme.typography.titleMedium)
                         Text("${i.bridgeCode.ifBlank {"Código pendiente"}} · ${statusLabel(i.status)}")
+                        com.tuempresa.inventariovial.core.AutomaticSyncPanel("SCAP",i.id,i.status=="COMPLETE",compact=true)
                         Text("Último cambio: ${SimpleDateFormat("dd/MM/yyyy HH:mm",Locale.getDefault()).format(Date(i.updatedAt))}")
                     }
                 }}
@@ -173,7 +174,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             Text("Datos pendientes: ${review.pending.size}")
             review.pending.forEach{Text("• $it")}
             completeness.pending.forEach {field->TextButton(onClick={c.navigate(field.route);confirm=false}) {Text("${field.section} · ${field.field}")}}
-        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id)};confirm=false}){Text("Finalizar ficha")}},
+        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar y programar envío" else "Confirmar cierre y envío con pendientes")}},
         dismissButton={TextButton(onClick={confirm=false}){Text("Volver a la ficha")}})
     if(showPending) AlertDialog(onDismissRequest={showPending=false},title={Text("SCAP · Pendientes ${completeness.pending.size}")},
         text={Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState())) {

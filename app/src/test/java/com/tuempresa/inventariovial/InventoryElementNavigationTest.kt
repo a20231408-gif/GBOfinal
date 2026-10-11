@@ -21,23 +21,23 @@ class InventoryElementNavigationTest {
     @get:Rule val compose=createComposeRule()
     @Test fun dashboardHasOneElementEntryForFajasAndAlcantarillasAndNoIndependentSibling() {
         compose.setContent {InventarioVialTheme {HomeScreen(0,0,{})}}
-        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Fajas"))
-        compose.onNodeWithText("Fajas").assertExists()
-        compose.onNodeWithText("SIC-08").assertDoesNotExist();compose.onNodeWithText("SIC-09").assertDoesNotExist()
+        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Fajas de las calzadas"))
+        compose.onNodeWithText("Fajas de las calzadas").assertExists()
+        compose.onNodeWithText("SIC-08").assertExists();compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Ancho de las fajas"));compose.onNodeWithText("SIC-09").assertExists()
         compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Alcantarillas"))
         compose.onNodeWithText("Alcantarillas").assertExists()
         compose.onNodeWithText("SIC-18A").assertDoesNotExist()
-        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Puntos críticos"))
-        compose.onNodeWithText("Puntos críticos").assertExists()
+        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Puntos crÃ­ticos"))
+        compose.onNodeWithText("Puntos crÃ­ticos").assertExists()
         compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Accidentes"))
         compose.onNodeWithText("Accidentes").assertExists()
     }
     @Test fun fajasDashboardOpensCharacteristicsDestinationAndKeepsCodesSecondary() {
         var opened:SicFieldFormat?=null
         compose.setContent {InventarioVialTheme {InventoryElementDashboard {opened=it}}}
-        compose.onNodeWithText("Fajas").performClick()
+        compose.onNodeWithText("Fajas de las calzadas").performClick()
         Assert.assertEquals(SicFieldFormat.SIC08,opened)
-        compose.onNodeWithText("SIC-08 · SIC-09").assertExists()
+        compose.onNodeWithText("SIC-08 Â· SIC-09").assertExists()
     }
     @Test fun culvertBadConditionRevealsSupplementInsideSameFormWithoutIndependentCommonInputs() {
         compose.setContent {InventarioVialTheme {
@@ -49,10 +49,10 @@ class InventoryElementNavigationTest {
                 if(expanded) CulvertSupplementFields(values,true) {values=it}
             }
         }}
-        compose.onNodeWithText("Completar detalle de condición mala").assertDoesNotExist()
-        compose.onAllNodes(hasText("3 · MALO",substring=true))[0].performScrollTo().performClick()
-        compose.onNodeWithText("Completar detalle de condición mala").performScrollTo().performClick()
-        compose.onNodeWithText("Detalle de condición mala").performScrollTo().assertExists()
+        compose.onNodeWithText("Completar detalle de condiciÃ³n mala").assertDoesNotExist()
+        compose.onAllNodes(hasText("3 Â· MALO",substring=true))[0].performScrollTo().performClick()
+        compose.onNodeWithText("Completar detalle de condiciÃ³n mala").performScrollTo().performClick()
+        compose.onNodeWithText("Detalle de condiciÃ³n mala").performScrollTo().assertExists()
         compose.onNodeWithText("Falla estructural").performScrollTo().assertExists()
         compose.onNodeWithText("Ruta").assertDoesNotExist();compose.onNodeWithText("Calzada").assertDoesNotExist()
         compose.onNodeWithText("Falla funcional").performScrollTo().assertExists()
@@ -60,9 +60,9 @@ class InventoryElementNavigationTest {
     @Test fun culvertTechnicalCriteriaStartCollapsedAndRemainAvailableOnDemand() {
         val criterion=com.tuempresa.inventariovial.catalog.SicCatalogRepository.sic18StructuralDescriptions.entries.first()
         compose.setContent {InventarioVialTheme {Column(Modifier.verticalScroll(rememberScrollState())) {Sic18Fields(Sic18FormState()) {}}}}
-        compose.onNodeWithText("${criterion.key} · ${criterion.value}").assertDoesNotExist()
+        compose.onNodeWithText("${criterion.key} Â· ${criterion.value}").assertDoesNotExist()
         compose.onNodeWithText("Ver criterio estructural").performScrollTo().performClick()
-        compose.onNodeWithText("${criterion.key} · ${criterion.value}").performScrollTo().assertExists()
+        compose.onNodeWithText("${criterion.key} Â· ${criterion.value}").performScrollTo().assertExists()
     }
 
 }

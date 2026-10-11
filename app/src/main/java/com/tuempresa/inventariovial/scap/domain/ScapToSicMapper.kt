@@ -8,7 +8,7 @@ data class ScapSicMapping(val format:String,val roadRecordId:String,val fields:L
 
 /** Safe projections. Does not write SIC tables, alter catalog codes or schedule Drive. */
 object ScapToSicMapper {
-    private fun direct(s:ScapInspectionSnapshot,pairs:List<Pair<String,String>>)=pairs.mapNotNull {(from,to)->
+    private fun direct(s:ScapInspectionSnapshot,pairs:List<Pair<String,String>>)=pairs.filterNot {it.first=="singularityName" && s.values()["nameContractVersion"]=="1"}.mapNotNull {(from,to)->
         (if(ScapBridgeType.from(s)!=null && from=="sidewalkWidthM") s.values()[from].orEmpty() else ScapFieldPolicy.exportValue(from,"inspection",s.values()))
             .takeIf {it.isNotBlank()}?.let {ScapMappedField(from,to,it,ScapMappingStatus.DIRECT)}
     }

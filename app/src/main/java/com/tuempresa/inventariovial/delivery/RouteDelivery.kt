@@ -57,7 +57,7 @@ class RouteDelivery(private val context: Context, private val db: InventoryDatab
                 val photo = photos.getValue(p.photoId)
                 val marked = com.tuempresa.inventariovial.core.CleanPhotoPolicy.original(com.tuempresa.inventariovial.core.PhotoForDelivery(photo.id, photo.originalPath.ifBlank { photo.localPath }, com.tuempresa.inventariovial.core.PhotoCategory.fromStored(photo.photoCategory), "{}"))
                 val copy = File(directory, "${photo.id}.jpg")
-                marked.copyTo(copy)
+                com.tuempresa.inventariovial.core.DeliveryJpeg.copy(marked,copy,photo)
                 // Metadata is held in the manifest; preserve the original bytes.
                 val payload = DeliveryMetadata.photoPayload(folder, photo, p).put("kind", "photo")
                     .put("logicalPath", com.tuempresa.inventariovial.core.DrivePaths.inventory(context, folder, photo.photoCategory ?: "GENERAL"))
@@ -66,7 +66,14 @@ class RouteDelivery(private val context: Context, private val db: InventoryDatab
                 DeliveryMetadata.photo(photo, p, payload.getString("sha256"))
             }
             val metadata = File(directory, "${folder.asset.recordId}.json")
-            metadata.writeText(DeliveryMetadata.element(folder, photoMetadata).toString(2))
+            val elementMetadata=DeliveryMetadata.element(folder, photoMetadata)
+            if(folder.asset.item.record.sicCode=="SIC-08") {
+                val linked=snapshots.filter {it.record.sicCode=="SIC-09" && it.sicExtension?.sourceRecordId==folder.asset.recordId}
+                elementMetadata.put("linkedFormats",JSONArray(linked.map {child->json("recordId" to child.record.id,
+                    "sicCode" to child.record.sicCode,"observations" to child.record.observations,
+                    "latitude" to child.record.latitude,"longitude" to child.record.longitude)}))
+            }
+            metadata.writeText(elementMetadata.toString(2))
             add(metadata, json("kind" to "metadata", "recordId" to folder.asset.recordId,
                 "routeCode" to route, "sibCode" to folder.asset.sibCode, "sicCode" to folder.asset.item.record.sicCode,
                 "elementFolder" to folder.asset.folderName, "fileName" to "metadata.json", "mimeType" to "application/json",
@@ -126,24 +133,10 @@ class RouteDelivery(private val context: Context, private val db: InventoryDatab
     })
 
     suspend fun enqueue(prepared: PreparedRouteDelivery) {
-        DriveUploadPolicy.requireConfiguration()
-        require(prepared.plan.folders.flatMap { it.photos }.all { FileNameComplianceValidator.warning(it.photoName) == null }) {
-            "La nomenclatura no cumple el límite de 20 caracteres. Selecciona FOLDER_COMPACT y vuelve a preparar."
-        }
-        db.withTransaction {
-            val batch = dao.delivery(prepared.batch.id) ?: error("Entrega inexistente.")
-            check(fingerprint(snapshots(batch.routeCode), DeliveryNamingPolicy.valueOf(batch.namingPolicy)) == batch.fingerprint) {
-                "El inventario cambió después de la revisión. Vuelve a preparar antes de sincronizar."
-            }
-            check(dao.deliveries(batch.routeCode).none { it.id != batch.id && it.status != "PREPARED" }) { "Ya existe una entrega iniciada para esta ruta." }
-            dao.deliveryStatus(batch.id, "QUEUED", null)
-        }
-        val job = OneTimeWorkRequestBuilder<DriveUploadWorker>()
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-            .setInputData(workDataOf("deliveryId" to prepared.batch.id)).build()
-        withContext(Dispatchers.IO) {
-            WorkManager.getInstance(context).enqueueUniqueWork("route-delivery-${prepared.batch.routeCode}", ExistingWorkPolicy.KEEP, job).result.get()
-        }
+        val batch=requireNotNull(dao.delivery(prepared.batch.id))
+        check(fingerprint(snapshots(batch.routeCode),DeliveryNamingPolicy.valueOf(batch.namingPolicy))==batch.fingerprint) {"El inventario cambió. Vuelve a revisar."}
+        snapshots(batch.routeCode).forEach {com.tuempresa.inventariovial.core.AutomaticSync.manual(context,"SIC",it.record.id)}
+        dao.deliveryStatus(batch.id,"QUEUED","Entrega por registro programada; consulta el Centro de sincronización.")
     }
 
     suspend fun snapshots(route: String) = dao.activeSnapshots().filter { normalizedRoadCode(it.record.routeCode) == route && it.record.sicCode != "SCAP" }
