@@ -52,7 +52,7 @@ Pendientes:
 
 ## Git, buildSrc y configuración privada
 
-- `buildSrc/src` **no está registrado en Git**. Está ignorado por `.gitignore` mediante `**/build/`; el archivo observado es `buildSrc/src/main/java/com/gbo/build/ValidateReleaseConfigurationTask.java`.
+- Al iniciar este control, `buildSrc/src` **no estaba registrado en Git** y su archivo estaba ignorado por `.gitignore` mediante `**/build/`. Se incorporó explícitamente al checkpoint como `buildSrc/src/main/java/com/gbo/build/ValidateReleaseConfigurationTask.java`, sin cambiar su contenido funcional.
 - No había archivos staged. Por ello, la revisión de “preparado para Git” aplica al working tree candidato, no a un índice ya preparado.
 - `drive.local.properties` y `server.local.properties` existen localmente y están ignorados por `.gitignore`. `keystore.properties` no apareció como archivo local; solo existe `keystore.properties.example`.
 - No se encontraron archivos `.jks` ni `.keystore` en la búsqueda realizada.
