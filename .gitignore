@@ -1,0 +1,32 @@
+/.gradle/
+/.kotlin/
+/.idea/
+**/build/
+/local.properties
+/drive.local.properties
+
+/server.local.properties
+/tmp/zip-integration-source/
+/tmp/integrate_forms.py
+/tmp/*integration*.log
+/tmp/gradle-failure.log
+/tmp/refine_integration.py
+
+# SCAP y entregables locales
+.gradle/
+.kotlin/
+.idea/
+local.properties
+drive.local.properties
+server.local.properties
+tmp/
+output/
+/GBO_InventarioVial_campo.zip
+
+# Historical production signing stays local
+/keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+/final-evidence/*.private.*

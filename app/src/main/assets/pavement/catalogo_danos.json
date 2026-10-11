@@ -1,0 +1,2168 @@
+{
+  "version": "0.1.0-propuesta",
+  "estado": "PENDIENTE_CONFIRMACION",
+  "fuente": {
+    "archivo": "docs/Manual_PCI_URCI.pdf",
+    "titulo": "Índice de Condición del Pavimento",
+    "autor": "L. R. Vásquez Varela",
+    "edicion": "2002–2024",
+    "sha256": "a83c5efa2d5a045f0f0c2e197783ccff5b1b6c4248da3f2a8f39e3022ca9394d"
+  },
+  "notas": [
+    "No contiene puntos inventados de curvas.",
+    "Severidades resumidas para interfaz; texto_fuente conserva el apartado extraído del PDF, incluyendo posibles pies de figura.",
+    "Fuera de alcance: adoquines 101–111; el identificador de superficie permite añadir otra familia."
+  ],
+  "superficies": [
+    "asfalto",
+    "rigido",
+    "no_pavimentado"
+  ],
+  "danos": [
+    {
+      "codigo": 1,
+      "superficie": "asfalto",
+      "nombre": "Piel de cocodrilo (fatiga)",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 69,
+        "pagina_fin": 72
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Grietas finas longitudinales, paralelas y poco o nada interconectadas, sin descascaramiento."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Red de grietas desarrollada, con posible descascaramiento ligero."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Fragmentos bien definidos y bordes descascarados; algunos pueden moverse con el tránsito."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L (Low: Bajo): Grietas finas, capilares y longitudinales que se desarrollan de forma paralela con \ninterconexión entre unas pocas o ninguna de ellas. Las grietas no están descascaradas, es decir, no \npresentan rotura del material a lo largo de los lados de la grieta \n \n20 La analogía con la piel de cocodrilo o caimán también se ha descrito en inglés como “alligator cracking” \n21 Esta definición es anterior a la identificación del deterioro por fatiga con  grietas de arriba hacia abajo ( “top-down \ncracking”) \n1 \n \n70 \n \nM (Medium: Medio): Desarrollo posterior de grietas piel de cocodrilo del nivel L, en un patrón o red \nde grietas que pueden estar ligeramente descascaradas \nH (High: Alto): Red o patrón de grietas que ha evolucionado de tal forma que las piezas o pedazos \nestán bien definidos y los bordes de las fisuras están descascarados. Algunos fragmentos del \npavimento pueden moverse con el tránsito \nEn la figura 5-1 se presenta el aspecto típico de los diferentes niveles de severidad de las grietas \ntipo piel de cocodrilo. La figura se redibujó a partir del manual “Distress Identification Manual for the \nLong-Term Pavement Performance Program. FHWA-HRT- 13-092”, publicado por la FHWA (2014) \ncomo herramienta de apoyo para el inventario de daños con las definiciones del PCI. \n \nFigura 5-1. Piel de cocodrilo (FHWA, 2014)",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se mide en metros cuadrados de área afectada. \nLa mayor dificultad en la medida de este tipo de daño radica en que, a menudo, dos o tres niveles \nde severidad coexisten en un área deteriorada. Si estas porciones pueden ser diferenciadas co n \n\n \n71 \n \nfacilidad se deben medir y registrar separadamente. De lo contrario, toda el área deberá ser \ncalificada en el mayor nivel de severidad presente.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 2,
+      "superficie": "asfalto",
+      "nombre": "Exudación",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 73,
+        "pagina_fin": 75
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Exudación muy ligera, detectable pocos días al año; el asfalto no se pega a zapatos o vehículos."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "El asfalto se pega a zapatos y vehículos durante pocas semanas al año."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Exudación extensa; gran cantidad de asfalto se pega a zapatos y vehículos durante al menos varias semanas al año."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: La exudación ha ocurrido solamente en un grado muy ligero y es detectable únicamente durante \nunos pocos días del año. El asfalto no se pega a los zapatos o a los vehículos \nM: La exudación ha ocurrido hasta un punto en el cual el asfalto se pega a los zapatos y vehículos \núnicamente durante unas pocas semanas del año \nH: La exudación ha ocurrido de forma extensa y gran cantidad de asfalto se pega a los zapatos y \nvehículos al menos durante varias semanas al año",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se mide en metros cuadrados de área afectada. Si se contabiliza la exudación no deberá \ncontabilizarse el pulimento de agregados",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        },
+        {
+          "id": "EXCLUSION_2_12",
+          "texto": "Exudación excluye pulimento en la misma área; advertir sin borrar.",
+          "pagina": 106
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 3,
+      "superficie": "asfalto",
+      "nombre": "Agrietamiento en bloque",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 76,
+        "pagina_fin": 78
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Bloques delimitados por grietas de severidad baja según el daño 10."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Bloques delimitados por grietas de severidad media."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Bloques delimitados por grietas de severidad alta."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Bloques definidos por grietas de severidad baja de acuerdo con las definiciones del daño \n“10.\n_Grietas longitudinales y transversales” \nM: Bloques definidos por grietas de severidad media \nH: Bloques definidos por grietas de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se mide en metros cuadrados de área afectada. Generalmente, se presenta un solo nivel de \nseveridad en la unidad de pavimento; no obstante, cualquier área que tenga un nivel de severidad \ndiferente debe medirse y reportarse por aparte.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 4,
+      "superficie": "asfalto",
+      "nombre": "Abultamientos y hundimientos",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 79,
+        "pagina_fin": 81
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja; consultar la definición común de la página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Los abultamientos o hundimientos causan una calidad del tránsito con severidad baja \nM: Los abultamientos o hundimientos causan una calidad de tránsito de severidad media \nH: Los abultamientos o hundimientos causan una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "Se miden en metros lineales. Si aparecen en un patrón perpendicular al flujo del tránsito con \nespaciamientos menores que 3.0 m el daño se reporta como “5. Corrugación”. Si el abultamiento \nocurre en combinación con una grieta, ésta también se registra. \n \n4 \n \n80",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 5,
+      "superficie": "asfalto",
+      "nombre": "Corrugación",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 82,
+        "pagina_fin": 84
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja; consultar página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: La corrugación produce una calidad de tránsito de severidad baja \nM: La corrugación produce una calidad de tránsito de severidad media \nH: La corrugación produce una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "Se mide en metros cuadrados de área afectada.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 6,
+      "superficie": "asfalto",
+      "nombre": "Depresión",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 85,
+        "pagina_fin": 87
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Profundidad máxima de 13,0 a 25,0 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Profundidad máxima de 25,0 a 51,0 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Profundidad máxima mayor que 51,0 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Profundidad máxima de la depresión: 13.0 a 25.0 mm \nM: Profundidad máxima de la depresión: 25.0 a 51.0 mm \nH: Profundidad máxima de la depresión: Más de 51.0 mm",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se mide en metros cuadrados del área afectada.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 7,
+      "superficie": "asfalto",
+      "nombre": "Grieta de borde",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 88,
+        "pagina_fin": 90
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Agrietamiento bajo o medio sin fragmentación ni desprendimiento."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Grietas medias con algo de fragmentación y desprendimiento."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Fragmentación o desprendimiento considerable a lo largo del borde."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Agrietamiento bajo o medio sin fragmentación o desprendimiento \nM: Grietas medias con algo de fragmentación y desprendimiento \nH: Considerable fragmentación o desprendimiento a lo largo del borde \n \n7 \n \n89",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "La grieta de borde se mide en metros lineales.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 8,
+      "superficie": "asfalto",
+      "nombre": "Grieta de reflexión de juntas de PCCP",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 91,
+        "pagina_fin": 94
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Sin relleno y ancho <10 mm, o cualquier ancho con relleno satisfactorio."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Sin relleno de 10 a 75 mm; o sin relleno hasta 75 mm con agrietamiento secundario ligero; o con relleno de cualquier ancho y agrietamiento secundario ligero."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Con o sin relleno y agrietamiento secundario medio/alto; o sin relleno >75 mm; o cualquier ancho con una franja de 100 mm alrededor severamente fragmentada."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Existe una de las siguientes condiciones: \n• Grietas sin relleno y de ancho menor que 10.0 mm, o \n• Grietas de cualquier ancho con relleno en condición satisfactoria \nM: Existe una de las siguientes condiciones: \n• Grietas sin relleno con ancho entre 10.0 mm y 75.0 mm \n• Grietas sin relleno de cualquier ancho hasta 75.0 mm, rodeadas de un ligero agrietamiento \nsecundario \n• Grietas con relleno, de cualquier ancho y rodeadas de un ligero agrietamiento secundario \nH: Existe una de las siguientes condiciones: \n• Cualquier grieta con relleno o sin relleno, rodeada de un agrietamiento secundaria de \nseveridades media o alta \n• Grietas sin relleno de más de 75.0 mm de ancho \n• Grieta de cualquier ancho alrededor de la cual una franja de 100 mm está severamente \nfragmentada",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "La grieta de reflexión de junta  se mide en metros lineales. La longitud y el nivel de severidad de \ncada grieta debe registrarse por separado. Por ejemplo, una grieta de 15.0 m puede tener 3.0 m de \ngrietas de severidad alta y 12.0 m de severidad media. Si se presenta un abultamiento en la grieta \nde reflexión, éste también debe reportarse.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 9,
+      "superficie": "asfalto",
+      "nombre": "Desnivel carril / berma",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 95,
+        "pagina_fin": 97
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Desnivel entre pavimento y berma de 25 a 50 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Desnivel de 50 a 100 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Desnivel mayor que 100 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: La diferencia de nivel entre el pavimento y la berma está entre 25.0 y 50.0 mm \nM: La diferencia de nivel está entre 50.0 mm y 100.0 mm \nH: La diferencia de nivel es mayor que 100.00 mm",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El desnivel carril / berma se miden en metros lineales. \n9 \n \n96",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 10,
+      "superficie": "asfalto",
+      "nombre": "Grietas longitudinales y transversales",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 98,
+        "pagina_fin": 101
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Sin relleno y ancho <10 mm, o cualquier ancho con relleno satisfactorio."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Sin relleno de 10 a 75 mm; o sin relleno hasta 75 mm rodeada de pequeñas grietas aleatorias; o con relleno de cualquier ancho y pequeñas grietas aleatorias."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Con o sin relleno y grietas aleatorias de severidad media/alta; o sin relleno >75 mm; o cualquier ancho con franja circundante de 100 mm severamente fracturada."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Existe una de las siguientes condiciones: \n• Grietas sin relleno y de ancho menor que 10.0 mm. \n• Grietas de cualquier ancho y con relleno en condición satisfactoria \nM: Existe una de las siguientes condiciones: \n• Grietas sin relleno y con ancho entre 10.0 mm y 75.0 mm \n• Grietas sin relleno, hasta de 75.0 mm de ancho, y rodeadas de pequeñas grietas aleatorias \n• Grietas con relleno, de cualquier ancho, y rodeadas de pequeñas grietas aleatorias \nH: Existe una de las siguientes condiciones: \n10 \n \n99 \n \n• Cualquier grieta, con o sin relleno, y rodeada de pequeñas grietas aleatorias de severidades \nmedia o alta \n• Grietas sin relleno de más de 75.0 mm de ancho \n• Grietas de cualquier ancho en las cuales una franja de 100 mm alrededor de las mismas está \nseveramente fracturada \n \nFigura 5-33. Grietas longitudinales y transversales (FHWA, 2014)",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Las grietas longitudinales y transversales se miden en metros lineales. \nLa longitud y severidad de cada grieta debe registrarse después de su identificación. Si la grieta no \ntiene el mismo nivel de severidad a lo largo de toda su longitud, cada porción con un nivel de \nseveridad diferente se registra por separado. Si ocurren abultamientos o hundimientos en la s \ngrietas, estos también deben reportarse. \n \n\n \n100",
+      "ancho_fisura_aplicable": true,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 11,
+      "superficie": "asfalto",
+      "nombre": "Parcheo y acometidas de servicios",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 102,
+        "pagina_fin": 105
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Parche en buena condición y funcionamiento satisfactorio; impacto bajo sobre la calidad del tránsito."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Parche moderadamente deteriorado; impacto medio sobre la calidad del tránsito."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Parche muy deteriorado; impacto alto sobre la calidad del tránsito y pronta sustitución requerida."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El parche está en buena condición y su comportamiento es satisfactorio. El impacto sobre la \ncalidad del tránsito se califica como de severidad baja \n11 \n \n103 \n \nM: El parche está moderadamente deteriorado. El impacto sobre la calidad del tránsito se califica \ncomo de severidad media \nH: El parche está muy deteriorado. El impacto sobre la calidad del tránsito se califica como de \nseveridad alta. Requiere pronta sustitución",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Los parches se miden en metros cuadrados de área afectada. \nSin embargo, si un parche tiene áreas de diferente severidad, estas deben medirse y registrarse de \nforma separada. Por ejemplo, un parche de 2.5 m² puede tener 1.0 m² de severidad media y 1.5 m² \nde severidad baja, las cuales deben reportarse por separado. \nNingún otro daño se registra dentro de un parche. Aún si el material del parche se está \ndesprendiendo o agrietando, el área se califica únicamente como parche. \nSi una cantidad importante de pavimento ha sido reemplazada, no se debe registrar como parcheo \nsino como un nuevo pavimento, por ejemplo, la sustitución de una intersección completa.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        },
+        {
+          "id": "PARCHE",
+          "texto": "No registrar otros daños dentro del parche; distintas severidades del parche por separado.",
+          "pagina": 103
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 12,
+      "superficie": "asfalto",
+      "nombre": "Pulimento de agregados",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 106,
+        "pagina_fin": 107
+      },
+      "severidad": {
+        "aplica": false,
+        "niveles": [],
+        "estado_sin_severidad": "NO_APLICA",
+        "texto_fuente": "No se define ningún nivel de severidad. Sin embargo, el grado de pulimento deberá ser significativo \nantes de ser incluido en una evaluación de la condición y contabilizado como defecto.",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se mide en metros cuadrados de área afectada. Si se reporta exudación, no se tendrá en cuenta el \npulimento de agregados en la misma área.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        },
+        {
+          "id": "EXCLUSION_2_12",
+          "texto": "Exudación excluye pulimento en la misma área; advertir sin borrar.",
+          "pagina": 106
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 13,
+      "superficie": "asfalto",
+      "nombre": "Huecos",
+      "unidad": "Un.",
+      "geometria": "CIRCULO",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 108,
+        "pagina_fin": 110
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Combinaciones B del Cuadro 5-6, usando profundidad máxima y diámetro medio; consultar matriz adjunta."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Combinaciones M del Cuadro 5-6. Para diámetro >750 mm y profundidad ≤25 mm, severidad media y conteo equivalente por área/0,47."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Combinaciones A del Cuadro 5-6. Para diámetro >750 mm y profundidad >25 mm, severidad alta y conteo equivalente por área/0,47."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "Los niveles de severidad para los huecos de diámetro menor que 7 50 mm se basan en la \nprofundidad y el diámetro, tal como se indica en el cuadro 5-6: \nCuadro 5-6. Niveles de severidad para huecos en pavimento asfáltico \nProfundidad máxima \ndel hueco. \nDiámetro medio (mm) \n100 a 200 mm 200 a 450 mm 450 a 750 mm \n13 a 25 mm L L M \n> 25 a 50 mm L M H \n> 50 mm M M H \nSi el diámetro del hueco es mayor que 7 50 mm, se mide el área en metros cuadrados y se divide \nentre 0.47 m² para hallar el número de huecos equivalentes. Si la profundidad es menor o igual que \n25.0 mm, los huecos equivalentes se consideran de severidad media. Si la profundidad es mayor \nque 25.0 mm la severidad se considera como alta. \n \n13 \n \n109",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-6",
+          "pagina": 108,
+          "filas": [
+            "13 a 25 mm",
+            ">25 a 50 mm",
+            ">50 mm"
+          ],
+          "columnas": [
+            "100 a 200 mm",
+            "200 a 450 mm",
+            "450 a 750 mm"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B",
+              "M"
+            ],
+            [
+              "B",
+              "M",
+              "A"
+            ],
+            [
+              "M",
+              "M",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Los huecos se miden contando aquellos que sean de severidades baja, media o alta, y se reportan \npor separado.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "HUECO_EQUIVALENTE",
+          "texto": "Una ocurrencia física por registro. Diámetro mayor que 0.75 m: cantidad técnica equivalente = área medida / 0.47 m². No sustituir área medida por círculo ideal sin confirmación.",
+          "pagina": 108
+        }
+      ],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 14,
+      "superficie": "asfalto",
+      "nombre": "Cruce de vía férrea",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 111,
+        "pagina_fin": 113
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja; consultar página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El cruce de vía férrea produce una calidad de tránsito de severidad baja \nM: El cruce de vía férrea produce una calidad de tránsito de severidad media \nH: El cruce de vía férrea produce una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "El área del cruce se mide en metros cuadrados de área afectada. Si el cruce no afecta la calidad \nde tránsito  no debe registrarse. Cualquier abultamiento importante causado por los rieles debe \nregistrarse como parte del cruce.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 15,
+      "superficie": "asfalto",
+      "nombre": "Ahuellamiento",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 114,
+        "pagina_fin": 116
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Profundidad media de la huella de 6 a 13 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Profundidad media >13 y ≤25 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Profundidad media >25 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Profundidad media del ahuellamiento: 6.0 a 13.0 mm \nM: Profundidad media del ahuellamiento: > 13.0 mm a 25.0 mm \nH: Profundidad media del ahuellamiento: > 25.0 mm",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El ahuellamiento se mide en metros cuadrados de área afectada y su severidad está definida por \nla profundidad media de la huella. La profundidad media del ahuellamiento se calcula \npromediando varias medidas de profundidad a lo largo de la huella. Las medidas de profundidad \nse toman colocando una regla perpendicular a la dirección de la huella.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 16,
+      "superficie": "asfalto",
+      "nombre": "Desplazamiento",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 117,
+        "pagina_fin": 119
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja; consultar página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El desplazamiento produce una calidad de tránsito de severidad baja \nM: El desplazamiento produce una calidad de tránsito de severidad media \nH: El desplazamiento produce una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "Los desplazamientos se miden en metros cuadrados de área afectada. Los desplazamientos que \nocurren dentro de parches se consideran como parte de este y no como un daño separado.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 17,
+      "superficie": "asfalto",
+      "nombre": "Grieta parabólica o por deslizamiento",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 120,
+        "pagina_fin": 122
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Ancho promedio de grieta <10 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Ancho promedio de 10 a 40 mm, o área circundante moderadamente fracturada en pequeños pedazos ajustados o rodeada de grietas secundarias."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Ancho promedio >40 mm, o área circundante fracturada en pedazos fácilmente removibles."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Ancho promedio de la grieta menor que 10.0 mm \nM: Existe una de las siguientes condiciones: \n• Ancho promedio de la grieta entre 10.0 mm y 40.0 mm \n• El área alrededor de la grieta está moderadamente fracturada en pequeños pedazos \najustados, o está rodeada de grietas secundarias \nH: Existe una de las siguientes condiciones: \n• Ancho promedio de la grieta mayor que 40.0 mm \n• El área alrededor de la grieta está fracturada en pedazos fácilmente removibles",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El área asociada con una grieta parabólica se mide en metros cuadrados y se califica según el nivel \nde severidad más alto presente en la misma.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 18,
+      "superficie": "asfalto",
+      "nombre": "Hinchamiento",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 123,
+        "pagina_fin": 124
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja. Puede ser difícil de observar; consultar página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El hinchamiento produce una calidad de tránsito de severidad baja. \nEl hinchamiento de severidad baja no es fácil de observar. Puede detectarse conduciendo \nen el límite de velocidad sobre la sección de pavimento. Si existe un hinchamiento se \nproducirá un movimiento hacia arriba del vehículo \nM: El hinchamiento produce una calidad de tránsito de severidad media \nH: El hinchamiento produce una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "El hinchamiento se mide en metros cuadrados de área afectada.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 19,
+      "superficie": "asfalto",
+      "nombre": "Desprendimiento de agregado grueso",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 125,
+        "pagina_fin": 126
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Pérdida considerable de agregado: más de 20 partículas por m², o grupos de agregados perdidos."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Superficie muy rugosa y agujereada; puede estar completamente removida en algunos sitios."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "En caso de duda sobre el nivel de severidad, se deben delimitar tres áreas de un metro cuadrado \n(1.0 m²) cada una y examinarlas para contar el número de partículas o grupos de agregados que se \nhan perdido. Para este deterioro no existe nivel de severidad bajo. \nM: Pérdida considerable de agregado, más de 20 por metro cuadrado, o se observan grupos  de \nagregados perdidos \nH: La superficie es muy rugosa y agujereada, y puede estar completamente removida en algunos \nsitios",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El desprendimiento de agregado grueso se mide en metros cuadrados de área de la superficie. Si se \nobserva desprendimiento de agregado grueso  no debe reportarse “20. Meteorización (desgaste \nsuperficial)”.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        },
+        {
+          "id": "SIN_BAJA",
+          "texto": "No existe severidad baja para este daño.",
+          "pagina": 125
+        },
+        {
+          "id": "EXCLUSION_19_20",
+          "texto": "Desprendimiento de agregado grueso excluye meteorización en la misma área; advertir.",
+          "pagina": 125
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 20,
+      "superficie": "asfalto",
+      "nombre": "Meteorización (desgaste superficial)",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 127,
+        "pagina_fin": 132
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Pérdida inicial de matriz fina, pérdida de color y bordes del agregado grueso descubiertos en menos de 1 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Pérdida notoria de matriz fina; bordes del agregado grueso expuestos hasta una cuarta parte de su lado mayor."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Bordes expuestos en más de una cuarta parte de la dimensión mayor; pérdida considerable de matriz fina y pérdida potencial o real de agregado grueso."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: La superficie asfáltica empieza a presentar señales de envejecimiento, el cual puede acelerarse \npor las condiciones climáticas. Se aprecia la pérdida de la matriz de agregado fino, acompañada \npor el desvanecimiento del color del asfalto. Se empiezan a descubrir los bordes del agregado \ngrueso en menos de un (1) mm. El pavimento puede ser relativamente nuevo (de hasta apenas 6 \nmeses de edad) \nM: La pérdida de la matriz de agregado fino es notoria y los bordes del agregado grueso están \nexpuestos hasta una cuarta parte de su lado más largo \nH: Los bordes del agregado grueso han sido expuestos en más de la cuarta parte de su dimensión \nmayor. Hay una pérdida considerable de matriz de agregado fino lo cual lleva a una pérdida \npotencial o real de agregado grueso",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "La meteorización (desgaste superficial) se miden en metros cuadrados de área afectada. No debe \nregistrarse en áreas donde se haya reportado “19. Desprendimiento de agregado grueso”.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        },
+        {
+          "id": "EXCLUSION_19_20",
+          "texto": "Desprendimiento de agregado grueso excluye meteorización en la misma área; advertir.",
+          "pagina": 125
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 21,
+      "superficie": "rigido",
+      "nombre": "Rotura por pandeo",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 133,
+        "pagina_fin": 135
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja; consultar página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: La rotura por pandeo produce una calidad de tránsito de severidad baja \nM: La rotura por pandeo produce una calidad de tránsito de severidad media. \nH: La rotura por pandeo produce una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "En una grieta, la rotura por pandeo se cuenta como presente en una (1) losa. Si el daño ocurre en \nuna junta y afecta dos losas se cuenta en ambas, es decir, dos (2) losas. Cuando la severidad de \nla rotura por pandeo  deja el pavimento inutilizable se debe programar la reparación de forma \ninmediata.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "JUNTA_DOS_LOSAS",
+          "texto": "En grieta: una losa. En junta y afectando dos losas: contar ambas.",
+          "pagina": 133
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 22,
+      "superficie": "rigido",
+      "nombre": "Rotura de la esquina",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 136,
+        "pagina_fin": 139
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Grieta baja y área entre rotura y juntas sin fisuras o ligeramente fisurada. Sin refuerzo: ancho <13 mm, o cualquier ancho con sello satisfactorio y sin escalonamiento."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Grieta media o área intermedia con grieta media. Sin refuerzo: sin sello >13 y <50 mm; o sin sello <50 mm y escalonamiento <10 mm; o con sello y escalonamiento <10 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Grieta alta o área intermedia muy fisurada. Sin refuerzo: sin sello >50 mm, o cualquier grieta con escalonamiento >10 mm. Con refuerzo: consultar daño 28."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: La rotura de esquina está definida por una grieta de severidad baja. El área entre la rotura y las \njuntas no tiene fisuras o está ligeramente fisurada. La grietas de severidad baja se definen como: \n• Una grieta de menos de 13 mm \n• Una grieta de cualquier ancho, cuyo sello se encuentre en condición satisfactoria y no \npresenta escalonamiento \nM: La rotura de esquina está definida por una grieta de severidad media, o el área entre la rotura \ny las juntas, o ambas, presenta una grieta de severidad media. Las grietas de severidad media se \ndefinen como: \n• Una grieta sin sello, con un ancho superior a 13 mm e inferior a 50 mm \n• Una grieta sin sello, con ancho inferior a 50 mm y con escalonamiento menor que 10 mm \n• Cualquier grieta con sello y escalonamiento menor que 10 mm \n22 \n \n137 \n \nH: La rotura de esquina está definida por una grieta de severidad alta, o el área entre la rotura y \nlas juntas, o ambas, está muy fisurada. Las grietas de severidad alta se definen como: \n• Una grieta sin sello, con un ancho superior a 50 mm \n• Cualquier grieta, con sello o sin sello, con Escalonamiento mayor que 10 mm \nLa definición empleada para la severidad de las grietas es para losas sin refuerzo. Para losas \nreforzadas se deben aplicar los criterios incluidos en “28. Grietas lineales”",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "La losa con rotura de esquina se registra como una (1) losa si: \n• Solo tiene rotura en una esquina \n• Presenta más de una rotura con la misma severidad \n• Presenta dos o más roturas de severidades diferentes \nPara dos o más roturas se reporta el mayor nivel de severidad. Por ejemplo, si una losa tiene una \nrotura de esquina de severidad baja y una de severidad media, deberá contabilizarse como una \n(1) losa con una rotura de esquina de severidad media.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 23,
+      "superficie": "rigido",
+      "nombre": "Losa dividida",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 140,
+        "pagina_fin": 142
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Mayoría de grietas B y 4–8 pedazos; ver Cuadro 5-8."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Mayoría B y ≥9 pedazos; o mayoría M/A y 4–8 pedazos."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Mayoría M/A y ≥9 pedazos."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "En el cuadro 5-8 se presentan los niveles de severidad para losas divididas. \nCuadro 5-8. Niveles de severidad para losa dividida \nSeveridad de la mayoría \nde las grietas \nNúmero de pedazos en la losa agrietada \n4 a 5 6 a 8 9 o más \nL L L M \nM M M H \nH M M H",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-8",
+          "pagina": 140,
+          "filas": [
+            "Mayoría B",
+            "Mayoría M",
+            "Mayoría A"
+          ],
+          "columnas": [
+            "4 a 5 pedazos",
+            "6 a 8 pedazos",
+            "9 o más pedazos"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B",
+              "M"
+            ],
+            [
+              "M",
+              "M",
+              "A"
+            ],
+            [
+              "M",
+              "M",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Si la losa dividida es de severidad media o alta no se contabiliza otro tipo de daño.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "EXCLUSION_LOSA_DIVIDIDA",
+          "texto": "Si severidad M/A, no contabilizar otro daño en esa losa; advertir y resolver antes del cálculo.",
+          "pagina": 140
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 24,
+      "superficie": "rigido",
+      "nombre": "Grieta de durabilidad (“D”)",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 143,
+        "pagina_fin": 146
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Grietas D en <15% del área; mayoría cerradas y pocos fragmentos sueltos o desprendidos."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Grietas D en <15% con mayoría de fragmentos sueltos/desprendidos; o >15% con mayoría de grietas cerradas y pocos fragmentos sueltos/desprendidos."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Grietas D en >15% y mayoría de fragmentos desprendidos o fácilmente removibles."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Las grietas “D”  cubren menos del 15% del área de la losa. La mayoría de las grietas están \ncerradas y unos pocas fragmentos están sueltos o pueden haberse desprendido \n24 \n \n144 \n \nM: Existe una de las siguientes condiciones: \n• Las grietas “D” cubren menos del 15% del área de la losa y la mayoría de los fragmentos \nestán sueltos o se han desprendido \n• Las grietas “D” cubren más del 15% del área. La mayoría de las grietas están cerradas, pero \nunos pocos fragmentos están sueltos o se han desprendido \nH: Las grietas “D” cubren más del 15% del área y la mayoría de los fragmentos se han desprendido \no pueden removerse con facilidad",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Cuando el daño es puntual y se califica en un nivel de severidad específico se cuenta como una \n(1) losa en dicha condición. Si existe más de un nivel de severidad, la losa se reporta como una (1) \ncon el nivel de daño más alto. Por ejemplo, si en una misma losa hay grietas “D” de severidades \nbaja y media, la losa se registra como de severidad media únicamente.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 25,
+      "superficie": "rigido",
+      "nombre": "Escalonamiento",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 147,
+        "pagina_fin": 149
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Diferencia de niveles de 3 a 10 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Diferencia de niveles >10 a 19 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Diferencia de niveles >19 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "Se definen por la diferencia de niveles a través de la junta como se indica a continuación: \nCuadro 5-9. Niveles de severidad para el escalonamiento \nNivel de severidad Diferencia de niveles \nL De 3 mm a 10 mm \nM Más de 10 mm a 19 mm \nH Mayor que 19 mm",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El escalonamiento a través de una junta se cuenta como una (1) losa. Se cuentan únicamente las \nlosas afectadas. El escalonamiento a través de una grieta no se cuenta como daño, pero se tiene \nen cuenta para definir la severidad de las grietas.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 26,
+      "superficie": "rigido",
+      "nombre": "Daño del sello de junta",
+      "unidad": null,
+      "geometria": "GLOBAL",
+      "modo_densidad": "NO_APLICA",
+      "fuente": {
+        "pagina_inicio": 150,
+        "pagina_fin": 153
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Sello en buena condición global con daños menores; algunas juntas con sello desprendido pero en contacto con el pavimento."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Condición regular y daños moderados; requiere reemplazo en próximos dos años. Criterios detallados de aberturas, bombeo, oxidación y vegetación en pp. 150–151."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Mala condición y reemplazo inmediato: 10% o más del sello supera los límites anteriores, o más del 10% se desprendió."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L:  El sello de las juntas está en buena condición en toda la sección, se comporta bien  y solo \npresenta daños menores \nEl daño del sello de junta es de severidad baja si sólo algunas de las juntas tienen el sello \ndesprendido, pero en contacto con el pavimento. Esta condición existe si se puede \ninsertar con facilidad la hoja de un cuchillo entre el sello y la cara de la junta \nM:  El sello de las juntas está en condición regular en toda la sección, presenta uno o más de \nlos tipos de daño citados, pero de forma moderada, y se estima que debe reemplazarse en los \npróximos dos años \nEl daño del sello de junta es de severidad media si un número reducido de juntas cumple \nalguna de las siguientes condiciones: \n26 \n \n151 \n \n• El sello está en su sitio, pero es permeable al agua a través de aberturas visibles \nde hasta 3 mm de ancho. Esta condición no se cumple si no se puede insertar la \nhoja de un cuchillo con facilidad \n• Se evidencian detritos producto de bombeo en la junta \n• El sello está oxidado y “sin vida” , pero es flexible (como una cuerda) y llena la \nabertura de la junta \n• Existe vegetación en la junta, pero no obstruye la apertura de esta \nH:  El sello de las juntas está en mala condición en toda la sección y presenta uno o más  de \nlos tipos de daño citados con alta severidad. El sello requiere reemplazo inmediato \nEl daño de sello de junta  es de severidad alta si 10% o más del material de sello excede \nlos criterios límite indicados anteriormente o si más del 10% del sello se ha desprendido \nde las juntas",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El daño del sello de junta no se registra losa por losa, sino que se evalúa con base en la condición \ngeneral de la unidad de inspección del pavimento.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "GLOBAL_UNICO",
+          "texto": "Una evaluación activa por muestra, sin geometría ni densidad.",
+          "pagina": 254
+        }
+      ],
+      "pendientes": [],
+      "vd_global_referencia": {
+        "B": 2,
+        "M": 4,
+        "A": 8,
+        "pagina": 254,
+        "estado": "TRANSCRIPCION_EXPLICITA_NO_CURVA",
+        "usar_en_motor": "pendiente_confirmacion_etapa_2"
+      }
+    },
+    {
+      "codigo": 27,
+      "superficie": "rigido",
+      "nombre": "Desnivel carril / berma",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 154,
+        "pagina_fin": 156
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Desnivel >25 y ≤50 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Desnivel >50 y ≤100 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Desnivel >100 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El desnivel entre el borde del pavimento y la berma es mayor que 25 mm y menor o igual que \n50 mm \nM: El desnivel entre el borde del pavimento y la berma es mayor que 50 mm y menor o igual que \n100 mm \nH: El desnivel entre el borde del pavimento y la berma es mayor que 100 mm",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El desnivel carril / berma se calcula promediando los desniveles máximo y mínimo a lo largo de \nla losa. Cada losa que exhiba este deterioro se mide de forma separada y se registra como una \n(1) losa con el nivel de severidad correspondiente.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 28,
+      "superficie": "rigido",
+      "nombre": "Grietas lineales (longitudinales transversales y diagonales)",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 157,
+        "pagina_fin": 160
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Sin refuerzo: sin sello ≤13 mm sin escalonamiento, o sello satisfactorio de cualquier ancho sin escalonamiento. Con refuerzo: sin sello ≥3 y <25 mm sin escalonamiento, o sello satisfactorio de cualquier ancho sin escalonamiento."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Sin refuerzo: sin sello >13 y ≤50 mm; o sin sello ≤50 mm y escalonamiento <10 mm; o sellada con escalonamiento <10 mm. Con refuerzo: sin sello ≥25 y <75 mm sin escalonamiento; o sin sello ≤75 mm y escalonamiento ≤10 mm; o sellada con escalonamiento ≤10 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Sin refuerzo: sin sello >50 mm, o cualquier grieta con escalonamiento >10 mm. Con refuerzo: sin sello >75 mm, o cualquier grieta con escalonamiento >10 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "Losas sin refuerzo \nL: Existe una de las siguientes condiciones: \n• Grieta sin sello con ancho menor o igual que 13.0 mm y sin escalonamiento \n• Grieta con sello de cualquier ancho, con material de sello en condición satisfactoria y sin \nescalonamiento. \nM: Existe una de las siguientes condiciones: \n• Grieta sin sello y con ancho mayor que 13.0 mm y menor o igual que 50.0 mm. \n• Grieta sin sello, con ancho menor o igual que 50 .0 mm y con escalonamiento menor que \n10.0 mm. \n• Grieta con sello de cualquier ancho y con escalonamiento menor que 10.0 mm \nH: Existe una de las siguientes condiciones: \n• Grieta sin sello y con ancho mayor que 50.0 mm \n• Grieta con sello o sin sello, de cualquier ancho y con escalonamiento mayor que 10.0 mm \nLosas con refuerzo \nL: Existe una de las siguientes condiciones:  \n28 \n \n158 \n \n• Grieta sin sello, con ancho mayor o igual que 3 .0 mm y menor que 25 .0 mm y sin \nescalonamiento \n• Grieta de cualquier ancho, con material de sello en condición satisfactoria y sin \nescalonamiento \nM: Existe una de las siguientes condiciones: \n• Grieta sin sello y con ancho mayor o igual que 25 .0 mm y menor que 75 .0 mm y sin \nescalonamiento \n• Grieta sin sello, con ancho menor o igual que 75.0 mm y con escalonamiento menor o igual \nque 10.0 mm \n• Grieta con sello, de cualquier ancho y con escalonamiento menor o igual que 10 mm \nH: Existe una de las siguientes condiciones: \n• Grieta sin sello y con ancho mayor que 75.0 mm \n• Grieta con sello o sin sello, de cualquier ancho y con escalonamiento mayor que 10.0 mm \nEn el cuadro 5-10 se resumen los niveles de severidad para consulta durante el trabajo de campo.  \nCuadro 5-10. Niveles de severidad para grietas lineales \nNivel de severidad Losas sin refuerzo \nSin sello Con sello Escalonamiento \nL ≤ 13 mm Cualquier ancho \nCondición satisfactoria No presenta \nM \n> 13 mm & ≤ 50 mm   \n≤ 50 mm  < 10 mm \n Cualquier ancho < 10 mm \nH > 50 mm   \nCualquier ancho Cualquier ancho > 10 mm \n \nNivel de severidad \n \nSin sello Con sello Escalonamiento \nL ≥ 3 mm & < 25 mm Cualquier ancho \nCondición satisfactoria No presenta \nM \n≥ 25 mm & < 75 mm  No presenta \n≤ 75 mm  ≤ 10 mm \n Cualquier ancho ≤ 10 mm \nH > 75 mm   \nCualquier ancho Cualquier ancho > 10 mm \n \n \n \n159",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Una vez se ha establecido la severidad de las grietas, el daño se registra como una (1) losa. Si l a \nlosa contiene dos grietas de severidad media, se reporta como una (1) losa con grietas de \nseveridad alta. Las losas divididas en cuatro o más pedazos se cuentan como losa dividida. \nEn losas de concreto reforzado, las grietas de menos de 3 .0 mm de ancho se reportan como \ngrietas de retracción. Las losas con longitud mayor que 8.0 metros se dividen en losas de igual \nlongitud con juntas imaginarias en perfecta condición.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [
+        {
+          "id": "GRIETAS_LOSA",
+          "texto": "Dos grietas medias en la misma losa se reportan como una losa alta. Cuatro o más pedazos: daño 23.",
+          "pagina": 159
+        }
+      ],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 29,
+      "superficie": "rigido",
+      "nombre": "Parcheo grande (> 0.5 m²) y acometidas de servicios",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 161,
+        "pagina_fin": 163
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Parche funcionando bien, con poco o ningún daño."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Parche moderadamente deteriorado o bordes moderadamente astillados; retirar el material requiere esfuerzo considerable."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Parche muy dañado; requiere reemplazo."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El parche está funcionando bien, con poco o ningún daño \nM: El parche esta moderadamente deteriorado o moderadamente astillado en sus bordes. El \nmaterial del parche solo puede retirarse con un esfuerzo considerable \nH: El parche está muy dañado. El estado de deterioro exige reemplazo",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Si una losa tiene uno o más parches con el mismo nivel de severidad, se cuenta como una (1) losa \ncon ese daño en particular. Si una losa presenta más de un nivel de severidad, se cuenta como \nuna (1) losa con el mayor nivel de severidad observado.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 30,
+      "superficie": "rigido",
+      "nombre": "Parcheo pequeño (≤ 0.5 m²)",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 164,
+        "pagina_fin": 166
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Parche funcionando bien, con poco o ningún daño."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Parche moderadamente deteriorado; retirar el material requiere esfuerzo considerable."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Parche muy deteriorado; requiere reemplazo."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El parche está funcionando bien, con poco o ningún daño \nM: El parche está moderadamente deteriorado. El material del parche puede ser retirado con \nconsiderable esfuerzo \nH: El parche está muy deteriorado. El estado de deterioro exige su reemplazo.",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Si una losa presenta uno o más parches con el mismo nivel de severidad, se registra como una \n(1) losa con ese daño en particular. Si una losa presenta más de un nivel de severidad, se cuenta \ncomo una (1) losa con el mayor nivel de severidad observado.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 31,
+      "superficie": "rigido",
+      "nombre": "Pulimento de agregados",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 167,
+        "pagina_fin": 168
+      },
+      "severidad": {
+        "aplica": false,
+        "niveles": [],
+        "estado_sin_severidad": "NO_APLICA",
+        "texto_fuente": "Este deterioro se reporta cuando el resultado de un ensayo de resistencia al deslizamiento es \nbajo o se reduce significativamente comparado con una evaluación anterior. \nNo se definen niveles de severidad; sin embargo, el grado de pulimento debe ser significativo \nantes de incluirlo en un inventario de la condición y calificarlo como un defecto.",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Una losa con pulimento de agregados se cuenta como una (1) losa.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 32,
+      "superficie": "rigido",
+      "nombre": "Desprendimientos",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 169,
+        "pagina_fin": 170
+      },
+      "severidad": {
+        "aplica": false,
+        "niveles": [],
+        "estado_sin_severidad": "NO_APLICA",
+        "texto_fuente": "No se definen niveles de severidad. Sin embargo, los desprendimientos deben ser extensos antes \nque se registren como un daño. La densidad promedio debe exceder aproximadamente tres por \nmetro cuadrado (3/m²) en toda el área de la losa.",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se debe medir la densidad del daño. Si existe alguna duda de que el promedio es mayor que \ntres desprendimientos por metro cuadrado (3/m²) se inspeccionan, por lo menos, tres áreas de \nun metro cuadrado cada una (1 m²) elegidas al azar. Cuando el promedio de desprendimientos \npor metro cuadrado es mayor que 3.0 se contabiliza una (1) losa para este daño.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 33,
+      "superficie": "rigido",
+      "nombre": "Bombeo",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 171,
+        "pagina_fin": 172
+      },
+      "severidad": {
+        "aplica": false,
+        "niveles": [],
+        "estado_sin_severidad": "NO_APLICA",
+        "texto_fuente": "No se definen niveles de severidad. Es suficiente indicar la existencia del bombeo",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El bombeo en una junta entre dos losas se contabiliza como dos (2) losas afectadas por el daño . \nSin embargo, si las juntas restantes alrededor de la losa tienen bombeo, se agrega una (1) losa \npor junta adicional con dicho deterioro.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "BOMBEO_JUNTAS",
+          "texto": "Junta entre dos losas: dos losas afectadas; juntas restantes alrededor con bombeo: una losa por junta adicional. Registrar adyacencia y revisar solapamientos.",
+          "pagina": 171
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 34,
+      "superficie": "rigido",
+      "nombre": "Punzonamiento",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 173,
+        "pagina_fin": 175
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Mayoría de grietas B y 2–5 pedazos, o mayoría M y 2–3; ver Cuadro 5-11."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Mayoría B y >5 pedazos, M y 4–5, o A y 2–3."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Mayoría M y >5 pedazos, o A y ≥4."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "En el cuadro 5-11 se presentan los niveles de severidad para el punzonamiento de acuerdo con \nla severidad de las grietas y su número de fragmentos. El nivel de severidad de las grietas se \nevalúa con los criterios para grietas lineales. \nCuadro 5-11. Niveles de severidad para punzonamiento \nSeveridad de la mayoría de las \ngrietas \nNúmero de pedazos \n2 a 3 4 a 5 Más de 5 \nL L L M \nM L M H \nH M H H",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-11",
+          "pagina": 173,
+          "filas": [
+            "Mayoría B",
+            "Mayoría M",
+            "Mayoría A"
+          ],
+          "columnas": [
+            "2 a 3 pedazos",
+            "4 a 5 pedazos",
+            "Más de 5 pedazos"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B",
+              "M"
+            ],
+            [
+              "B",
+              "M",
+              "A"
+            ],
+            [
+              "M",
+              "A",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Si la losa presenta un solo punzonamiento se contabiliza como una (1) losa con el nivel de \nseveridad observado. De lo contrario, hay dos recomendaciones: \n• Según ASTM D6433 : Si una losa presenta más de un (1) punzonamiento o un \npunzonamiento y una grieta, se reporta como losa dividida (“shattered”) \n• Según M: Y. Shahin (2005): Si una losa contiene más de un punzonamiento, se reporta \ncomo una (1) losa con punzonamiento del nivel de severidad más alto observado",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": [
+        "// TODO: validar con manual: seleccionar variante ASTM o Shahin para varios punzonamientos; p. 173 describe ambas."
+      ]
+    },
+    {
+      "codigo": 35,
+      "superficie": "rigido",
+      "nombre": "Cruce de vía férrea",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 176,
+        "pagina_fin": 178
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Calidad del tránsito de severidad baja; consultar página 66."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Calidad del tránsito de severidad media; consultar página 66."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Calidad del tránsito de severidad alta; consultar página 66."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El cruce de vía férrea produce una calidad de tránsito de severidad baja \nM: El cruce de vía férrea produce una calidad de tránsito de severidad media \nH: El cruce de vía férrea produce una calidad de tránsito de severidad alta",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "referencia_calidad_transito": 66
+      },
+      "medicion_texto_fuente": "Se registra el número de losas atravesadas por los rieles de la vía férrea. Cualquier abultamiento \nimportante producido por los rieles debe contarse como parte del cruce.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 36,
+      "superficie": "rigido",
+      "nombre": "Descascaramiento por agrietamiento",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 179,
+        "pagina_fin": 181
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Agrietamiento en la mayor parte de la losa, superficie buena y descascaramiento menor; reportar solo si la pérdida es inminente o ya ocurrió."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Descascaramiento en menos del 15% de la superficie."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Descascaramiento en 15% o más de la superficie."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El agrietamiento se presenta en la mayor parte de la losa, pero la superficie está en buena \ncondición y solo se observa algún descascaramiento menor \nM: La losa presenta descascaramiento en menos del 15% de la superficie \nH: La losa presenta descascaramiento del 15% o más de la superficie",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Una losa con descascaramiento por agrietamiento  se contabiliza como una (1) losa con su \nrespectivo nivel de severidad. El descascaramiento por agrietamiento de severidad baja solo se \nreporta si la pérdida de material es inminente o ya se han desprendido algunos pedazos \npequeños. \n \n25 La denominación “descascaramiento por agrietamiento”  se propone como traducción de tres términos en inglés: \n“scaling” (literalmente, descamación), “map cracking” (mapa de grietas), y “crazing” (mapa de grietas). El primero implica \nuna pérdida superficial de material y los dos restantes son sinónimos \n36 \n \n180",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 37,
+      "superficie": "rigido",
+      "nombre": "Grietas de retracción",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 182,
+        "pagina_fin": 182
+      },
+      "severidad": {
+        "aplica": false,
+        "niveles": [],
+        "estado_sin_severidad": "NO_APLICA",
+        "texto_fuente": "No se definen niveles de severidad. Basta con indicar que existe el daño",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Si en una losa se observan una o más grietas de retracción, se reporta como una (1) losa.",
+      "ancho_fisura_aplicable": true,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 38,
+      "superficie": "rigido",
+      "nombre": "Astillamiento de esquina",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 183,
+        "pagina_fin": 185
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Combinaciones B del Cuadro 5-12, según profundidad y dimensiones laterales; no reportar áreas <65 cm²."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Combinaciones M del Cuadro 5-12; consultar matriz adjunta."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Combinaciones A del Cuadro 5-12; consultar matriz adjunta."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "En el cuadro 5-12 se presentan los niveles de severidad para el astillamiento de esquina. No debe \nreportarse ningún astillamiento con un área menor que 65 cm² desde la grieta hasta ambos lados \nde la esquina. \nCuadro 5-12. Niveles de severidad para astillamiento de esquina \nProfundidad del \nastillamiento \nDimensiones de los lados del astillamiento \n130 x 130 mm a \n300 x 300 mm Mayor que 300 x 300 mm \nMenor que 25.0 mm L L \n> 25.0 mm a 50.0 mm L M \nMayor de 50.0 mm M H",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-12",
+          "pagina": 183,
+          "filas": [
+            "Menor que 25,0 mm",
+            ">25,0 mm a 50,0 mm",
+            "Mayor que 50,0 mm"
+          ],
+          "columnas": [
+            "130 × 130 mm a 300 × 300 mm",
+            "Mayor que 300 × 300 mm"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B"
+            ],
+            [
+              "B",
+              "M"
+            ],
+            [
+              "M",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Si en una losa hay uno o más astillamientos de esquina con el mismo nivel de severidad, la losa \nse registra como una (1) losa con dicho deterioro. Si se presenta más de un nivel de severidad, se \ncuenta como una (1) losa con el mayor nivel de severidad observado. \n \n26 Se emplea la palabra “astillamiento” como traducción de “ spalling” o “chipping” (fragmentación) . “Astillamiento” \nreemplaza a “descascaramiento” (traducción de 2002) , la cual se refiere a un proceso superficial y se asignó al daño \n“36. Descascaramiento por agrietamiento” de este documento \n38 \n \n184",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 39,
+      "superficie": "rigido",
+      "nombre": "Astillamiento de junta",
+      "unidad": "losas",
+      "geometria": "LOSAS",
+      "modo_densidad": "LOSAS_AFECTADAS_SOBRE_TOTAL_LOSAS",
+      "fuente": {
+        "pagina_inicio": 186,
+        "pagina_fin": 190
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Fragmentos apretados, o combinaciones B del Cuadro 5-13. Una junta desgastada en toda su longitud se califica B."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Combinaciones M del Cuadro 5-13, según fragmentos, ancho y longitud; consultar matriz adjunta."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Fragmentos faltantes, ancho ≥100 mm y longitud ≥500 mm; ver Cuadro 5-13."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "En el cuadro 5-13 se presentan los niveles de severidad para el astillamiento de junta. Una junta \ncon el concreto desgastado en toda su longitud se califica como astillamiento de junta  de \nseveridad baja. \nCuadro 5-13. Niveles de severidad para astillamiento de junta \nFragmentos del astillamiento Ancho del \nastillamiento \nLongitud del astillamiento \n< 500 mm ≥ 500 mm \nApretados \nNo pueden removerse fácilmente, pero podrían faltar algunos \npedazos \n< 100 mm L L \n≥ 100 mm L L \nSueltos \nPueden removerse y faltan algunos fragmentos. La mayoría o \ntodos los fragmentos se han perdido. El astillamiento es \nsuperficial (menos que 25 mm) \n< 100 mm L M \n≥100 mm L M \nFaltantes \nLa mayoría o todos los fragmentos han sido removidos \n< 100 mm L M \n≥ 100 mm M H \n \n \n27 Ibidem 20 \n39 \n \n187",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-13",
+          "pagina": 186,
+          "filas": [
+            "Apretados; ancho <100 mm",
+            "Apretados; ancho ≥100 mm",
+            "Sueltos; ancho <100 mm",
+            "Sueltos; ancho ≥100 mm",
+            "Faltantes; ancho <100 mm",
+            "Faltantes; ancho ≥100 mm"
+          ],
+          "columnas": [
+            "Longitud <500 mm",
+            "Longitud ≥500 mm"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B"
+            ],
+            [
+              "B",
+              "B"
+            ],
+            [
+              "B",
+              "M"
+            ],
+            [
+              "B",
+              "M"
+            ],
+            [
+              "B",
+              "M"
+            ],
+            [
+              "M",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Si el astillamiento se presenta a lo largo del borde de una losa, ésta se cuenta como una (1) losa \ncon dicho deterioro. Si existe astillamiento en más de un borde, se registra aquel que tenga el \nmayor nivel de severidad y se cuenta como una (1) losa con dicho deterioro. \nEl astillamiento de junta también puede ocurrir a lo largo de los bordes de dos losas adyacentes. \nSi este es el caso, cada losa se contabiliza con su respectivo nivel de severidad.",
+      "ancho_fisura_aplicable": false,
+      "reglas": [],
+      "pendientes": []
+    },
+    {
+      "codigo": 81,
+      "superficie": "no_pavimentado",
+      "nombre": "Sección transversal inadecuada",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 225,
+        "pagina_fin": 226
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Pequeñas cantidades/evidencia de agua empozada, o superficie plana sin pendientes transversales."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Cantidades moderadas/evidencia de agua empozada, o superficie con forma de tazón."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Grandes cantidades/evidencia de agua empozada, o depresiones profundas."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Se observan pequeñas cantidades de agua empozada o hay evidencia de agua empozada en \nla superficie de la vía; o bien, la superficie es completamente plana sin pendientes transversales \nM: Se observan cantidades moderadas de agua empozada o hay evidencia de agua empozada \nen la superficie de la vía; o bien, la superficie tiene forma de tazón \nH: Se observan grandes cantidades de agua empozada o hay evidencia de agua empozada en \nla superficie de la vía; o bien, la superficie presenta depresiones profundas",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "La sección transversal inadecuada se mide en metros lineales por unidad de inspección.  La \nsección transversal va desde el quiebre exterior de la berma de un lado hasta el quiebre exterior \nde la berma del lado opuesto. En una unidad de inspección pueden presentarse diferente s \nniveles de severidad. Por ejemplo, puede haber 18 metros con severidad media y 12 metros con \nseveridad alta. La máxima longitud no debe superar la longitud de la unidad de inspección. \n81 \n \n226 \n \n \nShahin, M. Y. (2005) \nFigura 5-148. Sección transversal inadecuada en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_LONGITUD",
+          "texto": "Cantidad total ≤ largo de la muestra.",
+          "pagina": 225
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 82,
+      "superficie": "no_pavimentado",
+      "nombre": "Drenaje lateral inadecuado",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 227,
+        "pagina_fin": 228
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Pequeñas cantidades/evidencia de agua empozada en cunetas, o vegetación/detritos excesivos."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Agua empozada moderada, vegetación/detritos excesivos, o erosión de cunetas hacia berma/calzada."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Grandes cantidades de agua empozada, agua que cruza o circula sobre la vía, vegetación/detritos excesivos o erosión hacia berma/calzada. Comparar condición completa; no clasificar por una sola palabra."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Se observan pequeñas cantidades de agua empozada o hay evidencia de agua empozada en \nlas cunetas; o bien, hay crecimiento excesivo de vegetación o acumulación de detritos en l as \ncunetas \nM: Se observan cantidades moderadas de agua empozada o hay evidencia de agua empozada \nen las cunetas; o bien, hay crecimiento excesivo de vegetación o acumulación de detritos en las \ncunetas; o hay erosión de las cunetas hacia la berma o la calzada \nH: Se observan grandes cantidades de agua empozada o hay evidencia de agua empozada en \nlas cunetas; o bien, el agua corre a través o sobre la vía; o hay crecimiento excesivo de vegetación \no acumulación de detritos en las cunetas; o hay erosión de las cunetas hacia la berma o la calzada",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Los problemas de drenaje se miden en metros lineales por sección paralela al eje. La máxima \nlongitud es dos veces la longitud de la unidad de inspección (dos cunetas para la longitud total \nde la unidad de inspección). Por ejemplo, una unidad de inspección puede tener 40 m con  \nseveridad baja y 12 m con severidad alta. \n82 \n \n228 \n \n \nShahin, M. Y. (2005) \n \nLuis Carlos Vásquez Torres, 2020 \nFigura 5-149. Drenaje lateral inadecuado en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "DOS_CUNETAS",
+          "texto": "Cantidad total ≤ 2 × largo de la muestra.",
+          "pagina": 227
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 83,
+      "superficie": "no_pavimentado",
+      "nombre": "Corrugaciones",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 229,
+        "pagina_fin": 230
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Profundidad <25 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Profundidad de 25 a 75 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Profundidad >75 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Las corrugaciones tienen menos de 25.0 mm de profundidad \nM: Las corrugaciones tienen entre 25.0 mm y 75.0 mm de profundidad \nH: Las corrugaciones tienen más de 75.0 mm de profundidad",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Las corrugaciones se miden en metros cuadrados de área por unidad de inspección. La cantidad \nno puede exceder el área total de la unidad de inspección. Por ejemplo, una unidad de inspección \npuede tener 22 m² con severidad media y 5 m² con severidad alta. \n83 \n \n230 \n \n \nShahin, M. Y. (2005) \nFigura 5-150. Corrugaciones en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 84,
+      "superficie": "no_pavimentado",
+      "nombre": "Polvo",
+      "unidad": null,
+      "geometria": "GLOBAL",
+      "modo_densidad": "NO_APLICA",
+      "fuente": {
+        "pagina_inicio": 231,
+        "pagina_fin": 232
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Polvo fino que no obstruye la visibilidad."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Nube moderadamente espesa que puede obstruir parcialmente la visibilidad y hacer desacelerar el tránsito."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Nube muy espesa que puede obstruir fuertemente la visibilidad y hacer desacelerar considerablemente o detener el tránsito."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: El tránsito normal produce un polvo fino que no obstruye la visibilidad \nM: El tránsito normal produce una nube moderadamente espesa que puede obstruir \nparcialmente la visibilidad y causar que el tránsito desacelere \nH: El tránsito normal produce una nube muy espesa que puede obstruir fuertemente la visibilidad \ny causar que el tránsito desacelere considerablemente o se detenga",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Se conduce un vehículo a 40 kilómetros por hora y se observa la nube de polvo. El polvo se mide \ncomo de severidad baja, media o alta para la unidad de inspección. \n84 \n \n232 \n \n \nShahin, M. Y. (2005) \nFigura 5-151. Polvo en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "GLOBAL_UNICO",
+          "texto": "Una evaluación activa por muestra, sin geometría ni densidad.",
+          "pagina": 275
+        }
+      ],
+      "pendientes": [],
+      "vd_global_referencia": {
+        "B": 2,
+        "M": 5,
+        "A": 15,
+        "pagina": 275,
+        "estado": "TRANSCRIPCION_EXPLICITA_NO_CURVA",
+        "usar_en_motor": "pendiente_confirmacion_etapa_2"
+      }
+    },
+    {
+      "codigo": 85,
+      "superficie": "no_pavimentado",
+      "nombre": "Huecos",
+      "unidad": "Un.",
+      "geometria": "CIRCULO",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 233,
+        "pagina_fin": 234
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Combinaciones B del Cuadro 5-16 según profundidad máxima y diámetro promedio; consultar matriz adjunta."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Combinaciones M del Cuadro 5-16; consultar matriz adjunta."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Combinaciones A del Cuadro 5-16; consultar matriz adjunta."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "Los niveles de severidad de los huecos se basan en su diámetro y profundidad de acuerdo con \nel cuadro 5-16. \nCuadro 5-16. Niveles de severidad para huecos en vías no pavimentadas \nProfundidad \nmáxima (mm) \nDiámetro promedio \nMenor que 0.30 m 0.30 a 0.60 m 0.60 a 0.90 m Más de 0.90 m \n13.0 a 50.0 L L M M \n51.0 a 100.0 L M H H \nMás de 100.0 M H H H \nSi el hueco tiene más de 0.90 m de diámetro, se calcula su área en metros cuadrados y se divide \nentre 0.65 m² para encontrar el número equivalente de huecos.",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada.",
+        "tabla": {
+          "numero": "5-16",
+          "pagina": 233,
+          "filas": [
+            "13,0 a 50,0 mm",
+            "51,0 a 100,0 mm",
+            "Más de 100,0 mm"
+          ],
+          "columnas": [
+            "Menor que 0,30 m",
+            "0,30 a 0,60 m",
+            "0,60 a 0,90 m",
+            "Más de 0,90 m"
+          ],
+          "niveles": [
+            [
+              "B",
+              "B",
+              "M",
+              "M"
+            ],
+            [
+              "B",
+              "M",
+              "A",
+              "A"
+            ],
+            [
+              "M",
+              "A",
+              "A",
+              "A"
+            ]
+          ]
+        }
+      },
+      "medicion_texto_fuente": "Los huecos se miden contando el número de ellos que son de severidad baja, media y alta en la \nunidad de inspección y registrándolos de forma separada. Por ejemplo, puede haber 14 huecos \nde severidad media y 8 huecos de severidad baja. \n85 \n \n234 \n \n \nShahin, M. Y. (2005) \nFigura 5-152. Huecos en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "HUECO_EQUIVALENTE",
+          "texto": "Una ocurrencia física por registro. Diámetro mayor que 0.9 m: cantidad técnica equivalente = área medida / 0.65 m². No sustituir área medida por círculo ideal sin confirmación.",
+          "pagina": 233
+        }
+      ],
+      "pendientes": [
+        "// TODO: validar con manual: límites exactos o huecos de los intervalos antes de automatizar severidad; conservar evaluación manual."
+      ]
+    },
+    {
+      "codigo": 86,
+      "superficie": "no_pavimentado",
+      "nombre": "Huellas",
+      "unidad": "m²",
+      "geometria": "AREA",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 235,
+        "pagina_fin": 236
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Profundidad <25 mm."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Profundidad de 25 a 75 mm."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Profundidad >75 mm."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Las huellas tienen menos de 25.0 mm de profundidad \nM: Las huellas tienen entre de 25.0 mm y 75.0 mm de profundidad \nH: Las huellas tienen más de 75.0 mm de profundidad",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "Las huellas se miden en metros cuadrados de área de la unidad de inspección. Por ejemplo, una \nunidad de inspección puede tener 7 m² de severidad alta y 23 m² de severidad media. \n \n86 \n \n236 \n \n \nShahin, M. Y. (2005) \nFigura 5-153. Huellas en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "MAX_AREA",
+          "texto": "La suma de cantidades del mismo daño, considerando sus severidades, no supera el área de muestra. No sumar áreas de clases distintas como si fueran disjuntas.",
+          "origen": "prompt"
+        }
+      ],
+      "pendientes": []
+    },
+    {
+      "codigo": 87,
+      "superficie": "no_pavimentado",
+      "nombre": "Agregado suelto",
+      "unidad": "m",
+      "geometria": "LINEAL",
+      "modo_densidad": "CANTIDAD_SOBRE_AREA_MUESTRA",
+      "fuente": {
+        "pagina_inicio": 237,
+        "pagina_fin": 238
+      },
+      "severidad": {
+        "aplica": true,
+        "niveles": [
+          {
+            "codigo": "B",
+            "codigo_manual": "L",
+            "descripcion": "Agregado suelto sobre la vía o cordón de espesor <50 mm en berma/zonas menos transitadas."
+          },
+          {
+            "codigo": "M",
+            "codigo_manual": "M",
+            "descripcion": "Cordón de espesor entre 50 y 100 mm; usualmente abundantes finos en la calzada."
+          },
+          {
+            "codigo": "A",
+            "codigo_manual": "H",
+            "descripcion": "Cordón de espesor >100 mm en berma/zonas menos transitadas."
+          }
+        ],
+        "estado_sin_severidad": null,
+        "texto_fuente": "L: Se observa agregado suelto en la superficie de la vía, o un cordón de agregado (< 50.0 mm de \nespesor) en la berma o en las áreas menos transitadas \nM: Se observa un cordón moderado de agregado (50.0 mm a 100.0 mm de espesor) en la berma \no en las áreas menos transitadas. Usualmente, se encuentra una gran cantidad de partículas finas \nde suelo en la superficie de la calzada \nH: Se observa un gran cordón de agregado (más de 100.0 mm de espesor) en la berma o en la s \náreas menos transitadas",
+        "nota": "B/M/A corresponde a L/M/H del manual. NO_APLICA es un estado, no una severidad inventada."
+      },
+      "medicion_texto_fuente": "El agregado suelto se mide en metros lineales y paralelo al eje de la unidad de inspección. Cada \ncordón se mide por separado. Por ejemplo, si una unidad de inspección de 30 metros de largo \ntiene tres cordones de agregado suelto de severidad media – uno en cada lado y el otro en el \ncentro de la vía – el reporte será de 90 metros de agregado suelto de severidad media. \n87 \n \n238 \n \n \nShahin, M. Y. (2005) \nFigura 5-154. Agregado suelto en vías no pavimentadas",
+      "ancho_fisura_aplicable": false,
+      "reglas": [
+        {
+          "id": "CORDONES",
+          "texto": "Cada cordón se mide por separado y paralelo al eje; no limitar a un solo largo de muestra.",
+          "pagina": 237
+        }
+      ],
+      "pendientes": []
+    }
+  ],
+  "calidad_transito": {
+    "pagina": 66,
+    "B": "Vibraciones perceptibles sin reducir velocidad para comodidad/seguridad; rebote ligero y poca incomodidad.",
+    "M": "Vibraciones significativas; reducir velocidad para comodidad/seguridad; rebote e incomodidad significativos.",
+    "A": "Vibraciones excesivas; reducción considerable de velocidad; rebote excesivo, peligro y daño potencial al vehículo."
+  }
+}

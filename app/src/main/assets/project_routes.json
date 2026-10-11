@@ -1,0 +1,88 @@
+{
+  "routes": [
+    {
+      "routeCode": "PE-3N",
+      "itemCode": "1",
+      "segmentCode": "Tramo 1",
+      "engineeringSource": {
+        "fileName": "Tramo 1 (Ruta Nacional PE-3N).kmz",
+        "sha256": "b8dc11fd0a8d0480f5f51669ed56e9d2326d94eba626808c143c803029b28b4c",
+        "sourceVertices": 3973,
+        "vertices": 3972,
+        "consecutiveDuplicatesRemoved": 1,
+        "reversedSourceForContractDirection": true,
+        "geometricLengthM": 149263.91155881132
+      }
+    },
+    {
+      "routeCode": "PE-22A",
+      "itemCode": "1",
+      "segmentCode": "Tramo 2",
+      "engineeringSource": {
+        "fileName": "Tramo 2 (Ruta Nacional PE-22A).kmz",
+        "sha256": "a48462db24d4a60c6f7ed0a8de296deab1de621f8dc4f91061cd06aee2276483",
+        "sourceVertices": 36905,
+        "vertices": 36904,
+        "consecutiveDuplicatesRemoved": 1,
+        "reversedSourceForContractDirection": false,
+        "geometricLengthM": 184267.26714001058
+      }
+    },
+    {
+      "routeCode": "PE-28C",
+      "itemCode": "1",
+      "segmentCode": "Tramo 3",
+      "engineeringSource": {
+        "fileName": "Tramo 3 (Ruta Nacional PE-28C).kmz",
+        "sha256": "4b6bbfd597ee5dc2e1cf85c0a79a24ced4470ffad8997791118d3809034dedc9",
+        "sourceVertices": 2397,
+        "vertices": 2397,
+        "consecutiveDuplicatesRemoved": 0,
+        "reversedSourceForContractDirection": false,
+        "geometricLengthM": 105525.10149120401
+      }
+    },
+    {
+      "routeCode": "PE-12A",
+      "itemCode": "2",
+      "segmentCode": "Tramo 1",
+      "engineeringSource": {
+        "fileName": "Item2-Tramo1 (Ruta Nacional PE-12A).kmz",
+        "sha256": "ef90a4144b691cbfa1cf4e2a9d3b836ff95042d607761c340e6a5f605a49c8fc",
+        "sourceVertices": 11737,
+        "vertices": 11737,
+        "consecutiveDuplicatesRemoved": 0,
+        "reversedSourceForContractDirection": false,
+        "geometricLengthM": 240504.70474758645
+      }
+    },
+    {
+      "routeCode": "PE-3NG",
+      "itemCode": "2",
+      "segmentCode": "Tramo 2",
+      "engineeringSource": {
+        "fileName": "Item 2 - Tramo 2 (Ruta Nacional PE-3NG).kmz",
+        "sha256": "251b837e37e7ffbd9ec890ccb6e332bdb8526e0a0f127eafed4425bba6e67ccd",
+        "sourceVertices": 12109,
+        "vertices": 12109,
+        "consecutiveDuplicatesRemoved": 0,
+        "reversedSourceForContractDirection": false,
+        "geometricLengthM": 114143.97393001764
+      }
+    },
+    {
+      "routeCode": "PE-28H",
+      "itemCode": "2",
+      "segmentCode": "Tramo 3",
+      "engineeringSource": {
+        "fileName": "Item 2 - Tramo3 (Ruta Nacional PE-28H).kmz",
+        "sha256": "5e255cf35ce666cf9133d2f85acda0c3a8da1d7d9b871bdc436e7baf3f780829",
+        "sourceVertices": 1942,
+        "vertices": 1942,
+        "consecutiveDuplicatesRemoved": 0,
+        "reversedSourceForContractDirection": false,
+        "geometricLengthM": 136277.43223624563
+      }
+    }
+  ]
+}

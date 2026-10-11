@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="kml_exports" path="kml/" />
+    <files-path name="stamped_images" path="stamped/" />
+
+    <files-path
+        name="inspection_images"
+        path="images/" />
+
+    <cache-path name="generated_cache_files" path="." />
+    <files-path name="route_deliveries" path="route_deliveries/" />
+    <files-path name="pavement_exports" path="pavement/exports/" />
+    <files-path name="scap_deliveries" path="scap_deliveries/" />
+    <files-path name="scap_exports" path="scap_exports/" />
+    <files-path name="scap_drive" path="scap-drive/" />
+</paths>
