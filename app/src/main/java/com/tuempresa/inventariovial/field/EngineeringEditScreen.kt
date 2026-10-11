@@ -18,12 +18,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun EngineeringEditScreen(id:String,onBack:()->Unit) {
     val context=LocalContext.current;val db=remember {InventoryDatabase.getInstance(context)};val scope=rememberCoroutineScope()
+    var openedRevision by remember(id) {mutableStateOf<Long?>(null)}
     var detail by remember(id) {mutableStateOf<SicFormDetail?>(null)}
     var paths by remember(id) {mutableStateOf<List<String>>(emptyList())}
     var categories by remember(id) {mutableStateOf<Map<String,String>>(emptyMap())}
     var captures by remember(id) {mutableStateOf<Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap())}
     var error by remember {mutableStateOf<String?>(null)};var saving by remember {mutableStateOf(false)}
-    LaunchedEffect(id) {runCatching {val s=requireNotNull(db.inventoryDao().snapshot(id));detail=EngineeringEdits.form(s);paths=s.photos.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()}.onFailure {error=it.message}}
+    LaunchedEffect(id) {runCatching {val s=requireNotNull(db.inventoryDao().snapshot(id));openedRevision=s.record.updatedAt;detail=EngineeringEdits.form(s);paths=s.photos.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()}.onFailure {error=it.message}}
     BackHandler(enabled=!saving,onBack=onBack)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         OutlinedButton(enabled=!saving,onClick=onBack) {Text("Volver")}
@@ -45,7 +46,7 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
         if(detail!=null && detail !is SicFormDetail.Sic18) com.tuempresa.inventariovial.core.InventoryElementPhotos(paths,true,{paths=it},{path,metadata->captures=captures+(path to metadata)})
         error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
         Button(enabled=detail!=null && !saving,onClick={val d=detail ?: return@Button;saving=true;scope.launch {
-            try {EngineeringEdits.save(db,id,d,paths,categories,captures);onBack()} catch(e:Exception){error=e.message} finally {saving=false}
+            try {EngineeringEdits.save(db,id,d,paths,categories,captures,expectedUpdatedAt=openedRevision);onBack()} catch(e:Exception){error=e.message} finally {saving=false}
         }},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("Guardar cambios")}
     }
 }

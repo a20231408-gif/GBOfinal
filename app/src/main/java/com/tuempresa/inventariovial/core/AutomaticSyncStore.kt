@@ -21,6 +21,10 @@ interface AutomaticSyncDao {
     suspend fun state(key:String,revision:Long,state:String,error:String?):Int
     @Query("UPDATE drive_sync_outbox SET preparedJson=:json WHERE `key`=:key AND revision=:revision")
     suspend fun prepared(key:String,revision:Long,json:String):Int
+    /** A late ACK advances the confirmed base without hiding a newer local edit or draft. */
+    @Query("UPDATE drive_sync_outbox SET state=CASE WHEN revision>:revision AND state NOT IN ('CONFLICT','DRAFT') THEN 'UPDATE_PENDING' ELSE state END,syncedRevision=:revision,lastSyncedAt=:time,receiptJson=:receipt,error=NULL WHERE `key`=:key AND revision>=:revision AND syncedRevision<:revision")
+    suspend fun confirmBase(key:String,revision:Long,time:Long,receipt:String):Int
+
     @Query("UPDATE drive_sync_outbox SET state='SYNCED',syncedRevision=:revision,lastSyncedAt=:time,receiptJson=:receipt,error=NULL,attempts=0 WHERE `key`=:key AND revision=:revision")
     suspend fun acknowledge(key:String,revision:Long,time:Long,receipt:String):Int
 }

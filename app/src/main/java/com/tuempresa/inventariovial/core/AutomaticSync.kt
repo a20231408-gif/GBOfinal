@@ -6,6 +6,9 @@ import androidx.work.*
 import com.tuempresa.inventariovial.DriveUploadPolicy
 import com.tuempresa.inventariovial.data.database.InventoryDatabase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 object AutomaticSync {
@@ -17,12 +20,14 @@ object AutomaticSync {
         val next=maxOf(revision,(old?.revision ?: 0)+1)
         dao.put(DriveSyncIntent(key,kind,id,next,old?.syncedRevision ?: 0,
             if((old?.syncedRevision ?: 0)>0) "UPDATE_PENDING" else "QUEUED",origin,warnings,
-            old?.lastSyncedAt,receiptJson=old?.receiptJson))
+            old?.lastSyncedAt,receiptJson=old?.receiptJson,preparedJson=old?.preparedJson?.takeIf {JSONObject(it).optLong("revision")>old.syncedRevision},
+            error=old?.error?.takeIf {old.state=="CONFLICT"}))
+        if(old?.state=="CONFLICT")dao.state(key,next,"CONFLICT",old.error)
         db.syncContext?.let { wake(it) }
     }
     suspend fun draft(db:InventoryDatabase,kind:String,id:String) {
         val old=db.automaticSyncDao().get("$kind/$id") ?: return
-        db.automaticSyncDao().put(old.copy(state=if(old.syncedRevision>0) "UPDATE_PENDING" else "DRAFT",preparedJson=null,error=null))
+        db.automaticSyncDao().put(old.copy(error=old.error?.takeIf {old.state=="CONFLICT"},state=if(old.state=="CONFLICT") "CONFLICT" else if(old.syncedRevision>0) "UPDATE_PENDING" else "DRAFT"))
     }
     /** Preserve identity/revision/receipts; recover only the previous GPS-only gate. */
     suspend fun recoverGpsBlocked(db:InventoryDatabase):Int=db.withTransaction {
@@ -59,6 +64,7 @@ object AutomaticSync {
         val db=InventoryDatabase.getInstance(context)
         db.withTransaction {
             val old=db.automaticSyncDao().get(key) ?: return@withTransaction
+            require(old.state!="CONFLICT") {"Conflicto de revisiones: conserva la edición local y concilia con el responsable antes de reenviar."}
             require(old.state!="DRAFT") {"Valida primero la ficha."}
             db.automaticSyncDao().put(old.copy(state="QUEUED",error=null,attempts=0,origin="MANUAL_APP"))
         }
@@ -87,7 +93,13 @@ class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWork
 
 /** Same drain for the WorkManager worker and focused transport/ACK regression tests. */
 object AutomaticSyncDrain {
+    private val mutex=Mutex()
     suspend fun run(context:Context,db:InventoryDatabase,
+        transportFactory:()->AutomaticDriveTransport={AutomaticDriveHttp()},
+        configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0):Boolean = mutex.withLock {
+        drain(context,db,transportFactory,configurationError,attempt)
+    }
+    private suspend fun drain(context:Context,db:InventoryDatabase,
         transportFactory:()->AutomaticDriveTransport={AutomaticDriveHttp()},
         configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0):Boolean {
         AutomaticSync.recoverGpsBlocked(db)
@@ -95,8 +107,9 @@ object AutomaticSyncDrain {
         var retry=false
         val pending=dao.all().filter {it.state in setOf("QUEUED","UPDATE_PENDING","UPLOADING","ERROR","UNCONFIGURED","PENDING_VALIDATION") && AutomaticDelivery.validated(db,it)}
         val ordered=pending.map {it to AutomaticDelivery.order(context,db,it)}.sortedWith(compareBy({it.second.first},{it.second.second},{it.first.key})).map {it.first}
-        for(intent in ordered) {
-            if(!AutomaticDelivery.validated(db,intent))continue
+        for(queued in ordered) {
+            var intent=dao.get(queued.key) ?: continue
+            if(intent.state=="CONFLICT" || !AutomaticDelivery.validated(db,intent))continue
             if(configurationError!=null) {dao.state(intent.key,intent.revision,"UNCONFIGURED",configurationError);continue}
             try {
                 val transport=transportFactory()
@@ -104,6 +117,20 @@ object AutomaticSyncDrain {
                 if(!transport.supportsFamilyPaths()) {
                     dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend requiere pathVersion 4 y stableFamilyNumbering=true. No se envió contenido; la cola se conserva.")
                     continue
+                }
+                // An unconfirmed predecessor may have committed before its response was lost.
+                // Replay its exact snapshot; never rebase against another operator's revision.
+                val predecessor=intent.preparedJson?.let(::JSONObject)?.takeIf {it.getLong("revision")<intent.revision && it.getLong("revision")>intent.syncedRevision}
+                if(predecessor!=null) {
+                    if(predecessor.optInt("technicalDeliveryVersion")==1 && !transport.supportsTechnicalDeliveryWithoutGps()) {dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend no acredita entrega técnica sin GPS. Cola conservada.");continue}
+                    val previousAck=transport.post(predecessor)
+                    if(!previousAck.optBoolean("ok"))throw SyncRejection(previousAck.optString("code"),previousAck.optBoolean("retryable"),previousAck.optLong("remoteRevision").takeIf {it>0})
+                    if(!AutomaticDelivery.validAck(predecessor,previousAck,intent.receiptJson?.let(::JSONObject)))throw java.io.IOException("Confirmación anterior incompleta.")
+                    db.withTransaction {
+                        DriveInventorySchema.remember(context,predecessor,previousAck)
+                        dao.confirmBase(intent.key,predecessor.getLong("revision"),System.currentTimeMillis(),previousAck.toString())
+                    }
+                    intent=dao.get(intent.key) ?: continue
                 }
                 val prepared=AutomaticDelivery.prepare(context,db,intent)
                 dao.prepared(intent.key,intent.revision,prepared.toString())
@@ -114,11 +141,13 @@ object AutomaticSyncDrain {
                 dao.state(intent.key,intent.revision,"UPLOADING",null)
                 if(!AutomaticDelivery.current(db,intent,prepared))continue
                 val ack=transport.post(prepared)
-                if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))
-                if(!AutomaticDelivery.validAck(prepared,ack))throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
+                if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"),ack.optLong("remoteRevision").takeIf {it>0})
+                if(!AutomaticDelivery.validAck(prepared,ack,intent.receiptJson?.let(::JSONObject)))throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
                 db.withTransaction {
-                    if(AutomaticDelivery.current(db,intent,prepared)) {
-                        DriveInventorySchema.remember(context,prepared,ack)
+                    val matches=AutomaticDelivery.current(db,intent,prepared)
+                    DriveInventorySchema.remember(context,prepared,ack)
+                    dao.confirmBase(intent.key,intent.revision,System.currentTimeMillis(),ack.toString())
+                    if(matches) {
                         dao.acknowledge(intent.key,intent.revision,System.currentTimeMillis(),ack.toString())
                         val files=ack.getJSONArray("files")
                         for(n in 0 until files.length()) {
@@ -139,8 +168,13 @@ object AutomaticSyncDrain {
             catch(e:SyncPending){dao.state(intent.key,intent.revision,"PENDING_VALIDATION",e.message)}
             catch(e:SyncRejection){
                 val pending=e.code=="ORDERING_REQUIRED"
-                val state=if(pending)"PENDING_VALIDATION" else if(e.retryable)"ERROR" else "BLOCKED"
-                dao.state(intent.key,intent.revision,state,if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva.")
+                val conflict=e.code in setOf("REVISION_CONFLICT","STALE_REVISION","BASE_REVISION_CONFLICT")
+                val state=if(conflict) "CONFLICT" else if(pending)"PENDING_VALIDATION" else if(e.retryable)"ERROR" else "BLOCKED"
+                val message=if(conflict) "Conflicto de revisiones (${e.code}; base ${intent.syncedRevision}; remota ${e.remoteRevision ?: "no informada"}). Edición local conservada; no se sobrescribió el servidor. Requiere conciliación antes de reenviar." else if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva."
+                if(conflict)db.withTransaction {
+                    val latest=dao.get(intent.key)
+                    if(latest!=null && latest.syncedRevision==intent.syncedRevision)dao.state(latest.key,latest.revision,state,message)
+                }else dao.state(intent.key,intent.revision,state,message)
                 retry=retry || e.retryable && attempt<4
             }catch(_:IllegalArgumentException){
                 dao.state(intent.key,intent.revision,"BLOCKED","La ficha o los archivos requieren corrección antes de enviar. Revisa la validación del formato.")
@@ -153,4 +187,4 @@ object AutomaticSyncDrain {
     }
 }
 class SyncPending(message:String):Exception(message)
-class SyncRejection(val code:String,val retryable:Boolean):Exception(code)
+class SyncRejection(val code:String,val retryable:Boolean,val remoteRevision:Long?=null):Exception(code)

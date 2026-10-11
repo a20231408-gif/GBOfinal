@@ -21,13 +21,15 @@ object EngineeringEdits {
             signalCodeSource,signalDescription,signalObservation))}
         else -> error("Este editor requiere SIC-18 a SIC-22.")
     }
-    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap())=db.withTransaction {
+    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null)=db.withTransaction {
         val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
+        require(expectedUpdatedAt==null || r.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste. Conserva tus cambios y vuelve a abrir la revisión actual."}
         require(r.status=="ACTIVE") {"Solo se pueden editar registros activos."}
         val request=InventorySaveRequest(r.sicCode,r.assetType,r.routeCode,r.roadbedCode,r.startPrCode,r.startDistanceM.toString(),
-            r.endPrCode,r.endDistanceM?.toString(),r.sideCode,requireNotNull(r.latitude),requireNotNull(r.longitude),r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
+            r.endPrCode,r.endDistanceM?.toString(),r.sideCode,r.latitude ?: Double.NaN,r.longitude ?: Double.NaN,r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
         val unchangedLegacyType=detail is SicFormDetail.Sic22 && detail.state.typeCode==s.sic22?.typeCode && detail.state.typeCode in setOf("4","5","6")
-        val errors=CaptureValidation.errors(request).filterNot {unchangedLegacyType && it.field=="typeCode"}
+        // NaN is only a validation sentinel; absent coordinates are never written or fabricated.
+        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {unchangedLegacyType && it.field=="typeCode"}
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {
             is SicFormDetail.Sic17 -> with(detail.state) {dao.updateSic17(requireNotNull(s.sic17).copy(classCode=classCode,typeCode=typeCode,bridgeCode=bridgeCode,inventoriedCode=inventoriedCode,spans=spans.toIntOrNull(),dimension1LengthM=dimension1LengthM.replace(',','.').toDoubleOrNull(),dimension2LowerHeightM=dimension2LowerHeightM.replace(',','.').toDoubleOrNull(),structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,serviceTypeCode=serviceTypeCode,singularityCode=singularityCode,singularityName=singularityName,dimension3UpperHeightM=dimension3UpperHeightM.replace(',','.').toDoubleOrNull()))}
@@ -56,7 +58,10 @@ object EngineeringEdits {
             var nextIndex=(s.photos.maxOfOrNull {it.photoIndex} ?: 0)+1
             for(photo in s.photos) {
                 if(photo.localPath !in paths) dao.deleteLocalPhoto(photo.id,id)
-                else dao.updatePhotoMetadata(photo.copy(photoCategory=categories[photo.localPath] ?: photo.photoCategory))
+                else {
+                    val category=categories[photo.localPath] ?: photo.photoCategory
+                    dao.updatePhotoMetadata(photo.copy(photoCategory=category,syncStatus=if(category!=photo.photoCategory) "PENDING" else photo.syncStatus))
+                }
             }
             paths.filter {path->s.photos.none {it.localPath==path}}.forEach {path->
                 val index=nextIndex++
@@ -69,6 +74,7 @@ object EngineeringEdits {
         }
         val revision=maxOf(System.currentTimeMillis(),r.updatedAt+1)
         dao.markServerPending(id,revision)
+        dao.markTechnicalExcelPending(id)
         com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",id,revision)
     }
 }

@@ -1,3 +1,21 @@
+# Estado vigente — Prompt 2B, 2026-10-11
+
+Rama `codex/edicion-sincronizados-2b` en copia aislada backend-v3-pruebas, desde 2A `99b15aae88b2e69cb28a4715c87acb854fe6e12b`. Checkpoint funcional consultable con `git log -1`. Sin push ni merge; copia operativa y modificaciones anteriores preservadas.
+
+Edición sincronizada implementada sobre la misma cola V3: UUID/folderId/fileIds estables, revisión/base confirmada, actualización pendiente automática sin GPS, protección de formularios/borradores obsoletos, ACK tardío/respuesta perdida, conflictos explícitos sin sobrescritura ni reintento forzado. Excel se consolida desde el registro completo del servidor. Foto recategorizada conserva fileId; altas, reemplazos y retiradas conservan originales/historial. Sin SIB nuevo ni cambio de numeración por PR. syncProtocol 3/pathVersion 4. Estados de entrega técnica y georreferenciación externa separados.
+
+Aprobadas: 17 Android (10 de 2B + 7 sin GPS), 8 backend locales y assembleDebug. Sin suite completa; resultados iniciales fallidos y finales conservados. Evidencia y SHA de APK: [VALIDACION.json](edicion-sincronizados-2b/VALIDACION.json); [informe](edicion-sincronizados-2b/ENTREGA.md). Los formularios conservan la revisión abierta durante ACKs de fondo; la verificación física de esa interacción sigue pendiente. El caso final comprueba que un rechazo remoto durante otro guardado mantiene la edición más reciente en CONFLICT.
+
+GET remoto consultado: raíz aislada `1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk`, syncProtocol=3/pathVersion=3, sin stableFamilyNumbering. No hubo escrituras remotas 2B. Pendiente que el responsable despliegue deployment-test/ SOLO en proyecto de pruebas y ejecute el checklist real; hasta protocolo de carpetas compatible la cola permanece UNCONFIGURED. Nunca tocar producción, servicio de usuarios ni tablet de campo. Firma/applicationId/versionCode 16 sin cambios.
+
+Conflictos quedan en CONFLICT con edición local conservada, base antigua y versión remota informada. Reintento deshabilitado y nuevos guardados no borran conflicto. La conciliación requiere respaldo y revisión humana: no se implementó merge automático/importador remoto. Migración histórica y cambio de ruta/familia no se ejecutan automáticamente. No comenzar otra tarea sin instrucciones.
+
+El checkpoint excluye credenciales, propiedades locales, keystores, APK, caches, logs y temporales. Archivos preexistentes de SCAP/proguard/herramientas/resultados V3 y logs 2A/2B se mantienen sin commit, separados de la entrega. Configuración del servicio de usuarios idéntica a la copia operativa.
+
+---
+
+## Historial previo; prevalece el estado vigente de arriba
+
 # Estado vigente — Prompt 2A, 2026-10-11
 
 Rama: `codex/drive-familias-2a` en worktree aislado backend-v3-pruebas. Base: `2bac1be62c29cd64c15f54b853912b5306f58d26`; hash de checkpoint funcional consultable con `git log -1`. No se subió esta rama ni se mezcló con main. Copia operativa y cambios anteriores conservados.

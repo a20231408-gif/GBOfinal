@@ -97,7 +97,7 @@ class AutomaticSyncWithoutGpsTest {
                     assertTrue(m.isNull("latitude"));assertTrue(m.isNull("longitude"))
                     val stored=d.inventoryDao().photoById("photo-${i.recordId}")!!
                     assertEquals("SYNCED",stored.syncStatus);assertNotNull(stored.driveFileId);assertNull(stored.photoLatitude)
-                    val root=File("../docs/drive-familias-2a/examples/${i.recordId}").apply {mkdirs()}
+                    val root=File("../docs/edicion-sincronizados-2b/nogps-regression/${i.recordId}").apply {mkdirs()}
                     val exported=JSONObject(p.toString());val outFiles=exported.getJSONArray("files")
                     for(n in 0 until outFiles.length()) {val f=outFiles.getJSONObject(n);f.put("base64",android.util.Base64.encodeToString(File(f.getString("localFile")).readBytes(),android.util.Base64.NO_WRAP));f.remove("localFile")}
                     File(root,"payload.json").writeText(exported.toString(2))

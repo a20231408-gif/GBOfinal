@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-11",
+  "branch": "codex/edicion-sincronizados-2b",
+  "baseCheckpoint": "99b15aae88b2e69cb28a4715c87acb854fe6e12b",
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "android": {
+    "passed": 17,
+    "failed": 0,
+    "suites": [
+      {
+        "name": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0"
+      }
+    ],
+    "log": "android-final-with-conflict.log"
+  },
+  "backend": {
+    "passed": 8,
+    "failed": 0,
+    "kind": "LOCAL_DRIVE_DOUBLES_NOT_REMOTE",
+    "log": "backend-checkpoint.log"
+  },
+  "debug": {
+    "result": "BUILD_SUCCESSFUL",
+    "log": "android-final-with-conflict.log",
+    "sha256": "15197da5e51d4e565a8fb856f96043e84b683d99beada709858a72744934d582",
+    "validationBuild": false,
+    "privateTestConfigurationMatches": true,
+    "userServiceUnchanged": true,
+    "applicationId": "com.tuempresa.inventariovial",
+    "versionCode": 16,
+    "installed": false,
+    "debugCertificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+  },
+  "remote": {
+    "getChecked": true,
+    "statusFile": "BACKEND_STATUS.json",
+    "writeExecuted": false,
+    "compatibleDeploymentPending": true,
+    "realFileConfirmationPending": true
+  },
+  "fullSuiteExecuted": false,
+  "initialFailuresPreserved": true
+}

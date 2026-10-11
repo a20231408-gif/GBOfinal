@@ -1,6 +1,6 @@
 /* Versioned engine shared unchanged by Apps Script and Node regression tests. No secrets. */
 var SyncV3 = (() => {
-  const reject = (code, retryable=false) => { const e=Error(code);e.code=code;e.retryable=retryable;throw e; };
+  const reject = (code, retryable=false, remoteRevision=null) => { const e=Error(code);e.code=code;e.retryable=retryable;e.remoteRevision=remoteRevision;throw e; };
   const component = s => typeof s==='string' && s.length>0 && s.length<=80 && !/[\\/\x00-\x1f]/.test(s) && s!=='.' && s!=='..';
   const families={
     PUENTE:['PUENTES',['SIC-17','SIC-17A','SIC-17B']], ALCANTARILLA:['ALCANTARILLAS',['SIC-18','SIC-18A']],
@@ -43,6 +43,7 @@ var SyncV3 = (() => {
         typeof p.roadbedCode!=='string' || typeof p.direction!=='string' || !Number.isSafeInteger(p.startPrNumber) || p.startPrNumber<0 ||
         !Number.isFinite(p.startDistanceM) || p.startDistanceM<0 || p.identityId!=null && !component(p.identityId))reject('INVALID_FAMILY_LOCATION');
       if(p.kind==='SCAP' && p.family!=='PUENTE')reject('INVALID_SCAP_FAMILY');
+      if(p.kind==='SIC' && p.identityId!=null && p.identityId!==p.recordId)reject('ROW_OWNER_MISMATCH');
       if(p.sicRows.some(r=>!family[1].includes(r.format)))reject('SIC_FAMILY_MISMATCH');
     } else if(!/^SIB-\d{2}$/.test(p.sibCode) || !component(p.family) || !Number.isFinite(p.orderAxis) || p.orderAxis<0)reject('ORDERING_REQUIRED');
     const existing=store.get(p.key);
@@ -103,11 +104,11 @@ var SyncV3 = (() => {
     validate(p,store);
     const old=store.get(p.key);
     if(old && old.revision===p.revision) {
-      if(old.contentHash!==p.contentHash)reject('REVISION_CONFLICT');
+      if(old.contentHash!==p.contentHash)reject('REVISION_CONFLICT',false,old?.revision || 0);
       return {...old.receipt,alreadyExists:true};
     }
-    if(old && p.revision<old.revision)reject('STALE_REVISION');
-    if((old?.revision || 0)!==p.baseRevision)reject('BASE_REVISION_CONFLICT');
+    if(old && p.revision<old.revision)reject('STALE_REVISION',false,old?.revision || 0);
+    if((old?.revision || 0)!==p.baseRevision)reject('BASE_REVISION_CONFLICT',false,old?.revision || 0);
     const all=store.all();
     if(all.length>1000)reject('REGISTRY_CAPACITY');
     if(p.bridgeCode && all.some(x=>x.bridgeCode===p.bridgeCode && x.identityId!==(p.identityId || p.recordId)))reject('BRIDGE_IDENTITY_CONFLICT');

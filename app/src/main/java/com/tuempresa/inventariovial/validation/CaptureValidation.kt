@@ -10,7 +10,7 @@ data class QualityConfig(val maxAccuracyM: Double = 1.0,val maxAgeMs: Long = 30_
 data class PhotoDimensions(val width: Int,val height: Int)
 
 object CaptureValidation {
-    fun errors(request: InventorySaveRequest): List<ValidationError> = buildList {
+    fun errors(request: InventorySaveRequest, validateLocation: Boolean = true): List<ValidationError> = buildList {
         val request=pointCapture(request)
         (request.detail as? SicFormDetail.Sic22)?.let {
             if(it.state.typeCode !in com.tuempresa.inventariovial.catalog.SicCatalogRepository.newSic22Types)
@@ -47,7 +47,7 @@ object CaptureValidation {
         if(!distance(request.startDistanceM)) add(ValidationError("startDistanceM","Distancia inicial inválida."))
         if(request.endPrCode.isNullOrBlank()!=request.endDistanceM.isNullOrBlank()) add(ValidationError("endPrCode","Completa ambos campos de ubicación final."))
         if(!request.endPrCode.isNullOrBlank() && (!request.endPrCode.trim().matches(Regex("[0-9]{1,4}")) || !distance(request.endDistanceM))) add(ValidationError("endDistanceM","Ubicación final inválida."))
-        if(!GeoMath.validCoordinate(request.latitude,request.longitude)) add(ValidationError("location","Coordenadas inválidas."))
+        if(validateLocation && !GeoMath.validCoordinate(request.latitude,request.longitude)) add(ValidationError("location","Coordenadas inválidas."))
         if((request.endLatitude==null)!=(request.endLongitude==null) || request.endLatitude?.let { !GeoMath.validCoordinate(it,request.endLongitude ?: Double.NaN) }==true) add(ValidationError("endLocation","Coordenadas finales inválidas."))
         if(request.sideCode!=null && request.sideCode !in setOf("D","I","S")) add(ValidationError("side","Lado inválido."))
         if(request.detail is SicFormDetail.Sic18) with(request.detail.state) {

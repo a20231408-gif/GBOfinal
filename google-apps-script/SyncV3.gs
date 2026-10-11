@@ -7,7 +7,7 @@ function commitRecordV3(data) {
     held=lock.tryLock(30000);if(!held)return jsonResponse({ok:false,code:'BUSY',retryable:true});
     if(typeof Drive==='undefined')return jsonResponse({ok:false,code:'ADVANCED_DRIVE_REQUIRED',retryable:false});
     return jsonResponse(SyncV3.commit(data,v3Store()));
-  }catch(e){return jsonResponse({ok:false,code:e.code || 'COMMUNICATION_OR_STORAGE_ERROR',retryable:e.retryable!==false});}
+  }catch(e){return jsonResponse({ok:false,code:e.code || 'COMMUNICATION_OR_STORAGE_ERROR',retryable:e.retryable!==false,...(Number.isSafeInteger(e.remoteRevision)?{remoteRevision:e.remoteRevision}:{})});}
   finally{if(held)lock.releaseLock();}
 }
 
@@ -170,7 +170,12 @@ function v3Store() {
           }
           const pieces=path.split('/');const name=pieces.pop();let dest=folder;pieces.forEach(part=>dest=getOrCreateFolder(dest,part));
           const previous=oldFiles.find(x=>x.key===f.key);
-          const file=write(f.bytes,f.mimeType,name,dest,previous?.fileId,'gbo-v3-file:'+p.key+':'+f.key);
+          let file;
+          if(previous && previous.sha256===f.sha256 && previous.logicalPath===logicalPath+'/'+path) {
+            file=DriveApp.getFileById(previous.fileId);
+            if(file.getDescription()!=='gbo-v3-file:'+p.key+':'+f.key || parent(file).getId()!==dest.getId())SyncV3.reject('FILE_OWNERSHIP_CONFLICT');
+            if(hash(file.getBlob().getBytes())!==f.sha256)SyncV3.reject('WRITE_HASH_MISMATCH',true);
+          }else file=write(f.bytes,f.mimeType,name,dest,previous?.fileId,'gbo-v3-file:'+p.key+':'+f.key);
           return {key:f.key,sha256:f.sha256,fileId:file.getId(),folderId:dest.getId(),requestedPath,logicalPath:logicalPath+'/'+path};
         },
         aggregate(f) {

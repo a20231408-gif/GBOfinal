@@ -184,21 +184,23 @@ private fun HistoryRecordCard(
     val record = item.record
     var editing by remember { mutableStateOf(false) }
     var saving by remember { mutableStateOf(false) }
-    var route by remember(record, editing) { mutableStateOf(record.routeCode) }
-    var roadbed by remember(record, editing) { mutableStateOf(record.roadbedCode) }
-    var startPr by remember(record, editing) { mutableStateOf(record.startPrCode) }
-    var startDistance by remember(record, editing) { mutableStateOf(record.startDistanceM.toString()) }
-    var endPr by remember(record, editing) { mutableStateOf(record.endPrCode.orEmpty()) }
-    var endDistance by remember(record, editing) { mutableStateOf(record.endDistanceM?.toString().orEmpty()) }
-    var startSource by remember(record, editing) { mutableStateOf(record.locationSource) }
-    var endSource by remember(record, editing) { mutableStateOf(record.endLocationSource) }
-    var routeSource by remember(record, editing) { mutableStateOf(record.routeSource) }
-    var startSuggestion by remember(record, editing) { mutableStateOf<LocationSuggestion?>(null) }
-    var endSuggestion by remember(record, editing) { mutableStateOf<LocationSuggestion?>(null) }
+    // Keep the opened revision while editing; background ACKs must not discard typed fields.
+    val openedRecord=remember(record.id,editing) {record}
+    var route by remember(openedRecord, editing) { mutableStateOf(openedRecord.routeCode) }
+    var roadbed by remember(openedRecord, editing) { mutableStateOf(openedRecord.roadbedCode) }
+    var startPr by remember(openedRecord, editing) { mutableStateOf(openedRecord.startPrCode) }
+    var startDistance by remember(openedRecord, editing) { mutableStateOf(openedRecord.startDistanceM.toString()) }
+    var endPr by remember(openedRecord, editing) { mutableStateOf(openedRecord.endPrCode.orEmpty()) }
+    var endDistance by remember(openedRecord, editing) { mutableStateOf(openedRecord.endDistanceM?.toString().orEmpty()) }
+    var startSource by remember(openedRecord, editing) { mutableStateOf(openedRecord.locationSource) }
+    var endSource by remember(openedRecord, editing) { mutableStateOf(openedRecord.endLocationSource) }
+    var routeSource by remember(openedRecord, editing) { mutableStateOf(openedRecord.routeSource) }
+    var startSuggestion by remember(openedRecord, editing) { mutableStateOf<LocationSuggestion?>(null) }
+    var endSuggestion by remember(openedRecord, editing) { mutableStateOf<LocationSuggestion?>(null) }
     val reference by viewModel.field.reference.collectAsState()
     val settings by viewModel.field.settings.collectAsState()
-    var side by remember(record, editing) { mutableStateOf(record.sideCode.orEmpty()) }
-    var observations by remember(record, editing) { mutableStateOf(record.observations.orEmpty()) }
+    var side by remember(openedRecord, editing) { mutableStateOf(openedRecord.sideCode.orEmpty()) }
+    var observations by remember(openedRecord, editing) { mutableStateOf(openedRecord.observations.orEmpty()) }
     var editError by remember { mutableStateOf<String?>(null) }
 
     Card(Modifier.fillMaxWidth()) {
@@ -328,7 +330,7 @@ private fun HistoryRecordCard(
                                 editError = "Completa el PR y la distancia final."
                             else -> {
                                 saving = true
-                                viewModel.updateCoreFields(record.copy(
+                                viewModel.updateCoreFields(openedRecord.copy(
                                     routeCode = route, roadbedCode = roadbed, startPrCode = startPr,
                                     startDistanceM = start, endPrCode = if(record.sicCode=="SIC-22") record.endPrCode else endPr.ifBlank { null },
                                     endDistanceM = if(record.sicCode=="SIC-22") record.endDistanceM else end, sideCode = side.trim().uppercase().ifBlank { null },

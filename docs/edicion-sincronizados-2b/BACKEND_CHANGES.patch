@@ -1,0 +1,32 @@
+diff --git a/google-apps-script/SyncV3.gs b/google-apps-script/SyncV3.gs
+index 561d01d..ad55e2d 100644
+--- a/google-apps-script/SyncV3.gs
++++ b/google-apps-script/SyncV3.gs
+@@ -10 +10 @@ function commitRecordV3(data) {
+-  }catch(e){return jsonResponse({ok:false,code:e.code || 'COMMUNICATION_OR_STORAGE_ERROR',retryable:e.retryable!==false});}
++  }catch(e){return jsonResponse({ok:false,code:e.code || 'COMMUNICATION_OR_STORAGE_ERROR',retryable:e.retryable!==false,...(Number.isSafeInteger(e.remoteRevision)?{remoteRevision:e.remoteRevision}:{})});}
+@@ -173 +173,6 @@ function v3Store() {
+-          const file=write(f.bytes,f.mimeType,name,dest,previous?.fileId,'gbo-v3-file:'+p.key+':'+f.key);
++          let file;
++          if(previous && previous.sha256===f.sha256 && previous.logicalPath===logicalPath+'/'+path) {
++            file=DriveApp.getFileById(previous.fileId);
++            if(file.getDescription()!=='gbo-v3-file:'+p.key+':'+f.key || parent(file).getId()!==dest.getId())SyncV3.reject('FILE_OWNERSHIP_CONFLICT');
++            if(hash(file.getBlob().getBytes())!==f.sha256)SyncV3.reject('WRITE_HASH_MISMATCH',true);
++          }else file=write(f.bytes,f.mimeType,name,dest,previous?.fileId,'gbo-v3-file:'+p.key+':'+f.key);
+diff --git a/google-apps-script/SyncV3Core.js b/google-apps-script/SyncV3Core.js
+index b399a1d..3a0b40d 100644
+--- a/google-apps-script/SyncV3Core.js
++++ b/google-apps-script/SyncV3Core.js
+@@ -3 +3 @@ var SyncV3 = (() => {
+-  const reject = (code, retryable=false) => { const e=Error(code);e.code=code;e.retryable=retryable;throw e; };
++  const reject = (code, retryable=false, remoteRevision=null) => { const e=Error(code);e.code=code;e.retryable=retryable;e.remoteRevision=remoteRevision;throw e; };
+@@ -45,0 +46 @@ var SyncV3 = (() => {
++      if(p.kind==='SIC' && p.identityId!=null && p.identityId!==p.recordId)reject('ROW_OWNER_MISMATCH');
+@@ -106 +107 @@ var SyncV3 = (() => {
+-      if(old.contentHash!==p.contentHash)reject('REVISION_CONFLICT');
++      if(old.contentHash!==p.contentHash)reject('REVISION_CONFLICT',false,old?.revision || 0);
+@@ -109,2 +110,2 @@ var SyncV3 = (() => {
+-    if(old && p.revision<old.revision)reject('STALE_REVISION');
+-    if((old?.revision || 0)!==p.baseRevision)reject('BASE_REVISION_CONFLICT');
++    if(old && p.revision<old.revision)reject('STALE_REVISION',false,old?.revision || 0);
++    if((old?.revision || 0)!==p.baseRevision)reject('BASE_REVISION_CONFLICT',false,old?.revision || 0);

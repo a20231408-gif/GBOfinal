@@ -43,12 +43,13 @@ class SicFieldRepository(private val db:InventoryDatabase) {
     }
     suspend fun save(id:String,state:SicFieldState,owner:String,finalize:Boolean,
         photoPaths:List<String>? = null,categories:Map<String,String> = emptyMap(),captures:Map<String,PhotoCaptureMetadata> = emptyMap(),
-        sessionId:String?=null):String = db.withTransaction {
+        sessionId:String?=null,expectedUpdatedAt:Long?=null):String = db.withTransaction {
         require(owner.isNotBlank()) {"Operador autenticado requerido"}
         val s=inheritCurrent(state)
         if(finalize) require(s.completion().canFinalize) {s.completion().issues.joinToString("\n") {"${it.field}: ${it.reason}"}}
         val key=if(s.format==SicFieldFormat.SIC18A) requireNotNull(s.sourceRecordId) else id
         val old=dao.recordById(key);val previous=dao.sicExtension(key)
+        require(expectedUpdatedAt==null || old?.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste; conserva tus cambios y vuelve a abrirla."}
         require(old==null || old.sicCode==s.format.code || s.format==SicFieldFormat.SIC18A) {"Formato incompatible"}
         require(previous==null || previous.ownerUserId==owner) {"Ficha de otro operador"}
         
@@ -98,7 +99,7 @@ class SicFieldRepository(private val db:InventoryDatabase) {
             val existing=dao.snapshot(key)!!.photos
             existing.forEach {p->
                 if(p.localPath !in photoPaths) dao.deleteLocalPhoto(p.id,key)
-                else dao.updatePhotoMetadata(p.copy(photoCategory=categories[p.localPath] ?: p.photoCategory))
+                else {val category=categories[p.localPath] ?: p.photoCategory;dao.updatePhotoMetadata(p.copy(photoCategory=category,syncStatus=if(category!=p.photoCategory) "PENDING" else p.syncStatus))}
             }
             photoPaths.distinct().filter {path->existing.none {it.localPath==path}}.forEach {path->
                 require(categories[path] in com.tuempresa.inventariovial.catalog.EngineeringConditions.culvertPhotos.keys)
@@ -120,7 +121,7 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         var next=(existing.maxOfOrNull {it.photoIndex} ?: 0)+1
         existing.forEach { p ->
             if(p.localPath !in paths) dao.deleteLocalPhoto(p.id,id)
-            else dao.updatePhotoMetadata(p.copy(photoCategory=categories[p.localPath] ?: p.photoCategory))
+            else {val category=categories[p.localPath] ?: p.photoCategory;dao.updatePhotoMetadata(p.copy(photoCategory=category,syncStatus=if(category!=p.photoCategory) "PENDING" else p.syncStatus))}
         }
         paths.distinct().filter {path->existing.none {it.localPath==path}}.forEach {path->
             val p=PhotoEntity(UUID.randomUUID().toString(),id,next++,path,false,null,null,null,"PENDING",now,photoCategory=categories[path] ?: "GENERAL")

@@ -100,7 +100,7 @@ object AutomaticDelivery {
             s.toString()+d.toString()+d.map {db.pavementDao().photos(it.id)}.toString()+db.pavementDao().observeSections().first().filter {it.ruta==s?.ruta && it.tramo==s.tramo && it.surface==s.surface}.toString()}
     }
     suspend fun current(db:InventoryDatabase,i:DriveSyncIntent,p:JSONObject)=
-        db.automaticSyncDao().get(i.key)?.revision==i.revision && validated(db,i) && sha256(source(db,i).toByteArray())==p.getString("sourceHash")
+        db.automaticSyncDao().get(i.key)?.let {it.revision==i.revision && it.syncedRevision==p.getLong("baseRevision")}==true && validated(db,i) && sha256(source(db,i).toByteArray())==p.getString("sourceHash")
 
     suspend fun prepare(c:Context,db:InventoryDatabase,i:DriveSyncIntent):JSONObject {
         if(!validated(db,i))throw SyncPending("Valida o confirma el cierre antes de enviar.")
@@ -108,7 +108,9 @@ object AutomaticDelivery {
         val cache=File(directory,"prepared-path4.json")
         if(cache.isFile) {
             val stored=JSONObject(cache.readText())
-            if(current(db,i,stored))return stored
+            if(db.automaticSyncDao().get(i.key)?.revision==i.revision && validated(db,i) && sha256(source(db,i).toByteArray())==stored.getString("sourceHash")) {
+                stored.put("baseRevision",i.syncedRevision);cache.writeText(stored.toString());return stored
+            }
             throw SyncPending("La ficha cambió; guarda y valida la revisión actual.")
         }
         val files=JSONArray();val rows=JSONArray()
@@ -284,7 +286,22 @@ object AutomaticDelivery {
         return sha256((header+"\n"+lines(p.getJSONArray("files"),listOf("key","path","mimeType","sha256"))+"\n"+
             lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical+"\npathVersion=4\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","roadbedCode","direction","startPrNumber","startDistanceM"))).toByteArray())
     }
-    fun validAck(p:JSONObject,a:JSONObject):Boolean {
+    fun validAck(p:JSONObject,a:JSONObject,previous:JSONObject?=null):Boolean {
+        if(previous?.optInt("pathVersion")==4) {
+            if(a.optString("folderId")!=previous.optString("folderId") || a.optString("logicalPath")!=previous.optString("logicalPath"))return false
+            for(arrayName in listOf("files","sicFiles")) {
+                val old=previous.optJSONArray(arrayName) ?: continue
+                val next=a.optJSONArray(arrayName) ?: return false
+                val field=if(arrayName=="files") "key" else "format"
+                for(n in 0 until next.length()) {
+                    val item=next.optJSONObject(n) ?: return false
+                    for(k in 0 until old.length()) {
+                        val before=old.optJSONObject(k) ?: return false
+                        if(item.optString(field)==before.optString(field) && item.optString("fileId")!=before.optString("fileId"))return false
+                    }
+                }
+            }
+        }
         if(!a.optBoolean("ok") || a.optInt("syncProtocol")!=3 || a.optInt("pathVersion")!=4 ||
             a.optString("key")!=p.getString("key") || a.optLong("revision")!=p.getLong("revision") ||
             a.optString("contentHash")!=p.getString("contentHash") || a.optString("folderId").isBlank())return false

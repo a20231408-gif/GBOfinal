@@ -44,6 +44,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     val repo=remember(db) {SicFieldRepository(db)}
     val scope=rememberCoroutineScope()
     var snapshot by remember(id) {mutableStateOf<InventorySnapshot?>(null)}
+    var openedRevision by remember(id) {mutableStateOf<Long?>(null)}
     var base by remember(id) {mutableStateOf(Sic18FormState())}
     var extra by remember(id) {mutableStateOf(initialExtra)}
     var extraComplete by remember(id) {mutableStateOf(false)}
@@ -60,14 +61,14 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     var conditionChange by remember {mutableStateOf<Sic18FormState?>(null)}
     var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
     LaunchedEffect(id) {try {
-        val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s
+        val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s;openedRevision=s.record.updatedAt
         base=(EngineeringEdits.form(s) as SicFormDetail.Sic18).state
         val saved=repo.load(id,SicFieldFormat.SIC18A)!!
         extra=saved.values+initialExtra
         extraComplete=initialExtra.isEmpty() && (s.sicExtension?.status=="COMPLETE" || s.sicExtension==null && s.sic18a!=null && saved.completion().canFinalize)
         paths=s.photos.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()
         val owner=vm.field.auth.sessions.requireUser().id
-        CulvertEditDraft.read(context,id,owner)?.let {draft->base=draft.base;extra=draft.extra;paths=draft.photos;categories=draft.categories;captures=draft.captures;dirty=true;editingDraft=true;expanded=true;notice="Borrador de edición recuperado"}
+        CulvertEditDraft.read(context,id,owner)?.let {draft->openedRevision=draft.baseRevision ?: openedRevision;base=draft.base;extra=draft.extra;paths=draft.photos;categories=draft.categories;captures=draft.captures;dirty=true;editingDraft=true;expanded=true;notice="Borrador de edición recuperado"}
     } catch(e:Exception) {notice=e.message}}
     val required=InventoryElements.requiresCulvertDetail(base.structuralConditionCode,base.functionalConditionCode)
     val hasExtra=extra.any {it.key in culvertAdditionalKeys && it.value.isNotBlank()}
@@ -75,8 +76,8 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     val extraState=SicFieldState(SicFieldFormat.SIC18A,(r?.let {SicFieldRepository.core(it)} ?: emptyMap())+extra+mapOf("classCode" to base.classCode,"typeCode" to base.typeCode,"spans" to base.spans),id)
     fun baseIssues():List<ValidationIssue> {
         val record=r ?: return listOf(ValidationIssue("Alcantarilla","Cargando datos",ValidationIssue.Severity.MISSING_USER_INPUT))
-        val request=InventorySaveRequest(record.sicCode,record.assetType,record.routeCode,record.roadbedCode,record.startPrCode,record.startDistanceM.toString(),record.endPrCode,record.endDistanceM?.toString(),record.sideCode,requireNotNull(record.latitude),requireNotNull(record.longitude),record.gpsAccuracyM?.toFloat(),record.surveyDate,record.observations.orEmpty(),"",SicFormDetail.Sic18(base),photoPaths=paths)
-        return CaptureValidation.errors(request).map {ValidationIssue(it.field,it.message,ValidationIssue.Severity.MISSING_USER_INPUT)}
+        val request=InventorySaveRequest(record.sicCode,record.assetType,record.routeCode,record.roadbedCode,record.startPrCode,record.startDistanceM.toString(),record.endPrCode,record.endDistanceM?.toString(),record.sideCode,record.latitude ?: Double.NaN,record.longitude ?: Double.NaN,record.gpsAccuracyM?.toFloat(),record.surveyDate,record.observations.orEmpty(),"",SicFormDetail.Sic18(base),photoPaths=paths)
+        return CaptureValidation.errors(request,validateLocation=record.latitude!=null || record.longitude!=null).map {ValidationIssue(it.field,it.message,ValidationIssue.Severity.MISSING_USER_INPUT)}
     }
     val completion=CompletionResult(baseIssues()+if(required)extraState.completion().issues else emptyList())
     fun leave() {if(dirty)exit=true else onBack()}
@@ -86,18 +87,18 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
         scope.launch {try {
             val owner=vm.field.auth.sessions.requireUser().id
             if(!finalize) {
-                CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures))
+                CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures,baseRevision=openedRevision))
                 editingDraft=true
                 notice="✓ Borrador guardado en tablet"
             } else {
                 require(completion.canFinalize) {"Completa los pendientes antes de finalizar"}
                 db.withTransaction {
-                    EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures)
+                    EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures,expectedUpdatedAt=openedRevision)
                     if(!extraComplete && hasExtra) repo.save(id,extraState,owner,required)
                 }
                 CulvertEditDraft.clear(context,id,owner)
                 editingDraft=false
-                snapshot=db.inventoryDao().snapshot(id);extraComplete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE" || extraComplete
+                snapshot=db.inventoryDao().snapshot(id);openedRevision=snapshot?.record?.updatedAt;extraComplete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE" || extraComplete
                 notice="✓ Alcantarilla finalizada · datos y detalle guardados"
             }
             dirty=false;review=false;after?.invoke()

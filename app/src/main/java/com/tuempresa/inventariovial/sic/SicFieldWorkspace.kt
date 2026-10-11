@@ -92,6 +92,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     var raw by rememberSaveable(format,recordId) {mutableStateOf("{}")}
     var loaded by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var formSessionId by rememberSaveable(format,recordId) {mutableStateOf<String?>(null)}
+    var openedRevision by rememberSaveable(format,recordId) {mutableStateOf<Long?>(null)}
     var complete by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var dirty by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var review by rememberSaveable {mutableStateOf(false)}
@@ -117,6 +118,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
                 raw=JSONObject(saved.values).toString();source=saved.sourceRecordId
                 complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
                 val snapshot=db.inventoryDao().snapshot(id)!!
+                openedRevision=snapshot.record.updatedAt
                 formSessionId=snapshot.record.sessionId
                 paths=snapshot.photos.sortedBy {it.photoIndex}.map {it.localPath}
                 categories=if(independent) snapshot.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()
@@ -128,6 +130,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
                 val initial=mutableMapOf("surveyDate" to LocalDate.now().format(SicFieldFormat.dateFormatter))
                 val captureSession=db.inventoryDao().currentSession()
                 val existingRecord=db.inventoryDao().recordById(id)
+                openedRevision=existingRecord?.updatedAt
                 formSessionId=if(existingRecord!=null) existingRecord.sessionId else captureSession?.sessionId
                 val location=com.tuempresa.inventariovial.field.FieldSessionDefaults.location(captureSession,existingRecord,vm.field.projectRoutes)
                 existingRecord?.let {initial.putAll(SicFieldRepository.core(it));initial["observations"]=it.observations.orEmpty()}
@@ -148,7 +151,8 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
         scope.launch {try {
             val owner=vm.field.auth.sessions.requireUser().id
             if(finalize) require(completion.canFinalize) {"Revisa los pendientes antes de finalizar"}
-            repo.save(id,state,owner,finalize,if(independent && !photosChanged)null else paths,categories=categories,captures=captures,sessionId=formSessionId)
+            repo.save(id,state,owner,finalize,if(independent && !photosChanged)null else paths,categories=categories,captures=captures,sessionId=formSessionId,expectedUpdatedAt=openedRevision)
+            openedRevision=db.inventoryDao().recordById(id)?.updatedAt
             complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
             trackRecordId=id
             dirty=false;photosChanged=false;review=false;notice=if(finalize) "✓ Finalizado · guardado en tablet" else "✓ Borrador guardado en tablet"

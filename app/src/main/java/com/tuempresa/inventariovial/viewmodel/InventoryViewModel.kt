@@ -333,6 +333,7 @@ class InventoryViewModel(
                         record.endDistanceM?.toString(), record.sideCode, checkEstimatedOrder = false)?.let { throw IllegalArgumentException(it) }
                 }
                 database.withTransaction {
+                require(database.inventoryDao().recordById(record.id)?.updatedAt==record.updatedAt) {"La ficha cambió desde que la abriste; vuelve a abrirla antes de guardar."}
                 database.inventoryDao().updateCoreFields(record.id, record.routeCode.trim().uppercase(),
                     record.roadbedCode.trim().uppercase(), normalizeRequiredPr(record.startPrCode), record.startDistanceM,
                     if(record.sicCode=="SIC-22") record.endPrCode else normalizeOptionalPr(record.endPrCode), record.endDistanceM, record.sideCode, record.observations, maxOf(System.currentTimeMillis(),record.updatedAt+1),

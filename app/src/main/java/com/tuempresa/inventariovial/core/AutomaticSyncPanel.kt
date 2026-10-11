@@ -16,6 +16,7 @@ import java.util.Date
 
 object SyncIntentPresentation {
     fun label(intent:DriveSyncIntent?,validated:Boolean,connected:Boolean,configured:Boolean):String {
+        if(intent?.state=="CONFLICT")return "Conflicto · edición local conservada"
         if(!validated)return if((intent?.syncedRevision ?: 0)>0) "Actualización pendiente · requiere cierre" else "Borrador"
         if(intent?.state=="SYNCED" && intent.syncedRevision==intent.revision)return "Sincronizado"
         if(intent?.state=="BLOCKED")return "Bloqueado"
@@ -23,7 +24,7 @@ object SyncIntentPresentation {
         if(!configured || intent.state=="UNCONFIGURED")return "Sin configurar"
         if(intent.state=="ERROR")return "Error"
         if(intent.state=="UPLOADING")return "Subiendo"
-        if(!connected)return "Pendiente de conexión"
+        if(!connected)return if(intent.syncedRevision>0) "Actualización pendiente · sin conexión" else "Pendiente de conexión"
         if(intent.state=="UPDATE_PENDING")return "Actualización pendiente"
         return "En cola"
     }
@@ -63,7 +64,7 @@ object SyncIntentPresentation {
                 receipt?.optJSONArray("retainedSicFormats")?.let {prior->for(n in 0 until prior.length())Text("SIC conserva revisión anterior: ${prior.getString(n)}")}
                 it.error?.let {error->Text(error,color=MaterialTheme.colorScheme.error)}
             }
-            if(validated)TextButton(onClick={scope.launch {
+            if(validated && intent?.state!="CONFLICT")TextButton(onClick={scope.launch {
                 runCatching {AutomaticSync.manual(context,kind,id)}.onSuccess {message="Trabajo programado. Android lo ejecutará cuando haya conexión y recursos."}.onFailure {message=it.message}
             }}){Text("Reintentar ahora")}
             message?.let {Text(it)}
