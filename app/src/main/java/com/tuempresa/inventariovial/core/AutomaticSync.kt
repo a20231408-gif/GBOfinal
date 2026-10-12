@@ -115,7 +115,7 @@ object AutomaticSyncDrain {
                 val transport=transportFactory()
                 if(!transport.supportsV3()) {dao.state(intent.key,intent.revision,"UNCONFIGURED","El servicio requiere syncProtocol 3. Se comprobará automáticamente de nuevo; la copia anterior se conserva.");continue}
                 if(!transport.supportsFamilyPaths()) {
-                    dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend requiere pathVersion 4 y stableFamilyNumbering=true. No se envió contenido; la cola se conserva.")
+                    dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend requiere pathVersion 4, stableFamilyNumbering=true y photoCategoryVersion=1. No se envió contenido; la cola se conserva.")
                     continue
                 }
                 // An unconfirmed predecessor may have committed before its response was lost.

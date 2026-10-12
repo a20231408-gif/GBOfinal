@@ -26,6 +26,7 @@ object DriveInventorySchema {
         else -> family.folderLabel
     }
     private val categories = mapOf(
+        "INICIO" to "INICIO", "FIN" to "FIN", "OBSERVACION" to "OBSERVACION", "PANORAMICA" to "PANORAMICA", "ELEMENTO" to "ELEMENTO",
         "CULVERT_PANORAMIC" to "PANORAMICA", "CULVERT_INLET" to "ENTRADA", "CULVERT_OUTLET" to "SALIDA",
         "RIGHT_SIDE" to "VISTA_LADO_DERECHO", "LEFT_SIDE" to "VISTA_LADO_IZQUIERDO",
         "UPSTREAM" to "AGUAS_ARRIBA", "DOWNSTREAM" to "AGUAS_ABAJO", "ROAD_DECK" to "CARRETERA_TABLERO",

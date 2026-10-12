@@ -80,7 +80,7 @@ import java.util.Locale
     }
     LazyColumn(Modifier.fillMaxSize(),state=list,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
-            Text("F.2 · PANEL FOTOGRÁFICO",style=MaterialTheme.typography.headlineSmall)
+            Text("FOTOGRAFÍAS · F.2 PANEL FOTOGRÁFICO",style=MaterialTheme.typography.headlineSmall)
             Text("NRO. · FECHA · DESCRIPCIÓN · DIGITAL")
             ScapFieldTarget("inspection","addPhoto"){OutlinedButton(enabled=editable&&!busy,onClick={adding=true}){Text("+ Añadir registro fotográfico")}}
             if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())

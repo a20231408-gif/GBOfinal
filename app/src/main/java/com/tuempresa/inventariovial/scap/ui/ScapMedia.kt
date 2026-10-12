@@ -46,6 +46,10 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
     var importing by remember {mutableStateOf(false)}
     var message by remember {mutableStateOf<String?>(null)}
     var removing by remember {mutableStateOf<String?>(null)}
+    var replaceTarget by rememberSaveable {mutableStateOf<String?>(null)}
+    val replacementPicker=com.tuempresa.inventariovial.core.rememberPhotoFilePicker({path->
+        replaceTarget?.let {id->c.submit {it.replacePhoto(s.inspection.id,id,path)}};replaceTarget=null
+    },{message=it;replaceTarget=null})
     val labels=if(sketch) sketchLabels else photoLabels
     fun attach(path:String,selectedCategory:String,selectedCode:String,capture:com.tuempresa.inventariovial.camera.PhotoCaptureMetadata?=null) {
         c.submit {if(sketch)it.addSketch(s.inspection.id,selectedCategory,path) else {
@@ -79,12 +83,13 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
         }.onFailure{message="No se pudo abrir la cámara: ${it.message}"}
     }
     val permission=rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()){if(it)takePhoto() else message="Permiso de cámara no concedido. Puedes importar una imagen."}
-    val importer=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){uri->
-        if(uri!=null) {
+    val importer=rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()){uris->
+        if(uris.isNotEmpty()) {
             val selectedCategory=captureCategory;val selectedCode=captureCode
             importing=true
             scope.launch {
                 try {
+                    for(uri in uris) {
                     val path=withContext(Dispatchers.IO) {
                         val directory=File(context.filesDir,"images").apply{mkdirs()}
                         val mime=context.contentResolver.getType(uri)
@@ -98,6 +103,7 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
                         } catch(e:Exception){file.delete();throw e}
                     }
                     attach(path,selectedCategory,selectedCode)
+                    }
                 } catch(e:Exception){message="No se pudo importar: ${e.message}"} finally {importing=false}
             }
         }
@@ -112,7 +118,7 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
     LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         if(sketch) item {ScapSketchDimensions(s,c,editable)}
         item {
-            Text(if(sketch) "Croquis del puente" else "Panel fotográfico",style=MaterialTheme.typography.titleLarge)
+            Text(if(sketch) "Croquis del puente" else "FOTOGRAFÍAS",style=MaterialTheme.typography.titleLarge)
             if(!sketch) Text("Estas tomas son recordatorios; puedes registrar varias fotos por categoría.")
             if(importing) LinearProgressIndicator(Modifier.fillMaxWidth())
             message?.let {Text(it,color=MaterialTheme.colorScheme.error)}
@@ -135,7 +141,7 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
                     captureButtons(cat.ifBlank {"OTHER"},if(cat=="DEFECT") code else "")
                 }}
                 items(photos,key={it.id}) {photo->
-                    ScapPhotoCard(s,c,catalog,photo,editable) {removing=photo.id}
+                    ScapPhotoCard(s,c,catalog,photo,editable,onRemove={removing=photo.id},onReplace={replaceTarget=photo.id;replacementPicker()})
                 }
             }
             item {
@@ -153,7 +159,7 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
 }
 
 @Composable
-private fun ScapPhotoCard(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,photo:com.tuempresa.inventariovial.data.entity.PhotoEntity,editable:Boolean,onRemove:()->Unit) {
+private fun ScapPhotoCard(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,photo:com.tuempresa.inventariovial.data.entity.PhotoEntity,editable:Boolean,onRemove:()->Unit,onReplace:()->Unit) {
     val context=LocalContext.current
     ScapElementCard("Foto ${photo.photoIndex} · ${com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.label(photo.photoCategory)}") {
         Text("Fecha: ${java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale.getDefault()).format(java.util.Date(photo.createdAt))}")
@@ -188,6 +194,7 @@ private fun ScapPhotoCard(s:ScapInspectionSnapshot,c:ScapController,catalog:Scap
         Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
             TextButton(enabled=editable && photo!=s.photos.minByOrNull {it.photoIndex},onClick={c.submit {it.movePhoto(s.inspection.id,photo.id,-1)}}) {Text("↑ Subir")}
             TextButton(enabled=editable && photo!=s.photos.maxByOrNull {it.photoIndex},onClick={c.submit {it.movePhoto(s.inspection.id,photo.id,1)}}) {Text("↓ Bajar")}
+            TextButton(enabled=editable,onClick=onReplace) {Text("Reemplazar")}
             TextButton(enabled=editable,onClick=onRemove) {Text("Eliminar")}
         }
     }

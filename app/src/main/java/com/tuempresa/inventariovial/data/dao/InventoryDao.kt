@@ -23,6 +23,8 @@ import androidx.room.Upsert
 
 @Dao
 interface InventoryDao {
+    @Insert(onConflict=OnConflictStrategy.ABORT) suspend fun insertPhotoHistory(history:PhotoHistoryEntity)
+    @Query("SELECT * FROM photo_history WHERE recordId=:id ORDER BY revision,id") suspend fun photoHistory(id:String):List<PhotoHistoryEntity>
     @Upsert suspend fun saveSicExtension(detail:SicExtensionEntity)
     @Query("SELECT * FROM sic_extension_details WHERE recordId=:id") suspend fun sicExtension(id:String):SicExtensionEntity?
     @Query("SELECT * FROM sic_extension_details") fun observeSicExtensions():Flow<List<SicExtensionEntity>>

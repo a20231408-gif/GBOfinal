@@ -187,7 +187,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     }
     if(independent) FajaCaptureForm(state,!busy,notice,onChange=::change,onDraft={save(false)},onBack=::leave,
         onSave={if(completion.canFinalize)save(true) else notice=completion.issues.joinToString("\n") {"${it.field}: ${it.reason}"}},
-        photoContent={com.tuempresa.inventariovial.field.LegacyInventoryPhotos(format.code,paths,categories,editable=!busy,captureLocation=false,
+        photoContent={com.tuempresa.inventariovial.field.LegacyInventoryPhotos(format.code,paths,categories,editable=!busy,captureLocation=false,captureMetadata=captures,
             onPhotoMetadata={path,metadata->captures=captures+(path to metadata)},
             onChange={p,c->paths=p;categories=c;photosChanged=true;dirty=true;files=emptyList()})},exportContent=exportContent)
     else LegacySicElementForm(vm,state,editable,true,busy,loaded,notice,fix,endFix,paths,categories,

@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EngineeringEditScreen(id:String,onBack:()->Unit) {
     val context=LocalContext.current;val db=remember {InventoryDatabase.getInstance(context)};val scope=rememberCoroutineScope()
+    var hasEnds by remember(id){mutableStateOf(false)}
     var observations by remember(id){mutableStateOf("")}
     var coordinate by remember(id){mutableStateOf<com.tuempresa.inventariovial.location.GeoLocation?>(null)}
     var coordinateEdited by remember(id){mutableStateOf(false)}
@@ -28,7 +29,7 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
     var categories by remember(id) {mutableStateOf<Map<String,String>>(emptyMap())}
     var captures by remember(id) {mutableStateOf<Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap())}
     var error by remember {mutableStateOf<String?>(null)};var saving by remember {mutableStateOf(false)}
-    LaunchedEffect(id) {runCatching {val s=requireNotNull(db.inventoryDao().snapshot(id));openedRevision=s.record.updatedAt;observations=s.record.observations.orEmpty();coordinate=s.record.let{r->if(r.latitude!=null && r.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(r.latitude,r.longitude,r.gpsAccuracyM?.toFloat() ?: Float.NaN,source=r.locationSource,timestamp=r.gpsTimestamp ?: 0) else null};detail=EngineeringEdits.form(s);paths=s.photos.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()}.onFailure {error=it.message}}
+    LaunchedEffect(id) {runCatching {val s=requireNotNull(db.inventoryDao().snapshot(id));hasEnds=!s.record.endPrCode.isNullOrBlank() && s.record.endDistanceM!=null;openedRevision=s.record.updatedAt;observations=s.record.observations.orEmpty();coordinate=s.record.let{r->if(r.latitude!=null && r.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(r.latitude,r.longitude,r.gpsAccuracyM?.toFloat() ?: Float.NaN,source=r.locationSource,timestamp=r.gpsTimestamp ?: 0) else null};detail=EngineeringEdits.form(s);paths=s.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.filter {it.scapInspectionId==null}.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()}.onFailure {error=it.message}}
     BackHandler(enabled=!saving,onBack=onBack)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         OutlinedButton(enabled=!saving,onClick=onBack) {Text("Volver")}
@@ -38,7 +39,7 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
         when(val d=detail) {
             is SicFormDetail.Sic17 -> Sic17Fields(d.state) {detail=SicFormDetail.Sic17(it)}
             is SicFormDetail.Sic23 -> Sic23Fields(d.state) {detail=SicFormDetail.Sic23(it)}
-            is SicFormDetail.Sic18 -> {Sic18Fields(d.state) {detail=SicFormDetail.Sic18(it)};CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->paths=p;categories=c}}
+            is SicFormDetail.Sic18 -> {Sic18Fields(d.state) {detail=SicFormDetail.Sic18(it)}}
             is SicFormDetail.Sic19 -> Sic19Fields(d.state) {detail=SicFormDetail.Sic19(it)}
             is SicFormDetail.Sic20 -> Sic20Fields(d.state) {detail=SicFormDetail.Sic20(it.copy(lengthMode=if(it.wallLengthMeters!=d.state.wallLengthMeters) "MEASURED" else d.state.lengthMode))}
             is SicFormDetail.Sic21 -> Sic21Fields(d.state) {detail=SicFormDetail.Sic21(it)}
@@ -48,7 +49,13 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
             }
             else -> Text("Cargando ficha…")
         }
-        if(detail!=null && detail !is SicFormDetail.Sic18) com.tuempresa.inventariovial.core.InventoryElementPhotos(paths,true,{paths=it},{path,metadata->captures=captures+(path to metadata)})
+        detail?.let {d->
+            val code=when(d) {is SicFormDetail.Sic17->"SIC-17";is SicFormDetail.Sic18->"SIC-18";is SicFormDetail.Sic19->"SIC-19";is SicFormDetail.Sic20->"SIC-20";is SicFormDetail.Sic21->"SIC-21";is SicFormDetail.Sic22->"SIC-22";is SicFormDetail.Sic23->"SIC-23"}
+            val cls=when(d) {is SicFormDetail.Sic19->d.state.classCode;is SicFormDetail.Sic20->d.state.classCode;is SicFormDetail.Sic21->d.state.classCode;is SicFormDetail.Sic23->d.state.classCode;else->""}
+            val type=when(d) {is SicFormDetail.Sic21->d.state.typeCode;else->""}
+            LegacyInventoryPhotos(code,paths,categories,classCode=cls,typeCode=type,hasEnds=hasEnds,
+                onPhotoMetadata={path,metadata->captures=captures+(path to metadata)},captureMetadata=captures) {p,c->paths=p;categories=c}
+        }
         OutlinedTextField(observations,{observations=it},label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())
         error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
         Button(enabled=detail!=null && !saving && gpsError==null,onClick={val d=detail ?: return@Button;saving=true;scope.launch {

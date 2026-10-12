@@ -57,21 +57,7 @@ object EngineeringEdits {
         }
         run {
             if(detail is SicFormDetail.Sic20 && detail.state.classCode=="14") TechnicalLengthStore.remember(db,r,detail.state.lengthMode)
-            var nextIndex=(s.photos.maxOfOrNull {it.photoIndex} ?: 0)+1
-            for(photo in s.photos) {
-                if(photo.localPath !in paths) dao.deleteLocalPhoto(photo.id,id)
-                else {
-                    val category=categories[photo.localPath] ?: photo.photoCategory
-                    dao.updatePhotoMetadata(photo.copy(photoCategory=category,syncStatus=if(category!=photo.photoCategory) "PENDING" else photo.syncStatus))
-                }
-            }
-            paths.filter {path->s.photos.none {it.localPath==path}}.forEach {path->
-                val index=nextIndex++
-                require(detail !is SicFormDetail.Sic18 || categories[path] in EngineeringConditions.culvertPhotos.keys) {"Selecciona categoría fotográfica."}
-                // Keep existing names/paths intact. Null names use the same legacy Drive filename fallback.
-                val photo=PhotoEntity(UUID.randomUUID().toString(),id,index,path,false,null,null,null,"PENDING",System.currentTimeMillis(),photoCategory=categories[path])
-                dao.insertPhoto((captures[path] ?: com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.fromOriginal(path)).applyTo(photo))
-            }
+            InventoryPhotoEdits.save(db,id,paths,categories,captures,maxOf(System.currentTimeMillis(),r.updatedAt+1))
             dao.refreshRecordPhotoStatus(id)
         }
         val revision=maxOf(System.currentTimeMillis(),r.updatedAt+1)

@@ -711,6 +711,7 @@ fun SignalizationFormScreen(
     var sideSource by rememberSaveable { mutableStateOf("MANUAL") }
     var stampedPaths by remember { mutableStateOf<Map<String,String>>(emptyMap()) }
     var photoCaptures by remember { mutableStateOf<Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap()) }
+    var photoCategories by remember {mutableStateOf<Map<String,String>>(emptyMap())}
     var photoGpsWarning by remember { mutableStateOf<String?>(null) }
     var routeSource by rememberSaveable { mutableStateOf(draftRecord?.routeSource ?: LocationSource.MANUAL) }
     var startSuggestion by remember { mutableStateOf<LocationSuggestion?>(null) }
@@ -1004,7 +1005,7 @@ fun SignalizationFormScreen(
         detail=if(signalizationType==SignalizationType.VERTICAL) SicFormDetail.Sic22(sic22State) else SicFormDetail.Sic21(sic21State),location=location,endLocation=endLocation,locationSource=locationSource,
         endLocationSource=endLocationSource,routeSource=routeSource,sideSource=sideSource,
         sessionId=draftRecord?.sessionId ?: fieldSession?.sessionId,segment=segment,direction=direction,
-        photoCaptures=photoCaptures,photoCategories=emptyMap()) }
+        photoCaptures=photoCaptures,photoCategories=photoCategories) }
     var draftNotice by remember { mutableStateOf("") }
     LaunchedEffect(draftRecord?.id) {
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
@@ -1019,6 +1020,7 @@ fun SignalizationFormScreen(
             endLocation=com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(raw.optJSONObject("endLocation"))
             sideSource=raw.optString("sideSource",sideSource)
             val paths=raw.getJSONArray("photoPaths");capturedPhotos=(0 until paths.length()).map { paths.getString(it) }
+            val cats=raw.getJSONObject("photoCategories");photoCategories=cats.keys().asSequence().associateWith {cats.getString(it)}
             photoCaptured=capturedPhotos.isNotEmpty();photoPath=capturedPhotos.lastOrNull()
             sic21State=com.tuempresa.inventariovial.core.InventoryDraftStore.restore(raw,sic21State)
             sic22State=com.tuempresa.inventariovial.core.InventoryDraftStore.restore(raw,sic22State)
@@ -1027,11 +1029,11 @@ fun SignalizationFormScreen(
                 val m=captures.getJSONObject(key)
                 val fix=com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(m.optJSONObject("fix")) ?: if(m.isNull("latitude")||m.isNull("longitude")) null else GeoLocation(m.getDouble("latitude"),m.getDouble("longitude"),m.optDouble("accuracy",Double.NaN).toFloat(),
                     if(m.isNull("altitude"))null else m.getDouble("altitude"),timestamp=m.optLong("timestamp"))
-                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(m.isNull("capturedAt"))null else m.getLong("capturedAt"),fix,m.getString("source"))
+                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(m.isNull("capturedAt"))null else m.getLong("capturedAt"),fix,m.getString("source"),if(m.isNull("replacesPath"))null else m.getString("replacesPath"))
             }
         }
     }
-    LaunchedEffect(capturedPhotos,photoCaptures) {
+    LaunchedEffect(capturedPhotos,photoCaptures,photoCategories) {
         if(capturedPhotos.isNotEmpty() || draftId!=null) {
             kotlinx.coroutines.delay(400)
             if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
@@ -1221,18 +1223,13 @@ fun SignalizationFormScreen(
 
 
 
-        // Shared photograph capture.
         item {
-            Text("Fotografías del elemento: ${capturedPhotos.size}")
-            com.tuempresa.inventariovial.field.InventoryPhotoGallery(capturedPhotos,
-                onAdd={ path -> capturedPhotos=capturedPhotos+path;photoPath=path;photoCaptured=true
-                    photoCaptures=photoCaptures+(path to com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.fromOriginal(path)) },
-                onTake={ if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED) openCamera() else cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }) { path ->
-                capturedPhotos = capturedPhotos - path
-                photoPath = capturedPhotos.lastOrNull()
-                photoCaptured = capturedPhotos.isNotEmpty()
+            com.tuempresa.inventariovial.field.LegacyInventoryPhotos(signalizationType.sicCode,capturedPhotos,photoCategories,
+                assetType=signalizationType.name,classCode=sic21State.classCode,typeCode=sic21State.typeCode,
+                hasEnds=signalizationType!=SignalizationType.VERTICAL,
+                onPhotoMetadata={path,metadata->photoCaptures=photoCaptures+(path to metadata)},captureMetadata=photoCaptures) {p,c->
+                capturedPhotos=p;photoCategories=c;photoPath=p.lastOrNull();photoCaptured=p.isNotEmpty()
             }
-
         }
         if (
             photoCaptured &&
@@ -1468,7 +1465,7 @@ fun SignalizationFormScreen(
                                                 observations,
 
                                             photoPath = capturedPhotos.firstOrNull().orEmpty(),
-                                            photoPaths = capturedPhotos,
+                                            photoPaths = capturedPhotos, photoCategories = photoCategories,
                                             recordId = draftId,
                                             location = location,
                                             endLocation = endLocation,
@@ -2385,11 +2382,11 @@ fun AssetFormScreen(
                 val m=captures.getJSONObject(key)
                 val fix=com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(m.optJSONObject("fix")) ?: if(m.isNull("latitude")||m.isNull("longitude")) null else GeoLocation(m.getDouble("latitude"),m.getDouble("longitude"),m.optDouble("accuracy",Double.NaN).toFloat(),
                     if(m.isNull("altitude"))null else m.getDouble("altitude"),timestamp=m.optLong("timestamp"))
-                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(m.isNull("capturedAt"))null else m.getLong("capturedAt"),fix,m.getString("source"))
+                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(m.isNull("capturedAt"))null else m.getLong("capturedAt"),fix,m.getString("source"),if(m.isNull("replacesPath"))null else m.getString("replacesPath"))
             }
         }
     }
-    LaunchedEffect(capturedPhotos,photoCaptures) {
+    LaunchedEffect(capturedPhotos,photoCaptures,photoCategories) {
         if(capturedPhotos.isNotEmpty() || draftId!=null) {
             kotlinx.coroutines.delay(400)
             if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
@@ -2556,64 +2553,12 @@ fun AssetFormScreen(
 
 
 
-        if(assetType==RoadAssetType.CULVERT) item {
-            CulvertPhotos(capturedPhotos,photoCategories,onPhotoMetadata={path,metadata->photoCaptures=photoCaptures+(path to metadata)}) {paths,categories->capturedPhotos=paths;photoCategories=categories;photoPath=paths.lastOrNull();photoCaptured=paths.isNotEmpty()}
-        } else {
         item {
-
-            SectionTitle("Fotografía")
-
-            Button(
-                onClick = {
-
-                    val permission =
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.CAMERA
-                        )
-
-                    if (
-                        permission ==
-                        PackageManager.PERMISSION_GRANTED
-                    ) {
-
-                        openCamera()
-
-                    } else {
-
-                        cameraPermissionLauncher.launch(
-                            Manifest.permission.CAMERA
-                        )
-                    }
-                },
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-            ) {
-
-                Text(
-                    text =
-                        if (photoCaptured)
-                            "Tomar otra fotografía"
-                        else
-                            "Tomar fotografía",
-                    fontSize = 18.sp
-                )
+            com.tuempresa.inventariovial.field.LegacyInventoryPhotos(assetType.sicCode,capturedPhotos,photoCategories,
+                assetType=assetType.name,classCode=if(assetType.sicCode=="SIC-23")sic23State.classCode else sic20State.classCode,typeCode=sic20State.typeCode,
+                onPhotoMetadata={path,metadata->photoCaptures=photoCaptures+(path to metadata)},captureMetadata=photoCaptures) {p,c->
+                capturedPhotos=p;photoCategories=c;photoPath=p.lastOrNull();photoCaptured=p.isNotEmpty()
             }
-        }
-
-        item {
-            Text("Fotografías del elemento: ${capturedPhotos.size}")
-            com.tuempresa.inventariovial.field.InventoryPhotoGallery(capturedPhotos,
-                onAdd={ path -> capturedPhotos=capturedPhotos+path;photoPath=path;photoCaptured=true
-                    photoCaptures=photoCaptures+(path to com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.fromOriginal(path)) },
-                onTake={ if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED) openCamera() else cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }) { path ->
-                capturedPhotos = capturedPhotos - path
-                photoPath = capturedPhotos.lastOrNull()
-                photoCaptured = capturedPhotos.isNotEmpty()
-            }
-
         }
         if (
             photoCaptured &&
@@ -2670,7 +2615,6 @@ fun AssetFormScreen(
             }
         }
 
-        }
         photoError?.let { error ->
 
             item {

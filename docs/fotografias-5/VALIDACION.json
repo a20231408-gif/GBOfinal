@@ -1,0 +1,240 @@
+{
+  "date": "2026-10-11",
+  "branch": "codex/fotografias-sic-5",
+  "baseCommit": "fec797c73d6eca00a009a3e53752b40276ecad35",
+  "scope": "Prompt 5; no full suite; local only",
+  "android": {
+    "distinctPassed": 25,
+    "approvedCases": [
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5ScreenTest",
+        "name": "landscapeShowsVerticalCategoriesAndMultiplePhotoActions",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5ScreenTest",
+        "name": "portraitShowsCountersHistoricalGeneralReplacementAndConfirmedRemoval",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "actualAndroidPayloadsIncludeCategoriesMetadataExcelAndNoSib",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "addingPhotosDoesNotRenumberExistingPhotos",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "additiveMigration17To18ValidatesRoomAndKeepsOriginalPhotos",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "badenHasTenIndependentPhotosAcrossThreeCategories",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "bridgeUsesExactlyExistingScapCategories",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "culvertRetainsKeysAndShared18AIdentity",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "extraLinearModelsAndFordPhysicalEndsDoNotChangePointLocationContracts",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "guardwayAllowsMultipleInEachCategory",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "historicalNullAndGeneralShareOneStableCategoryOrder",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "incompleteDraftCannotDeliverPhotos",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "independentFajasAndPointFormatsKeepGeneral",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "offlineReopeningRetainsIdsOrderMetadataAndNoDuplicates",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "recategorizationKeepsIdentityAndRecordsExplicitChange",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "removalPreservesOriginalAndOtherEngineersAndScapPhotographs",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "replacementDraftSurvivesReopeningWithCategoryAndBaseRevision",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "replacementRetainsUuidRemoteIdentityOrderAndOriginalHistory",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "studsUseEndsOnlyWhenARealSegmentExists",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "verticalHasMultiplePanoramicAndElementPhotos",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+        "name": "wallDitchAndTunnelUseActualStartAndEndModels",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+        "name": "lostAckThenEditReplaysExactPredecessorWithoutConflictingWithOwnDelivery",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+        "name": "missingBackendConfirmationCannotMarkAnEditSynced",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+        "name": "operatorConflictPersistsLocalEditAndCannotBeClearedByAnotherSave",
+        "result": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.TabletScapIterationTest",
+        "name": "photoDefaultsCoverEverySourceCaptionAndEditableRecordsExportAspectRatioAndOriginalJpegUnchanged",
+        "result": "PASS"
+      }
+    ],
+    "initial": {
+      "tests": 22,
+      "failed": [
+        {
+          "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+          "name": "actualAndroidPayloadsIncludeCategoriesMetadataExcelAndNoSib",
+          "result": "FAIL"
+        }
+      ]
+    },
+    "lastSelection": {
+      "tests": 4,
+      "failures": 0
+    }
+  },
+  "backend": {
+    "distinctPassed": 19,
+    "approvedCases": [
+      "SCAP inspections share bridge identity but keep separate photo and packet paths",
+      "SIC08 and SIC09 cannot inherit linear categories even if they have two PRs",
+      "a malformed or tampered category signature cannot commit any files",
+      "adding an observation retains previous fileIds and family numbering",
+      "alcantarilla5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "backend rejects a photo path that contradicts its internal category before writing",
+      "baden5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "confirmed retirement archives only owned photo and retains another record and all Excel rows",
+      "cuneta5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "explicit recategorization moves the same remote identity and archives prior placement",
+      "ford keeps physical INICIO and FIN even when its contractual location has one PR",
+      "guardavia5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "historical GENERAL remains visible without migration or subtype folder",
+      "muro5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "replacement updates fileId safely and preserves original archive",
+      "senal5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "tacha5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "tunel5 actual Android categories JPEG Excel and idempotent V3 receipt",
+      "two photo editors conflict without overwriting the winner; winner retry is harmless"
+    ],
+    "runs": [
+      {
+        "logLocal": "backend-prompt5.log",
+        "passed": [
+          "baden5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "muro5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "tunel5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "cuneta5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "guardavia5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "tacha5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "senal5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "alcantarilla5 actual Android categories JPEG Excel and idempotent V3 receipt",
+          "historical GENERAL remains visible without migration or subtype folder",
+          "SIC08 and SIC09 cannot inherit linear categories even if they have two PRs",
+          "adding an observation retains previous fileIds and family numbering",
+          "explicit recategorization moves the same remote identity and archives prior placement",
+          "replacement updates fileId safely and preserves original archive",
+          "confirmed retirement archives only owned photo and retains another record and all Excel rows",
+          "two photo editors conflict without overwriting the winner; winner retry is harmless",
+          "SCAP inspections share bridge identity but keep separate photo and packet paths"
+        ],
+        "failed": [
+          "a malformed or tampered category signature cannot commit any files",
+          "backend rejects a photo path that contradicts its internal category before writing"
+        ]
+      },
+      {
+        "logLocal": "backend-prompt5-repaired.log",
+        "passed": [
+          "backend rejects a photo path that contradicts its internal category before writing",
+          "a malformed or tampered category signature cannot commit any files",
+          "ford keeps physical INICIO and FIN even when its contractual location has one PR"
+        ],
+        "failed": []
+      }
+    ],
+    "environment": "Local Drive doubles; actual Android-generated JPEG/Excel payloads; NOT Google Drive"
+  },
+  "build": {
+    "task": "assembleDebug",
+    "result": "PASS",
+    "validationBuild": false,
+    "apkRelativePath": "app/build/outputs/apk/debug/app-debug.apk",
+    "apkSha256": "8825dddd2899f2e64c93c5d603dfdbafc2bac67aa9276c2c252300b448c43ce4",
+    "certificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+    "applicationId": "com.tuempresa.inventariovial",
+    "versionCode": 16
+  },
+  "migration": {
+    "from": 17,
+    "to": 18,
+    "change": "Only additive photo_history; original 17 entity schemas identical",
+    "localReopen": "PASS; same photo UUID, path, category and original",
+    "physicalUpgrade": "PENDING"
+  },
+  "privateConfiguration": "Identical copies; no credentials included",
+  "remoteDrive": "PENDING integrated isolated deployment and owner verification",
+  "noProductionChanges": true,
+  "noApkInstalled": true,
+  "noPrompt6Started": true,
+  "retainedInitialResults": [
+    "focused-prompt5-initial.log: compilation block closure error",
+    "focused-prompt5-repaired.log: SCAP gallery callback missing during compilation snapshot",
+    "focused-prompt5-final.log: 22 selected Android cases / one invalid SIC22 fixture; assembleDebug PASS",
+    "backend-prompt5.log: 18 selected local cases / two incorrect assertions counting the internal V3 registry as a technical folder"
+  ],
+  "corrections": "Gallery closure/callback repaired; SIC22 fixture changed to valid R-1 / regulatory code; category order normalizes null and GENERAL without changing stored category; backend rejection tests check no technical writes while allowing the existing internal registry folder."
+}

@@ -62,7 +62,7 @@ fun PhotoPreview(file: File, onClose: () -> Unit) {
 /** A UI adapter; the host owns camera activity contracts and persistence. */
 @Composable
 fun PhotoCaptureCard(title: String, photos: List<File>, onTakePhoto: (cameraId: String?) -> Unit,
-    onSelectFile: () -> Unit, onDelete: (File) -> Unit, captureEnabled: Boolean = true, editable: Boolean = true) {
+    onSelectFile: () -> Unit, onDelete: (File) -> Unit, captureEnabled: Boolean = true, editable: Boolean = true, onReplace: ((File)->Unit)? = null) {
     val context = LocalContext.current
     val available = remember(context) { FieldCameraCatalog.cameras(context) }
     var chosen by remember { mutableStateOf(FieldCameraSelection.chosen(context)) }
@@ -82,8 +82,8 @@ fun PhotoCaptureCard(title: String, photos: List<File>, onTakePhoto: (cameraId: 
                 }
             }
             if(captureEnabled && editable) Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                Button(onClick={onTakePhoto(chosen)}) { Text("Tomar foto") }
-                OutlinedButton(onClick=onSelectFile) { Text("Seleccionar archivo") }
+                Button(onClick={onTakePhoto(chosen)},modifier=Modifier.heightIn(min=56.dp)) { Text("Tomar foto") }
+                OutlinedButton(onClick=onSelectFile,modifier=Modifier.heightIn(min=56.dp)) { Text("Incorporar fotos") }
             }
             if(photos.isNotEmpty()) LazyRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 items(photos, key={it.path}) { file ->
@@ -92,6 +92,7 @@ fun PhotoCaptureCard(title: String, photos: List<File>, onTakePhoto: (cameraId: 
                         Text("Foto ${photos.indexOf(file)+1}", style=MaterialTheme.typography.labelSmall)
                         Row {
                             TextButton(onClick={selected=file}) {Text("Ver")}
+                            if(editable && onReplace!=null) TextButton(onClick={onReplace(file)}) {Text("Reemplazar")}
                             if(editable) TextButton(onClick={onDelete(file)}) {Text("Eliminar")}
                         }
                     }

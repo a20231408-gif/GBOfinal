@@ -244,7 +244,8 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
     suspend fun setPhotoMetadata(id:String,photoId:String,category:String,code:String?)=db.withTransaction {
         val s=editable(id);require(category in PHOTO_CATEGORIES);require(knownElement(s,code))
         val p=s.photos.single{it.id==photoId}
-        dao.updatePhoto(p.copy(photoCategory=category,scapElementCode=code));dao.touch(id,System.currentTimeMillis())
+        if(p.photoCategory!=category) com.tuempresa.inventariovial.repository.InventoryPhotoEdits.archive(db,p,maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1),"RECATEGORIZED")
+        dao.updatePhoto(p.copy(photoCategory=category,scapElementCode=code,syncStatus="PENDING"));dao.touch(id,System.currentTimeMillis())
     }
     suspend fun describePhoto(id:String,photoId:String,description:String)=db.withTransaction {
         val s=editable(id);dao.updatePhoto(s.photos.single {it.id==photoId}.copy(description=description));dao.touch(id,System.currentTimeMillis())
@@ -260,6 +261,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
     }
     suspend fun removePhoto(id:String,photoId:String)=db.withTransaction {
         val s=editable(id)
+        com.tuempresa.inventariovial.repository.InventoryPhotoEdits.archive(db,s.photos.single {it.id==photoId},maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1),"REMOVED")
         s.defects.filter {it.photoId==photoId}.forEach {dao.putDefect(it.copy(photoId=null))}
         dao.deletePhoto(id,photoId);dao.deleteValues(id,photoId)
         s.photos.filter{it.id!=photoId}.sortedBy{it.photoIndex}.forEachIndexed{i,p->dao.updatePhoto(p.copy(photoIndex=i+1,isPrimary=i==0))}
@@ -292,12 +294,14 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
     }
     suspend fun replacePhoto(id:String,photoId:String,path:String,capture:com.tuempresa.inventariovial.camera.PhotoCaptureMetadata?=null)=db.withTransaction {
         val s=editable(id);val old=s.photos.single{it.id==photoId};require(java.io.File(path).isFile)
+        com.tuempresa.inventariovial.repository.InventoryPhotoEdits.archive(db,old,maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1),"REPLACED")
         val metadata=capture ?: com.tuempresa.inventariovial.camera.PhotoCaptureMetadata.fromOriginal(path)
         dao.updatePhoto(metadata.applyTo(old.copy(localPath=path,originalPath=path,stampedPath=null,createdAt=metadata.capturedAt ?: System.currentTimeMillis(),syncStatus="PENDING")))
         dao.touch(id,System.currentTimeMillis())
     }
     suspend fun clearPhotoImage(id:String,photoId:String)=db.withTransaction {
         val s=editable(id);val old=s.photos.single{it.id==photoId}
+        com.tuempresa.inventariovial.repository.InventoryPhotoEdits.archive(db,old,maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1),"REMOVED")
         dao.updatePhoto(old.copy(localPath="",originalPath="",stampedPath=null,syncStatus="PENDING"));dao.touch(id,System.currentTimeMillis())
     }
     suspend fun updatePhotoCapture(id:String,path:String,capture:com.tuempresa.inventariovial.camera.PhotoCaptureMetadata)=db.withTransaction {

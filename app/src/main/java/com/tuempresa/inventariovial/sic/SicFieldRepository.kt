@@ -110,17 +110,7 @@ class SicFieldRepository(private val db:InventoryDatabase) {
             dao.saveSic18A(Sic18AEntity.from(key,s.values))
             // Same parent UUID and photographs; never alter its contractual fields.
             if(photoPaths!=null) {
-            var next=(dao.snapshot(key)?.photos?.maxOfOrNull {it.photoIndex} ?: 0)+1
-            val existing=dao.snapshot(key)!!.photos
-            existing.forEach {p->
-                if(p.localPath !in photoPaths) dao.deleteLocalPhoto(p.id,key)
-                else {val category=categories[p.localPath] ?: p.photoCategory;dao.updatePhotoMetadata(p.copy(photoCategory=category,syncStatus=if(category!=p.photoCategory) "PENDING" else p.syncStatus))}
-            }
-            photoPaths.distinct().filter {path->existing.none {it.localPath==path}}.forEach {path->
-                require(categories[path] in com.tuempresa.inventariovial.catalog.EngineeringConditions.culvertPhotos.keys)
-                val photo=PhotoEntity(UUID.randomUUID().toString(),key,next++,path,false,null,null,null,"PENDING",now,photoCategory=categories[path])
-                dao.insertPhoto((captures[path] ?: PhotoCaptureMetadata.fromOriginal(path)).applyTo(photo))
-            }
+                com.tuempresa.inventariovial.repository.InventoryPhotoEdits.save(db,key,photoPaths,categories,captures,now)
             }
             dao.markServerPending(key,now);dao.refreshRecordPhotoStatus(key)
         }
@@ -132,17 +122,7 @@ class SicFieldRepository(private val db:InventoryDatabase) {
         key
     }
     private suspend fun savePhotos(id:String,paths:List<String>,categories:Map<String,String>,captures:Map<String,PhotoCaptureMetadata>,now:Long) {
-        val existing=dao.snapshot(id)!!.photos
-        var next=(existing.maxOfOrNull {it.photoIndex} ?: 0)+1
-        existing.forEach { p ->
-            if(p.localPath !in paths) dao.deleteLocalPhoto(p.id,id)
-            else {val category=categories[p.localPath] ?: p.photoCategory;dao.updatePhotoMetadata(p.copy(photoCategory=category,syncStatus=if(category!=p.photoCategory) "PENDING" else p.syncStatus))}
-        }
-        paths.distinct().filter {path->existing.none {it.localPath==path}}.forEach {path->
-            val p=PhotoEntity(UUID.randomUUID().toString(),id,next++,path,false,null,null,null,"PENDING",now,photoCategory=categories[path] ?: "GENERAL")
-            dao.insertPhoto((captures[path] ?: PhotoCaptureMetadata.fromOriginal(path)).applyTo(p))
-        }
-        dao.refreshRecordPhotoStatus(id)
+        com.tuempresa.inventariovial.repository.InventoryPhotoEdits.save(db,id,paths,categories,captures,now)
     }
     /** Both formats are saved atomically; widths may remain absent or a raw draft. */
     suspend fun saveFaja(id:String,characteristics:SicFieldState,widthId:String,widths:Map<String,String>,owner:String,finalize:Boolean,

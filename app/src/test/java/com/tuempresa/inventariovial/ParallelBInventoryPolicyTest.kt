@@ -91,7 +91,7 @@ class ParallelBInventoryPolicyTest {
         assertTrue(categories.all {it.multipleAllowed})
         assertEquals("CULVERT_INLET",PhotoCategoryPolicy.category("SIC-18",stored="ENTRADA"))
         assertEquals("GENERAL",PhotoCategoryPolicy.category("SIC-18",stored=null))
-        assertEquals("GENERAL",PhotoCategoryPolicy.categories("SIC-22").single().key)
+        assertEquals(listOf("PANORAMICA","ELEMENTO"),PhotoCategoryPolicy.categories("SIC-22").map {it.key})
     }
 
     @Test fun informativeSubtypeSelectsExistingMarkerCodeAndExportsPostNumber() {

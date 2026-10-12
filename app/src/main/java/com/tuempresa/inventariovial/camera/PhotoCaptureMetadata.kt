@@ -10,7 +10,7 @@ import com.tuempresa.inventariovial.location.TabletLocationProvider
 import com.tuempresa.inventariovial.road.GeoMath
 import kotlin.math.abs
 
-data class PhotoCaptureMetadata(val capturedAt: Long?, val fix: GeoLocation?, val source: String = if (fix == null) "UNAVAILABLE_AT_CAPTURE" else "GNSS_AT_CAPTURE") {
+data class PhotoCaptureMetadata(val capturedAt: Long?, val fix: GeoLocation?, val source: String = if (fix == null) "UNAVAILABLE_AT_CAPTURE" else "GNSS_AT_CAPTURE", val replacesPath:String? = null) {
     fun applyTo(photo: PhotoEntity) = photo.copy(capturedAt = capturedAt,
         photoLatitude = fix?.latitude, photoLongitude = fix?.longitude, photoAltitudeM = fix?.altitude?.takeIf { it.isFinite() },
         photoGpsAccuracyM = fix?.horizontalAccuracy?.toDouble()?.takeIf { it.isFinite() && it >= 0 }, photoGpsTimestamp = fix?.timestamp?.takeIf { it > 0 },

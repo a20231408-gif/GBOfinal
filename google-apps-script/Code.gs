@@ -21,7 +21,7 @@ function doGet() {
   return jsonResponse({
     ok: true,
     message: "Inventario Vial API funcionando",
-    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
+    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoCategoryVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 1 : 0, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
     technicalDeliveryWithoutGps: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), rootFolderId: ROOT_FOLDER_ID
   });
 }

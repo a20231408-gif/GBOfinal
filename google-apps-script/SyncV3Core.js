@@ -30,6 +30,24 @@ var SyncV3 = (() => {
     }
     return Math.max(0,...bindings.filter(b=>b.scope===scope && b.family===family).map(b=>b.sequence))+1;
   }
+  // Validated internal codes are the sole authority for new photographic paths.
+  const photoFolders={GENERAL:'GENERAL',INICIO:'INICIO',FIN:'FIN',OBSERVACION:'OBSERVACION',PANORAMICA:'PANORAMICA',ELEMENTO:'ELEMENTO',
+    CULVERT_INLET:'ENTRADA',CULVERT_OUTLET:'SALIDA',CULVERT_PANORAMIC:'PANORAMICA',ENTRADA:'ENTRADA',SALIDA:'SALIDA',
+    RIGHT_SIDE:'VISTA_LADO_DERECHO',LEFT_SIDE:'VISTA_LADO_IZQUIERDO',UPSTREAM:'AGUAS_ARRIBA',DOWNSTREAM:'AGUAS_ABAJO',ROAD_DECK:'CARRETERA_TABLERO',
+    INFORMATIVE_SIGN:'SENAL_INFORMATIVA',RAILINGS_SIDEWALKS_PIPES:'BARANDAS_VEREDAS_TUBERIAS',DEFECT:'ANOMALIAS_FALLAS',BRIDGE_ELEMENT:'OTROS_ELEMENTOS_PUENTE',
+    TRANSVERSE:'VISTA_TRANSVERSAL',ELEMENT:'ELEMENTO',ACCESS:'ACCESO',CHANNEL:'CAUCE',OTHER:'OTRA'};
+  const scapCategories=['GENERAL','RIGHT_SIDE','LEFT_SIDE','UPSTREAM','DOWNSTREAM','ROAD_DECK','INFORMATIVE_SIGN','RAILINGS_SIDEWALKS_PIPES','DEFECT','BRIDGE_ELEMENT','TRANSVERSE','ELEMENT','ACCESS','CHANNEL','OTHER'];
+  function photoPath(p,f,hash) {
+    let allowed=['GENERAL'];
+    if(p.kind==='SCAP' || p.family==='PUENTE')allowed=scapCategories;
+    else if(p.family==='ALCANTARILLA')allowed=allowed.concat(['CULVERT_INLET','CULVERT_OUTLET','CULVERT_PANORAMIC','ENTRADA','SALIDA','PANORAMICA']);
+    else if(p.family==='SENAL')allowed=allowed.concat(['PANORAMICA','ELEMENTO']);
+    else if(p.family==='BADEN' || p.photoHasEnds===true && (['MURO','TUNEL','CUNETA','CANAL','BAJADA DE AGUA','ZANJA DE DRENAJE','ZANJA DE CORONACION','CUNETA DE BANQUETA','TACHA','MARCA','DERECHO DE VIA','ZONA URBANA'].includes(p.family) || p.family==='DISPOSITIVO' && p.photoClassCode==='19' && p.photoTypeCode==='1'))allowed=allowed.concat(['INICIO','FIN','OBSERVACION']);
+    if(!allowed.includes(f.photoCategory) || !Object.prototype.hasOwnProperty.call(photoFolders,f.photoCategory))reject('INVALID_PHOTO_CATEGORY');
+    const id=f.key.substring(6);
+    if(!component(id))reject('INVALID_PHOTO_ID');
+    return (p.kind==='SCAP'?'SCAP/'+p.recordId+'/':'')+photoFolders[f.photoCategory]+'/F_'+hash(id).substring(0,16)+'.jpg';
+  }
   function validate(p, store) {
     if(!p || p.syncProtocol!==3 || ![3,4].includes(p.pathVersion) || !['SIC','SCAP','PAVEMENT'].includes(p.kind) ||
       !/^(SIC|SCAP|PAVEMENT)\/[A-Za-z0-9_-]{1,80}$/.test(p.key) || p.key!==p.kind+'/'+p.recordId ||
@@ -55,10 +73,15 @@ var SyncV3 = (() => {
       p.georeferencing.externalSubmetricStatus!=='PENDING'))reject('INVALID_GEOREFERENCING_STATE');
     if(p.technicalDeliveryVersion===1 && (!p.georeferencing || !['PENDING_EXTERNAL','COORDINATES_AVAILABLE'].includes(p.georeferencing.status) ||
        p.georeferencing.externalSubmetricStatus!=='PENDING' || !['GNSS_MAP_MATCH','CONTRACTUAL_PR'].includes(p.orderSource)))reject('INVALID_GEOREFERENCING_STATE');
+    if(p.photoCategoryVersion!=null && p.photoCategoryVersion!==1)reject('UNSUPPORTED_PHOTO_CATEGORY_VERSION');
+    if(p.photoCategoryVersion===1 && (p.pathVersion!==4 || !['SIC','SCAP'].includes(p.kind) || typeof p.photoHasEnds!=='boolean' || typeof p.photoClassCode!=='string' || typeof p.photoTypeCode!=='string'))reject('INVALID_PHOTO_CONTRACT');
     const seen=new Set();let size=0;
     for(const f of p.files) {
       if(!component(f.key.replace(/\//g,'_')) || seen.has(f.key) || typeof f.path!=='string' ||
          f.path.split('/').some(s=>!component(s) || s.length>80 || p.pathVersion===4 && /^SIB(?:[-_ ]|$)/i.test(s)) || !/^[a-f0-9]{64}$/.test(f.sha256))reject('INVALID_FILE');
+      if(p.photoCategoryVersion===1 && f.key.startsWith('photo/')) {
+        if(f.mimeType!=='image/jpeg' || f.path!==photoPath(p,f,store.hash))reject('PHOTO_PATH_CATEGORY_MISMATCH');
+      }
       seen.add(f.key);
       f.bytes=store.fileBytes?store.fileBytes(p,f):store.decode(f.base64);size+=f.bytes.length;
       if(!f.bytes.length || store.hash(f.bytes)!==f.sha256)reject('HASH_MISMATCH');
@@ -85,7 +108,7 @@ var SyncV3 = (() => {
     const technical=p.technicalDeliveryVersion===1?'\n'+['technicalDeliveryVersion','orderAxis','orderSource','technicalDeliveryWithoutGps'].map(k=>String(p[k])).join('\t')+
       '\t'+p.georeferencing.status+'\t'+p.georeferencing.externalSubmetricStatus+'\n'+lines(p.sicRows,['recordId','format','orderAxis','orderSource']):'';
     return (p.pathVersion===4?['key','revision','routeCode','familyPath','family','tramo','surface','identityId','roadbedCode','direction','startPrNumber','startDistanceM']:['key','revision','routeCode','sibCode','family','tramo','surface']).map(k=>p[k]==null?'':String(p[k])).join('\t')+'\n'+
-      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical+(p.pathVersion===4?'\npathVersion=4\n'+lines(p.sicRows,['recordId','format','roadbedCode','direction','startPrNumber','startDistanceM']):'');
+      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical+(p.pathVersion===4?'\npathVersion=4\n'+lines(p.sicRows,['recordId','format','roadbedCode','direction','startPrNumber','startDistanceM']):'')+(p.photoCategoryVersion===1?'\nphotoCategoryVersion=1\n'+['photoHasEnds','photoClassCode','photoTypeCode'].map(k=>String(p[k])).join('\t')+'\n'+lines(p.files,['key','photoCategory']):'');
   }
   /** Header/media/styles come from the actual Android workbook. Only data rows and print extent change. */
   function mergeSheet(template, rows, start=14) {

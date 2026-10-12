@@ -647,7 +647,7 @@ class InventoryViewModel(
                     val marked = java.io.File(path)
                     val writable = com.tuempresa.inventariovial.camera.PhotoExif.writableCopy(java.io.File(path), marked,
                         java.io.File(getApplication<android.app.Application>().filesDir, "stamped"))
-                    val basePhoto = photo.copy(id = UUID.randomUUID().toString(), localPath = path,
+                    val basePhoto = photo.copy(id = UUID.nameUUIDFromBytes((recordId+"\n"+path).toByteArray()).toString(), localPath = path,
                         originalPath = path, stampedPath = writable.absolutePath,
                         photoCategory = request.photoCategories[path] ?: com.tuempresa.inventariovial.field.PhotoCategoryPolicy.category(request.sicCode,request.assetType,null),
                         photoIndex = index + 1, isPrimary = index == 0,

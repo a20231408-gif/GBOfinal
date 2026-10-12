@@ -26,7 +26,7 @@ object CulvertEditDraft {
             "structuralDamagePercent" to base.structuralDamagePercent,"functionalObstructionPercent" to base.functionalObstructionPercent)))
             .put("observations",draft.observations ?: JSONObject.NULL).put("baseRevision",draft.baseRevision ?: JSONObject.NULL).put("extra",JSONObject(draft.extra)).put("photos",JSONArray(draft.photos)).put("categories",JSONObject(draft.categories))
             .put("captures",JSONObject().apply {draft.captures.forEach {(path,c)->
-                put(path,JSONObject().put("capturedAt",c.capturedAt ?: JSONObject.NULL).put("source",c.source).put("fix",c.fix?.let {f->
+                put(path,JSONObject().put("capturedAt",c.capturedAt ?: JSONObject.NULL).put("source",c.source).put("replacesPath",c.replacesPath ?: JSONObject.NULL).put("fix",c.fix?.let {f->
                     JSONObject().put("latitude",f.latitude).put("longitude",f.longitude).put("accuracy",f.horizontalAccuracy.takeIf {it.isFinite()} ?: JSONObject.NULL)
                         .put("altitude",f.altitude ?: JSONObject.NULL).put("timestamp",f.timestamp).put("source",f.source).put("provider",f.provider.name)
                         .put("verticalAccuracy",f.verticalAccuracy ?: JSONObject.NULL).put("fixType",f.fixType ?: JSONObject.NULL)
@@ -44,7 +44,7 @@ object CulvertEditDraft {
         return CulvertEditingDraft(Sic18FormState(b.getString("classCode"),b.getString("typeCode"),b.getString("spans"),b.getString("crossSectionCode"),b.getString("dimension1M"),b.getString("dimension2M"),b.getString("structuralConditionCode"),b.getString("functionalConditionCode"),sectionShape=b.optString("sectionShape"),structuralDamagePercent=b.optString("structuralDamagePercent"),functionalObstructionPercent=b.optString("functionalObstructionPercent")),
             map(j.getJSONObject("extra")),(0 until p.length()).map {p.getString(it)},map(j.getJSONObject("categories")),
             captures.keys().asSequence().associateWith {path->val c=captures.getJSONObject(path)
-                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(c.isNull("capturedAt"))null else c.getLong("capturedAt"),com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(c.optJSONObject("fix")),c.getString("source"))},baseRevision=if(j.isNull("baseRevision"))null else j.getLong("baseRevision"),observations=if(j.isNull("observations"))null else j.getString("observations"))
+                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(c.isNull("capturedAt"))null else c.getLong("capturedAt"),com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(c.optJSONObject("fix")),c.getString("source"),if(c.isNull("replacesPath"))null else c.getString("replacesPath"))},baseRevision=if(j.isNull("baseRevision"))null else j.getLong("baseRevision"),observations=if(j.isNull("observations"))null else j.getString("observations"))
     }
     fun clear(context:Context,id:String,owner:String) {file(context,id,owner).delete()}
 }

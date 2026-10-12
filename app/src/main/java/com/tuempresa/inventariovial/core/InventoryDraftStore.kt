@@ -87,7 +87,7 @@ object InventoryDraftStore {
             .put("location",fixJson(r.location)).put("endLocation",fixJson(r.endLocation)).put("sideSource",r.sideSource)
             .put("photoPaths",JSONArray(r.photoPaths)).put("photoCategories",JSONObject(r.photoCategories))
             .put("photoCaptures",JSONObject().apply {r.photoCaptures.forEach { (path,capture) ->
-                put(path,JSONObject().put("capturedAt",capture.capturedAt?:JSONObject.NULL).put("source",capture.source)
+                put(path,JSONObject().put("capturedAt",capture.capturedAt?:JSONObject.NULL).put("source",capture.source).put("replacesPath",capture.replacesPath ?: JSONObject.NULL)
                     .put("latitude",capture.fix?.latitude?:JSONObject.NULL).put("longitude",capture.fix?.longitude?:JSONObject.NULL)
                     .put("accuracy",capture.fix?.horizontalAccuracy?.takeIf {it.isFinite()}?:JSONObject.NULL)
                     .put("altitude",capture.fix?.altitude?:JSONObject.NULL).put("timestamp",capture.fix?.timestamp?:JSONObject.NULL).put("fix",fixJson(capture.fix)))

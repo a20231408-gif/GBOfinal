@@ -106,7 +106,8 @@ class TabletScapIterationTest {
             }
         }}finally{db.close()}
     }
-    @Test fun photoDefaultsCoverEverySourceCaptionAndEditableRecordsExportAspectRatioAndOriginalJpegUnchanged()=runBlocking {
+    @Test @Config(application=android.app.Application::class)
+    fun photoDefaultsCoverEverySourceCaptionAndEditableRecordsExportAspectRatioAndOriginalJpegUnchanged()=runBlocking {
         val db=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
         val image=File(context.cacheDir,"iteration-photo.jpg")
         val bmp=Bitmap.createBitmap(120,240,Bitmap.Config.ARGB_8888);image.outputStream().use{bmp.compress(Bitmap.CompressFormat.JPEG,90,it)};bmp.recycle()

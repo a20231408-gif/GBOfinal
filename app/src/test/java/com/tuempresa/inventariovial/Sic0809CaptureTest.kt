@@ -211,7 +211,7 @@ class Sic0809CaptureTest {
             }
             old.version=16
         } finally {old.close()}
-        val upgraded=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_16_17).build()
+        val upgraded=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_16_17,InventoryDatabase.MIGRATION_17_18).build()
         try {
             val connection=upgraded.openHelper.writableDatabase // Full Room schema validation.
             before.forEach {(table,expected)->connection.query("SELECT * FROM `$table` ORDER BY 1").use {c->

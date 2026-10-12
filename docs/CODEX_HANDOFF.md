@@ -1,3 +1,27 @@
+# Estado vigente — Prompt 5, 2026-10-11
+
+Rama `codex/fotografias-sic-5`, worktree aislado `D:/Downloads/GBO_InventarioVial_INTEGRADO_FINAL_SOURCE/GBO_InventarioVial/prompt5`, desde Prompt 4 `fec797c73d6eca00a009a3e53752b40276ecad35`. Incluye 2A/2B sobre la misma infraestructura V3. El checkpoint local de entrega es HEAD de esta rama (`git log -1`); hash exacto entregado después del commit. Sin push ni merge.
+
+Implementado: sección FOTOGRAFÍAS con N imágenes por categoría, cámara, importación múltiple, contador, miniaturas/ampliación, reemplazo y retirada confirmada. INICIO/FIN/OBSERVACION en modelos longitudinales correspondientes y entrada/salida física del badén; PANORAMICA/ELEMENTO en SIC-22; claves CULVERT_* y UUID 18/18A conservados. SIC-08/09 y puntos mantienen GENERAL. Fotos históricas GENERAL/null visibles, sin reasignación automática. [Matriz completa](fotografias-5/MATRIZ.md).
+
+Foto nueva con UUID estable, categoría/orden/capturedAt/metadatos propios y estado pendiente; reemplazo conserva UUID, índice y fileId. Cambio de categoría explícito conserva identidad. Room 17 → 18 agrega solamente photo_history, sin transformar tablas/valores originales, para conservar vínculos de originales, categoría previa, acciones y revisiones. Borradores guardan relación de reemplazo. No se eliminan archivos originales. Galería técnica SIC del puente excluye imágenes SCAP; cada inspección mantiene sus categorías existentes y paquete/fotos bajo SCAP/<inspectionUUID> dentro de PUENTE N.
+
+V3/pathVersion 4, cola sin GPS, UUID/folderId/numeración, revisión base, conflictos, ACK verificable, staging y consolidación completa del servidor conservados. Categorías/contexto firmados mediante photoCategoryVersion=1; backend valida carpeta y nombre a partir del código/UUID. Reintento por la misma clave mantiene fileId; cambios y retiradas se archivan mediante el mecanismo 2B existente. Metadata/manifest conserva la relación foto/registro/SIC/calzada/categoría/orden/revisión/clave; recibos aportan IDs actuales. No se cambian columnas contractuales ni se generan rutas SIB nuevas.
+
+**25 casos Android distintos y 19 backend locales aprobados**, sin suite completa. Android: 19 nuevos de categoría/persistencia/migración/preparación, 2 interfaz retrato/paisaje, 3 de revisiones/ACK 2B y 1 regresión de originales/exportación SCAP. Última selección: 4/4 aprobadas + assembleDebug. Backend: primera ejecución 18/2 fallos, 16 aprobadas; última selección 3/3 (dos corregidas y un borde nuevo), total 19 distintas aprobadas. Fallos iniciales y logs/resultados locales conservados: dos errores de compilación de adaptación UI; fixture SIC-22 inválida corregida a R-1 del catálogo; dos aserciones backend corregidas para permitir el registro interno V3 y exigir ausencia de escrituras técnicas. [Evidencia sanitizada](fotografias-5/VALIDACION.json), [entrega](fotografias-5/ENTREGA.md).
+
+APK Debug compilada con propiedades reales copiadas idénticas y sin gboValidationBuild=true; firma Debug SHA256 `d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872`, igual a Prompt 4. applicationId com.tuempresa.inventariovial/versionCode 16/firma histórica conservados. No APK instalada; no publicación Apps Script, escritura remota ni cambio del servicio de usuarios. Propiedades, tokens, keystores, APK, caches, logs y resultados crudos excluidos del checkpoint.
+
+Pendiente: responsable debe actualizar SOLO el proyecto Apps Script aislado con fuentes integradas Code.gs + SyncV3Core.js (como .gs) + SyncV3.gs. GET esperado: protocolo 3, jerarquía 4, stableFamilyNumbering=true, technicalDeliveryWithoutGps=true, photoCategoryVersion=1 y raíz aislada autorizada 1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk. Último estado remoto conocido de encargos anteriores era pathVersion 3; no se volvió a consultar ni se acredita subida real de esta entrega. Cliente deja cola UNCONFIGURED si faltan capacidades. [Despliegue y checklist físico/remoto](fotografias-5/DESPLIEGUE_PRUEBAS.md).
+
+Validación pendiente en tablet secundaria: cámara/importación real/reinicio, migración con respaldo, IDs/JPEG/Excel/metadata reales en Drive, archivos históricos/SCAP por inspección, reintentos y dos operadores. Categorías históricas desconocidas se conservan y pueden necesitar reclasificación explícita para reenviar. No hay migración remota automática ni resolución automática de conflictos.
+
+Trabajo anterior preservado en Prompt 4 y copia backend-v3-pruebas, incluidos SCAP, proguard, Drive, pavimentos, herramientas y modificaciones sin commit. En prompt5 quedan sin commit solo recursos auxiliares copiados para compilar y logs/resultados crudos. Checkpoint selectivo de fuentes/esquema/pruebas/fixtures sintéticas/documentación. **Detenerse al terminar Prompt 5; Prompt 6 no iniciado.**
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
 # Estado vigente — Prompt 4, 2026-10-11
 
 Rama `codex/correcciones-tecnicas-sic-4` en worktree aislado `D:/Downloads/GBO_InventarioVial_INTEGRADO_FINAL_SOURCE/GBO_InventarioVial/prompt4`, basada en Prompt 3 `bbbf7598598b01624e421836923d39e9a3d1f326` (rama anterior subida a GitHub y main intacta). El commit funcional local es HEAD de esta rama, consultable con `git log -1`; el hash exacto se entrega al usuario después del commit. Sin push de Prompt 4 ni merge.

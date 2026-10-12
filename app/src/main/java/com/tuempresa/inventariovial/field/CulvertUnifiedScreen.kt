@@ -149,7 +149,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
                 if(hasExtra && !required)OutlinedButton(onClick={expanded=!expanded}) {Text(if(expanded)"Ocultar detalle de condición mala" else "Ver antecedente")}
             }
             if(required || expanded && hasExtra) item {CulvertSupplementFields(extra,!busy) {extra=it;extraComplete=false;dirty=true;review=false;files=emptyList()}}
-            item {CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->if(!busy){paths=p;categories=c;dirty=true;files=emptyList()}}}
+            item {CulvertPhotos(paths,categories,captureMetadata=captures,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->if(!busy){paths=p;categories=c;dirty=true;files=emptyList()}}}
             item {OutlinedTextField(observations,{observations=it;dirty=true;review=false},enabled=!busy,label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())}
             item {LegacyInventoryReviewButton(!busy) {review=true}}
             item {

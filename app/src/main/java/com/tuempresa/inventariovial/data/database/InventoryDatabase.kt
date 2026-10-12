@@ -32,7 +32,7 @@ import com.tuempresa.inventariovial.pavement.PavementSectionEntity
     entities = [
         com.tuempresa.inventariovial.core.DriveSyncIntent::class, UserCacheEntity::class, UserSyncStateEntity::class, LocalLoginStateEntity::class, AuditLogEntity::class,
         InventoryRecordEntity::class,
-        SicExtensionEntity::class, PhotoEntity::class, FieldPrEntity::class, DeliveryBatchEntity::class,
+        SicExtensionEntity::class, PhotoEntity::class, PhotoHistoryEntity::class, FieldPrEntity::class, DeliveryBatchEntity::class,
         Sic17Entity::class,
         Sic18Entity::class,
         Sic19Entity::class,
@@ -49,7 +49,7 @@ import com.tuempresa.inventariovial.pavement.PavementSectionEntity
         PavementSampleEntity::class, PavementDamageEntity::class, PavementDamagePhotoEntity::class, PavementSectionEntity::class
     ],
 
-    version = 17,
+    version = 18,
 
     exportSchema = true
 )
@@ -69,6 +69,13 @@ abstract class InventoryDatabase :
 
 
     companion object {
+        val MIGRATION_17_18 = object : Migration(17,18) {
+            override fun migrate(db:SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS photo_history (id TEXT NOT NULL PRIMARY KEY, recordId TEXT NOT NULL, photoId TEXT NOT NULL, revision INTEGER NOT NULL, action TEXT NOT NULL, snapshotJson TEXT NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_photo_history_recordId ON photo_history(recordId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_photo_history_photoId ON photo_history(photoId)")
+            }
+        }
         /** Only nullability changes. Every existing value, UUID and foreign key is retained. */
         val MIGRATION_16_17 = object : Migration(16,17) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -206,7 +213,7 @@ abstract class InventoryDatabase :
                             InventoryDatabase::class.java,
                             "inventario_vial.db"
                         )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17, MIGRATION_17_18)
                             .build()
 
                     instance.syncContext = context.applicationContext
