@@ -1,0 +1,51 @@
+{
+  "recordId": "e40cebdf-8039-4c6c-969a-0d7db73b8a94",
+  "photoFileId": "1ad2sDQFlZwUfHpR2FJ0aY28UK83_qHA3",
+  "photoFolderId": "1opIkXBZfOaK36Io5omhfZyPjbwpvn9Nl",
+  "photoLogicalPath": "PE-22A/FAJAS_CALZADA/FAJA 2/GENERAL/F_011d88f4ab63331f.jpg",
+  "photoSha256MatchesAck": true,
+  "originalSha256Unchanged": true,
+  "originalPixelsMatch": true,
+  "xlsxFileId": "1TqTHGZGdjWhxirRo81Frlk2SgiiIlwzX",
+  "xlsxSha256MatchesAck": true,
+  "validZip": true,
+  "headers": [
+    "Ruta",
+    "Calzada",
+    "Faja",
+    "Código PR",
+    "Distancia",
+    "Código PR",
+    "Distancia",
+    "Tipo",
+    "Sentido del tránsito",
+    "Fecha"
+  ],
+  "rows": [
+    [
+      "PE-22A",
+      "CD",
+      "2",
+      "0010",
+      "34.0",
+      "0011",
+      "20.0",
+      "1",
+      "C",
+      "46307"
+    ],
+    [
+      "PE-22A",
+      "CD",
+      "2",
+      "0010",
+      "45.0",
+      "0011",
+      "20.0",
+      "1",
+      "C",
+      "46307"
+    ]
+  ],
+  "twoDifferentRecordsNoDuplicate": true
+}

@@ -1,0 +1,16 @@
+{
+  "privateConfigurationAbsentFromDeliverableFiles": true,
+  "privateConfigurationAbsentFromValidationApkDex": true,
+  "validationBuildConfigPrivateFieldsEmpty": true,
+  "jsonEvidenceParsed": true,
+  "localDocumentLinksExist": true,
+  "apkHashesMatchIdentityEvidence": true,
+  "productionAndroidAndBackendDiffFrom8AEmpty": true,
+  "ignoredPrivatePropertiesAndApksVerified": true,
+  "protectedRemoteHeadsBeforePush": {
+    "main": "c42bb8158da6f24ff9cedbee7e4858fe104d1e31",
+    "codex/flujo-operador-7": "28f9549813b0bf5753c70d4967970fd10e0f74af",
+    "codex/integracion-android-8A": "29ae399cb09273a8e3aa1fea694fea97038c3fd4"
+  },
+  "noProductionDeployment": true
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "case": "wrong-sha",
+    "key": "SIC/fbc976e2-7760-4e5a-8c16-65e701b337b8",
+    "ok": false,
+    "code": "HASH_OR_FILE_SIZE",
+    "error": null
+  },
+  {
+    "case": "incompatible-stage-protocol",
+    "key": "SIC/fbc976e2-7760-4e5a-8c16-65e701b337b8",
+    "ok": false,
+    "code": "INVALID_STAGE",
+    "error": null
+  }
+]

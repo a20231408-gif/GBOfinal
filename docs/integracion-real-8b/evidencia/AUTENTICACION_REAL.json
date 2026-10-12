@@ -1,0 +1,40 @@
+{
+  "runtime": "Android instrumentation",
+  "mockBackend": false,
+  "events": [
+    {
+      "case": "capabilities",
+      "result": "APROBADO REAL",
+      "detail": {
+        "ok": true,
+        "version": "v7.0 · Integración Drive V2",
+        "syncProtocol": 3,
+        "scapProtocol": 2,
+        "scapBundleVersion": 6,
+        "pathVersion": 4,
+        "stableFamilyNumbering": true,
+        "photoCategoryVersion": 1,
+        "photoPolicy": "ORIGINAL_CLEAN",
+        "deliveryProtocol": 1,
+        "pavementProtocol": 1,
+        "strictElementFoldering": true,
+        "technicalDeliveryWithoutGps": true,
+        "rootFolderId": "1FQBVRD3BK1rOBfC8NdRzPQt3fvU40V23"
+      }
+    },
+    {
+      "case": "token-missing",
+      "result": "APROBADO REAL",
+      "detail": {
+        "accepted": false
+      }
+    },
+    {
+      "case": "token-incorrect",
+      "result": "APROBADO REAL",
+      "detail": {
+        "accepted": false
+      }
+    }
+  ]
+}

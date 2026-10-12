@@ -1,0 +1,152 @@
+{
+  "rootId": "1FQBVRD3BK1rOBfC8NdRzPQt3fvU40V23",
+  "routeFolderId": "1jbLBIsM3PK2Y377bm4DqgX0UPwecxOby",
+  "routeChildren": [
+    {
+      "id": "1u2L2waJjQ7idPsCPx1u3YXkaDCtyX5_3",
+      "name": "FAJAS_CALZADA",
+      "type": "application/vnd.google-apps.folder"
+    },
+    {
+      "id": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+      "name": "EXCEL_SIC",
+      "type": "application/vnd.google-apps.folder"
+    },
+    {
+      "id": "1hYPoGQnQqHAeueHjKH4hidYL4o6Zij7q",
+      "name": "ALCANTARILLAS",
+      "type": "application/vnd.google-apps.folder"
+    }
+  ],
+  "folders": [
+    {
+      "folderId": "1u2L2waJjQ7idPsCPx1u3YXkaDCtyX5_3",
+      "name": "FAJAS_CALZADA",
+      "files": [
+        {
+          "id": "1lxlgd4LL7KKs6GbtyoZM3nhof1dCCb2i",
+          "name": "FAJA 2",
+          "type": "application/vnd.google-apps.folder"
+        },
+        {
+          "id": "1vh6fizYLHtRwUIhZ8c8SLWfoE-AT_vP-",
+          "name": "FAJA 1",
+          "type": "application/vnd.google-apps.folder"
+        }
+      ]
+    },
+    {
+      "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+      "name": "EXCEL_SIC",
+      "files": [
+        {
+          "id": "1TqTHGZGdjWhxirRo81Frlk2SgiiIlwzX",
+          "name": "SIC-08.xlsx",
+          "type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        },
+        {
+          "id": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+          "name": "SIC-18.xlsx",
+          "type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+      ]
+    },
+    {
+      "folderId": "1hYPoGQnQqHAeueHjKH4hidYL4o6Zij7q",
+      "name": "ALCANTARILLAS",
+      "files": [
+        {
+          "id": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+          "name": "ALCANTARILLA 2",
+          "type": "application/vnd.google-apps.folder"
+        },
+        {
+          "id": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+          "name": "ALCANTARILLA 1",
+          "type": "application/vnd.google-apps.folder"
+        }
+      ]
+    },
+    {
+      "folderId": "1hId-uBumusk5AdOFmeTbj7huPN4B35A4",
+      "name": "._GBO_SYNC_V3",
+      "files": [
+        {
+          "id": "1n4xQHbfQandnrcxiOwniWDmZLm5MZ-W8",
+          "name": "journal_36caab6d95b5f219eb54258b1eba247a35fcb82c15d300640afd7d10a75b5787.json",
+          "type": "application/json"
+        },
+        {
+          "id": "107gPuLD6qqQP25QJQqgA0DZrlNk6MOZh",
+          "name": "binding_v4_bdf4a295a860f6041063672d86c79094e106f47a4208989e066b2ae50e4e8b1f.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1rDWHAtVXBXFRU-1wogfcLqtzQG7j78dr",
+          "name": "record_36caab6d95b5f219eb54258b1eba247a35fcb82c15d300640afd7d10a75b5787.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1IkL-xW375BDWy4HWdId00naOcWmBX65L",
+          "name": "aggregate_1a8985f17305b1d49eb2d8a8dc148767b66015f0c6bee2b921f66823affa9a2c.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1YJ4RPdZGcA2I76pho3ylBjW6Owl3oR15",
+          "name": "journal_ffb9d714eff8419c440b291012de789d023958cdcb1af1f64bc35984b795d674.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1ATbhhW0_92hxKdr9GqtaUwaXYeFqLKWj",
+          "name": "binding_v4_d178da1e46df5cafa158a84f4c44b1abc41407ee169f6b53d73e86759b1a5ede.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1OFu8souKrQhYyMGORuNbay19Zy4hiE-s",
+          "name": "record_ffb9d714eff8419c440b291012de789d023958cdcb1af1f64bc35984b795d674.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1hhQe_Bc6yORtPqWAGdFN_NePjr4EX_zJ",
+          "name": "journal_d9d53a5baa759a7f2e9e3b379efdecce46aa24f91736febad560bd92cf64d5c3.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1EJgNx3ZxBaTjR1bmbWFmjikaC_7-qfox",
+          "name": "binding_v4_48b5d24fa5bccce7cdef91775aef3980f81ef56cbe416212d053fbcef535f092.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1XV6dPUp3SJ8Wi5jUrhXmiIAx8WE3R57M",
+          "name": "record_d9d53a5baa759a7f2e9e3b379efdecce46aa24f91736febad560bd92cf64d5c3.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1ZPhHvhelf1eDWbYAsO3_qPkO-yyLx6ng",
+          "name": "aggregate_fb3705aef5ab50c5ee6858746361b610c6f51125a3352b1c6c74bd61749e74b4.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1rg9M6YYeIieOf8iXUW1I6FprDXISyeyr",
+          "name": "journal_003993bf1b0bb5e5c389be3901f7805d5491d205743f4002d84be4bf719feec9.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1aN7gtziwE5_Y5buDFy4XsO1opnaxm9Ab",
+          "name": "binding_v4_19ebba374568977196eb5920d90d5363598b307bde41ae9520b2b4798edf01de.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1PWU-mp46mIlaMWK12alDowPoapR4f3kd",
+          "name": "record_003993bf1b0bb5e5c389be3901f7805d5491d205743f4002d84be4bf719feec9.json",
+          "type": "application/json"
+        },
+        {
+          "id": "1PXumCvvLr_P6jRELFcZlxPJksvjeS0sc",
+          "name": "STAGING",
+          "type": "application/vnd.google-apps.folder"
+        }
+      ]
+    }
+  ]
+}

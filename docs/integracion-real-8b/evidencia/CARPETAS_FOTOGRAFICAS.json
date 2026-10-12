@@ -1,0 +1,50 @@
+[
+  {
+    "folderId": "1IRr-rUXCJ5MtxAMeZtKDQ_kifFcRoSXq",
+    "name": "ENTRADA",
+    "parentIds": null,
+    "files": [
+      {
+        "id": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+        "name": "F_d4df6bf44c810344.jpg"
+      }
+    ],
+    "isError": false
+  },
+  {
+    "folderId": "19z3En43vPnAJqFElkHEwnSO5Gn4Rs4WR",
+    "name": "SALIDA",
+    "parentIds": null,
+    "files": [
+      {
+        "id": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+        "name": "F_f480ed6faf078a39.jpg"
+      }
+    ],
+    "isError": false
+  },
+  {
+    "folderId": "1sAjf-OLpwuFnHh_qzcVL_LGgGH8s4ja5",
+    "name": "ENTRADA",
+    "parentIds": null,
+    "files": [
+      {
+        "id": "1uxTApbwdQajDksuqu_9pSKOSUcjRxOkZ",
+        "name": "F_ebe4b75ec1a30781.jpg"
+      }
+    ],
+    "isError": false
+  },
+  {
+    "folderId": "1MsI9U_8t-gQOnu8Y80hcGfjWK8o93jG6",
+    "name": "SALIDA",
+    "parentIds": null,
+    "files": [
+      {
+        "id": "13MWf_d3hI0cUlCLTD736KX_ZVy4sWrB9",
+        "name": "F_47545b4c25eb8a5b.jpg"
+      }
+    ],
+    "isError": false
+  }
+]

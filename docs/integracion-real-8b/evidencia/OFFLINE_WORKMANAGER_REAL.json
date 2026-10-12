@@ -1,0 +1,61 @@
+{
+  "recordId": "e40cebdf-8039-4c6c-969a-0d7db73b8a94",
+  "revision": 1791777418102,
+  "photoId": "c16e441e-481b-375c-94d5-43328227251a",
+  "originalSha256": "ab0f90046297c920c961384f4bfdc0715c30e2b597c85f5766ff14c434e71a60",
+  "createdWithNetwork": false,
+  "initialState": "QUEUED",
+  "completed": true,
+  "reopenedWithoutNetwork": true,
+  "state": "SYNCED",
+  "syncedRevision": 1791777418102,
+  "error": null,
+  "worker": "AutomaticSyncWorker",
+  "ack": {
+    "ok": true,
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC\/e40cebdf-8039-4c6c-969a-0d7db73b8a94",
+    "revision": 1791777418102,
+    "contentHash": "28292d07e5fdab4b92ec1748574723e0f9a37691dc4f73d055c2818c9a4ffec6",
+    "folderId": "1lxlgd4LL7KKs6GbtyoZM3nhof1dCCb2i",
+    "logicalPath": "PE-22A\/FAJAS_CALZADA\/FAJA 2",
+    "files": [
+      {
+        "key": "photo\/c16e441e-481b-375c-94d5-43328227251a",
+        "sha256": "972ab4b1c2004ae364193b277265e08789455e649ce7ee265a280b8e619a76b3",
+        "fileId": "1ad2sDQFlZwUfHpR2FJ0aY28UK83_qHA3",
+        "folderId": "1opIkXBZfOaK36Io5omhfZyPjbwpvn9Nl",
+        "requestedPath": "GENERAL\/F_011d88f4ab63331f.jpg",
+        "logicalPath": "PE-22A\/FAJAS_CALZADA\/FAJA 2\/GENERAL\/F_011d88f4ab63331f.jpg"
+      },
+      {
+        "key": "metadata",
+        "sha256": "5cf77ff2484171608ed8b73ac6d90ae618f1b741710084c232ef19b8629e952f",
+        "fileId": "1GkqN_HHMuNhun86C5_MGAL-PgL_086xR",
+        "folderId": "1lxlgd4LL7KKs6GbtyoZM3nhof1dCCb2i",
+        "requestedPath": "metadata.json",
+        "logicalPath": "PE-22A\/FAJAS_CALZADA\/FAJA 2\/metadata.json"
+      }
+    ],
+    "sicFiles": [
+      {
+        "format": "SIC-08",
+        "fileId": "1TqTHGZGdjWhxirRo81Frlk2SgiiIlwzX",
+        "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+        "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-08.xlsx",
+        "sha256": "f1b3e59c2c14cb1d9669fe2dc7f211cbaf27c2e997a2b9030638778d4c7c0fa4",
+        "recordIds": [
+          "53524c18-69d3-4ede-966c-32da68f11642",
+          "e40cebdf-8039-4c6c-969a-0d7db73b8a94"
+        ]
+      }
+    ],
+    "retainedSicFormats": [],
+    "alreadyExists": false,
+    "technicalDeliveryStatus": "DELIVERED",
+    "georeferencingStatus": "PENDING_EXTERNAL",
+    "externalGeoreferencingStatus": "PENDING",
+    "orderSource": "CONTRACTUAL_PR"
+  }
+}

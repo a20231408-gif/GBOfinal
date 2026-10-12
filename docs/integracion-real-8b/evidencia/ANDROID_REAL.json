@@ -1,0 +1,618 @@
+{
+  "runtime": "Android instrumentation",
+  "mockBackend": false,
+  "events": [
+    {
+      "case": "capabilities",
+      "result": "APROBADO REAL",
+      "detail": {
+        "ok": true,
+        "version": "v7.0 · Integración Drive V2",
+        "syncProtocol": 3,
+        "scapProtocol": 2,
+        "scapBundleVersion": 6,
+        "pathVersion": 4,
+        "stableFamilyNumbering": true,
+        "photoCategoryVersion": 1,
+        "photoPolicy": "ORIGINAL_CLEAN",
+        "deliveryProtocol": 1,
+        "pavementProtocol": 1,
+        "strictElementFoldering": true,
+        "technicalDeliveryWithoutGps": true,
+        "rootFolderId": "1FQBVRD3BK1rOBfC8NdRzPQt3fvU40V23"
+      }
+    },
+    {
+      "case": "draft",
+      "result": "APROBADO LOCAL",
+      "detail": {
+        "recordId": "53524c18-69d3-4ede-966c-32da68f11642",
+        "posts": 0
+      }
+    },
+    {
+      "case": "automatic-outbox",
+      "result": "APROBADO LOCAL",
+      "detail": {
+        "recordId": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1"
+      }
+    },
+    {
+      "case": "delivery-6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+        "revision": 1791776926279,
+        "syncedRevision": 1791776926279,
+        "state": "SYNCED",
+        "error": null,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+          "revision": 1791776926279,
+          "contentHash": "d4d69110f6d5303d42915b79979ba8d0e6c740bc8d6c12b2d795471bb1330a7a",
+          "folderId": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+          "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1",
+          "files": [
+            {
+              "key": "photo\/337ca20c-c40a-401c-bd22-61a44bcd64cc",
+              "sha256": "4d154db73de7c92fa7fafe3adcd68a0a064c97f8defeb9a407dbf2b87b519971",
+              "fileId": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+              "folderId": "1IRr-rUXCJ5MtxAMeZtKDQ_kifFcRoSXq",
+              "requestedPath": "ENTRADA\/F_d4df6bf44c810344.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/ENTRADA\/F_d4df6bf44c810344.jpg"
+            },
+            {
+              "key": "photo\/d9517d4a-e9e4-4180-845f-337f2c25e8ec",
+              "sha256": "d0610062cf8dda5174e3ca31cf0ae4e6093fe1a1010a719641ffbd4872dd59b0",
+              "fileId": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+              "folderId": "19z3En43vPnAJqFElkHEwnSO5Gn4Rs4WR",
+              "requestedPath": "SALIDA\/F_f480ed6faf078a39.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/SALIDA\/F_f480ed6faf078a39.jpg"
+            },
+            {
+              "key": "metadata",
+              "sha256": "31d0781c36484cd4079bfe53969d8791d46706845b994119db6d02140146b0b5",
+              "fileId": "1RycD2xaoL8nn2hnIs45FBZ6OoAkYl648",
+              "folderId": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-18",
+              "fileId": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-18.xlsx",
+              "sha256": "71207560cf00fddf425882a672db427698c1b5efd70c41abcf563edee2c8e7ad",
+              "recordIds": [
+                "6dc3301b-bda9-4432-8f62-b6efe38ef2b1"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": false,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        },
+        "photos": [
+          {
+            "photoId": "337ca20c-c40a-401c-bd22-61a44bcd64cc",
+            "category": "CULVERT_INLET",
+            "order": 1,
+            "fileId": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+            "originalSha256": "eb9ffcdcd79f7d063672e484c5ef27ed78f6d591f9860bdd74dd6d1560841dc1",
+            "originalBytes": 8790
+          },
+          {
+            "photoId": "d9517d4a-e9e4-4180-845f-337f2c25e8ec",
+            "category": "CULVERT_OUTLET",
+            "order": 2,
+            "fileId": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+            "originalSha256": "fe85dbcae4fe91e6e6f474779fbe5cc8b21dced5da3189a0d901f813b05907fd",
+            "originalBytes": 9187
+          }
+        ],
+        "baseRevision": 0
+      }
+    },
+    {
+      "case": "delivery-21d8814d-d8af-4be7-a141-33ece3df1008",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "21d8814d-d8af-4be7-a141-33ece3df1008",
+        "revision": 1791777000631,
+        "syncedRevision": 1791777000631,
+        "state": "SYNCED",
+        "error": null,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/21d8814d-d8af-4be7-a141-33ece3df1008",
+          "revision": 1791777000631,
+          "contentHash": "f3a7055b4004e29d12288850fd7f94c43f505692800cf36d1835448952c479ed",
+          "folderId": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+          "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2",
+          "files": [
+            {
+              "key": "photo\/eae70d0f-e274-4ba2-9679-fcfbdfeaa438",
+              "sha256": "8ca2db65c0cf2056c7d5fdb7d4013005ca5716aecd3ad0769e235f3eed0cf722",
+              "fileId": "1uxTApbwdQajDksuqu_9pSKOSUcjRxOkZ",
+              "folderId": "1sAjf-OLpwuFnHh_qzcVL_LGgGH8s4ja5",
+              "requestedPath": "ENTRADA\/F_ebe4b75ec1a30781.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/ENTRADA\/F_ebe4b75ec1a30781.jpg"
+            },
+            {
+              "key": "photo\/66044bfe-7613-4156-b206-ff023f07b8b7",
+              "sha256": "39e2cf2f289b3c4fb449f0137a82b857c4e6489e1765ac312138b6c5c4f91ee8",
+              "fileId": "13MWf_d3hI0cUlCLTD736KX_ZVy4sWrB9",
+              "folderId": "1MsI9U_8t-gQOnu8Y80hcGfjWK8o93jG6",
+              "requestedPath": "SALIDA\/F_47545b4c25eb8a5b.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/SALIDA\/F_47545b4c25eb8a5b.jpg"
+            },
+            {
+              "key": "metadata",
+              "sha256": "a90e470c4ec7c91a60c0567c293bad534f8d521bb00b2948e19a3f5078d9dc2d",
+              "fileId": "1feAkIhFPQCqLbBnSREK6gNcp5CS3uSLM",
+              "folderId": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-18",
+              "fileId": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-18.xlsx",
+              "sha256": "7f4390792f0b466ed42624152fa3f20a6157c2744624018b4aa96dcad38b0f6e",
+              "recordIds": [
+                "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+                "21d8814d-d8af-4be7-a141-33ece3df1008"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": false,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        },
+        "photos": [
+          {
+            "photoId": "eae70d0f-e274-4ba2-9679-fcfbdfeaa438",
+            "category": "CULVERT_INLET",
+            "order": 1,
+            "fileId": "1uxTApbwdQajDksuqu_9pSKOSUcjRxOkZ",
+            "originalSha256": "17754aba6ad1329091d2f2ce2cca4222497f57aa8563a560ab2d466f5882d87e",
+            "originalBytes": 8787
+          },
+          {
+            "photoId": "66044bfe-7613-4156-b206-ff023f07b8b7",
+            "category": "CULVERT_OUTLET",
+            "order": 2,
+            "fileId": "13MWf_d3hI0cUlCLTD736KX_ZVy4sWrB9",
+            "originalSha256": "e185fc7603a0c703d9e91a469d2fc554a462eba2525edc79775c49da2b0cef41",
+            "originalBytes": 9170
+          }
+        ],
+        "baseRevision": 0
+      }
+    },
+    {
+      "case": "delivery-6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+        "revision": 1791777079065,
+        "syncedRevision": 1791777079065,
+        "state": "SYNCED",
+        "error": null,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+          "revision": 1791777079065,
+          "contentHash": "4e904a2d24e1d8929749a8938ace6ab125fde373393d466c0c7a7a92b30aa23d",
+          "folderId": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+          "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1",
+          "files": [
+            {
+              "key": "photo\/337ca20c-c40a-401c-bd22-61a44bcd64cc",
+              "sha256": "4d154db73de7c92fa7fafe3adcd68a0a064c97f8defeb9a407dbf2b87b519971",
+              "fileId": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+              "folderId": "1IRr-rUXCJ5MtxAMeZtKDQ_kifFcRoSXq",
+              "requestedPath": "ENTRADA\/F_d4df6bf44c810344.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/ENTRADA\/F_d4df6bf44c810344.jpg"
+            },
+            {
+              "key": "photo\/d9517d4a-e9e4-4180-845f-337f2c25e8ec",
+              "sha256": "d0610062cf8dda5174e3ca31cf0ae4e6093fe1a1010a719641ffbd4872dd59b0",
+              "fileId": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+              "folderId": "19z3En43vPnAJqFElkHEwnSO5Gn4Rs4WR",
+              "requestedPath": "SALIDA\/F_f480ed6faf078a39.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/SALIDA\/F_f480ed6faf078a39.jpg"
+            },
+            {
+              "key": "metadata",
+              "sha256": "e01ea14582170987ce3505d427a1de3098909ffeadecdac441200fc4a4750d2e",
+              "fileId": "1RycD2xaoL8nn2hnIs45FBZ6OoAkYl648",
+              "folderId": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-18",
+              "fileId": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-18.xlsx",
+              "sha256": "82c69178b0e07099aee8ea2ef3add71b05258e0590e9456f88488d65d1c4c258",
+              "recordIds": [
+                "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+                "21d8814d-d8af-4be7-a141-33ece3df1008"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": false,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        },
+        "photos": [
+          {
+            "photoId": "337ca20c-c40a-401c-bd22-61a44bcd64cc",
+            "category": "CULVERT_INLET",
+            "order": 1,
+            "fileId": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+            "originalSha256": "eb9ffcdcd79f7d063672e484c5ef27ed78f6d591f9860bdd74dd6d1560841dc1",
+            "originalBytes": 8790
+          },
+          {
+            "photoId": "d9517d4a-e9e4-4180-845f-337f2c25e8ec",
+            "category": "CULVERT_OUTLET",
+            "order": 2,
+            "fileId": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+            "originalSha256": "fe85dbcae4fe91e6e6f474779fbe5cc8b21dced5da3189a0d901f813b05907fd",
+            "originalBytes": 9187
+          }
+        ],
+        "baseRevision": 1791776926279
+      }
+    },
+    {
+      "case": "edit-same-identity",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+        "priorRevision": 1791776926279,
+        "revision": 1791777079065
+      }
+    },
+    {
+      "case": "delivery-21d8814d-d8af-4be7-a141-33ece3df1008",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "21d8814d-d8af-4be7-a141-33ece3df1008",
+        "revision": 1791777130552,
+        "syncedRevision": 1791777130552,
+        "state": "SYNCED",
+        "error": null,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/21d8814d-d8af-4be7-a141-33ece3df1008",
+          "revision": 1791777130552,
+          "contentHash": "6fe2f98645dfaf901f505b6ea7209e9b26b8b7449ea75217a646e4341d383ad1",
+          "folderId": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+          "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2",
+          "files": [
+            {
+              "key": "photo\/eae70d0f-e274-4ba2-9679-fcfbdfeaa438",
+              "sha256": "8ca2db65c0cf2056c7d5fdb7d4013005ca5716aecd3ad0769e235f3eed0cf722",
+              "fileId": "1uxTApbwdQajDksuqu_9pSKOSUcjRxOkZ",
+              "folderId": "1sAjf-OLpwuFnHh_qzcVL_LGgGH8s4ja5",
+              "requestedPath": "ENTRADA\/F_ebe4b75ec1a30781.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/ENTRADA\/F_ebe4b75ec1a30781.jpg"
+            },
+            {
+              "key": "photo\/66044bfe-7613-4156-b206-ff023f07b8b7",
+              "sha256": "39e2cf2f289b3c4fb449f0137a82b857c4e6489e1765ac312138b6c5c4f91ee8",
+              "fileId": "13MWf_d3hI0cUlCLTD736KX_ZVy4sWrB9",
+              "folderId": "1MsI9U_8t-gQOnu8Y80hcGfjWK8o93jG6",
+              "requestedPath": "SALIDA\/F_47545b4c25eb8a5b.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/SALIDA\/F_47545b4c25eb8a5b.jpg"
+            },
+            {
+              "key": "metadata",
+              "sha256": "01fb9696169c2311841d9919f632a2f4ad7c8a36701202e9f78976752cf1986a",
+              "fileId": "1feAkIhFPQCqLbBnSREK6gNcp5CS3uSLM",
+              "folderId": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-18",
+              "fileId": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-18.xlsx",
+              "sha256": "e9ae91601b36ab297e196d713a0523151e55f8f72a417284c212a70365f2d8f3",
+              "recordIds": [
+                "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+                "21d8814d-d8af-4be7-a141-33ece3df1008"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": true,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        },
+        "photos": [
+          {
+            "photoId": "eae70d0f-e274-4ba2-9679-fcfbdfeaa438",
+            "category": "CULVERT_INLET",
+            "order": 1,
+            "fileId": "1uxTApbwdQajDksuqu_9pSKOSUcjRxOkZ",
+            "originalSha256": "17754aba6ad1329091d2f2ce2cca4222497f57aa8563a560ab2d466f5882d87e",
+            "originalBytes": 8787
+          },
+          {
+            "photoId": "66044bfe-7613-4156-b206-ff023f07b8b7",
+            "category": "CULVERT_OUTLET",
+            "order": 2,
+            "fileId": "13MWf_d3hI0cUlCLTD736KX_ZVy4sWrB9",
+            "originalSha256": "e185fc7603a0c703d9e91a469d2fc554a462eba2525edc79775c49da2b0cef41",
+            "originalBytes": 9170
+          }
+        ],
+        "baseRevision": 1791777000631
+      }
+    },
+    {
+      "case": "lost-real-ack-retry",
+      "result": "APROBADO REAL",
+      "detail": {
+        "controlledClientLoss": true,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/21d8814d-d8af-4be7-a141-33ece3df1008",
+          "revision": 1791777130552,
+          "contentHash": "6fe2f98645dfaf901f505b6ea7209e9b26b8b7449ea75217a646e4341d383ad1",
+          "folderId": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+          "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2",
+          "files": [
+            {
+              "key": "photo\/eae70d0f-e274-4ba2-9679-fcfbdfeaa438",
+              "sha256": "8ca2db65c0cf2056c7d5fdb7d4013005ca5716aecd3ad0769e235f3eed0cf722",
+              "fileId": "1uxTApbwdQajDksuqu_9pSKOSUcjRxOkZ",
+              "folderId": "1sAjf-OLpwuFnHh_qzcVL_LGgGH8s4ja5",
+              "requestedPath": "ENTRADA\/F_ebe4b75ec1a30781.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/ENTRADA\/F_ebe4b75ec1a30781.jpg"
+            },
+            {
+              "key": "photo\/66044bfe-7613-4156-b206-ff023f07b8b7",
+              "sha256": "39e2cf2f289b3c4fb449f0137a82b857c4e6489e1765ac312138b6c5c4f91ee8",
+              "fileId": "13MWf_d3hI0cUlCLTD736KX_ZVy4sWrB9",
+              "folderId": "1MsI9U_8t-gQOnu8Y80hcGfjWK8o93jG6",
+              "requestedPath": "SALIDA\/F_47545b4c25eb8a5b.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/SALIDA\/F_47545b4c25eb8a5b.jpg"
+            },
+            {
+              "key": "metadata",
+              "sha256": "01fb9696169c2311841d9919f632a2f4ad7c8a36701202e9f78976752cf1986a",
+              "fileId": "1feAkIhFPQCqLbBnSREK6gNcp5CS3uSLM",
+              "folderId": "1ThdhYYAcs5hzVlUMdcRyS5TV0fKXJazV",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 2\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-18",
+              "fileId": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-18.xlsx",
+              "sha256": "e9ae91601b36ab297e196d713a0523151e55f8f72a417284c212a70365f2d8f3",
+              "recordIds": [
+                "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+                "21d8814d-d8af-4be7-a141-33ece3df1008"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": true,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        }
+      }
+    },
+    {
+      "case": "delivery-6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+        "revision": 1791777214558,
+        "syncedRevision": 1791777214558,
+        "state": "SYNCED",
+        "error": null,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+          "revision": 1791777214558,
+          "contentHash": "739a87c58ba59d1a9c963d232ddb2d072e2f567ad4dbca58dd97074be1a20fff",
+          "folderId": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+          "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1",
+          "files": [
+            {
+              "key": "photo\/337ca20c-c40a-401c-bd22-61a44bcd64cc",
+              "sha256": "4d154db73de7c92fa7fafe3adcd68a0a064c97f8defeb9a407dbf2b87b519971",
+              "fileId": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+              "folderId": "1IRr-rUXCJ5MtxAMeZtKDQ_kifFcRoSXq",
+              "requestedPath": "ENTRADA\/F_d4df6bf44c810344.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/ENTRADA\/F_d4df6bf44c810344.jpg"
+            },
+            {
+              "key": "photo\/d9517d4a-e9e4-4180-845f-337f2c25e8ec",
+              "sha256": "d0610062cf8dda5174e3ca31cf0ae4e6093fe1a1010a719641ffbd4872dd59b0",
+              "fileId": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+              "folderId": "19z3En43vPnAJqFElkHEwnSO5Gn4Rs4WR",
+              "requestedPath": "SALIDA\/F_f480ed6faf078a39.jpg",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/SALIDA\/F_f480ed6faf078a39.jpg"
+            },
+            {
+              "key": "metadata",
+              "sha256": "fdfa6b1a86dbe400996261a1dd7ba65b157e16055331ebfebd688f9367657e01",
+              "fileId": "1RycD2xaoL8nn2hnIs45FBZ6OoAkYl648",
+              "folderId": "1RaHw4dsHeJ6Psn4gVobLF4ISCv1oTVyr",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/ALCANTARILLAS\/ALCANTARILLA 1\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-18",
+              "fileId": "1tv1viCM-jbB7-L3rp77xevTZ34qalTtn",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-18.xlsx",
+              "sha256": "9d357b2a301ea655edb8936b0fa4322b53aa19b126747435b8ef3798457f4015",
+              "recordIds": [
+                "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+                "21d8814d-d8af-4be7-a141-33ece3df1008"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": false,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        },
+        "photos": [
+          {
+            "photoId": "337ca20c-c40a-401c-bd22-61a44bcd64cc",
+            "category": "CULVERT_INLET",
+            "order": 1,
+            "fileId": "1dQys05jjfwni-3X0ebruitvi1zzPaEHQ",
+            "originalSha256": "eb9ffcdcd79f7d063672e484c5ef27ed78f6d591f9860bdd74dd6d1560841dc1",
+            "originalBytes": 8790
+          },
+          {
+            "photoId": "d9517d4a-e9e4-4180-845f-337f2c25e8ec",
+            "category": "CULVERT_OUTLET",
+            "order": 2,
+            "fileId": "1DtLCiOaUYP7ZbZOForTGxtwZJ4Ye3vEL",
+            "originalSha256": "fe85dbcae4fe91e6e6f474779fbe5cc8b21dced5da3189a0d901f813b05907fd",
+            "originalBytes": 9187
+          }
+        ],
+        "baseRevision": 1791777079065
+      }
+    },
+    {
+      "case": "concurrent-real-conflict",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+        "state": "CONFLICT",
+        "error": "Conflicto de revisiones (BASE_REVISION_CONFLICT; base 1791777079065; remota 1791777214558). Edición local conservada; no se sobrescribió el servidor. Requiere conciliación antes de reenviar.",
+        "serverReply": {
+          "ok": false,
+          "code": "BASE_REVISION_CONFLICT",
+          "retryable": false,
+          "remoteRevision": 1791777214558
+        }
+      }
+    },
+    {
+      "case": "offline-room-reopen",
+      "result": "APROBADO LOCAL",
+      "detail": {
+        "recordId": "53524c18-69d3-4ede-966c-32da68f11642",
+        "networkDisabled": false,
+        "note": "No drain before reopen; physical airplane mode pending"
+      }
+    },
+    {
+      "case": "delivery-53524c18-69d3-4ede-966c-32da68f11642",
+      "result": "APROBADO REAL",
+      "detail": {
+        "recordId": "53524c18-69d3-4ede-966c-32da68f11642",
+        "revision": 1791777296307,
+        "syncedRevision": 1791777296307,
+        "state": "SYNCED",
+        "error": null,
+        "ack": {
+          "ok": true,
+          "syncProtocol": 3,
+          "pathVersion": 4,
+          "key": "SIC\/53524c18-69d3-4ede-966c-32da68f11642",
+          "revision": 1791777296307,
+          "contentHash": "4702b13fccee97e1cce0541585fe8deb435fb3e69a607b3f11587e4b2ddaa90e",
+          "folderId": "1vh6fizYLHtRwUIhZ8c8SLWfoE-AT_vP-",
+          "logicalPath": "PE-22A\/FAJAS_CALZADA\/FAJA 1",
+          "files": [
+            {
+              "key": "metadata",
+              "sha256": "0082bd3d7417f398fb2e40832d56e0911e265421a56bf6d3b821a0713c5e407b",
+              "fileId": "1wocJ5Sxyho2dhetucwx7xwWNWk_MTaNz",
+              "folderId": "1vh6fizYLHtRwUIhZ8c8SLWfoE-AT_vP-",
+              "requestedPath": "metadata.json",
+              "logicalPath": "PE-22A\/FAJAS_CALZADA\/FAJA 1\/metadata.json"
+            }
+          ],
+          "sicFiles": [
+            {
+              "format": "SIC-08",
+              "fileId": "1TqTHGZGdjWhxirRo81Frlk2SgiiIlwzX",
+              "folderId": "1JNHT1op8sNPFYbf3LLSHUenJ2xkWrqi8",
+              "logicalPath": "PE-22A\/EXCEL_SIC\/SIC-08.xlsx",
+              "sha256": "bdaf6b382a9cabe9976ba2143b7e15f26645ebb0dcfe1c4e43e88c4b435c8df3",
+              "recordIds": [
+                "53524c18-69d3-4ede-966c-32da68f11642"
+              ]
+            }
+          ],
+          "retainedSicFormats": [],
+          "alreadyExists": false,
+          "technicalDeliveryStatus": "DELIVERED",
+          "georeferencingStatus": "PENDING_EXTERNAL",
+          "externalGeoreferencingStatus": "PENDING",
+          "orderSource": "CONTRACTUAL_PR"
+        },
+        "photos": [],
+        "baseRevision": 0
+      }
+    }
+  ],
+  "runId": "9ee7fdb5-7ead-476d-8330-da8ae2582c87",
+  "records": {
+    "operatorA": "6dc3301b-bda9-4432-8f62-b6efe38ef2b1",
+    "operatorB": "21d8814d-d8af-4be7-a141-33ece3df1008",
+    "otherFormat": "53524c18-69d3-4ede-966c-32da68f11642"
+  },
+  "completed": true
+}

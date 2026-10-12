@@ -1,0 +1,30 @@
+{
+  "dateLocal": "2026-10-11",
+  "timezone": "America/Lima",
+  "branch": "codex/integracion-real-8B",
+  "base8A": "29ae399cb09273a8e3aa1fea694fea97038c3fd4",
+  "protectedPrompt7": "28f9549813b0bf5753c70d4967970fd10e0f74af",
+  "runtime": "fresh Android emulator API 35; separate independent Room stores",
+  "physicalTabletModified": false,
+  "productionSourceChanged": false,
+  "appsScriptChangedOrDeployed": false,
+  "remoteFilesDeleted": false,
+  "attempts": [
+    {"case":"connected instrumentation compile initial","status":"FALLIDO","cause":"androidTest cannot access internal sha256 helper; fixed with test-local digest"},
+    {"case":"connected instrumentation compile corrected","status":"APROBADO LOCAL"},
+    {"case":"initial real instrumentation","tests":2,"passed":1,"failed":1,"authRealPassed":true,"sicRemoteDeliveryPosts":0,"status":"FALLIDO","cause":"fixture duplicated typed SIC-18 detail during draft finalization, Room ABORT; auth evidence overwrote shared filename in older installed test APK"},
+    {"case":"SIC with corrected evidence filename","tests":1,"passed":0,"failed":1,"sicRemoteDeliveryPosts":0,"status":"FALLIDO","cause":"same fixture cause; saved sanitized partial evidence"},
+    {"case":"SIC real fixture corrected using actual generic SIC08 draft repository","tests":1,"passed":1,"failed":0,"seconds":427.372,"status":"APROBADO REAL","evidence":"evidencia/ANDROID_REAL.json"},
+    {"case":"offline create with actual Android connectivity disabled","tests":1,"passed":1,"failed":0,"seconds":6.185,"status":"APROBADO REAL","evidence":"evidencia/OFFLINE_WORKMANAGER_REAL.json"},
+    {"case":"offline reopen after force-stop and existing WorkManager recovery","tests":1,"passed":1,"failed":0,"seconds":103.809,"status":"APROBADO REAL","evidence":"evidencia/OFFLINE_WORKMANAGER_REAL.json"},
+    {"case":"SCAP actual Android template and photo bundle selected methods","tests":2,"passed":2,"failed":0,"seconds":11.136,"status":"APROBADO LOCAL","methods":["ScapAndroidExportTest.exportsAndReopensRealTemplateOnAndroid","ScapDriveDeviceTest.realAndroidBundleAndAckTransaction"],"remoteUpload":false},
+    {"case":"PavementReportTest.rendersSampleReportAndExcelWithoutCurves","tests":1,"passed":1,"failed":0,"errors":0,"seconds":8.304,"status":"APROBADO LOCAL","runtime":"Robolectric native graphics","remoteUpload":false},
+    {"case":"host actual HTTP staging negative hash and protocol","tests":2,"passed":2,"failed":0,"status":"APROBADO REAL","evidence":"evidencia/NEGATIVAS_HTTP.json"},
+    {"case":"independent remote file readers","photos":5,"xlsxFormats":2,"passed":true,"status":"APROBADO REAL","notes":"reader expectations corrected for numeric 12.0 and SIC08 Ruta heading; no backend rerun or remote modification"},
+    {"case":"final Debug validation compile","status":"APROBADO LOCAL","seconds":11,"privateFieldsEmpty":["DRIVE_API_TOKEN","DRIVE_WEB_APP_URL","SERVER_BASE_URL"],"evidence":"evidencia/APK_VALIDACION.json"}
+  ],
+  "distinctCompletedAndroidAndLocalTestCases":7,
+  "remainingProductionDefectDemonstrated":false,
+  "productionReady":false,
+  "fullSuiteExecuted":false
+}

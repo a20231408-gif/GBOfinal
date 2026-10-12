@@ -1,0 +1,34 @@
+[
+  {
+    "filename": "app-debug.apk",
+    "path": "C:\\PROYECTOS\\GBO_FINAL\\GBOfinal\\app\\build\\outputs\\apk\\debug\\app-debug.apk",
+    "package": "com.tuempresa.inventariovial",
+    "versionCode": 16,
+    "versionName": "1.4.2",
+    "minSdk": "26",
+    "targetSdk": "37",
+    "certificateSha256": [
+      "b9fe89ed4ea039befde6a01c341559520e0739fe834f4222f4f185c5fc8db0ec"
+    ],
+    "certificateSha1": [
+      "4e8c9475db3d9becab56ecabdfb63c3dc10dc8ef"
+    ],
+    "certificateSubject": "C=US, O=Android, CN=Android Debug",
+    "signatureSchemes": {
+      "v2": true,
+      "v4": false,
+      "v1": false,
+      "v3": false,
+      "v3.1": false
+    },
+    "verified": true,
+    "zipAligned": true,
+    "pageAligned16KiB": true,
+    "isSplit": false,
+    "isTest": false,
+    "debuggable": true,
+    "bytes": 40579492,
+    "apkSha256": "64a7e37cf81b59a2515d76443b5011e18f7b39d8aaec79102a4a479f99740d82",
+    "deviceGroupKnown": "UNKNOWN"
+  }
+]

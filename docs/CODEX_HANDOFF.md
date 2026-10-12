@@ -1,4 +1,20 @@
-# Estado vigente — Prompt 8A
+# Estado vigente — Prompt 8B
+
+Rama `codex/integracion-real-8B`, creada exclusivamente desde 8A publicado `29ae399cb09273a8e3aa1fea694fea97038c3fd4`; 7/8A/main protegidos. El checkpoint es la punta publicada de 8B; consultar `git rev-parse origin/codex/integracion-real-8B`. No se cambió código productivo ni Apps Script: dos pruebas Android opt-in y evidencia/documentación.
+
+V4 real aprobado en emulador nuevo API 35: cuatro UUID SIC ficticios en PE-22A, cinco JPEG, SIC-18 con dos filas/13 columnas y SIC-08 con dos filas, lectura independiente de bytes/OOXML y hashes ACK. Ediciones conservan UUID/carpeta, dos bases Room independientes consolidan sin sobrescribir al otro, replay de ACK perdido es idempotente y conflicto conserva datos locales. Offline real con conectividad desactivada y force-stop: misma revisión/foto persiste y AutomaticSyncWorker confirma automáticamente tras habilitar red, sin drenaje manual. Dos casos iniciales SIC fallaron por fixture (sin POST de entrega), corregidos solo en androidTest; conservar detalle por intento. SCAP Android 2/2 local y pavimentos PDF/XLSX 1/1 local; no remotos/UI física acreditados.
+
+Debug conectado probado contra configuración local real, privado en output ignorado. Debug de validación final compilado sin token/URLs, SHA `64a7e37cf81b59a2515d76443b5011e18f7b39d8aaec79102a4a479f99740d82`. Firma Debug y applicationId/versionCode 16/Room 18 sin cambios. SM-T733 confirmada secundaria por el usuario, pero no modificada: firma instalada incompatible con Debug local. No borrar datos para instalar.
+
+Token ausente/incorrecto, hash erróneo y staging incompatible rechazados realmente. Servicio de usuarios sin configuración local; token histórico no disponible y revocación individual de tablet no verificada con token compartido. Pendientes físicos: cámara/importación, abrir/compartir, navegación y rotación, SCAP/pavimentos remotos y variantes de edición en vuelo/resolución de conflicto. No declarar producción segura. No eliminar archivos de Drive, registros internos o staging. No Prompt 9 ni despliegue.
+
+[Entrega](ENTREGA_8B.md), [matriz](MATRIZ_VALIDACION_8B.md), [procedimiento](PRUEBAS_REALES_DRIVE_8B.md), [archivos remotos conservados](integracion-real-8b/ARCHIVOS_DRIVE.md), [validación por intento](integracion-real-8b/VALIDACION.json).
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
+# Estado anterior — Prompt 8A
 
 Prompt 7 protegido y publicado: `codex/flujo-operador-7`, hash local/remoto `28f9549813b0bf5753c70d4967970fd10e0f74af`, árbol limpio antes de crear `codex/integracion-android-8A` exclusivamente desde ese commit. El hash final de 8A se comprueba contra la punta remota tras commit/push y se entrega al cerrar el encargo. No fusionar main.
 
