@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-12T06:46:06.649Z" hostname="JULIAN" time="33.492">
+  <properties/>
+  <testcase name="scapOrderDestinationOpensOnlyItsInspectionAndExistingSections" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="24.412"/>
+  <testcase name="landscapeActionsRemainReachableAndReturnToHistory" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="2.783"/>
+  <testcase name="detailNavigatesSheetGalleryExcelAndBackUsingSameUuid" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="2.858"/>
+  <testcase name="completingDraftOpensItsDetailAndSchedulesAutomaticDelivery" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="3.408"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

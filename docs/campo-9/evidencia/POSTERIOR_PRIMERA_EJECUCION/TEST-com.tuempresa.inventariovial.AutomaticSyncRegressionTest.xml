@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" tests="21" skipped="0" failures="0" errors="0" timestamp="2026-10-12T06:44:07.214Z" hostname="JULIAN" time="117.164">
+  <properties/>
+  <testcase name="unconfirmedScapWarningsCannotQueue" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="54.231"/>
+  <testcase name="staleAckCannotHideNewerEdit" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="5.191"/>
+  <testcase name="presentationCoversOfflineErrorsAndConfigurations" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.321"/>
+  <testcase name="sicProjectionDoesNotInventRiverFromNewBridgeName" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="1.689"/>
+  <testcase name="validatedSicQueuesInSameLocalTransactionWithoutNetwork" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.197"/>
+  <testcase name="draftSicCreatesNoDefinitiveQueue" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.138"/>
+  <testcase name="outboxSurvivesDatabaseReopen" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="2.113"/>
+  <testcase name="duplicateClosureSchedulesOneStableRevision" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.114"/>
+  <testcase name="pngBecomesRealJpegWithoutChangingOriginal" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.348"/>
+  <testcase name="sourceRevisionGuardRejectsConcurrentStateChanges" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.296"/>
+  <testcase name="draftAfterSyncKeepsPreviousReceiptAndRequiresClosure" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.133"/>
+  <testcase name="jpegOrientationAndPixelsRemainPreserved" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.132"/>
+  <testcase name="invalidMediaCannotBePreparedAsJpeg" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.096"/>
+  <testcase name="localExportDoesNotAcknowledgeDrive" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.212"/>
+  <testcase name="actualApplicationExportsCreateTraceableFourBridgeFixturesAndRouteSheets" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="2.778"/>
+  <testcase name="editRetainsIdentityAndPreviousAck" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.855"/>
+  <testcase name="confirmedScapClosurePersistsConsent" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="2.581"/>
+  <testcase name="historicalScapReopenNeverAddsNewDefaults" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.273"/>
+  <testcase name="rolledBackValidationCannotLeaveQueuedRecord" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.096"/>
+  <testcase name="newScapBothTypesKeepIndependentAAndBAndExactTemplateCells" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="27.021"/>
+  <testcase name="migrationChainKeepsHistoricalColumns" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="17.041"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PhotoCategories5Test" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-10-12T06:46:42.212Z" hostname="JULIAN" time="55.523">
+  <properties/>
+  <testcase name="bridgeUsesExactlyExistingScapCategories" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.319"/>
+  <testcase name="historicalNullAndGeneralShareOneStableCategoryOrder" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="5.259"/>
+  <testcase name="studsUseEndsOnlyWhenARealSegmentExists" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.813"/>
+  <testcase name="replacementRetainsUuidRemoteIdentityOrderAndOriginalHistory" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.201"/>
+  <testcase name="culvertRetainsKeysAndShared18AIdentity" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.194"/>
+  <testcase name="extraLinearModelsAndFordPhysicalEndsDoNotChangePointLocationContracts" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.081"/>
+  <testcase name="removalPreservesOriginalAndOtherEngineersAndScapPhotographs" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.407"/>
+  <testcase name="recategorizationKeepsIdentityAndRecordsExplicitChange" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.181"/>
+  <testcase name="additiveMigration17To18ValidatesRoomAndKeepsOriginalPhotos" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.749"/>
+  <testcase name="actualAndroidPayloadsIncludeCategoriesMetadataExcelAndNoSib" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="28.915"/>
+  <testcase name="independentFajasAndPointFormatsKeepGeneral" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="12.789"/>
+  <testcase name="replacementDraftSurvivesReopeningWithCategoryAndBaseRevision" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="1.649"/>
+  <testcase name="offlineReopeningRetainsIdsOrderMetadataAndNoDuplicates" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="1.138"/>
+  <testcase name="verticalHasMultiplePanoramicAndElementPhotos" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.652"/>
+  <testcase name="guardwayAllowsMultipleInEachCategory" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.414"/>
+  <testcase name="wallDitchAndTunnelUseActualStartAndEndModels" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.468"/>
+  <testcase name="incompleteDraftCannotDeliverPhotos" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.263"/>
+  <testcase name="badenHasTenIndependentPhotosAcrossThreeCategories" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.452"/>
+  <testcase name="addingPhotosDoesNotRenumberExistingPhotos" classname="com.tuempresa.inventariovial.PhotoCategories5Test" time="0.498"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

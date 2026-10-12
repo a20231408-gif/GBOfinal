@@ -107,7 +107,11 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, onBack: () -> Unit) {
                 item { Text("Ficha completa · consulta",style=MaterialTheme.typography.titleLarge); RecordSheet(s) }
                 item { Button(onClick={page=if(SicFieldFormat.fromCode(r.sicCode)!=null) "TECHNICAL" else "EDIT"},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("EDITAR")} }
             }
-            "PHOTOS" -> item { RecordPhotoSheet(s,db) }
+            "PHOTOS" -> item {
+                Column(Modifier.fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                    RecordPhotoSheet(s,db)
+                }
+            }
             "EDIT" -> {
                 item { Text("Edición del registro original",style=MaterialTheme.typography.titleLarge)
                     Button(onClick={page="TECHNICAL"},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) { Text("Editar ficha técnica y fotografías") }

@@ -27,7 +27,10 @@ import kotlinx.coroutines.withContext
     val bitmap by produceState<Bitmap?>(null,path,maxEdge) {
         value=withContext(Dispatchers.IO) { loadCorrectlyOrientedBitmap(path,maxEdge) }
     }
-    DisposableEffect(bitmap) { onDispose { bitmap?.recycle() } }
+    // The renderer retains ImageBitmap references across composition/frame boundaries.
+    // Reading the delegated state from the old effect's onDispose recycled the NEW
+    // bitmap as soon as decoding completed (null -> bitmap), crashing both review
+    // screens. Let GC release these bounded thumbnails when rendering releases them.
     val image=bitmap
     if(image!=null) Image(image.asImageBitmap(),"Fotografía del elemento",modifier,contentScale=ContentScale.Fit)
     else Box(modifier) { Text("Cargando / fotografía no disponible") }

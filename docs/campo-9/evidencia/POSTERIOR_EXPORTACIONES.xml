@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PhotoDrawing9Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-12T07:44:39.974Z" hostname="JULIAN" time="35.907">
+  <properties/>
+  <testcase name="advancedExportsDrawsSelectedPhoto" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="34.44"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
