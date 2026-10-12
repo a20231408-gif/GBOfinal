@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk=[34],qualifiers="w800dp-h1200dp-mdpi")
+@Config(sdk=[34],application=Application::class,qualifiers="w800dp-h1200dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ScapPendingNavigationTest {
     private var testDb:InventoryDatabase?=null
@@ -33,6 +33,10 @@ class ScapPendingNavigationTest {
     @get:Rule(order=1) val compose=createAndroidComposeRule<androidx.activity.ComponentActivity>()
     @Test fun tappingRealPendingButtonsReachesIdentificationSupportTwoGlobalPhotoAndMetrado() {
         val app=ApplicationProvider.getApplicationContext<Application>()
+        // The isolated Application does not implement the production WorkManager provider.
+        try {androidx.work.WorkManager.getInstance(app)}catch(_:IllegalStateException) {
+            androidx.work.WorkManager.initialize(app,androidx.work.Configuration.Builder().build())
+        }
         val db=Room.inMemoryDatabaseBuilder(app,InventoryDatabase::class.java).build()
         testDb=db
         val catalog=ScapCatalog.load(app);val repo=ScapRepository(db,catalog)
@@ -54,7 +58,9 @@ class ScapPendingNavigationTest {
             val e=initial.elements.last().element
             val photo=initial.photos.single()
             val targets=listOf(
-                issues.first{it.section=="A"&&it.key=="bridgeName"},
+                // The current contract puts category/code in A and singularityName in B.
+                // A fresh inspection has no bridgeCode; bridgeName is no longer an A field.
+                issues.first{it.section=="A"&&it.key=="bridgeCode"},
                 issues.first{it.ownerId==support.id&&it.key=="material"},
                 issues.first{it.ownerId==e.id&&it.key=="globalDescription"},
                 issues.first{it.ownerId==photo.id&&it.key=="photo"},
@@ -72,7 +78,7 @@ class ScapPendingNavigationTest {
                 compose.mainClock.advanceTimeBy(700)
                 compose.waitForIdle()
                 compose.onNodeWithTag("scap:${issue.ownerId}:${issue.key}",useUnmergedTree=true).assertIsDisplayed()
-                val directory=java.io.File("../docs/tablet-admin-stability-scap-evidence/screenshots").apply{mkdirs()}
+                val directory=java.io.File("build/outputs/8a-scap-pending/screenshots").apply{mkdirs()}
                 lateinit var bitmap:android.graphics.Bitmap
                 compose.runOnIdle {
                     val view=compose.activity.window.decorView
@@ -82,7 +88,7 @@ class ScapPendingNavigationTest {
                 java.io.File(directory,"pending_${issue.section}.png").outputStream().use{assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it))}
                 bitmap.recycle()
                 assertEquals(issue.route,c.destination.value!!.second)
-                if(issue.key in setOf("bridgeName","globalDescription","quantity")) {
+                if(issue.key in setOf("bridgeCode","globalDescription","quantity")) {
                     compose.onNode(isFocused() and hasAnyAncestor(hasTestTag("scap:${issue.ownerId}:${issue.key}")),useUnmergedTree=true).assertExists()
                 }
             }

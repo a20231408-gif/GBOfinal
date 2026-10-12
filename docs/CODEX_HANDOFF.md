@@ -1,3 +1,19 @@
+# Estado vigente — Prompt 8A
+
+Prompt 7 protegido y publicado: `codex/flujo-operador-7`, hash local/remoto `28f9549813b0bf5753c70d4967970fd10e0f74af`, árbol limpio antes de crear `codex/integracion-android-8A` exclusivamente desde ese commit. El hash final de 8A se comprueba contra la punta remota tras commit/push y se entrega al cerrar el encargo. No fusionar main.
+
+Regresión SCAP resuelta en el fixture: el catálogo actual no genera A/bridgeName; se usa el pendiente real A/bridgeCode y se inicializa WorkManager para Application aislado. La prueba completa de botones/destinos/foco aprobó; no se alteraron reglas, catálogos, modelos ni navegación SCAP. Primer intento: 3/4 (fallo de preparación WorkManager), selección corregida: 14/14, categorías: 2/2. **19 casos Android distintos aprobados; ningún fallo pendiente al finalizar.** No se repitieron las tres regresiones SCAP aprobadas inicialmente.
+
+Contrato existente syncProtocol 3/pathVersion 4/stableFamilyNumbering true/photoCategoryVersion 1/technicalDeliveryWithoutGps true comprobado localmente. Constructor interno de AutomaticDriveHttp admite inyección de cliente/endpoint/token para interceptar respuestas simuladas; defaults productivos conservados. Siete capacidades incompatibles bloquean todo POST; ocho ACK corruptos no confirman. Se verifican cola automática, borrador, persistencia offline/reapertura, recuperación, revisión/UUID/baseRevision, categorías/referencias y conflictos conservando datos. Mismo worker y outbox.
+
+Debug con `-PgboValidationBuild=true` aprobado; APK excluido de Git, no instalado y sin endpoints/credenciales. SHA `deab6dcc1c14b845a78c0e2bc1a1abf510ca25ca790bfc6323ccbad79dcf9e23`, firma Debug local igual a Prompt 7 (distinta de la histórica), applicationId/versionCode 16 y Room 18 conservados. Apps Script, servicio de usuarios y keystore intactos. No suite completa, auditoría general, Release, prueba remota ni despliegue.
+
+[Entrega 8A](integracion-android-8a/ENTREGA.md), [resultados por intento](integracion-android-8a/VALIDACION.json), [guía preparada para 8B](PRUEBA_INTEGRADA_8B.md). Pendiente del responsable: verificar servidor V4 aislado, preparar Debug configurado e instalar solo en dispositivo secundario/emulador compatible, ejecutar la guía y registrar evidencia física/Drive real. **8A termina al publicar su rama; no iniciar 8B.**
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
 # Estado vigente — Prompt 7, 2026-10-11
 
 Base comprobada: `codex/dashboard-sesion-6` en `c93aa5ad3c729285a56182b964f29cf3ad9b253a`, árbol limpio al inicio. Nueva rama `codex/flujo-operador-7`. El checkpoint de entrega es la punta de esta rama (`git rev-parse HEAD`), con hash entregado después del commit. No fusionar main ni continuar con auditoría final o despliegues.

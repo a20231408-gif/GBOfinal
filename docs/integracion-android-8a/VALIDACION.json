@@ -1,0 +1,214 @@
+{
+  "prompt": "8A",
+  "branch": "codex/integracion-android-8A",
+  "protectedPrompt7": {
+    "branch": "codex/flujo-operador-7",
+    "commit": "28f9549813b0bf5753c70d4967970fd10e0f74af",
+    "remoteHashMatched": true,
+    "initialWorkingTreeClean": true,
+    "pendingPrompt7Files": 0
+  },
+  "finalCommit": "Published branch tip; exact local/remote hash recorded in final delivery after commit",
+  "distinctAndroidCasesPassed": 19,
+  "totalCaseExecutions": 20,
+  "remainingFailedCases": 0,
+  "attempts": [
+    {
+      "name": "scap-initial",
+      "task": ":app:testDebugUnitTest",
+      "validationBuild": true,
+      "filters": [
+        "*ScapPendingNavigationTest*",
+        "*TabletScapIterationTest.bothContractsSeedAllUnsetElementsAndTwoSupportsAndRetainManualAndHiddenValuesAfterReopen",
+        "*AutomaticSyncRegressionTest.unconfirmedScapWarningsCannotQueue",
+        "*AutomaticSyncRegressionTest.confirmedScapClosurePersistsConsent"
+      ],
+      "result": "FAILED",
+      "cause": "After repairing obsolete A/bridgeName target, isolated test Application had no WorkManager provider/initialization.",
+      "cases": [
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+          "name": "unconfirmedScapWarningsCannotQueue",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+          "name": "confirmedScapClosurePersistsConsent",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.ScapPendingNavigationTest",
+          "name": "tappingRealPendingButtonsReachesIdentificationSupportTwoGlobalPhotoAndMetrado",
+          "result": "FAILED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.TabletScapIterationTest",
+          "name": "bothContractsSeedAllUnsetElementsAndTwoSupportsAndRetainManualAndHiddenValuesAfterReopen",
+          "result": "PASSED"
+        }
+      ]
+    },
+    {
+      "name": "focused-corrected",
+      "tasks": [
+        ":app:testDebugUnitTest",
+        ":app:assembleDebug"
+      ],
+      "validationBuild": true,
+      "filters": [
+        "*ScapPendingNavigationTest*",
+        "*AutomaticSyncWithoutGpsTest.v4HttpCapabilities*",
+        "*AutomaticSyncWithoutGpsTest.wrongAckProtocol*",
+        "*AutomaticSyncWithoutGpsTest.offlineFailure*",
+        "*AutomaticSyncWithoutGpsTest.incompleteDrafts*",
+        "*AutomaticSyncWithoutGpsTest.lostResponseRetries*",
+        "*AutomaticSyncWithoutGpsTest.workManagerKeepsOffline*",
+        "*AutomaticSyncRegressionTest.validatedSicQueues*",
+        "*AutomaticSyncRegressionTest.duplicateClosure*",
+        "*SyncedRecordEdits2BTest.editDuringUpload*",
+        "*SyncedRecordEdits2BTest.lostAckThenEdit*",
+        "*SyncedRecordEdits2BTest.operatorConflict*",
+        "*DriveFamilies2ATest.allSecondaryClasses*",
+        "*DriveFamilies2ATest.categoriesUseRealCodes*"
+      ],
+      "result": "BUILD SUCCESSFUL",
+      "cases": [
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+          "name": "validatedSicQueuesInSameLocalTransactionWithoutNetwork",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+          "name": "duplicateClosureSchedulesOneStableRevision",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+          "name": "wrongAckProtocolIdentityRevisionAndPathsNeverConfirmCurrentDelivery",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+          "name": "incompleteDraftsAreNeverDeliveredEvenWithOldGpsError",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+          "name": "v4HttpCapabilitiesRejectEachIncompatibleResponseBeforeAnyPost",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+          "name": "offlineFailurePersistsSnapshotAndSameIdentityAcrossReopenAndRecovery",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+          "name": "workManagerKeepsOfflineDrainEnqueuedWithNetworkConstraintAndSafeBackoff",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest",
+          "name": "lostResponseRetriesSameRevisionAndIdsWithoutCreatingAnotherDelivery",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.DriveFamilies2ATest",
+          "name": "categoriesUseRealCodesAndAllowFutureKeysWithoutGuessingFileNames",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.DriveFamilies2ATest",
+          "name": "allSecondaryClassesHaveAnExplicitFamilyAndNoSib",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.ScapPendingNavigationTest",
+          "name": "tappingRealPendingButtonsReachesIdentificationSupportTwoGlobalPhotoAndMetrado",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+          "name": "lostAckThenEditReplaysExactPredecessorWithoutConflictingWithOwnDelivery",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+          "name": "editDuringUploadRetainsLateAckAsBaseAndThenDeliversNewerRevision",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+          "name": "operatorConflictPersistsLocalEditAndCannotBeClearedByAnotherSave",
+          "result": "PASSED"
+        }
+      ]
+    },
+    {
+      "name": "photo-categories",
+      "task": ":app:testDebugUnitTest",
+      "validationBuild": true,
+      "filters": [
+        "*PhotoCategories5Test.recategorizationKeepsIdentityAndRecordsExplicitChange",
+        "*PhotoCategories5Test.historicalNullAndGeneralShareOneStableCategoryOrder"
+      ],
+      "result": "BUILD SUCCESSFUL",
+      "cases": [
+        {
+          "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+          "name": "historicalNullAndGeneralShareOneStableCategoryOrder",
+          "result": "PASSED"
+        },
+        {
+          "class": "com.tuempresa.inventariovial.PhotoCategories5Test",
+          "name": "recategorizationKeepsIdentityAndRecordsExplicitChange",
+          "result": "PASSED"
+        }
+      ]
+    }
+  ],
+  "simulations": {
+    "incompatibleCapabilityResponses": 7,
+    "compatibleCapabilityResponse": 1,
+    "corruptAckVariants": 8,
+    "httpResponses": "OkHttp interceptor, no real network",
+    "offline": "IOException before simulated commit plus Room reopen",
+    "workers": "Existing network constraint/backoff regression"
+  },
+  "apk": {
+    "path": "app/build/outputs/apk/debug/app-debug.apk",
+    "sha256": "deab6dcc1c14b845a78c0e2bc1a1abf510ca25ca790bfc6323ccbad79dcf9e23",
+    "applicationId": "com.tuempresa.inventariovial",
+    "versionCode": 16,
+    "versionName": "1.4.2",
+    "certificateSha256": "b9fe89ed4ea039befde6a01c341559520e0739fe834f4222f4f185c5fc8db0ec",
+    "signatureVerified": true,
+    "installed": false,
+    "configuredForRemoteDrive": false
+  },
+  "preserved": [
+    "google-apps-script",
+    "user-service",
+    "Room 18",
+    "applicationId",
+    "versionCode",
+    "keystore",
+    "Prompt 7 branch"
+  ],
+  "exclusions": [
+    "full test suite",
+    "backend tests",
+    "general audit",
+    "Release",
+    "APK install",
+    "Apps Script deployment",
+    "real Drive requests",
+    "8B execution"
+  ],
+  "pending": [
+    "Compatible isolated V4 deployment confirmation by server owner",
+    "Secondary device/emulator Debug with authorized test configuration",
+    "Physical and remote checklist docs/PRUEBA_INTEGRADA_8B.md"
+  ]
+}

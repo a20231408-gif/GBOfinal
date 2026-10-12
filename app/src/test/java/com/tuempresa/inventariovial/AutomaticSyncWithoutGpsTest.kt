@@ -38,12 +38,15 @@ class AutomaticSyncWithoutGpsTest {
     }
     private class Backend:AutomaticDriveTransport {
         var posts=0;var mutations=0;var loseFirstAck=false;var invalidAck=false;var capable=true
+        var offline=false
+        var alterAck:((JSONObject)->Unit)?=null
         val receipts=mutableMapOf<String,JSONObject>()
         override fun supportsV3()=true
         override fun supportsFamilyPaths()=true
         override fun supportsTechnicalDeliveryWithoutGps()=capable
         override fun post(payload:JSONObject):JSONObject {
             posts++
+            if(offline)throw IOException("Simulated offline connection before server commit")
             val key=payload.getString("key")+"/"+payload.getLong("revision")
             val receipt=receipts.getOrPut(key) {
                 mutations++
@@ -71,10 +74,113 @@ class AutomaticSyncWithoutGpsTest {
                     .put("externalGeoreferencingStatus","PENDING")
             }
             if(loseFirstAck) {loseFirstAck=false;throw IOException("Response lost after server commit")}
-            return JSONObject(receipt.toString()).apply {if(invalidAck)getJSONArray("files").getJSONObject(0).remove("fileId")}
+            return JSONObject(receipt.toString()).apply {
+                if(invalidAck)getJSONArray("files").getJSONObject(0).remove("fileId")
+                alterAck?.invoke(this)
+            }
         }
     }
     private suspend fun drain(d:InventoryDatabase,b:Backend)=AutomaticSyncDrain.run(context,d,{b},null)
+
+    @Test fun v4HttpCapabilitiesRejectEachIncompatibleResponseBeforeAnyPost()=runBlocking(Dispatchers.IO) {
+        val compatible=JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4)
+            .put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("technicalDeliveryWithoutGps",true)
+        val incompatible=listOf<(JSONObject)->Unit>(
+            {it.put("ok",false)}, {it.put("syncProtocol",2)}, {it.put("pathVersion",3)},
+            {it.put("stableFamilyNumbering",false)}, {it.put("photoCategoryVersion",0)},
+            {it.put("technicalDeliveryWithoutGps",false)}, {it.remove("photoCategoryVersion")}
+        )
+        for((n,change) in incompatible.withIndex())database().use {d->
+            save(d,"capability-$n");photo(d,"capability-$n")
+            val before=d.automaticSyncDao().all().single()
+            val response=JSONObject(compatible.toString()).apply(change)
+            var gets=0;var posts=0
+            val client=okhttp3.OkHttpClient.Builder().addInterceptor {chain->
+                if(chain.request().method=="GET")gets++ else posts++
+                okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1)
+                    .code(200).message("Simulated capabilities")
+                    .body(okhttp3.ResponseBody.create(null,response.toString())).build()
+            }.build()
+            val transport=AutomaticDriveHttp(client,"https://drive-test.invalid/exec","")
+            assertFalse(AutomaticSyncDrain.run(context,d,{transport},null))
+            val pending=d.automaticSyncDao().all().single()
+            assertEquals("UNCONFIGURED",pending.state);assertEquals(before.key,pending.key)
+            assertEquals(before.revision,pending.revision);assertEquals(0L,pending.syncedRevision)
+            assertNull(pending.receiptJson);assertFalse(SyncIntentPresentation.confirmed(pending))
+            assertEquals(1,gets);assertEquals(0,posts)
+            assertEquals("PENDING",d.inventoryDao().photoById("photo-capability-$n")!!.syncStatus)
+        }
+        val client=okhttp3.OkHttpClient.Builder().addInterceptor {chain->
+            okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1)
+                .code(200).message("Simulated compatible capabilities")
+                .body(okhttp3.ResponseBody.create(null,compatible.toString())).build()
+        }.build()
+        val transport=AutomaticDriveHttp(client,"https://drive-test.invalid/exec","")
+        assertTrue(transport.supportsV3());assertTrue(transport.supportsFamilyPaths())
+        assertTrue(transport.supportsTechnicalDeliveryWithoutGps())
+    }
+
+    @Test fun wrongAckProtocolIdentityRevisionAndPathsNeverConfirmCurrentDelivery()=runBlocking(Dispatchers.IO) {
+        val corruptions=listOf<Pair<String,(JSONObject)->Unit>>(
+            "protocol" to {it.put("syncProtocol",2)}, "pathVersion" to {it.put("pathVersion",3)},
+            "identity" to {it.put("key","SIC/another-record")},
+            "olderRevision" to {it.put("revision",it.getLong("revision")-1)},
+            "futureRevision" to {it.put("revision",it.getLong("revision")+1)},
+            "hash" to {it.put("contentHash","0".repeat(64))},
+            "excelPath" to {it.getJSONArray("sicFiles").getJSONObject(0).put("logicalPath","wrong/EXCEL_SIC/SIC-08.xlsx")},
+            "photoPath" to {ack->
+                val files=ack.getJSONArray("files")
+                (0 until files.length()).map{files.getJSONObject(it)}.first{it.getString("key").startsWith("photo/")}
+                    .put("logicalPath",ack.getString("logicalPath")+"/FIN/wrong.jpg")
+            }
+        )
+        for((label,corrupt) in corruptions)database().use {d->
+            val id="bad-$label";save(d,id);photo(d,id)
+            val before=d.automaticSyncDao().all().single();val original=d.inventoryDao().photoById("photo-$id")!!
+            val originalBytes=File(original.localPath).readBytes()
+            val backend=Backend().apply{alterAck=corrupt}
+            assertTrue(label,drain(d,backend))
+            val pending=d.automaticSyncDao().all().single()
+            assertEquals(label,"ERROR",pending.state);assertEquals(before.revision,pending.revision)
+            assertEquals(0L,pending.syncedRevision);assertNull(pending.receiptJson)
+            assertFalse(SyncIntentPresentation.confirmed(pending))
+            val photo=d.inventoryDao().photoById(original.id)!!
+            assertEquals(original.id,photo.id);assertEquals("GENERAL",photo.photoCategory)
+            assertNull(photo.driveFileId);assertArrayEquals(originalBytes,File(photo.localPath).readBytes())
+            backend.alterAck=null;assertFalse(drain(d,backend))
+            val confirmed=d.automaticSyncDao().all().single()
+            assertEquals(before.revision,confirmed.syncedRevision);assertTrue(SyncIntentPresentation.confirmed(confirmed))
+            assertEquals(1,backend.mutations)
+        }
+    }
+
+    @Test fun offlineFailurePersistsSnapshotAndSameIdentityAcrossReopenAndRecovery()=runBlocking(Dispatchers.IO) {
+        val name="8a-offline-${System.nanoTime()}";val id="offline-8a"
+        fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).build()
+        val backend=Backend().apply{offline=true}
+        var revision=0L;var prepared="";var photoBytes=byteArrayOf()
+        try {
+            open().use {d->
+                save(d,id);photo(d,id);revision=d.automaticSyncDao().all().single().revision
+                photoBytes=File(d.inventoryDao().photoById("photo-$id")!!.localPath).readBytes()
+                assertTrue(drain(d,backend));val pending=d.automaticSyncDao().all().single()
+                assertEquals("ERROR",pending.state);assertEquals(0L,pending.syncedRevision)
+                prepared=pending.preparedJson!!;assertEquals(0,backend.mutations)
+            }
+            open().use {d->
+                val pending=d.automaticSyncDao().all().single()
+                assertEquals("SIC/$id",pending.key);assertEquals(revision,pending.revision)
+                assertEquals(prepared,pending.preparedJson);assertFalse(SyncIntentPresentation.confirmed(pending))
+                assertEquals("Campo sin GPS",d.inventoryDao().recordById(id)!!.observations)
+                assertArrayEquals(photoBytes,File(d.inventoryDao().photoById("photo-$id")!!.localPath).readBytes())
+                backend.offline=false;assertFalse(drain(d,backend))
+                val confirmed=d.automaticSyncDao().all().single()
+                assertEquals(id,confirmed.recordId);assertEquals(revision,confirmed.syncedRevision)
+                assertEquals(prepared,confirmed.preparedJson);assertTrue(SyncIntentPresentation.confirmed(confirmed))
+                assertEquals(1,backend.mutations);assertEquals(2,backend.posts)
+            }
+        }finally{context.deleteDatabase(name)}
+    }
 
     @Test fun offlineQueueAndNullCoordinatesSurviveReopenThenBothFormatsDeliverPhotoAndExcel()=runBlocking(Dispatchers.IO) {
         val name="gps-offline-${System.nanoTime()}"

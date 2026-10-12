@@ -26,10 +26,13 @@ interface AutomaticDriveTransport {
     fun supportsFamilyPaths():Boolean = false
     fun post(payload:JSONObject):JSONObject
 }
-class AutomaticDriveHttp:AutomaticDriveTransport {
-    private val client=OkHttpClient.Builder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(180,TimeUnit.SECONDS).writeTimeout(180,TimeUnit.SECONDS).build()
+class AutomaticDriveHttp internal constructor(
+    private val client:OkHttpClient=OkHttpClient.Builder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(180,TimeUnit.SECONDS).writeTimeout(180,TimeUnit.SECONDS).build(),
+    private val endpoint:String=DriveConfig.WEB_APP_URL,
+    private val apiToken:String=DriveConfig.API_TOKEN
+):AutomaticDriveTransport {
     private val capabilities:JSONObject by lazy {
-        client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).get().build()).execute().use {
+        client.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
             if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
             JSONObject(it.body?.string() ?: "{}")
         }
@@ -37,8 +40,8 @@ class AutomaticDriveHttp:AutomaticDriveTransport {
     override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")==3
     override fun supportsFamilyPaths()=supportsV3() && capabilities.optInt("pathVersion")==4 && capabilities.optBoolean("stableFamilyNumbering") && capabilities.optInt("photoCategoryVersion")==1
     override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
-    private fun send(payload:JSONObject)=client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL)
-        .post(JSONObject(payload.toString()).put("token",DriveConfig.API_TOKEN).toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()).execute().use {
+    private fun send(payload:JSONObject)=client.newCall(Request.Builder().url(endpoint)
+        .post(JSONObject(payload.toString()).put("token",apiToken).toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()).execute().use {
         if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
         JSONObject(it.body?.string() ?: "{}")
     }
