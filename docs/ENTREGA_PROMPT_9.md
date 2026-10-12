@@ -26,13 +26,13 @@ Ambas ampliaciones están deshabilitadas por defecto en Android. Videos también
 
 La base de inventario sigue en Room 18. La base multimedia es adicional; no usa migración destructiva. No se modificaron encabezados/columnas contractuales Excel, applicationId, versionCode, keystore, usuarios, permisos administrativos ni la firma histórica. El orden local no entra en revisiones de fichas, numeración remota o rutas de entrega. `._GBO_SYNC_V3` conserva staging, bindings y journals existentes; el parche añade únicamente su registro de videos cuando el propietario lo despliegue.
 
-Solo se compila Debug con `-PgboValidationBuild=true`: omite endpoints/credenciales de esta máquina y mantiene videos/prefijos deshabilitados. APK: `app/build/outputs/apk/debug/app-debug.apk`. La aceptación real de Drive requiere configuración y backend de prueba del propietario; esta APK verifica UI/offline. No desinstalar la aplicación de campo ni borrar almacenamiento para instalarla: Debug y Release pueden tener certificados distintos.
+El cierre original compiló Debug con `-PgboValidationBuild=true`: omite endpoints/credenciales de esta máquina y mantiene videos/prefijos deshabilitados. La continuación exclusiva de ordenamiento utiliza `-PgboValidationBuild=false` para cargar la configuración local real; ver `ordenamiento-9b/INFORME.md` para la APK vigente. No desinstalar la aplicación de campo ni borrar almacenamiento para instalarla: Debug y Release pueden tener certificados distintos.
 
 El directorio preexistente ajeno `app/release/` se conserva y excluye de los commits. La evidencia histórica del primer Prompt 9 queda archivada en `campo-9b/ANTES_9B_*.md` y `campo-9/`; la evidencia 9B queda en `campo-9b/`.
 
 Consulte la matriz completa de implementación y validación en `MATRIZ_VALIDACION_9.md`. El commit final se informa en la entrega y se obtiene con `git rev-parse HEAD`; el documento no incluye su propio hash.
 
-## Cierre solicitado por el usuario
+## Cierre histórico solicitado por el usuario (antes de la continuación de ordenamiento)
 
 Se detuvo la ampliación al recibir la instrucción de cierre inmediato. Se entregan cambios guardados y publicados, con aceptación física/remota pendiente. La tercera ejecución focalizada pasó 30/30; la última prueba en curso terminó con 5 aprobadas y 6 fallos de AssetOrderingTest. No hubo investigación, correcciones ni repetición posteriores. La matriz detalla cada fallo y las dependencias. No presentar esta APK como versión íntegramente aprobada para producción.
 
@@ -46,5 +46,11 @@ Instalación y prueba:
 1. Copiar el APK Debug a la tablet de validación y abrirlo; permitir instalación desde esa fuente si Android lo solicita.
 2. Si Android permite actualizar con su firma actual, instalar conservando datos. Si indica firma incompatible, **no desinstalar ni borrar almacenamiento de campo**: usar otra tablet/perfil de validación o coordinar la instalación compatible.
 3. Ejecutar `PRUEBAS_TABLET_9.md`, empezando por listas, revisión/borrador, fotos históricas y videos offline. Esta compilación omite endpoints/credenciales y mantiene ambas ampliaciones remotas desactivadas.
-4. Registrar los resultados. La entrega real exige después el servidor de prueba actualizado y una compilación configurada por el responsable. Los seis fallos de ordenamiento requieren atención antes de aceptación integral.
+4. Registrar los resultados. Estas instrucciones y hash corresponden al APK histórico de validación; los seis fallos se resolvieron en la continuación siguiente.
+
+## Continuación autorizada: seis fallos de AssetOrderingTest
+
+Se investigó y comprobó que las seis expectativas precedían al contrato Drive V4 del commit `99b15aa`. Se actualizaron exclusivamente esos casos y se reforzaron conservación de identidad/fotos, números confirmados, rutas y orden independiente. No se modificó código de producción ni Apps Script. Resultado: **40/40 pruebas focalizadas aprobadas, incluidas 8/8 de AssetOrderingTest**. No se afirma aceptación física/remota ni suite completa.
+
+Configuración local real preparada mediante `drive.local.properties` y `server.local.properties`, ignorados y sin valores publicados. Debug conectado: `.\gradlew.bat :app:assembleDebug -PgboValidationBuild=false --console=plain`. El control de acceso sigue desactivado en la configuración local actual; fotos numeradas y videos remotos también permanecen desactivados. Firma y versionCode sin cambios, sin Release ni despliegue. Consulte `ordenamiento-9b/INFORME.md` para causas, evidencia, resultado de compilación e instalación del APK vigente.
 

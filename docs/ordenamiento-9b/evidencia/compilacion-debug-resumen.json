@@ -1,0 +1,16 @@
+{
+  "task": ":app:assembleDebug",
+  "gboValidationBuild": false,
+  "result": "BUILD SUCCESSFUL",
+  "duration": "1m 13s",
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "apkPath": "app/build/outputs/apk/debug/app-debug.apk",
+  "apkBytes": 40190144,
+  "sha256": "cf43cf4f58544b3cb1ca2c2d5720945d8fd10fa77e516633fb9d79dfe67c3c1e",
+  "compiledDriveEndpointPresent": true,
+  "compiledDriveTokenPresent": true,
+  "compiledUserEndpointPresent": true,
+  "releaseBuilt": false
+}

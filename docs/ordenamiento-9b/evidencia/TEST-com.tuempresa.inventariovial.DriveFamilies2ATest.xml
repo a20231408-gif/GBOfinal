@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.DriveFamilies2ATest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:36:43.624Z" hostname="JULIAN" time="41.597">
+  <properties/>
+  <testcase name="categoriesUseRealCodesAndAllowFutureKeysWithoutGuessingFileNames" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="9.165"/>
+  <testcase name="allSecondaryClassesHaveAnExplicitFamilyAndNoSib" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="0.127"/>
+  <testcase name="actualAndroidPayloadsAndOfficialExcelRowsForBackendTests" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="29.721"/>
+  <testcase name="kmzIncludesFajasCriticalAccidentsAndSecondaryFamiliesWithoutInventedCoordinates" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="0.096"/>
+  <testcase name="pavementFormatsParticipateWithoutSyntheticGpsAndKeepOriginalHeaders" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="0.085"/>
+  <testcase name="visibleIdentityIsStableWhenTechnicalOrderChanges" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="0.04"/>
+  <testcase name="orderingUsesRouteRoadbedDirectionNumericProgressiveAndUuid" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="0.043"/>
+  <testcase name="newFajaFormatsNeverShareIdentityEvenWithLegacySourceLink" classname="com.tuempresa.inventariovial.DriveFamilies2ATest" time="1.671"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:37:34.851Z" hostname="JULIAN" time="40.355">
+  <properties/>
+  <testcase name="staleLocalFormCannotOverwriteNewerConditionOrPhotos" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="0.387"/>
+  <testcase name="lostAckThenEditReplaysExactPredecessorWithoutConflictingWithOwnDelivery" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="4.306"/>
+  <testcase name="conditionAndProgressiveEditsKeepIdentityConfirmedBaseAndGenerateActualPayloads" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="9.128"/>
+  <testcase name="missingBackendConfirmationCannotMarkAnEditSynced" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="4.683"/>
+  <testcase name="editDuringUploadRetainsLateAckAsBaseAndThenDeliversNewerRevision" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="4.423"/>
+  <testcase name="photoCategoryAddAndRemovePreserveOriginalFilesAndExistingPhotoUuid" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="6.221"/>
+  <testcase name="pendingEditAndConfirmedIdentitySurviveDatabaseReopening" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="4.349"/>
+  <testcase name="rejectionDuringAnotherSaveKeepsLatestLocalRevisionInConflict" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="2.835"/>
+  <testcase name="nonblankButChangedFolderIdentityCannotAcknowledgeAnUpdate" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="1.673"/>
+  <testcase name="operatorConflictPersistsLocalEditAndCannotBeClearedByAnotherSave" classname="com.tuempresa.inventariovial.SyncedRecordEdits2BTest" time="2.32"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

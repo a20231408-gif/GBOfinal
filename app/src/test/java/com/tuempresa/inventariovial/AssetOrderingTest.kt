@@ -11,14 +11,20 @@ class AssetOrderingTest {
     private fun photo(id: String, record: String, index: Int) = PhotoEntity(id, record, index, "/$id.jpg", index == 1,
         null, null, null, "PENDING", 1)
 
-    @Test fun retroactiveCulvertRenumbersOnlyItsFamilyAndKeepsIdentityAndPhotos() {
+    @Test fun retroactiveCulvertKeepsIdentityPhotosAndConfirmedV4Number() {
         val captured = listOf(asset("A", 10000.0, 1), asset("B", 15000.0, 2), asset("C", 20000.0, 3),
             asset("D", 17000.0, 4)).map { it.copy(photos = listOf(photo("photo-${it.record.id}", it.record.id, 1))) }
         val before = RoadOrdering.orderAssetsForRoute(captured.take(3))
         val after = RoadOrdering.orderAssetsForRoute(captured)
         assertEquals(listOf("A", "B", "C"), before.map { it.recordId })
-        assertEquals(listOf("A", "B", "D", "C"), after.map { it.recordId })
-        assertEquals(listOf("ALC-1", "ALC-2", "ALC-3", "ALC-4"), after.map { it.shortCode })
+        // V4 technical ties use UUID, independently of the geometric display order.
+        assertEquals(listOf("A", "B", "C", "D"), after.map { it.recordId })
+        assertEquals(listOf("A", "B", "D", "C"), after.sortedBy { it.axisMeasureM }.map { it.recordId })
+        assertEquals(listOf(1, 2, 3, 4), after.map { it.sequence })
+        assertEquals(listOf("ALC-A", "ALC-B", "ALC-C", "ALC-D"), after.map { it.shortCode })
+        val confirmed=before.single {it.recordId=="C"}.copy(remoteLogicalPath="PE-22A/ALCANTARILLAS/ALCANTARILLA 7")
+        assertEquals("ALC-7",confirmed.copy(sequence=99).shortCode)
+        assertEquals("ALCANTARILLA 7",confirmed.copy(sequence=99).folderName)
         for (original in captured) {
             val actual = after.single { it.recordId == original.record.id }.item
             assertEquals(original, actual)
@@ -27,12 +33,17 @@ class AssetOrderingTest {
         }
     }
 
-    @Test fun mixedFamiliesUseSeparateCountersAndIgnoreCaptureTimeAndManualPr() {
+    @Test fun mixedFamiliesUseSeparateCountersAndContractualProgressiveWithoutRenamingIdentity() {
         val records = listOf(asset("p1", 5000.0, 90, "SIC-17"), asset("a1", 6000.0, 50),
             asset("p2", 10000.0, 10, "SIC-17"), asset("a2", 12000.0, 1))
             .mapIndexed { i, item -> item.copy(record = item.record.copy(startPrCode = "${100 - i}")) }
         val sorted = RoadOrdering.orderAssetsForRoute(records.reversed())
-        assertEquals(listOf("P-1", "ALC-1", "P-2", "ALC-2"), sorted.map { it.shortCode })
+        // 99b15aa made numeric PR the technical order; the old test expected axis order.
+        assertEquals(listOf("a2", "p2", "a1", "p1"), sorted.map {it.recordId})
+        assertEquals(listOf(1,1,2,2),sorted.map {it.sequence})
+        assertEquals(listOf("ALC-a2", "P-p2", "ALC-a1", "P-p1"), sorted.map { it.shortCode })
+        val changedGeometry=records.map {it.copy(record=it.record.copy(axisMeasureM=0.0,createdAt=999))}
+        assertEquals(sorted.map {it.recordId},RoadOrdering.orderAssetsForRoute(changedGeometry).map {it.recordId})
         val inserted = RoadOrdering.orderAssetsForRoute(records + asset("a0", 5500.0, 999))
         assertEquals(sorted.filter { it.assetFamily == AssetFamily.PUENTE }.map { it.shortCode },
             inserted.filter { it.assetFamily == AssetFamily.PUENTE }.map { it.shortCode })
@@ -44,40 +55,53 @@ class AssetOrderingTest {
         val unknown = asset("unknown", null, 1).let { it.copy(record = it.record.copy(startPrCode = "?")) }
         val nan = asset("nan", Double.NaN, 2).let { it.copy(record = it.record.copy(startPrCode = "?")) }
         val rows = RoadOrdering.orderAssetsForRoute(listOf(unknown, legacy, axis, nan))
-        assertEquals(listOf("axis", "legacy", "unknown", "nan"), rows.map { it.recordId })
+        assertEquals(listOf("axis", "legacy", "nan", "unknown"), rows.map { it.recordId })
         assertEquals(listOf(AssetOrderSource.GNSS_MAP_MATCH, AssetOrderSource.MANUAL_CHAINAGE_FALLBACK,
             AssetOrderSource.CREATED_AT_FALLBACK, AssetOrderSource.CREATED_AT_FALLBACK), rows.map { it.orderSource })
         assertNull(rows[1].axisMeasureM)
+        assertNull(rows[2].axisMeasureM)
+        assertEquals(rows,RoadOrdering.orderAssetsForRoute(listOf(nan,axis,legacy,unknown)))
+        listOf(axis,legacy,unknown,nan).forEach {original->assertEquals(original,rows.single {it.recordId==original.record.id}.item)}
     }
 
-    @Test fun tiesAreDeterministicAndRouteSibFamilyDefineCountersNotRoadbed() {
+    @Test fun tiesAreDeterministicAndV4RouteFamilyCountersDoNotDefineRemoteNumbers() {
         val a = asset("a", 10.0, 1)
         val b = asset("b", 10.0, 1).let { it.copy(record = it.record.copy(roadbedCode = "UC")) }
         val r = asset("r", 10.0, 1, route = "PE-3N")
         val rows = RoadOrdering.orderAssetsForRoute(listOf(r, b, a))
         assertEquals(listOf("a", "b", "r"), rows.map { it.recordId })
-        assertEquals(listOf("ALC-1", "ALC-2", "ALC-1"), rows.map { it.shortCode })
+        assertEquals(listOf(1,2,1),rows.map {it.sequence})
+        assertEquals(listOf("ALC-a", "ALC-b", "ALC-r"), rows.map { it.shortCode })
+        assertTrue(rows.all {it.sibCode==null})
         val sameFamilyDifferentSib = listOf(asset("x", 1.0, 1, "SIC-21"), asset("y", 2.0, 2, "SIC-20"))
             .map { it.copy(record = it.record.copy(assetType = "MURO")) }
-        assertEquals(listOf("MUR-1", "MUR-1"), RoadOrdering.orderAssetsForRoute(sameFamilyDifferentSib).map { it.shortCode })
+        val sameFamily=RoadOrdering.orderAssetsForRoute(sameFamilyDifferentSib)
+        assertEquals(listOf(1,2),sameFamily.map {it.sequence})
+        assertEquals(listOf("MUR-x", "MUR-y"),sameFamily.map {it.shortCode})
+        assertEquals(rows,RoadOrdering.orderAssetsForRoute(listOf(a,r,b)))
         assertEquals(1, RoadOrdering.orderAssetsForRoute(listOf(a, b.copy(record = b.record.copy(status = "ANNULLED")))) .size)
     }
 
-    @Test fun folderPlanUsesCurrentOrderAndRealPhotoIndexWithoutMutatingAnything() {
+    @Test fun folderPlanUsesStableV4UuidAndRealPhotoIndexWithoutMutatingAnything() {
         val original = asset("id", 1.0, 1, route = "PE-3N").copy(photos = listOf(photo("second", "id", 9), photo("first", "id", 2)))
         val plan = DrivePathPlanner.plan(listOf(original))
         assertTrue(plan.warnings.isEmpty())
         val photos = plan.folders.single().photos
         assertEquals(listOf("first", "second"), photos.map { it.photoId })
-        assertEquals(listOf("PE-3N/SIB-02/ALCANTARILLA 1/001_F02.jpg", "PE-3N/SIB-02/ALCANTARILLA 1/002_F09.jpg"), photos.map { it.plannedPath })
+        assertEquals(listOf("PE-3N/ALCANTARILLAS/ALCANTARILLA UUID_id/GENERAL/001_F02.jpg", "PE-3N/ALCANTARILLAS/ALCANTARILLA UUID_id/GENERAL/002_F09.jpg"), photos.map { it.plannedPath })
+        assertEquals(listOf(2,9),photos.map {it.photoIndex})
+        assertEquals(listOf("id","id"),photos.map {it.recordId})
         assertEquals(listOf("second", "first"), original.photos.map { it.id })
         val next = DrivePathPlanner.plan(listOf(original, asset("earlier", 0.0, 50, route = "PE-3N")))
-        assertEquals("PE-3N/SIB-02/ALCANTARILLA 2", next.folders.single { it.asset.recordId == "id" }.plannedPath)
+        val retained=next.folders.single {it.asset.recordId=="id"}
+        assertEquals(plan.folders.single().plannedPath,retained.plannedPath)
+        assertEquals(photos,retained.photos)
+        assertFalse(retained.plannedPath!!.contains("SIB-"))
     }
 
-    @Test fun catalogUsesDetailClassesAndReportsUnknownsWithoutInventingSib() {
+    @Test fun catalogUsesV4DetailFamiliesAndReportsUnknownsWithoutInventingSib() {
         val drainage = asset("d", 1.0, 1, "SIC-19")
-        for ((code, abbreviation) in mapOf("08" to "CUN", "09" to "CAN", "10" to "BAJ", "11" to "ZD", "12" to "ELM", "13" to "CUN")) {
+        for ((code, abbreviation) in mapOf("08" to "CUN", "09" to "CAN", "10" to "BAJ", "11" to "ZD", "12" to "ZC", "13" to "CB")) {
             val row = drainage.copy(sic19 = Sic19Entity("d", code, "1", "1", "1", "1"))
             assertEquals(abbreviation, AssetPresentationCatalog.resolve(row).abbreviation)
         }
@@ -87,9 +111,10 @@ class AssetOrderingTest {
         }
         val unknown = asset("u", 1.0, 1, "UNKNOWN")
         val plan = DrivePathPlanner.plan(listOf(unknown))
-        assertEquals("ELM-1", plan.folders.single().asset.shortCode)
-        assertNull(plan.folders.single().plannedPath)
-        assertTrue(plan.warnings.any { it.contains("SIB no configurado") })
+        assertEquals("ELM-u", plan.folders.single().asset.shortCode)
+        assertEquals("PE-22A/OTROS/ELEMENTO UUID_u",plan.folders.single().plannedPath)
+        assertNull(plan.folders.single().asset.sibCode)
+        assertFalse(plan.warnings.any { it.contains("SIB") })
         assertTrue(plan.warnings.any { it.contains("ELM") })
         assertEquals("SV", AssetPresentationCatalog.resolve(asset("v", 1.0, 1, "SIC-22")).abbreviation)
         assertEquals("SH", AssetPresentationCatalog.resolve(asset("h", 1.0, 1, "SIC-21").let { it.copy(record = it.record.copy(assetType = "HORIZONTAL_MARKS")) }).abbreviation)
