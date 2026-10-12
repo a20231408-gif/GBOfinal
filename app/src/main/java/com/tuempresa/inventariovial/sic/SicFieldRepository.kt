@@ -77,7 +77,7 @@ class SicFieldRepository(private val db:InventoryDatabase) {
                 if(finalize) "ACTIVE" else "DRAFT","PENDING","PENDING",old?.createdAt ?: now,now,
                 endLatitude=SicFieldState.number(s.text("_endLatitude")) ?: old?.endLatitude,endLongitude=SicFieldState.number(s.text("_endLongitude")) ?: old?.endLongitude,
                 endGpsAccuracyM=SicFieldState.number(s.text("_endAccuracy")) ?: old?.endGpsAccuracyM,
-                sessionId=old?.sessionId ?: sessionId,
+                sessionId=if(old!=null) old.sessionId else sessionId,
                 gpsTimestamp=if(s.text("_gpsExplicit")=="true") s.text("_gpsTimestamp").toLongOrNull() else old?.gpsTimestamp,endGpsTimestamp=old?.endGpsTimestamp,gnssProvider=old?.gnssProvider ?: "TABLET",
                 gnssFixType=old?.gnssFixType,verticalAccuracyM=old?.verticalAccuracyM,satellites=old?.satellites,hdop=old?.hdop,
                 correctionAge=old?.correctionAge,isRtkFixed=old?.isRtkFixed ?: false,

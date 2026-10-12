@@ -1,3 +1,23 @@
+# Estado vigente — Prompt 6, 2026-10-11
+
+Rama `codex/dashboard-sesion-6`, worktree aislado `D:/Downloads/GBO_InventarioVial_INTEGRADO_FINAL_SOURCE/GBO_InventarioVial/prompt6`, desde Prompt 5 `24df7d3562d823cc1382754b8a3950aed7f88e0e`. Checkpoint funcional local: punta de `codex/dashboard-sesion-6`, hash consultable con `git rev-parse codex/dashboard-sesion-6` y entregado después del commit. Sin push/merge. **Prompt 6 cerrado; no iniciar Prompt 7.**
+
+Dashboard Material 3: sesión verde iniciar/configurar, identidad/fecha/sentido, cuatro accesos reales (nuevo registro, mis registros, pavimentos, entregas Drive), herramientas secundarias conservadas y resumen Drive basado en ACK/revisión/recibo. Borradores del día por fecha real de sesión; fallback documentado a creación original para históricos sin sesión, nunca última edición. Lista acotada a 360 dp, progresiva visible en lugar de UUID, orden numérico creciente/decreciente con catálogo oficial y empates estables, filtro completo fecha/ruta/calzada/tipo y continuación por UUID original. Se preservan propietario y relaciones explícitas de fichas previas; SCAP/pavimentos mantienen sus listados propios.
+
+Fecha reutilizada de `FieldSession.startTime`: configuración aditiva sobre la tabla existente conserva identidad, operador y fecha. Ediciones de borradores históricos no inventan sesión aunque esté activa una nueva; asignación de sessionId corregida en callbacks y stores existentes. Room sigue en 18, sin migración. No cambia fotografía categorizada/photo_history, longitudes técnicas, revisiones 2B, observaciones/GPS opcional, backend/worker, autenticación ni TABLET_ADMIN.
+
+**27 pruebas distintas aprobadas**: 17 presentación/orden, 4 Robolectric persistencia, 6 Compose. Ejecución corregida 26/27 y repetición individual del caso horizontal 1/1. `assembleDebug` aprobado. Primer fallo de compilación y ejecuciones con 4/27 y 1/27 fallos conservados en logs/XML locales, excluidos del commit; no se declaran aprobados. Suite completa no ejecutada. Tres capturas reales de Compose bajo Robolectric Native con datos ficticios, inspeccionadas visualmente, incluyen vertical, horizontal con fuente 130% y filtros históricos. [Entrega, capturas y pendientes](dashboard-6/ENTREGA.md), [matriz](dashboard-6/MATRIZ.md), [evidencia](dashboard-6/VALIDACION.json).
+
+APK Debug local: `app/build/outputs/apk/debug/app-debug.apk`, SHA-256 `4d65f70cfbac4370c6cb3d671deee6f14003babe66be2508878ef7fdd58e030e`. Firma Debug comprobada idéntica al Prompt 5: `d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872`. applicationId `com.tuempresa.inventariovial`, versionCode 16, syncProtocol 3/pathVersion 4 y PhotoCategoryVersion 1 intactos. No Release, APK instalada, Apps Script publicado ni operación remota de Drive. Configuración privada copiada idéntica y excluida del checkpoint.
+
+Pendientes: prueba física en dispositivo secundario, lector de pantalla y ejecución real de todas las herramientas; comprobación remota aislada ya pendiente del Prompt 5. No asumir que endpoint local es de pruebas. [Criterios de sesión histórica y alcance](dashboard-6/AUDITORIA_INICIO.md).
+
+Trabajo preexistente de copia operativa y worktrees 4/5 intacto. En prompt6 quedan sin commit únicamente proguard/plantillas SCAP/herramientas copiados para compilar y logs/resultados crudos locales. Propiedades, APK y caches ignorados. Commit selectivo de fuentes, pruebas, documentación y capturas sintéticas; sin credenciales ni artefactos privados.
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
 # Estado vigente — Prompt 5, 2026-10-11
 
 Rama `codex/fotografias-sic-5`, worktree aislado `D:/Downloads/GBO_InventarioVial_INTEGRADO_FINAL_SOURCE/GBO_InventarioVial/prompt5`, desde Prompt 4 `fec797c73d6eca00a009a3e53752b40276ecad35`. Incluye 2A/2B sobre la misma infraestructura V3. El checkpoint local de entrega es HEAD de esta rama (`git log -1`); hash exacto entregado después del commit. Sin push ni merge.

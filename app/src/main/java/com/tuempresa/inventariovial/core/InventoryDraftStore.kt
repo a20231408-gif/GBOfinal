@@ -102,7 +102,7 @@ object InventoryDraftStore {
             endLatitude=r.endLocation?.latitude?:r.endLatitude,endLongitude=r.endLocation?.longitude?:r.endLongitude,endGpsAccuracyM=(r.endLocation?.horizontalAccuracy?:r.endGpsAccuracyM)?.toDouble(),
             locationSource=if(r.latitude.isFinite()&&r.longitude.isFinite())r.locationSource else "DRAFT_LOCATION_PENDING",
             gpsTimestamp=r.location?.timestamp,gnssProvider=r.location?.provider?.name ?: "TABLET",isRtkFixed=r.location?.isRtkFixed ?: false,
-            sessionId=r.sessionId,segment=r.segment,surveyDirection=r.direction,endLocationSource=r.endLocationSource,routeSource=r.routeSource)
+            sessionId=if(old!=null) old.sessionId else r.sessionId,segment=r.segment,surveyDirection=r.direction,endLocationSource=r.endLocationSource,routeSource=r.routeSource)
         db.withTransaction {
             check(AuthGraph.get(context).sessions.requireUser().id==user.id)
             check(db.inventoryDao().recordById(id)?.status.let { it==null || it=="DRAFT" }) { "La ficha ya está finalizada" }

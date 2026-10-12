@@ -105,6 +105,11 @@ interface InventoryDao {
     }
     @Query("SELECT * FROM field_sessions WHERE endTime IS NULL ORDER BY startTime DESC LIMIT 1")
     fun observeSession(): Flow<FieldSession?>
+    @Query("SELECT * FROM field_sessions ORDER BY startTime, sessionId")
+    fun observeSessions(): Flow<List<FieldSession>>
+    @Query("""UPDATE field_sessions SET project=:project, road=:road, segment=:segment,
+        roadbed=:bed, direction=:direction WHERE sessionId=:id AND endTime IS NULL""")
+    suspend fun configureSession(id:String,project:String,road:String?,segment:String?,bed:String?,direction:String):Int
     @Query("SELECT * FROM field_sessions WHERE endTime IS NULL ORDER BY startTime DESC LIMIT 1")
     suspend fun currentSession(): FieldSession?
     @Query("SELECT * FROM field_sessions WHERE sessionId = :id") suspend fun sessionById(id: String): FieldSession?

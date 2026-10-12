@@ -1,0 +1,211 @@
+{
+  "date": "2026-10-11",
+  "branch": "codex/dashboard-sesion-6",
+  "baseCommit": "24df7d3562d823cc1382754b8a3950aed7f88e0e",
+  "checkpointRef": "codex/dashboard-sesion-6",
+  "passedDistinctTests": 27,
+  "classes": {
+    "com.tuempresa.inventariovial.Dashboard6PersistenceTest": 4,
+    "com.tuempresa.inventariovial.Dashboard6PresentationTest": 17,
+    "com.tuempresa.inventariovial.Dashboard6ScreenTest": 6
+  },
+  "tests": [
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PersistenceTest",
+      "test": "configureKeepsSessionDateOperatorIdentityAndSavedDraftContext",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PersistenceTest",
+      "test": "fieldFormatDraftPreservesNullHistoricalSessionEvenWhenNewSessionSupplied",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PersistenceTest",
+      "test": "legacyDraftReopensWithPhotosObservationsAndNoInventedSession",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PersistenceTest",
+      "test": "storedDraftsRemainDiscoverableAndReactiveWithoutParallelStore",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "catalogueSpecialOrderIsRespectedWithoutKmConversion",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "dateRemainsStableAfterEditingOldDraft",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "dayFilterKeepsOldInFullList",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "decreasingOrderReversesPrAndDistance",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "equalProgressiveRetainsBothWithStableTie",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "filtersSelectDateRouteBedAndTypeTogether",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "historicalDraftUsesOriginalCreationNotModificationOrSurveyText",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "increasingOrderIsNumeric",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "linearProgressiveIncludesEnd",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "localZoneSetsDayWithoutUtcAssumption",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "missingOrUnknownPrIsLastAcrossRoutes",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "missingProgressiveNeverFallsBackToIdentity",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "progressiveDisplaysPaddedCodeAndDistanceWithoutUuid",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "routesBedsSessionsAndDirectionsStayDistinct",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "savedPrReordersImmediatelyFromNewSnapshot",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "syncCountsRequireAckAndExcludeIncompleteDrafts",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6PresentationTest",
+      "test": "todayUsesRealSessionDate",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6ScreenTest",
+      "test": "allDraftsFiltersHistoricalRowsAndContinuesOriginal",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6ScreenTest",
+      "test": "fiftyDraftsScrollInsideBoundedListAndResumeExactData",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6ScreenTest",
+      "test": "landscapeLargeFontNavigationOfFourMainActionsAndTools",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6ScreenTest",
+      "test": "newRecordChooserPreservesEveryExistingDestination",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6ScreenTest",
+      "test": "noSessionShowsStartAndDriveStatesAreDistinct",
+      "passed": true
+    },
+    {
+      "class": "com.tuempresa.inventariovial.Dashboard6ScreenTest",
+      "test": "portraitSessionProgressiveAndAccessibleActions",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "log": "focused-prompt6-initial.log",
+      "result": "compile failed: BoxWithConstraints receiver; tests not run"
+    },
+    {
+      "log": "focused-prompt6-repaired.log",
+      "tests": 27,
+      "failures": 4,
+      "result": "assembleDebug passed; corrected ACK count and test screenshot/scroll"
+    },
+    {
+      "log": "focused-prompt6-final.log",
+      "tests": 27,
+      "failures": 1,
+      "result": "26 passed; landscape test return-to-top locator failed; assembleDebug passed"
+    },
+    {
+      "log": "focused-prompt6-landscape.log",
+      "tests": 1,
+      "failures": 0,
+      "result": "passed; assembleDebug successful (up-to-date)"
+    }
+  ],
+  "assembleDebug": "PASS",
+  "apkSha256": "4d65f70cfbac4370c6cb3d671deee6f14003babe66be2508878ef7fdd58e030e",
+  "debugCertificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+  "roomVersion": 18,
+  "migrationsAdded": false,
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 16,
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "photoCategoryVersion": 1,
+  "screenshots": [
+    {
+      "file": "01-dashboard-vertical-datos-ficticios.png",
+      "width": 800,
+      "height": 1280,
+      "sha256": "7a374406ee946a851b5236a7c17c0af26b375425a0a97c7b80eaf0ebb8417317",
+      "source": "Robolectric Native: decorView.draw(Canvas), real Compose UI, synthetic data"
+    },
+    {
+      "file": "02-dashboard-horizontal-fuente-130-datos-ficticios.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "7e39ea6ffe96529e80de9ec994793a30cb3829f1bb449c3404f8d1b9903f3d2e",
+      "source": "Robolectric Native: decorView.draw(Canvas), real Compose UI, synthetic data"
+    },
+    {
+      "file": "03-borradores-historicos-filtrados-datos-ficticios.png",
+      "width": 800,
+      "height": 1280,
+      "sha256": "2569d50eefceb0957660781ba3d3868d936aacae02491a83bbf2d48fc9aabff8",
+      "source": "Robolectric Native: decorView.draw(Canvas), real Compose UI, synthetic data"
+    }
+  ],
+  "physicalTabletValidation": "PENDING",
+  "remoteDriveValidation": "NOT RUN; backend/workers unchanged",
+  "fullSuite": "NOT RUN",
+  "privateConfiguration": "unchanged; excluded from checkpoint",
+  "rawResultsAndLogs": "preserved locally; excluded from checkpoint"
+}

@@ -49,55 +49,26 @@ fun SaveWarningsDialog(viewModel: InventoryViewModel) {
 }
 
 @Composable
-fun FieldHomePanel(viewModel: InventoryViewModel,onResumeDraft: (InventoryRecordEntity)->Unit) {
-    val field=viewModel.field
-    val session by field.session.collectAsState()
-    val allDrafts by field.drafts.collectAsState()
-    val context=LocalContext.current
-    val currentUser by field.auth.sessions.current.collectAsState()
-    val extensions by field.dao.observeSicExtensions().collectAsState(initial=emptyList())
-    val accessibleDrafts = allDrafts.filter { currentUser!=null && it.sicCode != "SCAP" && com.tuempresa.inventariovial.core.InventoryDraftStore.accessible(context,it.id) }
-    val drafts=accessibleDrafts.filter {com.tuempresa.inventariovial.sic.InventoryElements.parentId(it,extensions,accessibleDrafts)==it.id}
-    var showSession by remember { mutableStateOf(false) }
-    var showSettings by remember { mutableStateOf(false) }
-    var message by remember { mutableStateOf<String?>(null) }
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-            Text("Sesión de campo",style=MaterialTheme.typography.titleLarge)
-            session?.let {
-                Text("${it.project} · ${it.operator}")
-                Text("Ruta: ${it.road ?: "Por elemento"} · Calzada: ${it.roadbed ?: "Por elemento"}")
-                ProjectRouteFields(it.road.orEmpty())
-                Text("Sentido: ${if(it.direction=="DECREASING") "Decreciente" else "Creciente"}")
-                OutlinedButton(onClick={ field.endSession { message=it } }) { Text("Finalizar sesión") }
-            } ?: OutlinedButton(onClick={ showSession=true }) { Text("Iniciar sesión de campo") }
-            OutlinedButton(onClick={ showSettings=true }) { Text("Ajustar umbrales GNSS") }
-            KmlControls(viewModel)
-            ObservationReportButton(viewModel)
-            if(drafts.isNotEmpty()) {
-                Text("Borradores por completar",style=MaterialTheme.typography.titleMedium)
-                drafts.forEach { draft ->
-                    OutlinedButton(onClick={ onResumeDraft(draft) }) {
-                        Text("Continuar ${com.tuempresa.inventariovial.sic.InventoryElements.title(draft.sicCode)} · ${draft.routeCode} · ${draft.id.take(8)}")
-                    }
-                }
-                Text("Los puntos están guardados. Completa los datos y las fotografías del registro.")
-            }
-            message?.let { Text(it) }
-        }
-    }
-    if(showSession) SessionDialog(field,{showSession=false})
-    if(showSettings) SettingsDialog(field,{showSettings=false})
+fun FieldSecondaryTools(viewModel:InventoryViewModel) {
+    var showSettings by remember {mutableStateOf(false)}
+    var message by remember {mutableStateOf<String?>(null)}
+    val session by viewModel.field.session.collectAsState()
+    if(session!=null) OutlinedButton(onClick={viewModel.field.endSession {message=it}}) {Text("Finalizar sesión de campo")}
+    OutlinedButton(onClick={showSettings=true}) {Text("Ajustar umbrales GNSS")}
+    KmlControls(viewModel)
+    ObservationReportButton(viewModel)
+    message?.let {Text(it)}
+    if(showSettings) SettingsDialog(viewModel.field) {showSettings=false}
 }
 
 @Composable
-private fun SessionDialog(field: FieldController,onClose: ()->Unit) {
-    var project by remember { mutableStateOf("") }
+fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?=null) {
+    var project by remember { mutableStateOf(initial?.project.orEmpty()) }
     val currentUser by field.auth.sessions.current.collectAsState()
-    val operator = currentUser?.displayName.orEmpty()
-    var road by remember { mutableStateOf("") };var roadbed by remember { mutableStateOf("") }
-    var decreasing by remember { mutableStateOf(false) };var error by remember { mutableStateOf<String?>(null) }
-    AlertDialog(onDismissRequest=onClose,title={Text("Nueva sesión")},text={ Column(Modifier.verticalScroll(rememberScrollState())) {
+    val operator = initial?.operator ?: currentUser?.displayName.orEmpty()
+    var road by remember { mutableStateOf(initial?.road.orEmpty()) };var roadbed by remember { mutableStateOf(initial?.roadbed.orEmpty()) }
+    var decreasing by remember { mutableStateOf(initial?.direction=="DECREASING") };var error by remember { mutableStateOf<String?>(null) }
+    AlertDialog(onDismissRequest=onClose,title={Text(if(initial==null) "Nueva sesión" else "Configurar sesión")},text={ Column(Modifier.verticalScroll(rememberScrollState())) {
         OutlinedTextField(project,{project=it},label={Text("Proyecto")})
         OutlinedTextField(operator,{},readOnly=true,label={Text("Operador autenticado")})
         Text("Ruta (opcional)")
@@ -109,9 +80,10 @@ private fun SessionDialog(field: FieldController,onClose: ()->Unit) {
         error?.let { ErrorText(it) }
     } },confirmButton={TextButton(onClick={
         if(project.isBlank() || operator.isBlank()) error="Completa proyecto y operador." else {
-            field.startSession(project,road,field.projectRoutes.segment(road),roadbed,if(decreasing) "DECREASING" else "INCREASING",onClose) { error=it }
+            if(initial==null) field.startSession(project,road,field.projectRoutes.segment(road),roadbed,if(decreasing) "DECREASING" else "INCREASING",onClose) {error=it}
+            else field.configureSession(initial.sessionId,project,road,roadbed,if(decreasing) "DECREASING" else "INCREASING",onClose) {error=it}
         }
-    }) {Text("Iniciar")} },dismissButton={TextButton(onClick=onClose){Text("Cancelar")}})
+    }) {Text(if(initial==null) "Iniciar" else "Guardar configuración")} },dismissButton={TextButton(onClick=onClose){Text("Cancelar")}})
 }
 
 @Composable

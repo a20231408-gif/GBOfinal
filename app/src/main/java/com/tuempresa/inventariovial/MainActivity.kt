@@ -352,145 +352,8 @@ fun HomeScreen(
     onNewSic: (com.tuempresa.inventariovial.sic.SicFieldFormat)->Unit = {}
 ) {
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
-
-        contentPadding = PaddingValues(
-            top = 24.dp,
-            bottom = 32.dp
-        ),
-
-        verticalArrangement =
-            Arrangement.spacedBy(16.dp)
-    ) {
-
-        item {
-            Surface(color=MaterialTheme.colorScheme.primary,contentColor=MaterialTheme.colorScheme.onPrimary,shape=androidx.compose.foundation.shape.RoundedCornerShape(20.dp)) {
-                Row(Modifier.fillMaxWidth().padding(20.dp),verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                        Text("GBO · INGENIERÍA EN CAMPO",style=MaterialTheme.typography.labelLarge)
-                        Text("Inventario vial",style=MaterialTheme.typography.headlineLarge,fontWeight=FontWeight.Bold)
-                        Text("Inspecciona, registra y revisa tus levantamientos.",style=MaterialTheme.typography.bodyLarge)
-                    }
-                    Image(androidx.compose.ui.res.painterResource(R.mipmap.ic_launcher_foreground),"GBO Ingenieros Consultores",modifier=Modifier.size(104.dp))
-                }
-            }
-        }
-
-        item {
-            ElevatedCard(onClick = onPavement, modifier = Modifier.fillMaxWidth()) {
-                Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("Fallas en pavimentos", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                        Text("PCI para asfalto y rígido · URCI para vía no pavimentada", style = MaterialTheme.typography.bodyMedium)
-                        Text("Esquema X/Y · daños · fotos · Excel/PDF · Drive", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-                    }
-                    Text("ABRIR", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-
-        item {
-            inventoryViewModel?.let { AuthHomePanel(it.field.auth) }
-            if(inventoryViewModel!=null) FieldHomePanel(inventoryViewModel,onResumeDraft) else ProjectCard()
-        }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedButton(onClick = onHistory) { Text("Ver registros") }
-                OutlinedButton(onClick = onSync) { Text("Mapa y orden de elementos") }
-            }
-            OutlinedButton(onClick = onExport, modifier = Modifier.fillMaxWidth()) { Text("Exportar SIC a Excel") }
-            syncMessage?.let { Text(it) }
-            inventoryViewModel?.let { DriveStatusPanel(it) }
-            inventoryViewModel?.let { com.tuempresa.inventariovial.core.CoreFieldTools(it) }
-        }
-
-        item {
-
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                StatusCard(
-                    title = "Registros",
-                    value =
-                        recordsToday.toString(),
-                    modifier =
-                        Modifier.weight(1f)
-                )
-
-                Spacer(
-                    modifier =
-                        Modifier.width(16.dp)
-                )
-
-                StatusCard(
-                    title = "Pendientes",
-                    value =
-                        pendingSync.toString(),
-                    modifier =
-                        Modifier.weight(1f)
-                )
-            }
-        }
-
-        item {
-
-            Text(
-                text = "Nuevo registro",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                modifier =
-                    Modifier.padding(top = 12.dp)
-            )
-
-            Text(
-                text =
-                    "Seleccione el elemento encontrado en carretera.",
-                style =
-                    MaterialTheme.typography.bodyMedium
-            )
-        }
-
-        com.tuempresa.inventariovial.sic.InventoryElements.home.groupBy {it.family}.forEach {(family,destinations)->
-            item {Text(family,style=MaterialTheme.typography.titleMedium)}
-            items(destinations.chunked(2)) {pair->
-                com.tuempresa.inventariovial.core.InventoryFieldRows(pair) {entry->
-                    InventoryElementButton(entry.title,entry.subtitle) {
-                        entry.asset?.let(onAssetSelected)
-                        entry.format?.let(onNewSic)
-                    }
-                }
-            }
-        }
-
-        item {
-
-            HorizontalDivider(
-                modifier =
-                    Modifier.padding(vertical = 8.dp)
-            )
-
-            Text(
-                text = "Estado del sistema",
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(
-                modifier =
-                    Modifier.height(8.dp)
-            )
-
-            Text("● Captura offline habilitada")
-            Text("● Fotografías guardadas localmente")
-            Text("● GPS disponible durante cada registro")
-            Text(
-                "● Pendientes de sincronización: $pendingSync"
-            )
-        }
-    }
+    com.tuempresa.inventariovial.dashboard.DashboardHome(inventoryViewModel,onResumeDraft,onPavement,
+        onHistory,onExport,onSync,onAssetSelected,onNewSic,syncMessage)
 }
 
 
@@ -1004,7 +867,7 @@ fun SignalizationFormScreen(
         photoPath=capturedPhotos.firstOrNull().orEmpty(),photoPaths=capturedPhotos,recordId=draftId ?: java.util.UUID.randomUUID().toString().also { draftId=it },
         detail=if(signalizationType==SignalizationType.VERTICAL) SicFormDetail.Sic22(sic22State) else SicFormDetail.Sic21(sic21State),location=location,endLocation=endLocation,locationSource=locationSource,
         endLocationSource=endLocationSource,routeSource=routeSource,sideSource=sideSource,
-        sessionId=draftRecord?.sessionId ?: fieldSession?.sessionId,segment=segment,direction=direction,
+        sessionId=if(draftRecord!=null) draftRecord.sessionId else fieldSession?.sessionId,segment=segment,direction=direction,
         photoCaptures=photoCaptures,photoCategories=photoCategories) }
     var draftNotice by remember { mutableStateOf("") }
     LaunchedEffect(draftRecord?.id) {
@@ -1474,7 +1337,7 @@ fun SignalizationFormScreen(
                                             routeSource = routeSource, startSuggestion = startSuggestion, endSuggestion = endSuggestion,
                                             photoCaptures = photoCaptures,
                                             sideSource = sideSource,
-                                            sessionId = draftRecord?.sessionId ?: fieldSession?.sessionId,
+                                            sessionId = if(draftRecord!=null) draftRecord.sessionId else fieldSession?.sessionId,
                                             segment = segment, direction = direction,
                                             stampedPaths = stampedPaths.filterKeys { it in capturedPhotos },
                                             endLatitude = endLocation?.latitude,
@@ -2322,7 +2185,7 @@ fun AssetFormScreen(
                                             routeSource = routeSource, startSuggestion = startSuggestion, endSuggestion = endSuggestion,
                                             photoCaptures = photoCaptures,
                                             sideSource = sideSource,
-                                            sessionId = draftRecord?.sessionId ?: fieldSession?.sessionId,
+                                            sessionId = if(draftRecord!=null) draftRecord.sessionId else fieldSession?.sessionId,
                                             segment = segment, direction = direction,
                                             stampedPaths = stampedPaths.filterKeys { it in capturedPhotos },
                                             endLatitude = endLocation?.latitude,
@@ -2352,7 +2215,7 @@ fun AssetFormScreen(
         photoPath=capturedPhotos.firstOrNull().orEmpty(),photoPaths=capturedPhotos,recordId=draftId ?: java.util.UUID.randomUUID().toString().also { draftId=it },
         detail=when(assetType) { RoadAssetType.RIGHT_OF_WAY->SicFormDetail.Sic23(sic23State);RoadAssetType.BRIDGE->SicFormDetail.Sic17(sic17State);RoadAssetType.CULVERT->SicFormDetail.Sic18(sic18State);RoadAssetType.DITCH->SicFormDetail.Sic19(sic19State);else->SicFormDetail.Sic20(sic20State) },location=location,endLocation=endLocation,locationSource=locationSource,
         endLocationSource=endLocationSource,routeSource=routeSource,sideSource=sideSource,
-        sessionId=draftRecord?.sessionId ?: fieldSession?.sessionId,segment=segment,direction=direction,
+        sessionId=if(draftRecord!=null) draftRecord.sessionId else fieldSession?.sessionId,segment=segment,direction=direction,
         photoCaptures=photoCaptures,photoCategories=photoCategories) }
     var draftNotice by remember { mutableStateOf("") }
     LaunchedEffect(draftRecord?.id) {

@@ -87,6 +87,27 @@ class FieldController(private val context: Context,private val database: Invento
             } catch(error:Exception) { onError(error.message ?: "No se pudo iniciar la sesión.") }
         }
     }
+    /** Configure the existing session without changing identity, operator or original date. */
+    fun configureSession(id:String,project:String,road:String,bed:String,direction:String,
+        onSuccess:()->Unit,onError:(String)->Unit) { scope.launch {
+        try {
+            val user=authSessions.requireUser()
+            require(project.isNotBlank()) {"Completa el proyecto."}
+            require(direction in SurveyDirection.entries.map {it.name})
+            val route=if(road.isBlank()) null else projectRoutes.requireRoute(road)
+            check(TrackCaptureService.activeRecordId.value==null) {"Finaliza el recorrido antes de cambiar de sesión."}
+            database.withTransaction {
+                authSessions.requireUser()
+                check(dao.currentSession()?.sessionId==id) {"La sesión cambió; vuelve a abrir su configuración."}
+                check(dao.configureSession(id,project.trim(),road.trim().uppercase().ifBlank {null},route?.segmentCode,
+                    bed.trim().uppercase().ifBlank {null},direction)==1)
+                database.auditDao().insert(AuditLogEntity(userId=user.id,username=user.username,action="FIELD_SESSION_CONFIGURED"))
+            }
+            scheduleServerSync(context)
+            onSuccess()
+        } catch(e:Exception) {onError(e.message ?: "No se pudo configurar la sesión.")}
+    } }
+
     fun endSession(onError: (String)->Unit) { scope.launch {
         try {
             check(TrackCaptureService.activeRecordId.value==null) { "Finaliza el recorrido antes de cerrar la sesión." }
