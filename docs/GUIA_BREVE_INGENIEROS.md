@@ -1,23 +1,33 @@
-# Guía breve — datos de campo y almacenamiento Drive
+# Guía breve para ingenieros — versión 9B
 
-## Fotografías y exportaciones
+## Registrar y revisar
 
-Desde **Mis registros → Ver detalle → Ver fotografías** se consultan las imágenes locales de la ficha y los originales disponibles. Una fotografía histórica sin categoría se muestra en GENERAL. Si falta el archivo local, su referencia no se elimina: revisar el almacenamiento y comunicar la incidencia. La corrección del Prompt 9 evita el reciclado prematuro de miniaturas; su aceptación en tablet está pendiente.
+Abra el módulo: verá sus elementos, número local, tipo, progresiva, condición y estado. Los borradores e históricos siguen disponibles. Use **Nuevo elemento**, **Detalle**, **Editar**, **Fotografías** o **Revisar y finalizar**. El número local permanece asociado al elemento; la identidad Drive, cuando existe, se muestra aparte.
 
-**Herramientas y ajustes → Exportaciones avanzadas** prepara una copia local de Excel o ZIP de los registros activos seleccionados. Una copia local no confirma que Drive haya recibido la revisión; la confirmación depende del ACK de la sincronización automática.
+Las tarjetas de condición muestran descripción y selección: verde favorable, amarillo intermedia y rojo desfavorable según el catálogo de la ficha. SCAP estadístico y severidades de pavimento conservan sus escalas propias.
 
-Esta entrega parcial no incorpora videos, nuevos catálogos, cambios de condición ni reorganización de elementos por KMZ. Conservar los registros y originales; no borrar almacenamiento ni desinstalar para resolver un cierre. Registrar el recorrido que falla y exportar el diagnóstico de estabilidad disponible en administración/cuenta.
+**Guardar borrador** conserva la captura incompleta. **Revisar y finalizar** muestra un resumen; corrija los pendientes antes de confirmar. Abrir el resumen no envía nada. Después de validar, **Entrega pendiente** significa que la tablet conserva una revisión en cola; **Sincronizado** exige confirmación del servidor. Error o conflicto conserva la edición y requiere revisar el mensaje.
 
-## Carpeta técnica de Drive
+## Fotos y videos
 
-`._GBO_SYNC_V3` es almacenamiento interno del sincronizador; no contiene fichas destinadas a consulta de campo.
+Las categorías aparecen desde el inicio, incluso con contador cero. Incorpore varias fotos, amplíe una con **Ver fotografía**, reemplace o retire cuando corresponda. GENERAL conserva fotos históricas. Los originales y UUID se mantienen. Los paneles SCAP siguen nombres de la plantilla elegida.
 
-- **STAGING** contiene archivos temporales de las entregas.
-- **Bindings** conservan las asociaciones entre UUID, elementos y sus archivos/carpetas remotos.
-- **Journals** controlan revisiones y ayudan a recuperar entregas interrumpidas.
+Los videos aparecen en el panel multimedia por categoría. Puede grabar/importar MP4, WebM o 3GP de hasta 32 MiB, reproducirlos sin Internet y consultar su estado. **Pendiente del backend** es el estado esperado de esta versión: la subida remota está deshabilitada hasta actualizar y validar Apps Script. **Reintentar** conserva el UUID. Retirar un video conserva su original y no elimina la evidencia remota.
 
-**No eliminar, editar, renombrar ni mover esta carpeta ni sus archivos.** Su contenido mantiene la continuidad del inventario y evita duplicaciones o pérdida de asociaciones. Consultar los archivos contractuales en las carpetas de rutas/familias y en **EXCEL_SIC**.
+Los cierres de detalle/fotos y exportaciones corregidos en Prompt 9 fueron aceptados manualmente por el usuario en su tablet. Las funciones nuevas requieren la lista `PRUEBAS_TABLET_9.md`.
 
-## Posición de la tablet
+## Orden y GPS
 
-GNSS es el sistema de navegación por satélite utilizado por la tablet para estimar su ubicación. Esa posición es auxiliar para el trabajo de campo y el ordenamiento interno existente; no reemplaza la georreferenciación técnica contractual externa. Los umbrales existentes no se cambiaron en esta entrega. La ampliación de ayuda contextual y ordenamiento KMZ del Prompt 9 continúa pendiente.
+En **Orden de elementos**, seleccione la ruta e importe KML/KMZ para su orden local. Revise el sentido y el orden de segmentos del archivo; puede invertir el sentido. La distancia se acumula sobre las líneas. Los huecos no se rellenan con distancia recta. Puede usar **Capturar GPS para orden local** para ubicar al operador.
+
+Un punto sin GPS, alejado, impreciso o en un cruce queda señalado para revisión. **Revisar posición local manual** permite introducir metros acumulados sobre el eje. Esto modifica únicamente la presentación local: conserva UUID, revisión y nombre/carpeta Drive. La georreferenciación contractual sigue siendo externa.
+
+En **Umbrales GNSS**, la precisión ±m es una incertidumbre estimada. Los valores por defecto son: eje 30 m; matching 15 m; recorrido 10 m; separación 3 m; aviso 1 m. La pantalla muestra los valores configurados y explica su efecto. Un umbral menor no mejora físicamente el receptor.
+
+## Sesión y carpeta técnica
+
+Los botones rojos **Finalizar sesión de campo** y **Cerrar sesión** conservan las comprobaciones existentes. Finalice un recorrido abierto antes de salir. Cerrar sesión no borra datos, fotos, videos ni entregas pendientes.
+
+`._GBO_SYNC_V3` contiene staging, asociaciones de identidad y journals técnicos que permiten recuperar entregas y evitar duplicados. No editar, borrar, mover ni renombrar esa carpeta ni sus archivos. El parche de videos añade un registro técnico separado cuando se active. Consulte las fichas en las carpetas de familia y **EXCEL_SIC**.
+
+La APK Debug de validación omite endpoints/credenciales. Comprueba interfaz y trabajo offline; no prueba entrega real. No desinstale ni borre datos de la aplicación de campo para instalar una APK con otra firma. Use el dispositivo/perfil de validación previsto por el responsable.

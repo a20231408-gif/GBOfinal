@@ -1,83 +1,38 @@
-# Matriz de validación — Prompt 9 parcial
+# Matriz de cierre — Prompt 9B
 
-Fecha: 12/10/2026. **Preparada/compilada no equivale a ejecutada o aprobada.**
+12/10/2026. Cierre inmediato solicitado por el usuario: se conserva lo avanzado y no se abren ciclos adicionales de implementación o corrección. **Esta entrega no es una aceptación integral para producción.**
 
-## Evidencia previa
+| Requisito | IMPLEMENTADO | VALIDADO LOCALMENTE | VALIDADO EN TABLET | DEPENDIENTE DEL BACKEND | PENDIENTE | BLOQUEADO |
+|---|---|---|---|---|---|---|
+| Condición compartida SIC-17…22 y captura SIC desde SCAP | Sí | Catálogos, códigos y Room; selección Compose | No, cambios 9B | No | Recorridos físicos de todos los formatos | Solo validación física: sin dispositivo |
+| Categorías fotográficas predefinidas CORE y SCAP | Sí | Categorías, originales, historial y controles; 19+2 pruebas | No, cambios 9B | No | Captura/importación SAF real y plantillas en tablet | Solo validación física |
+| Galería y GENERAL histórico | Sí | 8 escenarios PhotoDrawing9Test aprobados | Ambos crashes anteriores aceptados manualmente por el usuario | No | Revalidar nueva interfaz y rotación en tablet | Solo validación física |
+| Listas, números locales y navegación | Sí, SIC/SCAP/pavimentos | Lista común y navegación aprobadas | No | No | Comprobar todos los módulos e históricos en tablet | Solo validación física |
+| Borrador, revisión, confirmación y outbox | Sí | Resumen sin entrega, validación incompleta, finalización, revisiones e identidad | No | Entrega real requiere servidor configurado | Aceptación integral por formato | Solo prueba física/remota |
+| Prefijos numéricos de nuevas fotografías | Cliente y parche preparados; flag desactivado | Persistencia, reintentos, histórico y backend simulado | No | Sí: photoNamingVersion=1 | Activación y aceptación coordinada | Activación remota fuera de este cierre |
+| KML/KMZ offline y acumulación local | Sí | Segmentos, huecos, inversión, cruces, imprecisión y posición manual | No | No | Importación/GPS físico | Solo validación física |
+| Integridad del orden contractual/remoto | Separación local implementada | Revisiones y UUID aprobados; **6 fallos en AssetOrderingTest al cierre** | No | No para revisar los fallos locales | Analizar los seis fallos; no atribuidos a causa sin investigación | Correcciones detenidas por solicitud del usuario |
+| Posición del operador sobre eje | Sí | Cálculo probado; captura nativa sin probar | No | No | GNSS y permisos reales | Sin hardware accesible |
+| Ayuda GNSS y salida roja Material 3 | Sí | Compilación y 24 pruebas de autenticación aprobadas entre ejecuciones | No, cambios 9B | No | Verificación visual y conservación de datos al salir | Solo validación física |
+| Carpeta técnica ._GBO_SYNC_V3 | Conservada; guía actualizada | Sin despliegue ni modificación de producción | No aplica | Nuevo journal de videos solo tras despliegue | Confirmar servidor de prueba | Ninguno local |
+| Videos múltiples offline, MIME, tamaño, SHA e identidad | Sí | 10 escenarios JVM aprobados entre ejecuciones; codec sustituido solo en test | No | No para almacenamiento local | Cámara, miniatura, audio/video y codecs en tablet | Sin hardware accesible |
+| Videos reanudables y ACK verificado | Cliente y parche preparados; remoto desactivado | Reanudación, caducidad, ACK inválido, retiro y adapter simulado | No | Sí: videoProtocol=1 y flags | OAuth, checksum Drive, corte de red y aceptación remota | Backend no desplegado por instrucción |
+| Excel contractual, SCAP y pavimentos | Columnas/plantillas conservadas | Exportación SCAP, revisiones SIC, 19 pruebas de pavimentos y 2 UI aprobadas | No, cambios 9B | No para Excel local | Revisión física de archivos y recorridos completos | Ninguno para generar localmente |
+| Debug, commits, push y documentos | Código y documentos guardados; resultado APK en informe | Evidencia en campo-9b/evidencia | Instalación pendiente | No | Instalar APK de validación y ejecutar PRUEBAS_TABLET_9.md | No se hicieron instrumentadas físicas |
 
-| Prueba | Resultado sobre código anterior |
-|---|---|
-| `OperatorFlow7ScreenTest.detailNavigatesSheetGalleryExcelAndBackUsingSameUuid` | Pasa; no detectaba el dibujo tardío de una imagen reciclada |
-| `PhotoDrawing9Test.decodedThumbnailCanBeDrawn` | Falla: Canvas intentando usar un bitmap reciclado |
-| `PhotoDrawing9Test.advancedExportsDrawsSelectedPhoto` | Falla: mismo error de bitmap reciclado |
-| `PhotoDrawing9Test.detailGalleryDrawsHistoricalPhoto`, tamaño tablet | Falla: mismo error de bitmap reciclado |
+## Ejecuciones conservadas
 
-Antes de modificar producción se guardaron los XML en `campo-9/evidencia`. Los intentos iniciales de captura con PixelCopy y del fixture de detalle en tamaño teléfono produjeron timeouts del entorno/prueba, corregidos antes de reproducir el defecto; no se contabilizan como crashes de producto.
+- Primera focalizada: 75 pruebas, 63 aprobadas, 12 fallos. XML: `campo-9b/evidencia/primera-ejecucion`.
+- Segunda: 79 pruebas, 76 aprobadas, 3 fallos. XML: `segunda-ejecucion`.
+- Tercera focalizada de correcciones: **30/30 aprobadas**. XML: `tercera-ejecucion`.
+- Última ejecución ya iniciada antes del cierre: **11 pruebas, 5 aprobadas y 6 fallos**. XML: `cierre`. No se repitió ni se corrigió después de la orden de cierre.
+- Resultado más reciente por prueba actualmente vigente: **124 aprobadas y 6 fallos pendientes (130 pruebas)**. Se excluye del cómputo el nombre antiguo de una prueba de empates sustituida para reflejar el comparador contractual vigente. No se afirma que una ejecución única de 130 pruebas haya pasado.
+- Backend Node: **38/38 aprobadas** (PhotoCategories5, SyncedEdits2B, Media9 y VideoV1Adapter); servicios simulados, sin aceptación Drive real.
 
-## Verificación posterior
+Los fallos pendientes son `AssetOrderingTest`: `retroactiveCulvertRenumbersOnlyItsFamilyAndKeepsIdentityAndPhotos`, `mixedFamiliesUseSeparateCountersAndIgnoreCaptureTimeAndManualPr`, `fallbackIsExplicitAndDoesNotMixContractualAndGeometricOrigins`, `tiesAreDeterministicAndRouteSibFamilyDefineCountersNotRoadbed`, `folderPlanUsesCurrentOrderAndRealPhotoIndexWithoutMutatingAnything` y `catalogUsesDetailClassesAndReportsUnknownsWithoutInventingSib`. Su causa no se investigó en el cierre.
 
-| Grupo | Resultado ejecutado |
-|---|---|
-| `PhotoDrawing9Test`: miniatura, detalle con 0/1/3 fotos, histórica nula, faltante, reapertura, ampliación, horizontal y exportación vacía | 7/7 escenarios aprobados en la primera ejecución |
-| `PhotoDrawing9Test.advancedExportsDrawsSelectedPhoto` | Timeout inicial esperando una imagen fuera del área visible; se corrigió el desplazamiento del test y la repetición pasó 1/1, incluido dibujo y recomposición |
-| `OperatorFlow7ScreenTest` | 4/4: navegación, Excel local, finalización/cola y asociación SCAP |
-| `PhotoCategories5Test` | 19/19: categorías, originales, historial y persistencia |
-| `PhotoCategories5ScreenTest` | 2/2: controles fotográficos y retiro confirmado |
-| `AutomaticSyncRegressionTest` | 21/21: SIC, SCAP, Excel, ACK simulado, revisiones/conflictos y recuperación de cola offline |
-| `assembleDebug` y `assembleDebugAndroidTest`, configuración de validación | BUILD SUCCESSFUL |
+La prueba de importación JVM usa un proveedor de documentos simulado por la incompatibilidad de separadores Windows/Android de FileProvider. La autenticación recibió un ANDROID_ID simulado válido. Los hashes SCAP se ajustaron a las plantillas ya existentes, cuyos blobs Git se verificaron iguales al HEAD; las plantillas no se modificaron.
 
-**54 pruebas distintas con resultado aprobado, distribuido entre dos ejecuciones.** La primera terminó con 53 aprobadas y 1 timeout de visibilidad del test; no se presenta como una suite íntegramente exitosa. La repetición focalizada de esa única prueba pasó. Los XML de ambas ejecuciones se conservan en `campo-9/evidencia/POSTERIOR_PRIMERA_EJECUCION` y `POSTERIOR_EXPORTACIONES.xml`.
+Las imágenes y ejemplos regenerados por tests se conservan en `campo-9b/capturas` y `campo-9b/examples`, restaurando los fixtures históricos para no reemplazar su evidencia. Los XML registran también los fallos intermedios; no se ocultan.
 
-Las capturas `campo-9/capturas/` proceden de Canvas nativo en Robolectric, con fotografías sintéticas; **no son evidencia de tablet/emulador Android**. Los archivos que las suites antiguas regeneran en `docs/automatic-sync-v16` y `docs/fotografias-5` se restauraron para no mezclar fixtures cambiantes con el parche.
-
-Comando de regresión focalizada ejecutado:
-
-```powershell
-.\gradlew.bat :app:testDebugUnitTest --tests '*PhotoDrawing9Test' --tests '*OperatorFlow7ScreenTest' --tests '*PhotoCategories5Test' --tests '*PhotoCategories5ScreenTest' --tests '*AutomaticSyncRegressionTest' -PgboValidationBuild=true --console=plain
-```
-
-Repetición y compilación final ejecutadas:
-
-```powershell
-.\gradlew.bat :app:testDebugUnitTest --tests '*PhotoDrawing9Test.advancedExportsDrawsSelectedPhoto' :app:assembleDebug :app:assembleDebugAndroidTest -PgboValidationBuild=true --console=plain
-```
-
-SHA-256 APK Debug: `e84f08d6ed5337790f901dc3eeb7c0af082ea5532fbba671a9cb9495fb66c062` (40 507 663 bytes).
-SHA-256 APK instrumentada: `e387a530e7be08eb984361d757f8ef6fa98938dffc91bee952abf84f5a657b0a` (1 421 953 bytes).
-
-No se ejecutó la suite completa del repositorio, ni red real, entrega remota, permisos SAF reales, memoria prolongada, reinicio de la APK, ni ninguna prueba física.
-
-## Android instrumentado
-
-`FieldCrashes9DeviceTest`: seis escenarios preparados para galería desde historial (0/1/3 fotos, original faltante) y exportación (vacía/con fotos). Exige una APK sin endpoints. No elimina tablas ni datos; inserta fixtures sintéticos con UUID únicos. El escenario de base vacía se omite si ya existen registros: ejecutarlo primero en un emulador nuevo. **No ejecutado** en esta entrega.
-
-```powershell
-$env:JAVA_HOME='D:\Android Studio\jbr'
-.\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest -PgboValidationBuild=true --console=plain
-# Elegir el serial de un emulador NUEVO; no usar la tablet de campo.
-$adb9='D:\Android\Sdk\platform-tools\adb.exe'
-$serial9='SERIAL_EMULADOR_AISLADO'
-& $adb9 -s $serial9 install -r app/build/outputs/apk/debug/app-debug.apk
-& $adb9 -s $serial9 install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-& $adb9 -s $serial9 shell am instrument -w -e class 'com.tuempresa.inventariovial.FieldCrashes9DeviceTest#advancedExportsWithoutRecords' com.tuempresa.inventariovial.test/androidx.test.runner.AndroidJUnitRunner
-& $adb9 -s $serial9 shell am instrument -w -e class 'com.tuempresa.inventariovial.FieldCrashes9DeviceTest' com.tuempresa.inventariovial.test/androidx.test.runner.AndroidJUnitRunner
-& $adb9 -s $serial9 logcat -d -b crash
-```
-
-No usar desinstalación, `pm clear` ni borrado de Room para resolver incompatibilidades de firma. Las capturas instrumentadas se guardan en el directorio externo de archivos de la aplicación con prefijo `p9-`.
-
-## Lista física — todo pendiente
-
-Repetir en vertical y horizontal; registrar modelo, API, APK/hash, fecha, operador, resultado y Logcat/diagnóstico si falla. Instalar únicamente por un procedimiento aprobado que conserve la firma y los datos de la tablet; esta APK Debug no debe sustituir una APK firmada con otro certificado.
-
-- [ ] Mis registros → detalle por UUID → fotografías: sin fotos, una y varias, categorías históricas nulas.
-- [ ] Ampliar, cerrar, volver y reabrir la galería repetidamente; rotar durante la carga.
-- [ ] Archivo original o miniatura faltante: mensaje visible y retorno disponible.
-- [ ] Repetir con y sin conexión; comprobar que las fotografías siguen disponibles tras reinicio.
-- [ ] Herramientas y ajustes → exportaciones avanzadas con base vacía en dispositivo de pruebas.
-- [ ] Exportaciones con registros/fotos y copia local anterior; editar encabezado, volver y reabrir.
-- [ ] Generar Excel/ZIP, abrir selector de Android, cancelar, volver a guardar y denegar acceso al destino.
-- [ ] Comparar UUID, datos, número de fotografías, originales, revisiones y entregas pendientes antes/después.
-- [ ] Validar ACK automático SIC/fotos/Excel con la configuración V4 autorizada; no marcar copia local como ACK.
-- [ ] Comprobar SCAP, pavimentos, usuarios, sesión y conflictos con datos de prueba.
-
-Condiciones, categorías nuevas, videos, numeración nueva, listados adicionales, GNSS/KMZ y finalización ampliada: **no implementados ni aprobados en Prompt 9**. Las regresiones de funciones anteriores no constituyen aceptación de estas ampliaciones.
+El usuario comunicó que los dos crashes previos desaparecieron en su tablet. Se registra como aceptación manual comunicada, **no como instrumentación ejecutada por Codex**. No se ejecutó ADB/emulador, despliegue Apps Script, renombrado remoto ni carga real de videos.

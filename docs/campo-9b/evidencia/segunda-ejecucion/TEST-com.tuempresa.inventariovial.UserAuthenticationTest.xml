@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.UserAuthenticationTest" tests="24" skipped="0" failures="1" errors="0" timestamp="2026-10-12T10:16:05.737Z" hostname="JULIAN" time="20.211">
+  <properties/>
+  <testcase name="offlineAdminActionIsRejectedWithoutLocalChanges" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.271"/>
+  <testcase name="changingUserAfterRestartClosesPreviousFieldWithoutRewritingOperator" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.352"/>
+  <testcase name="revokedTabletPreventsNewLoginAndSafelyMarksSession" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.599"/>
+  <testcase name="noCacheRequiresFirstSyncAndDoesNotCreateAdmin" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.082"/>
+  <testcase name="pbkdf2MatchesKnownSha256Vector" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.251"/>
+  <testcase name="lockRequiresSameUserAndRetainsSessionIdentity" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.642"/>
+  <testcase name="fiveFailuresPersistAcrossRepositoryRecreationAndExpire" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="3.711"/>
+  <testcase name="databaseWriteFailureRollsBackSnapshotAndLease" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.097"/>
+  <testcase name="roleChangesTakeEffectInActiveSession" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.693"/>
+  <testcase name="exactly72HoursIsAllowedAndClockRollbackIsRejected" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.644"/>
+  <testcase name="adminSessionExpiresLocally" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.622"/>
+  <testcase name="equalVersionOnlyRefreshesLeaseWithoutReplacingCredentials" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.11"/>
+  <testcase name="fieldSessionOperatorComesFromAuthenticatedUser" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.851">
+    <failure message="java.lang.AssertionError: expected null, but was:&lt;ANDROID_ID no disponible&gt;" type="java.lang.AssertionError">java.lang.AssertionError: expected null, but was:&lt;ANDROID_ID no disponible&gt;
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotNull(Assert.java:756)
+	at org.junit.Assert.assertNull(Assert.java:738)
+	at org.junit.Assert.assertNull(Assert.java:748)
+	at com.tuempresa.inventariovial.UserAuthenticationTest$fieldSessionOperatorComesFromAuthenticatedUser$1.invokeSuspend(UserAuthenticationTest.kt:186)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at com.tuempresa.inventariovial.UserAuthenticationTest.fieldSessionOperatorComesFromAuthenticatedUser(UserAuthenticationTest.kt:179)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:524)
+	at org.robolectric.internal.SandboxTestRunner.executeInSandbox(SandboxTestRunner.java:494)
+	at org.robolectric.internal.SandboxTestRunner.access$900(SandboxTestRunner.java:67)
+	at org.robolectric.internal.SandboxTestRunner$7.evaluate(SandboxTestRunner.java:442)
+	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+	at org.robolectric.internal.SandboxTestRunner.access$600(SandboxTestRunner.java:67)
+	at org.robolectric.internal.SandboxTestRunner$6.evaluate(SandboxTestRunner.java:333)
+	at org.robolectric.internal.SandboxTestRunner$3.evaluate(SandboxTestRunner.java:233)
+	at org.robolectric.internal.SandboxTestRunner$5.lambda$evaluate$0(SandboxTestRunner.java:317)
+	at org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:101)
+	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+</failure>
+  </testcase>
+  <testcase name="usernameNormalizationAndOfflineLoginNeverCallsService" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.625"/>
+  <testcase name="olderVersionAndDuplicateUsernameAreRejected" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.108"/>
+  <testcase name="operatorCannotRunAdminLogicOrReadAudit" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.714"/>
+  <testcase name="cacheOlderThan72HoursRequiresSyncButDoesNotEndExistingSession" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.508"/>
+  <testcase name="newerVersionDisablesUserAndUpdatesRole" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.996"/>
+  <testcase name="wrongPinAndInactiveUserUseGenericError" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="1.17"/>
+  <testcase name="clientPreventsDisablingAndDemotingLastAdmin" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.611"/>
+  <testcase name="migration7to8PreservesEveryExistingTable" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.192"/>
+  <testcase name="failedSyncPreservesUsersVersionAndTimestamp" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.101"/>
+  <testcase name="malformedSnapshotDoesNotPartiallyReplaceCache" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.137"/>
+  <testcase name="storedVerifierIsProtectedAndBoundToUser" classname="com.tuempresa.inventariovial.UserAuthenticationTest" time="0.11"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

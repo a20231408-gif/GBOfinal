@@ -1,0 +1,14 @@
+{
+  "result": "BUILD SUCCESSFUL",
+  "variant": "debug",
+  "validationBuild": true,
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "path": "app\\build\\outputs\\apk\\debug\\app-debug.apk",
+  "sizeBytes": 40190144,
+  "sha256": "ebe8e6e2166522048aa04541f01653a72c2e7cd1b60a9bc97589bd1fecb2f00f",
+  "remoteVideoEnabled": false,
+  "photoNumbersEnabled": false,
+  "instrumentedTestsExecuted": false
+}

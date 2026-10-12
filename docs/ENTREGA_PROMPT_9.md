@@ -1,71 +1,50 @@
-# Prompt 9 — entrega parcial: corrección de los cierres
+# Prompt 9 + 9B — continuación de campo
 
-Fecha: 12/10/2026 (America/Lima). Rama: `codex/ajustes-campo-9`.
-Partida verificada: `codex/integracion-real-8B`, `a55ed8e`, árbol limpio.
+Rama: `codex/ajustes-campo-9`. Base publicada del Prompt 9: `37544481981be2bb27ef5153b2b9c0e0169e1127`. Se conserva la corrección aprobada `e2b3b5a`; no se reinició desde 8B.
 
-## Alcance y puerta de aceptación
+El usuario comunicó que ambos cierres ya desaparecieron en su tablet. Esto es **aceptación manual comunicada**, sin ADB, Logcat ni prueba instrumentada ejecutada por Codex. Las mejoras 9B requieren las comprobaciones de `PRUEBAS_TABLET_9.md`. La falta de dispositivo no detuvo su implementación.
 
-Esta entrega se limita a la fase 1 del Bloque A. **No es una versión aprobada para campo ni la implementación completa del Prompt 9.** El código del defecto se reprodujo y corrigió con Canvas nativo en Robolectric. La aceptación en Android/tablet continúa pendiente: no había dispositivos ADB conectados ni AVD instalados; el emulador aislado preparado para esta tarea no completó su arranque por software. El controlador de aceleración no está instalado. No se instalaron drivers ni se modificó Windows.
+## Funciones Android
 
-Se respeta la prioridad solicitada: no continuar con condiciones, catálogos, nuevos listados, finalización, GNSS/KMZ o videos hasta cerrar la aceptación instrumentada de los dos recorridos. Las pruebas instrumentadas se entregan compiladas, pero **no ejecutadas**. No hay Logcat de la aplicación ni validación física en esta entrega.
+- Condición compartida: tarjetas táctiles de 64 dp, selección explícita y colores obtenidos del significado textual del catálogo, conservando códigos SIC-17…22. Se aplica también a la captura SIC desde SCAP. Las condiciones estadísticas SCAP 0…5 y la severidad de pavimentos conservan sus escalas propias.
+- Fotografías: categorías CORE existentes y nombres exactos de las plantillas SCAP aparecen vacíos, con contadores. Captura/importación múltiple, consulta a pantalla completa, reemplazo y retiro conservan UUID y archivos originales. GENERAL histórico sigue visible. Mostrar categorías no escribe fotografías ni outbox.
+- Listas: componente común de acciones para SIC, SCAP y pavimentos. Alcantarillas, señalización y puntos críticos incluyen borradores e históricos. El número local por UUID persiste; la identidad Drive se muestra por separado. Los campos contractuales permanecen intactos.
+- Revisión/finalización: fajas pasan por resumen; ediciones históricas permiten borrador y confirmación validada. SCAP mantiene sus validaciones de cierre; pavimentos muestra cabecera y daños antes de confirmar. Abrir un resumen no solicita entrega. La confirmación válida usa WorkManager existente.
+- GNSS/KML: importación asociada explícitamente a ruta, almacenamiento offline atómico/versionado, acumulación sobre líneas, sentido invertible, detección de cruces ambiguos, límites de precisión/distancia reales y corrección manual local. Se reutilizan ejes incluidos cuando no hay importación. Se puede capturar la posición actual del operador respecto al eje. El mapa muestra el eje importado. Los huecos entre segmentos no se suman como distancia recta y su orden sigue el archivo: debe revisarse.
+- Ajustes: ayuda sobre 30 m al eje, precisión máxima de matching 15 m, recorrido 10 m, separación 3 m y aviso 1 m (valores actuales configurables mostrados en pantalla). Los dos botones de salida usan el color de error Material 3 y conservan sus verificaciones de seguridad.
+- Videos: MP4/WebM/3GP, múltiples por categoría, importación y cámara externa Android, miniatura/reproductor, originales offline y Room independiente `field_video_9.db` v1. SHA-256 por streaming y máximo 32 MiB por archivo. Retiro conserva el original. La ficha debe finalizar y recibir ACK antes de enviar videos.
 
-## Error reproducido y causa real
+## Protocolos preparados, pendientes del servidor
 
-`LocalPhotoImage`, en `field/InventoryPhotoGallery.kt`, empleaba:
+`photoNamingVersion=1` incorpora `001_F_<hashUUID>.jpg` para nuevas identidades. Una asociación persistente evita cambios por reordenación o reintento. UUID/hash evita colisiones entre tablets; el prefijo es local y no promete un contador global entre operadores. Los archivos ya confirmados conservan su nombre. El servidor rechaza renombres históricos implícitos. El rotulado contractual externo está identificado como pendiente en metadata, sin inventar una base externa.
 
-```kotlin
-DisposableEffect(bitmap) { onDispose { bitmap?.recycle() } }
-```
+`videoProtocol=1` solicita a Apps Script una sesión de Drive y envía binario en bloques de 512 KiB, con consulta de offset/HTTP 308 y reinicio sobre el mismo fileId si caduca. El backend reserva el ID antes de crear el archivo, verifica propietario, carpeta, tamaño y SHA-256 calculado por Drive. El cliente exige ACK completo. Ningún video local se presenta como sincronizado.
 
-`bitmap` es una propiedad delegada a estado. Cuando la decodificación cambia el estado de `null` a una imagen, Compose descarta el efecto anterior. Su callback lee el estado actual y recicla la imagen recién cargada, que `Image` acaba de entregar al renderizador. El dibujo posterior lanza:
+Ambas ampliaciones están deshabilitadas por defecto en Android. Videos también exige `GBO_VIDEO_V1_ENABLED=true` en Apps Script y `videoProtocol=1`. El protocolo fotográfico existente continúa sin cambios mientras no se active el nuevo perfil. **No se desplegó Apps Script, no se enviaron videos reales ni se renombraron archivos remotos.** Ver `PENDIENTES_SERVIDOR_9.md`.
 
-```text
-java.lang.RuntimeException: Canvas: trying to use a recycled bitmap
-android.graphics.BaseCanvas.throwIfCannotDraw
-android.graphics.RecordingCanvas.throwIfCannotDraw
-androidx.compose.ui.graphics.AndroidCanvas.drawImageRect
-androidx.compose.ui.graphics.painter.BitmapPainter.onDraw
-```
+## Compatibilidad y entrega
 
-Se obtuvo este fallo **antes de editar producción**, primero en la miniatura y luego en los recorridos completos `RecordDetailScreen → VER FOTOGRAFÍAS` y `SicExportScreen` con una fotografía seleccionada. Las trazas son de pruebas JVM con Android/Canvas nativos, no de una tablet. La prueba anterior de navegación pasaba porque verificaba principalmente semántica y no esperaba la decodificación antes de dibujar.
+La base de inventario sigue en Room 18. La base multimedia es adicional; no usa migración destructiva. No se modificaron encabezados/columnas contractuales Excel, applicationId, versionCode, keystore, usuarios, permisos administrativos ni la firma histórica. El orden local no entra en revisiones de fichas, numeración remota o rutas de entrega. `._GBO_SYNC_V3` conserva staging, bindings y journals existentes; el parche añade únicamente su registro de videos cuando el propietario lo despliegue.
 
-Se eliminó el reciclado manual de miniaturas usadas por Compose. Se mantiene la decodificación en IO, orientación EXIF, carga local y muestreo acotado a 480 píxeles en revisión. El recolector libera la imagen cuando el estado y el renderizador dejan de referenciarla. Además, el panel de detalle coloca sus títulos y galerías en una `Column`, evitando superposición de varios hijos dentro del mismo elemento de `LazyColumn`.
+Solo se compila Debug con `-PgboValidationBuild=true`: omite endpoints/credenciales de esta máquina y mantiene videos/prefijos deshabilitados. APK: `app/build/outputs/apk/debug/app-debug.apk`. La aceptación real de Drive requiere configuración y backend de prueba del propietario; esta APK verifica UI/offline. No desinstalar la aplicación de campo ni borrar almacenamiento para instalarla: Debug y Release pueden tener certificados distintos.
 
-Evidencia anterior: `campo-9/evidencia/ANTES_MINIATURA.xml`, `ANTES_DETALLE.xml` y `ANTES_EXPORTACIONES_Y_DETALLE_INICIAL.xml`. Este último conserva también un fallo inicial del fixture por tamaño de pantalla, identificado como timeout; no se presenta ese timeout como causa del cierre. El detalle se reprodujo después con dimensiones de tablet y tiene su traza separada.
+El directorio preexistente ajeno `app/release/` se conserva y excluye de los commits. La evidencia histórica del primer Prompt 9 queda archivada en `campo-9b/ANTES_9B_*.md` y `campo-9/`; la evidencia 9B queda en `campo-9b/`.
 
-## Integridad y compatibilidad
+Consulte la matriz completa de implementación y validación en `MATRIZ_VALIDACION_9.md`. El commit final se informa en la entrega y se obtiene con `git rev-parse HEAD`; el documento no incluye su propio hash.
 
-- Afecta la revisión de fotografías de los SIC que utilizan el componente compartido; los fixtures completos son SIC-18 con categoría histórica nula. No cambia campos ni significado de ningún SIC.
-- Los catálogos de condición, las categorías fotográficas y la exportación contractual existentes permanecen en su implementación anterior. No se completaron las fases 2/3.
-- No modifica UUID, Room 18, índices, revisiones, colas WorkManager, ACK, nombres ni asociaciones de Drive. Abrir las pantallas continúa siendo una consulta local.
-- No modifica los dos proyectos Apps Script, ni ejecuta entregas reales o borra archivos remotos. Se mantienen `syncProtocol=3`, `pathVersion=4`, `photoCategoryVersion=1`, numeración estable y entrega técnica sin GPS.
-- No incorpora videos ni habilita su subida. Tampoco entrega un parche de videos: la auditoría y ampliación corresponden al Bloque C pendiente.
-- No cambia firma histórica, keystore, applicationId, versionCode, usuarios ni APK de campo. No se generó Release ni se instaló/desinstaló la aplicación de la tablet.
+## Cierre solicitado por el usuario
 
-## Estado de los requisitos restantes
+Se detuvo la ampliación al recibir la instrucción de cierre inmediato. Se entregan cambios guardados y publicados, con aceptación física/remota pendiente. La tercera ejecución focalizada pasó 30/30; la última prueba en curso terminó con 5 aprobadas y 6 fallos de AssetOrderingTest. No hubo investigación, correcciones ni repetición posteriores. La matriz detalla cada fallo y las dependencias. No presentar esta APK como versión íntegramente aprobada para producción.
 
-| Requisito | Estado en esta entrega |
-|---|---|
-| Condición visual reutilizable en todos los formatos | Pendiente, sin cambios |
-| Categorías predeterminadas verificadas por formato | Pendiente; se conserva catálogo anterior |
-| Videos Android, persistencia, cola y servidor | Pendiente y deshabilitados |
-| Prefijos numéricos de fotos/videos | Pendiente; nombres históricos conservados |
-| Listados equivalentes en todas las familias | Pendiente; listados anteriores conservados |
-| Ordenamiento GNSS/KMZ adicional | Pendiente; lógica anterior conservada |
-| Revisar/finalizar en todos los módulos | Pendiente; validaciones anteriores conservadas |
-| Ayuda GNSS, navegación y sesión roja | Pendiente |
-| Guía de la carpeta técnica Drive | Incluida en `GUIA_BREVE_INGENIEROS.md` |
-| Pruebas Android y físicas de los dos recorridos | Pendientes |
+Backend que debe actualizar posteriormente el propietario: `google-apps-script/Code.gs`, `SyncV3Core.js` (como .gs), `VideoV1Core.js` (como VideoV1Core.gs) y `VideoV1.gs`; conservar `SyncV3.gs` actual. No se desplegó ninguno. Fotos numeradas y videos remotos permanecen desactivados.
 
-## Validación, APK y commits
+Compilación Debug final: **BUILD SUCCESSFUL**, 56 segundos, `:app:assembleDebug -PgboValidationBuild=true --console=plain`. Log: `campo-9b/evidencia/compilacion-debug.log`.
 
-Los resultados definitivos se registran en `MATRIZ_VALIDACION_9.md`: 54 pruebas distintas aprobadas entre la ejecución inicial (53/54) y la repetición focalizada del timeout del test (1/1). Debug y APK instrumentada compilan correctamente. La compilación usa `-PgboValidationBuild=true` para excluir los endpoints y credenciales locales sin editar sus archivos. La APK resultante es para pruebas locales; no permite validar una entrega real a Drive.
+APK: `app/build/outputs/apk/debug/app-debug.apk`, 40,190,144 bytes. SHA-256: `ebe8e6e2166522048aa04541f01653a72c2e7cd1b60a9bc97589bd1fecb2f00f`. `applicationId=com.tuempresa.inventariovial`, `versionCode=16`, `versionName=1.4.2`; conservados. Se generó únicamente Debug; no Release ni despliegue de servidor.
 
-APK Debug: `app/build/outputs/apk/debug/app-debug.apk`.
-APK instrumentada: `app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk`.
+Instalación y prueba:
+1. Copiar el APK Debug a la tablet de validación y abrirlo; permitir instalación desde esa fuente si Android lo solicita.
+2. Si Android permite actualizar con su firma actual, instalar conservando datos. Si indica firma incompatible, **no desinstalar ni borrar almacenamiento de campo**: usar otra tablet/perfil de validación o coordinar la instalación compatible.
+3. Ejecutar `PRUEBAS_TABLET_9.md`, empezando por listas, revisión/borrador, fotos históricas y videos offline. Esta compilación omite endpoints/credenciales y mantiene ambas ampliaciones remotas desactivadas.
+4. Registrar los resultados. La entrega real exige después el servidor de prueba actualizado y una compilación configurada por el responsable. Los seis fallos de ordenamiento requieren atención antes de aceptación integral.
 
-Commit de corrección y regresiones: `e2b3b5a`. Otro commit conserva esta entrega, matriz y guías. Para obtener el commit final exacto del checkout publicado: `git rev-parse HEAD`. El hash se informa también en la respuesta de entrega; el documento no intenta incluir su propio hash.
-
-Durante la ejecución aparecieron archivos en `app/release/` ajenos a los comandos Debug de esta tarea. Se conservaron sin modificarlos, revisarlos ni incluirlos en esta entrega; esta tarea no ejecutó `assembleRelease`.
-
-Riesgo pendiente: el comportamiento de renderizado, rotación, memoria y archivos reales de la tablet requiere ejecución instrumentada y física. La evidencia JVM confirma un defecto compartido, pero no excluye otros cierres dependientes de datos o dispositivo. El siguiente paso es ejecutar `FieldCrashes9DeviceTest` en un emulador operativo aislado, revisar Logcat y completar la lista física. No avanzar al Bloque B/C con esa aceptación abierta.

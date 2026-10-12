@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.FieldContinuation9Test" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:14:56.873Z" hostname="JULIAN" time="13.955">
+  <properties/>
+  <testcase name="displayNumbersSurviveReorderingAndNewElements" classname="com.tuempresa.inventariovial.FieldContinuation9Test" time="5.175"/>
+  <testcase name="historicalEditDraftDoesNotDeliverAndIncompleteFinalizationRollsBack" classname="com.tuempresa.inventariovial.FieldContinuation9Test" time="8.042"/>
+  <testcase name="localGeometryAccumulatesSegmentsWithoutStraightLineGapsAndReverses" classname="com.tuempresa.inventariovial.FieldContinuation9Test" time="0.154"/>
+  <testcase name="selfCrossingAndParallelGeometryRequireManualReview" classname="com.tuempresa.inventariovial.FieldContinuation9Test" time="0.058"/>
+  <testcase name="everyOfficialConditionKeepsItsCodeAndText" classname="com.tuempresa.inventariovial.FieldContinuation9Test" time="0.038"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

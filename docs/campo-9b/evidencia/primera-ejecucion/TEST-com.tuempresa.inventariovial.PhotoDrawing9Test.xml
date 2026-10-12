@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PhotoDrawing9Test" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:07:46.406Z" hostname="JULIAN" time="3.507">
+  <properties/>
+  <testcase name="detailGalleryInLandscape" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.825"/>
+  <testcase name="advancedExportsWithoutRecords" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.263"/>
+  <testcase name="decodedThumbnailCanBeDrawn" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.157"/>
+  <testcase name="detailGalleryWithoutPhotos" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.324"/>
+  <testcase name="advancedExportsDrawsSelectedPhoto" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.496"/>
+  <testcase name="detailGalleryDrawsHistoricalPhoto" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.517"/>
+  <testcase name="detailGalleryWithMissingFiles" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.366"/>
+  <testcase name="detailGalleryDrawsMultipleCategories" classname="com.tuempresa.inventariovial.PhotoDrawing9Test" time="0.535"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

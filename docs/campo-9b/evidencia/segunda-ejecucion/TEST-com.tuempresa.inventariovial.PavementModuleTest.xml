@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PavementModuleTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:15:55.623Z" hostname="JULIAN" time="9.246">
+  <properties/>
+  <testcase name="singleDeductionUsesTotalWithoutCorrection" classname="com.tuempresa.inventariovial.PavementModuleTest" time="1.677"/>
+  <testcase name="coordinatesCannotEscapeSampleOrBeNan" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.038"/>
+  <testcase name="migrationFromDeliveredVersion10KeepsExistingUsers" classname="com.tuempresa.inventariovial.PavementModuleTest" time="5.884"/>
+  <testcase name="forgedSampleIdsCannotChangeAnotherInspectorsDamageOrPhotos" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.155"/>
+  <testcase name="calculationSnapshotRetainsPendingReasonsAndIterationValues" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.037"/>
+  <testcase name="additionalSamplesUseSectionAreaAndMissingSamplesBlockResult" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.076"/>
+  <testcase name="translatingClampsBothEndpointsAndPreservesMeasuredQuantity" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.076"/>
+  <testcase name="logarithmicInterpolationAndNoExtrapolation" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.079"/>
+  <testcase name="fractionalRetentionAndIterationsDoNotMutateInput" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.06"/>
+  <testcase name="closedSamplesAndOtherInspectorsCannotWrite" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.128"/>
+  <testcase name="areaLimitUsesSameCodeAcrossSeverities" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.03"/>
+  <testcase name="potholeSuggestionDoesNotGuessAmbiguousLimits" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.059"/>
+  <testcase name="exportKeepsExactThirteenHeadersAndEscapesText" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.1"/>
+  <testcase name="missingCurvesNeverProduceNumericIndex" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.086"/>
+  <testcase name="rulerAndDamageUseSameBottomLeftTransform" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.044"/>
+  <testcase name="urciUsesFiveAndNinetyFiveInsteadOfPciConstants" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.049"/>
+  <testcase name="unpavedWithoutDamageNeedsNoCurveAndRigidRequiresSlabGrid" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.086"/>
+  <testcase name="updatingHeaderAndDamagePreservesChildren" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.191"/>
+  <testcase name="importedPhotosPersistAndDeleteOnlySelectedManagedCopy" classname="com.tuempresa.inventariovial.PavementModuleTest" time="0.222"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

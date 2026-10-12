@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:06:40.772Z" hostname="JULIAN" time="29.103">
+  <properties/>
+  <testcase name="scapOrderDestinationOpensOnlyItsInspectionAndExistingSections" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="24.264"/>
+  <testcase name="landscapeActionsRemainReachableAndReturnToHistory" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.847"/>
+  <testcase name="visualConditionWritesOnlyOfficialCodeAndSurvivesRecomposition" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.346"/>
+  <testcase name="detailNavigatesSheetGalleryExcelAndBackUsingSameUuid" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.952"/>
+  <testcase name="completingDraftOpensItsDetailAndSchedulesAutomaticDelivery" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.919"/>
+  <testcase name="commonModuleListShowsActiveDraftHistoricalAndOpensSamePhotoIdentity" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="1.393"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

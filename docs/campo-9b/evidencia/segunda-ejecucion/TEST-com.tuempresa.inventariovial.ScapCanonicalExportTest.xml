@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.ScapCanonicalExportTest" tests="5" skipped="0" failures="1" errors="0" timestamp="2026-10-12T10:15:10.871Z" hostname="JULIAN" time="19.944">
+  <properties/>
+  <testcase name="bothExportsKeepManualCodeMetradoContractualUnitAndActualImportanceValue" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="5.147"/>
+  <testcase name="bothTypesUseExactSourceAndKeepCorporateHeaderSheetNamesStylesGeometryAndDerivedFormulas" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="0.131">
+    <failure message="org.junit.ComparisonFailure: expected:&lt;a[c02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89]&gt; but was:&lt;a[e6962149498506c8bf71f5b51d6f77231691161c1372132b82caefaf0058091]&gt;" type="org.junit.ComparisonFailure">org.junit.ComparisonFailure: expected:&lt;a[c02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89]&gt; but was:&lt;a[e6962149498506c8bf71f5b51d6f77231691161c1372132b82caefaf0058091]&gt;
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.tuempresa.inventariovial.ScapCanonicalExportTest.bothTypesUseExactSourceAndKeepCorporateHeaderSheetNamesStylesGeometryAndDerivedFormulas(ScapCanonicalExportTest.kt:47)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:524)
+	at org.robolectric.internal.SandboxTestRunner.executeInSandbox(SandboxTestRunner.java:494)
+	at org.robolectric.internal.SandboxTestRunner.access$900(SandboxTestRunner.java:67)
+	at org.robolectric.internal.SandboxTestRunner$7.evaluate(SandboxTestRunner.java:442)
+	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+	at org.robolectric.internal.SandboxTestRunner.access$600(SandboxTestRunner.java:67)
+	at org.robolectric.internal.SandboxTestRunner$6.evaluate(SandboxTestRunner.java:333)
+	at org.robolectric.internal.SandboxTestRunner$3.evaluate(SandboxTestRunner.java:233)
+	at org.robolectric.internal.SandboxTestRunner$5.lambda$evaluate$0(SandboxTestRunner.java:317)
+	at org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:101)
+	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+</failure>
+  </testcase>
+  <testcase name="portraitLandscapeAndExifRotationStayCenteredInsideOriginalPhotoFrames" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="11.895"/>
+  <testcase name="observedNumericSourceLiteralsSurviveAndNumbersRemainTyped" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="1.87"/>
+  <testcase name="canonicalBoundsRejectOverflowAndMismatchedTypeBeforeWriting" classname="com.tuempresa.inventariovial.ScapCanonicalExportTest" time="0.759"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

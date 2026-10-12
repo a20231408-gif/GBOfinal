@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.VideoContinuation9Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:20:08.762Z" hostname="JULIAN" time="5.705">
+  <properties/>
+  <testcase name="importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="5.628"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

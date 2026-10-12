@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-12T10:20:15.712Z" hostname="JULIAN" time="14.753">
+  <properties/>
+  <testcase name="scapOrderDestinationOpensOnlyItsInspectionAndExistingSections" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="11.595"/>
+  <testcase name="listReviewOpensSummaryWithoutCreatingDelivery" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.58"/>
+  <testcase name="landscapeActionsRemainReachableAndReturnToHistory" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.431"/>
+  <testcase name="visualConditionWritesOnlyOfficialCodeAndSurvivesRecomposition" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.229"/>
+  <testcase name="detailNavigatesSheetGalleryExcelAndBackUsingSameUuid" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.589"/>
+  <testcase name="completingDraftOpensItsDetailAndSchedulesAutomaticDelivery" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.478"/>
+  <testcase name="commonModuleListShowsActiveDraftHistoricalAndOpensSamePhotoIdentity" classname="com.tuempresa.inventariovial.OperatorFlow7ScreenTest" time="0.768"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.VideoContinuation9Test" tests="10" skipped="0" failures="1" errors="0" timestamp="2026-10-12T10:15:53.675Z" hostname="JULIAN" time="1.111">
+  <properties/>
+  <testcase name="badAckAndChangedOriginalCannotBecomeSynced" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.202"/>
+  <testcase name="photographicNumbersAreStableAcrossOrderRetryAndHistoricalFiles" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.06"/>
+  <testcase name="waitingParentAndMissingCapabilityPreserveOriginalAndQueue" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.092"/>
+  <testcase name="retiredVideoCannotBeResurrectedByWorkerProgress" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.136"/>
+  <testcase name="disabledUploadNeverCallsRemoteOrPretendsToBeSynced" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.107"/>
+  <testcase name="importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.062">
+    <failure message="java.lang.SecurityException: The authority videos.test does not match the one of the contentProvider: null" type="java.lang.SecurityException">java.lang.SecurityException: The authority videos.test does not match the one of the contentProvider: null
+	at android.content.ContentProvider.validateIncomingAuthority(ContentProvider.java:2736)
+	at android.content.ContentProvider.validateIncomingUri(ContentProvider.java:2755)
+	at android.content.ContentProvider$Transport.openTypedAssetFile(ContentProvider.java:660)
+	at android.content.ContentResolver.openTypedAssetFileDescriptor(ContentResolver.java:2043)
+	at android.content.ContentResolver.openAssetFileDescriptor(ContentResolver.java:1858)
+	at android.content.ContentResolver.openInputStream(ContentResolver.java:1528)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at org.robolectric.shadows.ShadowContentResolver$ContentResolverReflector$$Reflector93.openInputStream(Unknown Source)
+	at org.robolectric.shadows.ShadowContentResolver.openInputStream(ShadowContentResolver.java:198)
+	at android.content.ContentResolver.openInputStream(ContentResolver.java)
+	at com.tuempresa.inventariovial.media.VideoStorage.import(VideoStorage.kt:59)
+	at com.tuempresa.inventariovial.VideoContinuation9Test$importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows$1.invokeSuspend(VideoContinuation9Test.kt:67)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at com.tuempresa.inventariovial.VideoContinuation9Test.importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows(VideoContinuation9Test.kt:49)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:524)
+	at org.robolectric.internal.SandboxTestRunner.executeInSandbox(SandboxTestRunner.java:494)
+	at org.robolectric.internal.SandboxTestRunner.access$900(SandboxTestRunner.java:67)
+	at org.robolectric.internal.SandboxTestRunner$7.evaluate(SandboxTestRunner.java:442)
+	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+	at org.robolectric.internal.SandboxTestRunner.access$600(SandboxTestRunner.java:67)
+	at org.robolectric.internal.SandboxTestRunner$6.evaluate(SandboxTestRunner.java:333)
+	at org.robolectric.internal.SandboxTestRunner$3.evaluate(SandboxTestRunner.java:233)
+	at org.robolectric.internal.SandboxTestRunner$5.lambda$evaluate$0(SandboxTestRunner.java:317)
+	at org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:101)
+	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+</failure>
+  </testcase>
+  <testcase name="offlineDatabaseReopenRetainsCategoriesHashOriginalAndIdentity" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.17"/>
+  <testcase name="sessionHostAndOffsetsRejectForeignOrMalformedResponses" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.032"/>
+  <testcase name="expiredSessionClearsSecretAndRetryKeepsId" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.101"/>
+  <testcase name="resumableRetryAfterLostChunkResponseUsesSameUuidAndFileId" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.139"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

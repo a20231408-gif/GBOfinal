@@ -1,17 +1,39 @@
-# Servidor — Prompt 9 parcial
+# Cambios del servidor preparados para Prompt 9B
 
-Esta corrección de miniaturas **no requiere desplegar Apps Script**. No se modificó el backend de sincronización ni el servicio independiente de usuarios. Sigue vigente el contrato verificado en Prompt 8B: protocolo 3, rutas V4, categorías versión 1, numeración familiar estable y entrega técnica sin GPS.
+Estado: parche local preparado; **sin despliegue ni aceptación remota**. No editar ni eliminar las asociaciones existentes de `._GBO_SYNC_V3`.
 
-## Videos: bloqueo de habilitación
+## Archivos
 
-Videos no implementados ni habilitados. No se auditó todavía el transporte completo y **no existe un parche de servidor de videos en esta entrega**. El soporte actual de fotos no se considera evidencia de compatibilidad con videos.
+Actualizar en un despliegue de prueba `Code.gs` y `SyncV3Core.js` (como `.gs`); conservar `SyncV3.gs` actual. Agregar `VideoV1Core.js` como `VideoV1Core.gs` y `VideoV1.gs`. El parche publicado inicialmente está en `3ee22ec`. Mantener ROOT_FOLDER_ID/token reales en la configuración del propietario; no copiar placeholders sobre valores de producción. No imprimir tokens ni URI de sesiones de carga.
 
-Después de cerrar el Bloque A, el Bloque C deberá:
+El `doPost` existente autentica el token antes de enrutar `beginVideoV1` y `finishVideoV1`. Los archivos nuevos reutilizan el bloqueo ScriptLock y el servicio avanzado Drive v3. Se necesita autorización de Drive y UrlFetch para iniciar sesiones, además del OAuth del propietario. Confirmar autorización y scopes en el entorno de prueba antes de activar.
 
-1. Auditar límites documentados del servicio y solicitudes, consumo de memoria y almacenamiento, MIME y tipos de video reales.
-2. Diseñar transporte binario adecuado/resumible o una ampliación segura por partes; evitar videos completos en JSON/Base64.
-3. Definir persistencia offline, progreso, reintentos, idempotencia UUID, SHA-256, reemplazo e historial, y capacidades explícitas del servidor.
-4. Preparar parche compatible en el repositorio, pruebas y actualización manual coordinada del proyecto `GBO_Inventario` existente. No mezclarlo con el servicio de usuarios.
-5. Mantener la entrega real de videos bloqueada hasta que el usuario despliegue y pruebe el servidor compatible en un entorno autorizado.
+## Fotos numeradas
 
-Prefijos numéricos de multimedia y migraciones de carpetas: pendientes. No renombrar ni duplicar históricos, no cambiar fileId/bindings y no reorganizar Drive por un nuevo orden KMZ. Cualquier migración futura requiere diseño y autorización separados.
+El GET anuncia `photoNamingVersion=1`; el nuevo core valida categorías y hash del UUID, acepta prefijos de 3…10 dígitos y el nombre legado. Integra el perfil en el contentHash. Rechaza cambiar el nombre de una foto previamente vinculada; los fileId se conservan en ediciones/reintentos. No hay tarea de renombrado masivo.
+
+Después de probar, Android puede habilitar `GBO_PHOTO_NUMBERS_ENABLED=true` en `server.local.properties` para una compilación configurada. Por defecto false. Los snapshots ya preparados conservan su contenido exacto; no se rehacen silenciosamente para aplicar otro perfil.
+
+El prefijo se reserva localmente por elemento y UUID. Distintos operadores pueden usar el mismo prefijo con distinto hash; no colisionan. Un contador remoto global o etiquetas de una base externa requerirían un nuevo contrato/migración explícitos, no implementados ni ejecutados.
+
+## Videos
+
+1. Desplegar los cuatro archivos anteriores en un servidor de prueba con Drive v3 avanzado.
+2. Mantener `GBO_VIDEO_V1_ENABLED` ausente/false inicialmente. El GET debe anunciar `videoProtocol=0`; Android muestra dependencia del backend.
+3. Activar la propiedad en prueba; GET debe anunciar 1. Activar Android `GBO_VIDEO_REMOTE_ENABLED=true` únicamente para la aceptación coordinada. La APK Debug de validación mantiene false incluso si hay propiedades locales.
+4. Finalizar y sincronizar una ficha de prueba. `beginVideoV1` recibe parentKey/revisión/UUID/categoría/MIME/tamaño/SHA, reserva fileId en `._GBO_SYNC_V3/VIDEO_V1` y crea `VIDEOS/<categoría>/V_<hashUUID>.<ext>` dentro de la carpeta ya vinculada.
+5. Android consulta offset y transmite bloques binarios directamente a una URI HTTPS de `www.googleapis.com/upload/drive/v3/files…`, sin exponer OAuth del propietario y sin Base64 del video. La URI es un secreto temporal que se conserva solo en almacenamiento privado.
+6. `finishVideoV1` compara propietario, carpeta, MIME, tamaño y `sha256Checksum` devuelto por Drive. Si Drive no proporciona el checksum, rechaza la confirmación; el cliente conserva original y error, sin afirmar sincronización. No descarga un blob gigante en Apps Script.
+7. Probar pérdida de respuesta inicial/final, corte a mitad de bloque, reinicio de app, caducidad/404, dos videos de una categoría, varias categorías, UUID reutilizado con contenido distinto y ficha aún no finalizada. Verificar un único fileId por UUID.
+
+El retiro es local y conserva originales/remotos; no elimina evidencia remota. No existe renumeración/movimiento de carpetas por cambios del orden visual. Una migración de numeración Drive debe diseñarse y aprobarse por separado.
+
+## Límites revisados
+
+El staging fotográfico actual admite 24 MiB por archivo y hasta 160 MiB por revisión. No se reutiliza esa vía Base64 para videos. El límite de producto se fija en 32 MiB por video y bloques de 512 KiB. No es el máximo de Drive: limita captura/almacenamiento y facilita la aceptación inicial. El número de videos queda sujeto al espacio local/Drive disponible.
+
+Google documenta [sesiones reanudables, bloques múltiplos de 256 KiB, respuesta 308 y caducidad de una semana](https://developers.google.com/workspace/drive/api/guides/manage-uploads). Apps Script documenta [6 minutos por ejecución y 50 MB por llamada UrlFetch](https://developers.google.com/apps-script/guides/services/quotas). Drive expone [SHA-256 de archivos binarios, si está disponible](https://developers.google.com/workspace/drive/api/reference/rest/v3/files). El parche renueva sesiones después de seis días o cuando el cliente informa caducidad, siempre sobre el ID reservado.
+
+## Pruebas realmente realizadas
+
+Pruebas Node del motor y adapter Apps Script con servicios simulados, junto con regresiones de categorías/fotos/Excel/ediciones. Pruebas JVM del cliente: persistencia, límites, reanudación, idempotencia, ACK falso, original modificado, retiro y flag deshabilitado. No constituyen aceptación OAuth/Drive remota. Las cuotas diarias y permisos de la cuenta del propietario deben probarse antes de habilitar producción.
