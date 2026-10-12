@@ -99,14 +99,24 @@ class InventoryRepository(
     suspend fun saveSic20(
         record: InventoryRecordEntity,
         detail: Sic20Entity,
-        photos: List<PhotoEntity>
+        photos: List<PhotoEntity>,
+        lengthMode: String = "HISTORICAL"
     ) {
 
         database.withTransaction {
 
+            if(detail.classCode in setOf("13","14")) {
+                val allowed=if(detail.classCode=="13")setOf("S") else setOf("I","D")
+                val old=dao.snapshot(record.id)
+                require(record.sideCode in allowed || old?.sic20?.classCode==detail.classCode && old.record.sideCode==record.sideCode) {
+                    "Túnel: solo SIN OBJETO. Muro: IZQUIERDA o DERECHA."
+                }
+            }
+
             dao.insertOrCompleteDraft(record)
 
             dao.insertSic20(detail)
+            if(detail.classCode=="14") TechnicalLengthStore.remember(database,record,lengthMode)
 
             dao.insertPhotos(photos)
             if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)

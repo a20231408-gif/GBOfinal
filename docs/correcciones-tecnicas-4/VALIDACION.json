@@ -1,0 +1,117 @@
+{
+  "base": "bbbf7598598b01624e421836923d39e9a3d1f326",
+  "branch": "codex/correcciones-tecnicas-sic-4",
+  "androidTests": 51.0,
+  "failures": 0.0,
+  "suites": [
+    {
+      "suite": "com.tuempresa.inventariovial.ContractualForms3Test",
+      "tests": 12,
+      "failures": 0,
+      "cases": [
+        "allExtensionLocationsRejectFourIntegerDigits",
+        "coordinatePairsAreOptionalButNeverPartiallyValid",
+        "criticalAndAccidentObservationsPersistEditAndReopen",
+        "dimensionsDoNotReceiveOffsetLimit",
+        "fullRoadCatalogueDoesNotBypassOffsetLimit",
+        "historicalGpsIsPreservedUntilExplicitlyCleared",
+        "manualGpsIsNotCertifiedOrSubmetric",
+        "noGpsAndDeniedPermissionAllowTechnicalValidation",
+        "observationsReachDriveMetadataWithoutChangingContractualColumns",
+        "offsetsKeepPrecisionAndBothSeparators",
+        "prPreservesLeadingZerosRejectsPasteAndFifthDigit",
+        "scapSicOffsetsUseSameLimitsWithoutConstrainingFullProgressive"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.InventoryElementFlowTest",
+      "tests": 11,
+      "failures": 0,
+      "cases": [
+        "coordinatesAndCleanPhotographsOfNewElementsSurviveSaveAndReopen",
+        "culvertRawEditDraftPersistsInvalidNumbersAndIsIsolatedByOperator",
+        "culvertSupplementEnteredBeforeBaseFinalizationKeepsItsParentForeignKey",
+        "fajaCharacteristicsSaveReopenThenWidthsFinalizeAsOneElement",
+        "generatedFileDiscoveryAndGroupingRetainElementContextForOldAndNewFilenameOrder",
+        "goodConditionKeepsFunctionAndSupplementHistoryExportable",
+        "historicalUnlinkedWidthsAndMultipleLinkedMeasurementsAreNeverLostOrGuessed",
+        "inheritedCommonFieldsFollowCurrentFajaWhilePreservingWidthUuidAndRawValues",
+        "legacyCulvertRegularRequiresFailuresAndKeepsOneIdentity",
+        "oneDriveFolderForLinkedFajaFormatsKeepsChildAckIdAndDoesNotMarkPreparedAsSynced",
+        "rawWidthsAndPartialCharacteristicsRemainDraftsWithoutDuplicatingTheirParent"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.SyncedRecordEdits2BTest",
+      "tests": 10,
+      "failures": 0,
+      "cases": [
+        "conditionAndProgressiveEditsKeepIdentityConfirmedBaseAndGenerateActualPayloads",
+        "editDuringUploadRetainsLateAckAsBaseAndThenDeliversNewerRevision",
+        "lostAckThenEditReplaysExactPredecessorWithoutConflictingWithOwnDelivery",
+        "missingBackendConfirmationCannotMarkAnEditSynced",
+        "nonblankButChangedFolderIdentityCannotAcknowledgeAnUpdate",
+        "operatorConflictPersistsLocalEditAndCannotBeClearedByAnotherSave",
+        "pendingEditAndConfirmedIdentitySurviveDatabaseReopening",
+        "photoCategoryAddAndRemovePreserveOriginalFilesAndExistingPhotoUuid",
+        "rejectionDuringAnotherSaveKeepsLatestLocalRevisionInConflict",
+        "staleLocalFormCannotOverwriteNewerConditionOrPhotos"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.TechnicalRules4ScreenTest",
+      "tests": 3,
+      "failures": 0,
+      "cases": [
+        "failureFieldsOfCompletedSupplementRemainEnabled",
+        "functionIsAlwaysBeforeConditionAndRemainsEditable",
+        "lengthUpdatesWhenFullProgressiveChangesAndDoesNotInventMissingValues"
+      ]
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.TechnicalRules4Test",
+      "tests": 15,
+      "failures": 0,
+      "cases": [
+        "culvertConditionChangesPersistReopenAndExportSameUuidWithoutLosingFailures",
+        "databaseReopenKeepsFunctionFailuresMaterialAndMeasuredWallLength",
+        "decreasingDirectionHasPositivePhysicalLength",
+        "differentPrUsesActualNonKilometricCatalogSpacing",
+        "distinctRoutesAndRoadbedsAreRejected",
+        "goodRegularAndBadRequireIndependentFunctionAndAppropriateFailures",
+        "lengthCompanionContainsMeasuredAndCalculatedValuesWithoutChangingSicColumns",
+        "linearFamiliesAreScopedToTheirActualModels",
+        "missingAndAmbiguousPrNeverInventKilometers",
+        "newMaterialsUseExistingOfficialCodesAndPreserveHistoricalSelections",
+        "samePrUsesCompleteOffsetsAndKeepsDecimalPrecision",
+        "tunnelAndWallSideRulesDoNotAffectFord",
+        "tunnelSidePersistsAndHistoricalSideIsNeverMigratedSilently",
+        "v3LengthCompanionReusesStableKeyAndReflectsProgressiveEditWithoutGps",
+        "wallAutomaticModeUpdatesAfterProgressiveEditButHistoricalAndMeasuredRemain"
+      ]
+    }
+  ],
+  "assembleDebug": "PASSED",
+  "apkSha256": "78a88bf9c3243bf9178aeba287921ce926bc1b056d70158e5e31a82e49334fa9",
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 16,
+  "signerSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+  "testCountMeaning": "51 distinct cases approved across focused runs; final affected selection: 16",
+  "roomSchemaVersion": 17,
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "remoteDrive": "NOT_RUN",
+  "backend": "UNCHANGED",
+  "fullSuite": "NOT_RUN",
+  "physicalValidation": "PENDING",
+  "initialFailures": [
+    "initial: 38 cases / 1 failure (Excel companion header minimum columns)",
+    "second: 29 cases / 1 failure (legacy GPS fixture without explicit source)"
+  ],
+  "latestSelection": {
+    "failures": 0,
+    "tests": 16,
+    "assembleDebug": "PASSED",
+    "log": "focused-prompt4-repaired.log"
+  }
+}

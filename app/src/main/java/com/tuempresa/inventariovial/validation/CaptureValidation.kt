@@ -50,6 +50,8 @@ object CaptureValidation {
         if(validateLocation && !GeoMath.validCoordinate(request.latitude,request.longitude)) add(ValidationError("location","Coordenadas inválidas."))
         if((request.endLatitude==null)!=(request.endLongitude==null) || request.endLatitude?.let { !GeoMath.validCoordinate(it,request.endLongitude ?: Double.NaN) }==true) add(ValidationError("endLocation","Coordenadas finales inválidas."))
         if(request.sideCode!=null && request.sideCode !in setOf("D","I","S")) add(ValidationError("side","Lado inválido."))
+        if(request.detail is SicFormDetail.Sic20 && request.detail.state.classCode in setOf("13","14") && request.sideCode !in TechnicalElementRules.sides(request.detail))
+            add(ValidationError("side","Túnel: solo SIN OBJETO. Muro: IZQUIERDA o DERECHA."))
         if(request.detail is SicFormDetail.Sic18) with(request.detail.state) {
             fun positive(value: String) = value.replace(',','.').toDoubleOrNull()?.let {it.isFinite() && it>0} == true
             if(!positive(dimension1M)) add(ValidationError("dimension1M","Ancho o diámetro debe ser mayor que cero."))

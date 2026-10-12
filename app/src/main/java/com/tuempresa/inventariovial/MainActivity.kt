@@ -1038,6 +1038,9 @@ fun SignalizationFormScreen(
         }
     }
 
+    val signalLength = com.tuempresa.inventariovial.validation.ContractualLength.calculate(
+        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
+        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),prReference.prs,direction)
     com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
         title="Registrar ${signalizationType.title}",subtitle="${signalizationType.sicCode} · ${signalizationType.subtitle}",
         onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
@@ -1198,8 +1201,12 @@ fun SignalizationFormScreen(
                 SignalizationType.HORIZONTAL_STUDS,
                 SignalizationType.SAFETY -> {
 
+                    if(com.tuempresa.inventariovial.validation.TechnicalElementRules.linear(SicFormDetail.Sic21(sic21State)))
+                        com.tuempresa.inventariovial.field.TechnicalLengthField(signalLength)
+
                     Sic21Fields(
                         state = sic21State,
+                        isNew = draftRecord == null,
                         onStateChange = {
                             sic21State = it
                         }
@@ -1524,6 +1531,7 @@ fun Sic22Fields(state: Sic22FormState, onStateChange: (Sic22FormState) -> Unit) 
 @Composable
 fun Sic21Fields(
     state: Sic21FormState,
+    isNew: Boolean = false,
     onStateChange: (Sic21FormState) -> Unit
 ) {
 
@@ -1610,8 +1618,8 @@ fun Sic21Fields(
 
             onStateChange(
                 state.copy(
-                    typeCode =
-                        codeFromOption(it)
+                    typeCode = codeFromOption(it),
+                    materialCode = com.tuempresa.inventariovial.validation.TechnicalElementRules.selectSafetyType(state,codeFromOption(it),isNew).materialCode
                 )
             )
         }
@@ -2007,10 +2015,21 @@ fun AssetFormScreen(
                 assetType == RoadAssetType.BRIDGE ||
                 assetType == RoadAssetType.RIGHT_OF_WAY
 
+    val assetLength = com.tuempresa.inventariovial.validation.ContractualLength.calculate(
+        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
+        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),prReference.prs,direction)
+    var wallManual by rememberSaveable {mutableStateOf(draftRecord!=null)}
+    LaunchedEffect(startPr,startDistance,endPr,endDistance,route,roadbed,direction,prReference,wallManual) {
+        if(assetType==RoadAssetType.WALL && !wallManual)
+            sic20State=sic20State.copy(wallLengthMeters=assetLength.metres?.toString().orEmpty(),lengthMode="AUTO")
+    }
+
     val needsSide =
         assetType == RoadAssetType.DITCH ||
                 assetType in setOf(RoadAssetType.FORD, RoadAssetType.TUNNEL, RoadAssetType.WALL) ||
                 assetType == RoadAssetType.RIGHT_OF_WAY
+
+    LaunchedEffect(assetType) {if(draftRecord==null && assetType==RoadAssetType.TUNNEL) side="S - Sin objeto"}
 
     val sideOptions =
         when (assetType) {
@@ -2021,7 +2040,9 @@ fun AssetFormScreen(
                     "I - Izquierdo"
                 )
 
-            RoadAssetType.FORD, RoadAssetType.TUNNEL, RoadAssetType.WALL, RoadAssetType.RIGHT_OF_WAY ->
+            RoadAssetType.TUNNEL -> listOf("S - Sin objeto")
+            RoadAssetType.WALL -> listOf("D - Derecho","I - Izquierdo")
+            RoadAssetType.FORD, RoadAssetType.RIGHT_OF_WAY ->
                 listOf(
                     "D - Derecho",
                     "I - Izquierdo",
@@ -2036,6 +2057,10 @@ fun AssetFormScreen(
     val saveAsset = fun() {
 
                     when {
+
+                        assetType==RoadAssetType.CULVERT && culvertExtra()["functionCode"].isNullOrBlank() -> {
+                            formError="Selecciona la función de la alcantarilla antes de guardar la ficha completa."
+                        }
 
                         gpsInputError != null -> { formError=gpsInputError }
 
@@ -2351,6 +2376,8 @@ fun AssetFormScreen(
             sic18State=com.tuempresa.inventariovial.core.InventoryDraftStore.restore(raw,sic18State)
             sic19State=com.tuempresa.inventariovial.core.InventoryDraftStore.restore(raw,sic19State)
             sic20State=com.tuempresa.inventariovial.core.InventoryDraftStore.restore(raw,sic20State)
+            if(!raw.getJSONObject("detail").getJSONObject("fields").has("lengthMode")) sic20State=sic20State.copy(lengthMode="HISTORICAL")
+            wallManual=sic20State.lengthMode!="AUTO"
             sic23State=com.tuempresa.inventariovial.core.InventoryDraftStore.restore(raw,sic23State)
             val cats=raw.getJSONObject("photoCategories");photoCategories=cats.keys().asSequence().associateWith { cats.getString(it) }
             val captures=raw.getJSONObject("photoCaptures")
@@ -2425,6 +2452,10 @@ fun AssetFormScreen(
                 {endLocationSource=LocationSource.edited(endLocationSource,endSuggestion!=null);endPr=it},
                 {endLocationSource=LocationSource.edited(endLocationSource,endSuggestion!=null);endDistance=it})
         }
+        if(assetType in setOf(RoadAssetType.WALL,RoadAssetType.DITCH,RoadAssetType.FORD)) item {
+            com.tuempresa.inventariovial.field.TechnicalLengthField(assetLength,
+                if(assetType==RoadAssetType.WALL) {{metres:Double->wallManual=false;sic20State=sic20State.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO")}} else null)
+        }
 
         if (needsSide) {
 
@@ -2462,13 +2493,18 @@ fun AssetFormScreen(
                     Sic18Fields(
                         state = sic18State,
                         onCompleteSic18A = {culvertExpanded=true},
+                        beforeConditions = {
+                            com.tuempresa.inventariovial.field.CulvertFunctionField(culvertExtra()) {values->
+                                culvertExtraRaw=org.json.JSONObject(values).toString();culvertExtraDirty=true
+                            }
+                        },
                         onStateChange = {
                             if(com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(sic18State.structuralConditionCode,sic18State.functionalConditionCode) &&
                                 !com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(it.structuralConditionCode,it.functionalConditionCode) && culvertExtra().isNotEmpty()) pendingCulvertCondition=it
                             else sic18State = it
                         }
                     )
-                    if(culvertExpanded) {
+                    if(com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(sic18State.structuralConditionCode,sic18State.functionalConditionCode) || culvertExpanded) {
                         Text("$route · $roadbed · PR $startPr + $startDistance m · ${sic18State.spans} vanos")
                         com.tuempresa.inventariovial.field.CulvertSupplementFields(culvertExtra(),true) {values->culvertExtraRaw=org.json.JSONObject(values).toString();culvertExtraDirty=true}
                     }
@@ -2488,8 +2524,9 @@ fun AssetFormScreen(
 
                     Sic20Fields(
                         state = sic20State,
+                        onManualLength = {wallManual=true;sic20State=sic20State.copy(lengthMode="MEASURED")},
                         onStateChange = {
-                            sic20State = it
+                            sic20State = it.copy(lengthMode=if(wallManual) "MEASURED" else "AUTO")
                         }
                     )
                 }
@@ -2709,6 +2746,7 @@ fun AssetFormScreen(
 fun Sic18Fields(
     state: Sic18FormState,
     onCompleteSic18A: (() -> Unit)? = null,
+    beforeConditions: @Composable () -> Unit = {},
     onStateChange: (Sic18FormState) -> Unit
 ) {
 
@@ -2886,17 +2924,18 @@ fun Sic18Fields(
     } else Text("Dimensión 2: no aplica a sección circular")
 
 
+    beforeConditions()
     ConditionSelector("CONDICIÓN ESTRUCTURAL",state.structuralConditionCode,emptyMap()) {onStateChange(state.copy(structuralConditionCode=it))}
     com.tuempresa.inventariovial.sic.TechnicalCriterion("Ver criterio estructural") {SicCatalogRepository.sic18StructuralDescriptions.forEach {(code,description)->Text("$code · $description")}}
     ConditionSelector("Condición funcional",state.functionalConditionCode,emptyMap()) {onStateChange(state.copy(functionalConditionCode=it))}
     com.tuempresa.inventariovial.sic.TechnicalCriterion("Ver criterio funcional") {com.tuempresa.inventariovial.catalog.EngineeringConditions.functional.forEach {(code,description)->Text("$code · $description")}}
-    if(com.tuempresa.inventariovial.catalog.EngineeringConditions.badCulvert(state.structuralConditionCode,state.functionalConditionCode)) {
+    if(com.tuempresa.inventariovial.catalog.EngineeringConditions.culvertFailuresRequired(state.structuralConditionCode,state.functionalConditionCode)) {
         Card(Modifier.fillMaxWidth(),colors=CardDefaults.cardColors(containerColor=MaterialTheme.colorScheme.errorContainer)) {
             Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                Text("⚠ CONDICIÓN MALA",style=MaterialTheme.typography.titleLarge)
+                Text("CONDICIÓN REGULAR O MALA",style=MaterialTheme.typography.titleLarge)
                 Text("Corresponde completar SIC-18A")
                 Text("Se requiere información complementaria SIC-18A.")
-                if(onCompleteSic18A!=null) Button(onClick=onCompleteSic18A) {Text("Completar detalle de condición mala")}
+                if(onCompleteSic18A!=null) Button(onClick=onCompleteSic18A) {Text("Completar fallas SIC-18A")}
             }
         }
     }
@@ -3036,6 +3075,7 @@ fun Sic19Fields(
 @Composable
 fun Sic20Fields(
     state: Sic20FormState,
+    onManualLength: () -> Unit = {},
     onStateChange: (Sic20FormState) -> Unit
 ) {
 
@@ -3171,7 +3211,7 @@ fun Sic20Fields(
     }
 
 
-    if(state.classCode=="14") OutlinedTextField(state.wallLengthMeters,{onStateChange(state.copy(wallLengthMeters=it))},label={Text("Longitud del muro (m)")},supportingText={Text("Dato interno · no se exporta SIC")},keyboardOptions=androidx.compose.foundation.text.KeyboardOptions(keyboardType=androidx.compose.ui.text.input.KeyboardType.Decimal),modifier=Modifier.fillMaxWidth())
+    if(state.classCode=="14") OutlinedTextField(state.wallLengthMeters,{onManualLength();onStateChange(state.copy(wallLengthMeters=it))},label={Text("Longitud técnica del muro (m)")},supportingText={Text("Medida validada por el ingeniero; se incluye en Excel complementario, sin cambiar columnas SIC")},keyboardOptions=androidx.compose.foundation.text.KeyboardOptions(keyboardType=androidx.compose.ui.text.input.KeyboardType.Decimal),modifier=Modifier.fillMaxWidth())
     ConditionSelector("Condición estructural",state.structuralConditionCode,mapOf("1" to "No tiene problema.","2" to "Puede tener problemas.","3" to "Necesita repararse.")) {onStateChange(state.copy(structuralConditionCode=it))}
     ConditionSelector("Condición funcional",state.functionalConditionCode,com.tuempresa.inventariovial.catalog.EngineeringConditions.functional) {onStateChange(state.copy(functionalConditionCode=it))}
 

@@ -1,4 +1,26 @@
-# Estado vigente — Prompt 3, 2026-10-11
+# Estado vigente — Prompt 4, 2026-10-11
+
+Rama `codex/correcciones-tecnicas-sic-4` en worktree aislado `D:/Downloads/GBO_InventarioVial_INTEGRADO_FINAL_SOURCE/GBO_InventarioVial/prompt4`, basada en Prompt 3 `bbbf7598598b01624e421836923d39e9a3d1f326` (rama anterior subida a GitHub y main intacta). El commit funcional local es HEAD de esta rama, consultable con `git log -1`; el hash exacto se entrega al usuario después del commit. Sin push de Prompt 4 ni merge.
+
+Implementado: función SIC-18A siempre antes de condiciones e independiente; fallas para REGULAR/MALA, selección persistente y editable aun tras completar; BUENA conserva antecedentes y exportación del detalle en el mismo UUID. Túnel solo S/Sin objeto, muro I/D, con validaciones equivalentes y preservación de lados históricos no editados. Acero (1) para guardavía nuevo y Concreto (2) al seleccionar resalto nuevo; históricos y materiales elegidos se conservan.
+
+Longitudes por progresivas completas: diferencia de offsets del mismo PR o `RoadPr.chainageM + offset` en catálogo de la misma ruta/calzada. No convertir diferencias de códigos PR en kilómetros. Sentido decreciente produce metros positivos; datos insuficientes/equivalencia ausente/sentido contradictorio devuelven pendiente y advertencia. Muros AUTO se recalculan al cambiar progresivas; modo medido/histórico y valores anteriores se conservan. Modo persistido en tabla de extensión existente, sin migración Room. Cunetas, guardavías, tachas por tramo y badenes muestran cálculo; no se reinterpretan anchos/dimensiones como longitud.
+
+Las plantillas oficiales actuales no tienen columna longitudinal para esas familias: Excel complementario por UUID y metadata V3 conservan longitud calculada, medida/histórica y aplicable, origen/unidad/advertencias. La clave `technical-length` usa el mecanismo V3 existente de archivos/fileId, revisión y ACK. No se cambia el consolidado ni sus columnas. La revisión local del backend confirma archivos genéricos y actualización por clave/fileId; Apps Script no modificado.
+
+**51 casos Android distintos aprobados**, 18 nuevos y 33 regresiones focalizadas. Última selección afectada: 16/16 aprobadas y `assembleDebug` exitoso. Primer resultado: 38 casos/1 fallo (complemento Excel con menos de nueve columnas para cabecera corporativa), corregido incluyendo ubicación completa; segundo: 29 casos/1 fallo (fixture GPS antigua sin procedencia explícita del Prompt 3), reparado solo en fixture. Resultados iniciales y logs locales conservados, sin suite completa ni pruebas backend/remotas. [Matriz y entrega](correcciones-tecnicas-4/ENTREGA.md), [evidencia resumida](correcciones-tecnicas-4/VALIDACION.json).
+
+Firma Debug verificada idéntica a Prompt 3: `d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872`. applicationId `com.tuempresa.inventariovial`, versionCode 16, Room 17, syncProtocol 3/pathVersion 4 conservados. Configuraciones Drive/usuarios copiadas idénticas, no modificadas ni incluidas en Git. No APK instalada ni despliegue de Apps Script.
+
+Pendientes: validación física en dispositivo de pruebas; prueba real de archivos/IDs/Excel/reintentos contra backend aislado compatible pathVersion 4 (última observación histórica del endpoint: pathVersion 3). Ingeniero debe revisar catálogo de PR en rutas sin equivalencia, el uso del complemento de longitud y la denominación contractual SIC-18A «condición mala» que se conserva en encabezados oficiales. No se declara verificada una subida real de Prompt 4.
+
+Trabajo previo protegido: copia operativa y worktree backend-v3-pruebas sin cambios; permanecen allí sus 10 archivos rastreados modificados y 38 entradas no rastreadas. En el worktree Prompt 4 quedan sin commit recursos SCAP/proguard/herramientas copiados para compilar, logs/resultados crudos y seis JSON 2B regenerados por regresiones. No se atribuyen al Prompt 4 ni se descartan. Checkpoint selectivo excluye tokens, propiedades locales, keystores, APK, caches y logs privados. Detenerse al completar Prompt 4: no iniciar fotografías, dashboard ni navegación; no producción, servicio de usuarios, nueva firma ni siguiente prompt sin instrucciones.
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
+# Estado histórico — Prompt 3, 2026-10-11
 
 Rama `codex/formularios-sic-3`, copia aislada backend-v3-pruebas, desde 2B `433b958831aa58f935fc5ff7941ab31a435911f5`. Checkpoint local consultable con `git log -1`; sin push, merge ni cambio de copia operativa.
 

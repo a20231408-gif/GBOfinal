@@ -336,6 +336,12 @@ class InventoryViewModel(
                 }
                 database.withTransaction {
                 require(database.inventoryDao().recordById(record.id)?.updatedAt==record.updatedAt) {"La ficha cambió desde que la abriste; vuelve a abrirla antes de guardar."}
+                val before=requireNotNull(database.inventoryDao().snapshot(record.id))
+                before.sic20?.let {d->
+                    val allowed=com.tuempresa.inventariovial.validation.TechnicalElementRules.sides(SicFormDetail.Sic20(
+                        com.tuempresa.inventariovial.model.form.Sic20FormState(classCode=d.classCode)))
+                    require(record.sideCode in allowed || record.sideCode==before.record.sideCode) {"Túnel: solo SIN OBJETO. Muro: IZQUIERDA o DERECHA."}
+                }
                 database.inventoryDao().updateCoreFields(record.id, record.routeCode.trim().uppercase(),
                     record.roadbedCode.trim().uppercase(), normalizeRequiredPr(record.startPrCode), record.startDistanceM,
                     if(record.sicCode=="SIC-22") record.endPrCode else normalizeOptionalPr(record.endPrCode), record.endDistanceM, record.sideCode, record.observations, maxOf(System.currentTimeMillis(),record.updatedAt+1),
@@ -350,6 +356,7 @@ class InventoryViewModel(
                         endMatchedSegmentId = record.endMatchedSegmentId, endProjectedLatitude = record.endProjectedLatitude,
                         endProjectedLongitude = record.endProjectedLongitude))
                     axisStorage.persist(positionRecord(current))
+                    com.tuempresa.inventariovial.repository.TechnicalLengthStore.refresh(database,current,field.reference.value.prs)
                     if(current.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",current.id,current.updatedAt)
                 }
                 }
@@ -922,6 +929,7 @@ class InventoryViewModel(
 
 
                         repository.saveSic20(
+                            lengthMode = state.lengthMode,
 
                             record =
                                 record,

@@ -11,5 +11,7 @@ object EngineeringConditions {
         else -> emptyMap()
     }
     fun badCulvert(structural:String?,functional:String?)=structural=="3" || functional=="3"
+    fun culvertFailuresRequired(structural:String?,functional:String?) =
+        structural in setOf("2","3") || functional in setOf("2","3")
     val culvertPhotos=linkedMapOf("CULVERT_PANORAMIC" to "FOTO PANORÁMICA","CULVERT_INLET" to "FOTO DE ENTRADA","CULVERT_OUTLET" to "FOTO DE SALIDA")
 }

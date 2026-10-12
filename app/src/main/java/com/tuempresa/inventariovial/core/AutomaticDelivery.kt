@@ -139,6 +139,13 @@ object AutomaticDelivery {
                     .put("orderSource",orderSource).put("georeferencing",geo)
                     .put("technicalDeliveryWithoutGps",orderSource=="CONTRACTUAL_PR" || geo.getString("status")=="PENDING_EXTERNAL")
                 val record=requireNotNull(db.inventoryDao().recordsForExport(null,r.routeCode).singleOrNull {it.record.id==r.id})
+                val lengthPrs=com.tuempresa.inventariovial.road.FieldPrRepository(db.inventoryDao()).merge(RoadReferenceRepository(c).loadFromAssets()).prs
+                val length=if(TechnicalLengthExport.applies(record))TechnicalLengthExport.metadata(record,lengthPrs) else null
+                if(length!=null) {
+                    val bytes=java.io.ByteArrayOutputStream()
+                    TechnicalLengthExport.write(bytes,record,lengthPrs)
+                    add("technical-length","longitud.xlsx",SicExcelWriter.XLSX_MIME,bytes.toByteArray())
+                }
                 record.sic17?.bridgeCode?.let {p.put("bridgeCode",it)}
                 val formats=SicExportFormat.entries.filter {it.appliesTo(record)}
                 formats.forEach {format->
@@ -174,6 +181,7 @@ object AutomaticDelivery {
                     .put("pathVersion",4).put("familyPath",p.getString("familyPath")).put("identityId",r.id)
                     .put("sourceRecordId",s.sicExtension?.sourceRecordId ?: JSONObject.NULL)
                     .put("observations",r.observations ?: JSONObject.NULL)
+                    .put("technicalLength",length ?: JSONObject.NULL)
                     .put("photos",JSONArray(s.photos.filter {it.scapInspectionId==null}.map {photo->JSONObject()
                         .put("id",photo.id).put("category",photo.photoCategory).put("capturedAt",photo.capturedAt ?: JSONObject.NULL)
                         .put("latitude",photo.photoLatitude ?: JSONObject.NULL).put("longitude",photo.photoLongitude ?: JSONObject.NULL)

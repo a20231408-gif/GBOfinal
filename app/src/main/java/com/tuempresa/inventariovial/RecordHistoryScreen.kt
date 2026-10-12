@@ -314,7 +314,17 @@ private fun HistoryRecordCard(
                 com.tuempresa.inventariovial.field.ContractualPrField(value = endPr, onValueChange = { endPr = it; endSource = LocationSource.edited(endSource, endSuggestion != null) }, label = { Text("PR fin") }, modifier = Modifier.fillMaxWidth())
                 com.tuempresa.inventariovial.field.PrDistanceField(value = endDistance, onValueChange = { endDistance = it; endSource = LocationSource.edited(endSource, endSuggestion != null) }, label = { Text("Distancia fin (m)") }, modifier = Modifier.fillMaxWidth())
                 }
-                OutlinedTextField(value = side, onValueChange = { side = it }, label = { Text("Lado") }, modifier = Modifier.fillMaxWidth())
+                if(com.tuempresa.inventariovial.export.TechnicalLengthExport.applies(item)) {
+                    com.tuempresa.inventariovial.field.TechnicalLengthField(com.tuempresa.inventariovial.validation.ContractualLength.calculate(
+                        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
+                        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),reference.prs,record.surveyDirection ?: "INCREASING"))
+                }
+                if(item.sic20?.classCode in setOf("13","14")) {
+                    Text("Lado")
+                    val allowed=if(item.sic20?.classCode=="13")listOf("S") else listOf("I","D")
+                    if(side !in allowed) Text("Valor histórico $side conservado; selecciona un lado válido para corregirlo.")
+                    ChoiceSelector(allowed,side) {side=it}
+                } else OutlinedTextField(value = side, onValueChange = { side = it }, label = { Text("Lado") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = observations, onValueChange = { observations = it }, label = { Text("OBSERVACIONES") }, minLines=3, modifier = Modifier.fillMaxWidth())
                 editError?.let { ErrorText(it) }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

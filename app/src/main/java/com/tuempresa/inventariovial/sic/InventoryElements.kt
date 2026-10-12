@@ -47,7 +47,7 @@ object InventoryElements {
         val groups = records.groupBy { parentId(it, extensions, records) }
         return groups.map { (id, rows) -> InventoryElement(rows.first { it.id == id }, rows.filter { it.id != id }) }
     }
-    fun requiresCulvertDetail(structural: String, functional: String) = EngineeringConditions.badCulvert(structural, functional)
+    fun requiresCulvertDetail(structural: String, functional: String) = EngineeringConditions.culvertFailuresRequired(structural, functional)
     fun culvertDetailStatus(parent: Sic18Entity, detail: Sic18AEntity?, extension: SicExtensionEntity?): String {
         if (!requiresCulvertDetail(parent.structuralConditionCode, parent.functionalConditionCode))
             return if (detail != null || extension != null) "No requerido · antecedente conservado" else "No requerido"
@@ -58,8 +58,7 @@ object InventoryElements {
         for (format in SicExportFormat.entries) {
             val selected = rows.filter { row ->
                 row.record.status == "ACTIVE" && format.appliesTo(row) &&
-                    (format.fieldFormat == null || row.sicExtension?.status != "DRAFT") &&
-                    (format != SicExportFormat.SIC18A || row.sic18?.let { requiresCulvertDetail(it.structuralConditionCode,it.functionalConditionCode) } == true)
+                    (format.fieldFormat == null || row.sicExtension?.status != "DRAFT")
             }
             if (selected.isNotEmpty()) output += format to selected
         }

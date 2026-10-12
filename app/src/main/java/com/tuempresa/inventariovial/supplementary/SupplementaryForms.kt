@@ -10,6 +10,8 @@ enum class SupplementaryFormat(val title: String) { SIC17A("SIC-17A"), SIC17B("S
 data class SupplementaryFormState(val format: SupplementaryFormat, val values: Map<String, String> = emptyMap()) {
     fun validate(): List<String> = SupplementaryForms.fields(format, values).mapNotNull { field ->
         val value=values[field.key].orEmpty().trim()
+        if(format==SupplementaryFormat.SIC18A && field.key in Sic18ARules.failureKeys &&
+            !Sic18ARules.failuresRequired(values)) return@mapNotNull null
         if(value.isEmpty()) return@mapNotNull if(format==SupplementaryFormat.SIC18A) "${field.label}: obligatorio." else null // These optional forms can be progressively completed.
         val number=value.replace(',', '.').toDoubleOrNull()
         val valid=when(field.kind) {
@@ -25,6 +27,13 @@ data class SupplementaryFormState(val format: SupplementaryFormat, val values: M
         }
         if(valid) null else "${field.label}: valor inválido."
     }
+}
+object Sic18ARules {
+    val failureKeys=setOf("failureLocationCode","failureTypeCode","functionalStateCode","probableCauseCode")
+    fun failuresRequired(values:Map<String,String>):Boolean =
+        if(!values.containsKey("structuralConditionCode") || !values.containsKey("functionalConditionCode")) true
+        else com.tuempresa.inventariovial.catalog.EngineeringConditions.culvertFailuresRequired(
+            values["structuralConditionCode"],values["functionalConditionCode"])
 }
 object SupplementaryForms {
     fun fields(format: SupplementaryFormat, values: Map<String,String> = emptyMap()): List<SupplementaryField> {

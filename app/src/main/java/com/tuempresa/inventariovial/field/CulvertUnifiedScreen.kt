@@ -24,11 +24,16 @@ import java.io.File
 
 val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTypeCode","functionalStateCode","probableCauseCode")
 
+@Composable fun CulvertFunctionField(values:Map<String,String>,editable:Boolean=true,onChange:(Map<String,String>)->Unit) {
+    SicCodeDropdown(SicFieldFormat.SIC18A.fields.single {it.key=="functionCode"},values["functionCode"].orEmpty(),
+        {onChange(values+("functionCode" to it))},editable)
+}
+
 @Composable fun CulvertSupplementFields(values:Map<String,String>,editable:Boolean,onChange:(Map<String,String>)->Unit) {
     Column {
-        com.tuempresa.inventariovial.SectionTitle("Detalle de condición mala")
+        com.tuempresa.inventariovial.SectionTitle("Fallas · condición regular o mala")
         Text("SIC-18A · datos heredados de la ficha principal",style=MaterialTheme.typography.bodyLarge)
-        listOf("Función" to listOf("functionCode"),"Falla estructural" to listOf("failureLocationCode","failureTypeCode"),"Falla funcional" to listOf("functionalStateCode","probableCauseCode")).forEach {(title,keys)->
+        listOf("Falla estructural" to listOf("failureLocationCode","failureTypeCode"),"Falla funcional" to listOf("functionalStateCode","probableCauseCode")).forEach {(title,keys)->
             com.tuempresa.inventariovial.SectionTitle(title)
             SicFieldFormat.SIC18A.fields.filter {it.key in keys}.forEach {field->
                 SicCodeDropdown(field,values[field.key].orEmpty(),{onChange(values+(field.key to it))},editable)
@@ -81,13 +86,14 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             source=extra["_coordinateSource"] ?: "MANUAL_COORDINATES",timestamp=extra["_gpsTimestamp"]?.toLongOrNull() ?: 0) else null
     } else r?.let{record->if(record.latitude!=null && record.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(record.latitude,record.longitude,record.gpsAccuracyM?.toFloat() ?: Float.NaN,source=record.locationSource,timestamp=record.gpsTimestamp ?: 0) else null}
 
-    val extraState=SicFieldState(SicFieldFormat.SIC18A,(r?.let {SicFieldRepository.core(it)} ?: emptyMap())+extra+mapOf("classCode" to base.classCode,"typeCode" to base.typeCode,"spans" to base.spans),id)
+    val extraState=SicFieldState(SicFieldFormat.SIC18A,(r?.let {SicFieldRepository.core(it)} ?: emptyMap())+extra+mapOf("classCode" to base.classCode,"typeCode" to base.typeCode,"spans" to base.spans,
+        "structuralConditionCode" to base.structuralConditionCode,"functionalConditionCode" to base.functionalConditionCode),id)
     fun baseIssues():List<ValidationIssue> {
         val record=r ?: return listOf(ValidationIssue("Alcantarilla","Cargando datos",ValidationIssue.Severity.MISSING_USER_INPUT))
         val request=InventorySaveRequest(record.sicCode,record.assetType,record.routeCode,record.roadbedCode,record.startPrCode,record.startDistanceM.toString(),record.endPrCode,record.endDistanceM?.toString(),record.sideCode,record.latitude ?: Double.NaN,record.longitude ?: Double.NaN,record.gpsAccuracyM?.toFloat(),record.surveyDate,record.observations.orEmpty(),"",SicFormDetail.Sic18(base),photoPaths=paths)
         return CaptureValidation.errors(request,validateLocation=record.latitude!=null || record.longitude!=null).filterNot{it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}.map {ValidationIssue(it.field,it.message,ValidationIssue.Severity.MISSING_USER_INPUT)}
     }
-    val completion=CompletionResult(baseIssues()+(if(extra["_gpsError"].isNullOrBlank())emptyList() else listOf(ValidationIssue("GPS",extra["_gpsError"].orEmpty(),ValidationIssue.Severity.MISSING_USER_INPUT)))+(if(required)extraState.completion().issues else emptyList()))
+    val completion=CompletionResult(baseIssues()+(if(extra["_gpsError"].isNullOrBlank())emptyList() else listOf(ValidationIssue("GPS",extra["_gpsError"].orEmpty(),ValidationIssue.Severity.MISSING_USER_INPUT)))+extraState.completion().issues)
     fun leave() {if(dirty)exit=true else onBack()}
     fun save(finalize:Boolean,after:(()->Unit)?=null) {
         if(busy || r==null)return
@@ -102,7 +108,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
                 require(completion.canFinalize) {"Completa los pendientes antes de finalizar"}
                 db.withTransaction {
                     EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate)
-                    if(!extraComplete && hasExtra) repo.save(id,extraState,owner,required)
+                    repo.save(id,extraState,owner,true)
                 }
                 CulvertEditDraft.clear(context,id,owner)
                 editingDraft=false
@@ -128,7 +134,9 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             item {Text("PR ${record.startPrCode} + ${record.startDistanceM} m · ${record.surveyDate}")}
         }
         if(snapshot!=null) {
-            item {Sic18Fields(base,onCompleteSic18A={expanded=true}) {next->
+            item {Sic18Fields(base,onCompleteSic18A={expanded=true},beforeConditions={
+                CulvertFunctionField(extra,!busy) {extra=it;extraComplete=false;dirty=true;review=false;files=emptyList()}
+            }) {next->
                 if(!busy) {
                     if(required && !InventoryElements.requiresCulvertDetail(next.structuralConditionCode,next.functionalConditionCode) && hasExtra)conditionChange=next
                     else {base=next;dirty=true;review=false;files=emptyList()}
@@ -137,10 +145,10 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             item {
                 Text("SIC-18 · ${if(dirty) "Edición en borrador" else "Completo"}")
                 Text("SIC-18A · ${if(!required) if(hasExtra) "No requerido · antecedente conservado" else "No requerido" else if(extraComplete) "Completo" else "Pendiente"}")
-                if(!required && hasExtra)Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")
+                if(!required && hasExtra)Text("Condición buena: función conservada y fallas anteriores preservadas como antecedente.")
                 if(hasExtra && !required)OutlinedButton(onClick={expanded=!expanded}) {Text(if(expanded)"Ocultar detalle de condición mala" else "Ver antecedente")}
             }
-            if(expanded && (required || hasExtra)) item {CulvertSupplementFields(extra,!extraComplete && !busy) {extra=it;dirty=true;review=false;files=emptyList()}}
+            if(required || expanded && hasExtra) item {CulvertSupplementFields(extra,!busy) {extra=it;extraComplete=false;dirty=true;review=false;files=emptyList()}}
             item {CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->if(!busy){paths=p;categories=c;dirty=true;files=emptyList()}}}
             item {OutlinedTextField(observations,{observations=it;dirty=true;review=false},enabled=!busy,label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())}
             item {LegacyInventoryReviewButton(!busy) {review=true}}
@@ -159,7 +167,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             SicFieldFormat.SIC18A.fields.filter {it.key in culvertAdditionalKeys}.map {it.label to extraState.text(it.key)},paths.map(::File),completion,
         enabled=!busy,onConfirm={save(true)},onDismiss={review=false})
     conditionChange?.let {next->AlertDialog(onDismissRequest={conditionChange=null},title={Text("Conservar detalle existente")},
-        text={Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")},
+        text={Text("La condición buena conserva la función y las fallas anteriores como antecedente; no se eliminarán datos.")},
         confirmButton={TextButton(onClick={base=next;conditionChange=null;dirty=true;review=false;files=emptyList()}) {Text("Conservar como antecedente")}},
         dismissButton={TextButton(onClick={conditionChange=null}) {Text("Cancelar cambio")}})}
     if(exit) AlertDialog(onDismissRequest={exit=false},title={Text("Guardar cambios")},text={Text("Conserva los cambios como borrador antes de volver")},

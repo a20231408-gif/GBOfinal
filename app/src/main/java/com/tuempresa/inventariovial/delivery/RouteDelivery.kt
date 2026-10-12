@@ -93,8 +93,7 @@ class RouteDelivery(private val context: Context, private val db: InventoryDatab
                 "mimeType" to SicExcelWriter.XLSX_MIME,"pathVersion" to 2,
                 "logicalPath" to com.tuempresa.inventariovial.core.DrivePaths.inventory(context,folder)))
             // Supplement shares the parent folder/UUID; drafts are never sent as final documents.
-            val supplementary=records.filter {SicExportFormat.SIC18A.appliesTo(it) && it.sic18?.let {detail->
-                com.tuempresa.inventariovial.sic.InventoryElements.requiresCulvertDetail(detail.structuralConditionCode,detail.functionalConditionCode)}==true}
+            val supplementary=records.filter {SicExportFormat.SIC18A.appliesTo(it)}
             if(supplementary.isNotEmpty()) {
                 val extra=File(directory,"${record.id}_SIC-18A.xlsx")
                 extra.outputStream().use {SicExcelWriter.write(it,supplementary,SicExportFormat.SIC18A,heading)}

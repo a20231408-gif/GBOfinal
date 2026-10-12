@@ -14,7 +14,7 @@ object EngineeringEdits {
         "SIC-23" -> with(requireNotNull(s.sic23)) {SicFormDetail.Sic23(Sic23FormState(classCode,typeCode.orEmpty(),widthM?.toString().orEmpty(),description))}
         "SIC-18" -> with(requireNotNull(s.sic18)) {SicFormDetail.Sic18(Sic18FormState(classCode,typeCode,spans?.toString().orEmpty(),crossSectionCode,dimension1M?.toString().orEmpty(),dimension2M?.toString().orEmpty(),structuralConditionCode,functionalConditionCode,sectionShape=sectionShape.orEmpty()))}
         "SIC-19" -> with(requireNotNull(s.sic19)) {SicFormDetail.Sic19(Sic19FormState(classCode,typeCode,crossSectionCode,structuralConditionCode,functionalConditionCode,structuralCriterion.orEmpty()))}
-        "SIC-20" -> with(requireNotNull(s.sic20)) {SicFormDetail.Sic20(Sic20FormState(classCode,typeCode,dimension1M?.toString().orEmpty(),dimension2M?.toString().orEmpty(),structuralConditionCode,functionalConditionCode.orEmpty(),wallLengthMeters?.toString().orEmpty()))}
+        "SIC-20" -> with(requireNotNull(s.sic20)) {SicFormDetail.Sic20(Sic20FormState(classCode,typeCode,dimension1M?.toString().orEmpty(),dimension2M?.toString().orEmpty(),structuralConditionCode,functionalConditionCode.orEmpty(),wallLengthMeters?.toString().orEmpty(),s.sicExtension?.values()?.get("_lengthMode") ?: "HISTORICAL"))}
         "SIC-21" -> with(requireNotNull(s.sic21)) {SicFormDetail.Sic21(Sic21FormState(classCode,typeCode,materialCode,conditionCode))}
         "SIC-22" -> with(requireNotNull(s.sic22)) {SicFormDetail.Sic22(Sic22FormState(classCode,typeCode,materialCode,signalCode.orEmpty(),kilometerPostNumber.orEmpty(),conditionCode,
             signWidthM?.toString().orEmpty(),signHeightM?.toString().orEmpty(),lowerEdgeHeightM?.toString().orEmpty(),
@@ -29,7 +29,8 @@ object EngineeringEdits {
             r.endPrCode,r.endDistanceM?.toString(),r.sideCode,r.latitude ?: Double.NaN,r.longitude ?: Double.NaN,r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
         val unchangedLegacyType=detail is SicFormDetail.Sic22 && detail.state.typeCode==s.sic22?.typeCode && detail.state.typeCode in setOf("4","5","6")
         // NaN is only a validation sentinel; absent coordinates are never written or fabricated.
-        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {(unchangedLegacyType && it.field=="typeCode") || it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}
+        val unchangedHistoricalSide=detail is SicFormDetail.Sic20 && detail.state.classCode==s.sic20?.classCode
+        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {(unchangedHistoricalSide && it.field=="side") || (unchangedLegacyType && it.field=="typeCode") || it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {
             is SicFormDetail.Sic17 -> with(detail.state) {dao.updateSic17(requireNotNull(s.sic17).copy(classCode=classCode,typeCode=typeCode,bridgeCode=bridgeCode,inventoriedCode=inventoriedCode,spans=spans.toIntOrNull(),dimension1LengthM=dimension1LengthM.replace(',','.').toDoubleOrNull(),dimension2LowerHeightM=dimension2LowerHeightM.replace(',','.').toDoubleOrNull(),structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,serviceTypeCode=serviceTypeCode,singularityCode=singularityCode,singularityName=singularityName,dimension3UpperHeightM=dimension3UpperHeightM.replace(',','.').toDoubleOrNull()))}
@@ -55,6 +56,7 @@ object EngineeringEdits {
             else -> error("Detalle incompatible")
         }
         run {
+            if(detail is SicFormDetail.Sic20 && detail.state.classCode=="14") TechnicalLengthStore.remember(db,r,detail.state.lengthMode)
             var nextIndex=(s.photos.maxOfOrNull {it.photoIndex} ?: 0)+1
             for(photo in s.photos) {
                 if(photo.localPath !in paths) dao.deleteLocalPhoto(photo.id,id)

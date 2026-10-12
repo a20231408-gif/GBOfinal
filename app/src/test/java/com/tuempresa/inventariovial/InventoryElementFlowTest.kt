@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class) @Config(sdk=[28])
+@RunWith(RobolectricTestRunner::class) @Config(sdk=[28],application=android.app.Application::class)
 class InventoryElementFlowTest {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
     private fun db()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
@@ -83,11 +83,11 @@ class InventoryElementFlowTest {
             assertEquals(1,ElementExports.prepare(context,db,"faja",ExportHeading()).size)
         } finally {db.close()}
     }
-    @Test fun culvertNormalRequiresOneFormatBadConditionRequiresAdditionalDetailAndOneIdentity()=runBlocking {
+    @Test fun legacyCulvertRegularRequiresFailuresAndKeepsOneIdentity()=runBlocking {
         val db=db();try {
             val id=culvert(db)
-            assertFalse(InventoryElements.requiresCulvertDetail("2","1"))
-            assertEquals("No requerido",InventoryElements.culvertDetailStatus(db.inventoryDao().snapshot(id)!!.sic18!!,null,null))
+            assertTrue(InventoryElements.requiresCulvertDetail("2","1"))
+            assertEquals("Pendiente",InventoryElements.culvertDetailStatus(db.inventoryDao().snapshot(id)!!.sic18!!,null,null))
             assertEquals(listOf("SIC-18"),ElementExports.prepare(context,db,id,ExportHeading()).map {it.fileType})
             val base=(EngineeringEdits.form(db.inventoryDao().snapshot(id)!!) as SicFormDetail.Sic18).state
             EngineeringEdits.save(db,id,SicFormDetail.Sic18(base.copy(structuralConditionCode="3")),emptyList(),emptyMap())
@@ -98,16 +98,16 @@ class InventoryElementFlowTest {
             assertEquals(setOf("SIC-18","SIC-18A"),ElementExports.prepare(context,db,id,ExportHeading()).map {it.fileType}.toSet())
         } finally {db.close()}
     }
-    @Test fun conditionImprovementKeepsSupplementAsHistoryWithoutExportingItAsCurrentlyRequired()=runBlocking {
+    @Test fun goodConditionKeepsFunctionAndSupplementHistoryExportable()=runBlocking {
         val db=db();try {
             val id=culvert(db,true);fill(db,id)
             val saved=db.inventoryDao().snapshot(id)!!.sic18a
             val base=(EngineeringEdits.form(db.inventoryDao().snapshot(id)!!) as SicFormDetail.Sic18).state
-            EngineeringEdits.save(db,id,SicFormDetail.Sic18(base.copy(structuralConditionCode="2")),emptyList(),emptyMap())
+            EngineeringEdits.save(db,id,SicFormDetail.Sic18(base.copy(structuralConditionCode="1")),emptyList(),emptyMap())
             val current=db.inventoryDao().snapshot(id)!!
             assertEquals(saved,current.sic18a)
-            assertEquals("No requerido Â· antecedente conservado",InventoryElements.culvertDetailStatus(current.sic18!!,current.sic18a,current.sicExtension))
-            assertEquals(listOf("SIC-18"),ElementExports.prepare(context,db,id,ExportHeading()).map {it.fileType})
+            assertEquals("No requerido · antecedente conservado",InventoryElements.culvertDetailStatus(current.sic18!!,current.sic18a,current.sicExtension))
+            assertEquals(setOf("SIC-18","SIC-18A"),ElementExports.prepare(context,db,id,ExportHeading()).map {it.fileType}.toSet())
         } finally {db.close()}
     }
     @Test fun culvertRawEditDraftPersistsInvalidNumbersAndIsIsolatedByOperator() {
@@ -154,7 +154,7 @@ class InventoryElementFlowTest {
     }
     @Test fun coordinatesAndCleanPhotographsOfNewElementsSurviveSaveAndReopen()=runBlocking {
         val db=db();try {
-            val state=faja().copy(format=SicFieldFormat.SIC13,values=faja().values+mapOf("sideCode" to "D","classCode" to "15","_latitude" to "-12.2","_longitude" to "-77.3","_accuracy" to "2.5"))
+            val state=faja().copy(format=SicFieldFormat.SIC13,values=faja().values+mapOf("sideCode" to "D","classCode" to "15","_latitude" to "-12.2","_longitude" to "-77.3","_accuracy" to "2.5","_gpsExplicit" to "true","_coordinateSource" to "TABLET_GNSS"))
             SicFieldRepository(db).save("critical",state,"operator",true,listOf("/original/clean.jpg"))
             val s=db.inventoryDao().snapshot("critical")!!
             assertEquals(-12.2,requireNotNull(s.record.latitude),0.0);assertEquals("TABLET_GNSS",s.record.locationSource)

@@ -26,6 +26,13 @@ object ElementExports {
             try {SicExcelWriter.write(stream,selected,format,heading);atomic.finishWrite(stream)}
             catch(e:Exception) {atomic.failWrite(stream);throw e}
             GeneratedFile("${format.code}_$id",id,parent.assetType,format.code,target.absolutePath,SicExcelWriter.XLSX_MIME,target.lastModified(),"LOCAL")
+        }.toMutableList()
+        rows.singleOrNull()?.takeIf {TechnicalLengthExport.applies(it)}?.let {row->
+            val reference=com.tuempresa.inventariovial.road.FieldPrRepository(db.inventoryDao()).merge(
+                com.tuempresa.inventariovial.road.RoadReferenceRepository(context).loadFromAssets())
+            val file=File(dir,"LONGITUD_${id}.xlsx")
+            file.outputStream().use {TechnicalLengthExport.write(it,row,reference.prs)}
+            generated+=GeneratedFile("LONGITUD_$id",id,parent.assetType,"LONGITUD",file.absolutePath,SicExcelWriter.XLSX_MIME,file.lastModified(),"LOCAL")
         }
         if(!parent.observations.isNullOrBlank()) {
             val report=File(dir,"${parent.sicCode}_${id}_observaciones.html")

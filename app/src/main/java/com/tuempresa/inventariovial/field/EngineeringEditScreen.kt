@@ -40,7 +40,7 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
             is SicFormDetail.Sic23 -> Sic23Fields(d.state) {detail=SicFormDetail.Sic23(it)}
             is SicFormDetail.Sic18 -> {Sic18Fields(d.state) {detail=SicFormDetail.Sic18(it)};CulvertPhotos(paths,categories,onPhotoMetadata={path,metadata->captures=captures+(path to metadata)}) {p,c->paths=p;categories=c}}
             is SicFormDetail.Sic19 -> Sic19Fields(d.state) {detail=SicFormDetail.Sic19(it)}
-            is SicFormDetail.Sic20 -> Sic20Fields(d.state) {detail=SicFormDetail.Sic20(it)}
+            is SicFormDetail.Sic20 -> Sic20Fields(d.state) {detail=SicFormDetail.Sic20(it.copy(lengthMode=if(it.wallLengthMeters!=d.state.wallLengthMeters) "MEASURED" else d.state.lengthMode))}
             is SicFormDetail.Sic21 -> Sic21Fields(d.state) {detail=SicFormDetail.Sic21(it)}
             is SicFormDetail.Sic22 -> {
                 if(d.state.typeCode in setOf("4","5","6")) Text("Tipo histórico ${d.state.typeCode}: se conservará mientras no selecciones un tipo nuevo.")

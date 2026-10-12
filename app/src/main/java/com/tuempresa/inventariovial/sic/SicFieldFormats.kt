@@ -81,6 +81,7 @@ data class SicFieldState(val format:SicFieldFormat,val values:Map<String,String>
         }
         if(text("_gpsError").isNotBlank()) issue("GPS",text("_gpsError"))
         for(f in format.fields) {
+            if(format==SicFieldFormat.SIC18A && f.key in Sic18ARules.failureKeys && !Sic18ARules.failuresRequired(values)) continue
             val v=if(f.key in setOf("startPrCode","endPrCode","startDistanceM","endDistanceM"))text(f.key) else text(f.key).trim()
             if(f.key in setOf("startDistanceM","endDistanceM") && com.tuempresa.inventariovial.validation.ContractualLocationInput.distanceError(text(f.key))!=null && v.isNotBlank()) issue(f.label,"Distancia: máximo tres cifras enteras")
             if(v.isBlank()) {if(f.required) issue(f.label,"Falta completar",ValidationIssue.Severity.MISSING_USER_INPUT);continue}

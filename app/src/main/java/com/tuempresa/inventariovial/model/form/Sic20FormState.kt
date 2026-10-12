@@ -55,7 +55,8 @@ data class Sic20FormState(
     // 2 - Regular / parcialmente obstruida
     // 3 - Mala / totalmente obstruida
     val functionalConditionCode: String = "1",
-    val wallLengthMeters: String = ""
+    val wallLengthMeters: String = "",
+    val lengthMode: String = "AUTO"
 ) {
 
     val usesDimension2: Boolean
