@@ -21,7 +21,7 @@ function doGet() {
   return jsonResponse({
     ok: true,
     message: "Inventario Vial API funcionando",
-    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoCategoryVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 1 : 0, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
+    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoCategoryVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 1 : 0, videoProtocol: typeof videoV1Enabled!=="undefined" && typeof VideoV1!=="undefined" && videoV1Enabled() ? 1 : 0, photoNamingVersion: typeof SyncV3!=="undefined" && v3Enabled() ? 1 : 0, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
     technicalDeliveryWithoutGps: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), rootFolderId: ROOT_FOLDER_ID
   });
 }
@@ -69,6 +69,7 @@ function doPost(e) {
       });
     }
 
+    if (data.action === "beginVideoV1" || data.action === "finishVideoV1") return videoV1Action(data);
     if (data.action === "stageRecordV3") return stageRecordV3(data);
     if (data.action === "commitRecordV3") return commitRecordV3(data);
     if (typeof SyncV3 !== "undefined" && v3Enabled()) {

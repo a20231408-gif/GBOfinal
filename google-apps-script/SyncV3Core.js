@@ -46,7 +46,14 @@ var SyncV3 = (() => {
     if(!allowed.includes(f.photoCategory) || !Object.prototype.hasOwnProperty.call(photoFolders,f.photoCategory))reject('INVALID_PHOTO_CATEGORY');
     const id=f.key.substring(6);
     if(!component(id))reject('INVALID_PHOTO_ID');
-    return (p.kind==='SCAP'?'SCAP/'+p.recordId+'/':'')+photoFolders[f.photoCategory]+'/F_'+hash(id).substring(0,16)+'.jpg';
+    const legacy='F_'+hash(id).substring(0,16)+'.jpg';
+    let name=legacy;
+    if(p.photoNamingVersion===1) {
+      const requested=f.path.split('/').pop();
+      if(requested!==legacy && !new RegExp('^[0-9]{3,10}_'+legacy.replace('.jpg','\\.jpg')+'$').test(requested))reject('INVALID_PHOTO_NUMBER');
+      name=requested;
+    }
+    return (p.kind==='SCAP'?'SCAP/'+p.recordId+'/':'')+photoFolders[f.photoCategory]+'/'+name;
   }
   function validate(p, store) {
     if(!p || p.syncProtocol!==3 || ![3,4].includes(p.pathVersion) || !['SIC','SCAP','PAVEMENT'].includes(p.kind) ||
@@ -64,6 +71,7 @@ var SyncV3 = (() => {
       if(p.kind==='SIC' && p.identityId!=null && p.identityId!==p.recordId)reject('ROW_OWNER_MISMATCH');
       if(p.sicRows.some(r=>!family[1].includes(r.format)))reject('SIC_FAMILY_MISMATCH');
     } else if(!/^SIB-\d{2}$/.test(p.sibCode) || !component(p.family) || !Number.isFinite(p.orderAxis) || p.orderAxis<0)reject('ORDERING_REQUIRED');
+    if(p.photoNamingVersion!=null && p.photoNamingVersion!==1)reject("UNSUPPORTED_PHOTO_NAMING");
     const existing=store.get(p.key);
     if(p.pathVersion===3 && (!existing || existing.revision!==p.revision))reject('LEGACY_READ_ONLY');
     if(p.pathVersion===4 && existing && (existing.pathVersion || 3)!==4)reject('HISTORICAL_MIGRATION_REQUIRED');
@@ -81,6 +89,8 @@ var SyncV3 = (() => {
          f.path.split('/').some(s=>!component(s) || s.length>80 || p.pathVersion===4 && /^SIB(?:[-_ ]|$)/i.test(s)) || !/^[a-f0-9]{64}$/.test(f.sha256))reject('INVALID_FILE');
       if(p.photoCategoryVersion===1 && f.key.startsWith('photo/')) {
         if(f.mimeType!=='image/jpeg' || f.path!==photoPath(p,f,store.hash))reject('PHOTO_PATH_CATEGORY_MISMATCH');
+        const historical=(existing?.files || []).find(x=>x.key===f.key);
+        if(p.photoNamingVersion===1 && historical && historical.requestedPath.split('/').pop()!==f.path.split('/').pop())reject('HISTORICAL_PHOTO_RENAME_REQUIRES_MIGRATION');
       }
       seen.add(f.key);
       f.bytes=store.fileBytes?store.fileBytes(p,f):store.decode(f.base64);size+=f.bytes.length;
@@ -108,7 +118,7 @@ var SyncV3 = (() => {
     const technical=p.technicalDeliveryVersion===1?'\n'+['technicalDeliveryVersion','orderAxis','orderSource','technicalDeliveryWithoutGps'].map(k=>String(p[k])).join('\t')+
       '\t'+p.georeferencing.status+'\t'+p.georeferencing.externalSubmetricStatus+'\n'+lines(p.sicRows,['recordId','format','orderAxis','orderSource']):'';
     return (p.pathVersion===4?['key','revision','routeCode','familyPath','family','tramo','surface','identityId','roadbedCode','direction','startPrNumber','startDistanceM']:['key','revision','routeCode','sibCode','family','tramo','surface']).map(k=>p[k]==null?'':String(p[k])).join('\t')+'\n'+
-      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical+(p.pathVersion===4?'\npathVersion=4\n'+lines(p.sicRows,['recordId','format','roadbedCode','direction','startPrNumber','startDistanceM']):'')+(p.photoCategoryVersion===1?'\nphotoCategoryVersion=1\n'+['photoHasEnds','photoClassCode','photoTypeCode'].map(k=>String(p[k])).join('\t')+'\n'+lines(p.files,['key','photoCategory']):'');
+      lines(p.files,['key','path','mimeType','sha256'])+'\n'+lines(p.sicRows,['recordId','format','sha256'])+technical+(p.pathVersion===4?'\npathVersion=4\n'+lines(p.sicRows,['recordId','format','roadbedCode','direction','startPrNumber','startDistanceM']):'')+(p.photoCategoryVersion===1?'\nphotoCategoryVersion=1\n'+['photoHasEnds','photoClassCode','photoTypeCode'].map(k=>String(p[k])).join('\t')+'\n'+lines(p.files,['key','photoCategory']):'')+(p.photoNamingVersion===1?'\nphotoNamingVersion=1':'');
   }
   /** Header/media/styles come from the actual Android workbook. Only data rows and print extent change. */
   function mergeSheet(template, rows, start=14) {
@@ -181,6 +191,6 @@ var SyncV3 = (() => {
       transaction.finish();return receipt;
     }catch(e){transaction.rollback();throw e;}
   }
-  return {commit,validate,mergeSheet,reject,component,canonical,families,aggregateScope,compareTechnical,allocateNumber};
+  return {photoPath,commit,validate,mergeSheet,reject,component,canonical,families,aggregateScope,compareTechnical,allocateNumber};
 })();
 if(typeof module!=='undefined')module.exports=SyncV3;
