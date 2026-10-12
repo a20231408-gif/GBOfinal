@@ -85,6 +85,9 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     val scope=rememberCoroutineScope()
     val session by vm.field.session.collectAsState()
     val survey=remember(context) {com.tuempresa.inventariovial.field.SurveyPreferences(context)}
+    var detailId by rememberSaveable(recordId) {mutableStateOf<String?>(null)}
+    detailId?.let { saved -> com.tuempresa.inventariovial.RecordDetailScreen(vm,saved,onBack); return }
+    val returnToDetail=com.tuempresa.inventariovial.LocalRecordSaved.current
     val independent=format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)
     var id by rememberSaveable(format,recordId) {mutableStateOf(recordId ?: UUID.randomUUID().toString())}
     var trackRecordId by rememberSaveable(format,recordId) {mutableStateOf(recordId)}
@@ -162,6 +165,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
                     survey.projectRoutes.segment(state.text("routeCode"),state.text("_segment")),state.text("routeCode"),state.text("roadbedCode"),state.text("startPrCode"),
                     SicFieldState.number(state.text("startDistanceM")) ?: 0.0,state.text("_direction").ifBlank {"INCREASING"},formSessionId))
             }
+            if(finalize) {if(returnToDetail!=null)returnToDetail(id) else detailId=id}
             after?.invoke()
         } catch(e:Exception) {notice=e.message} finally {busy=false}}
     }

@@ -61,7 +61,7 @@ class AutomaticSyncRegressionTest {
         assertEquals("Error",SyncIntentPresentation.label(i.copy(state="ERROR"),true,true,true))
         assertEquals("Bloqueado",SyncIntentPresentation.label(i.copy(state="BLOCKED"),true,true,true))
         assertEquals("Pendiente de validación/ordenamiento",SyncIntentPresentation.label(i.copy(state="PENDING_VALIDATION"),true,true,true))
-        assertEquals("Sincronizado",SyncIntentPresentation.label(i.copy(state="SYNCED",syncedRevision=1),true,true,true))
+        assertEquals("Sincronizado",SyncIntentPresentation.label(i.copy(state="SYNCED",syncedRevision=1,lastSyncedAt=10,receiptJson="{\"ok\":true,\"key\":\"SIC/A\",\"revision\":1}"),true,true,true))
         assertEquals("Subiendo",SyncIntentPresentation.label(i.copy(state="UPLOADING"),true,true,true))
     }
     @Test fun pngBecomesRealJpegWithoutChangingOriginal() {

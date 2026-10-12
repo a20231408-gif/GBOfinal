@@ -1,0 +1,96 @@
+{
+  "backend": {
+    "tests": 8,
+    "initialFailure": "8/8 failed: harness Python path belonged to previous workstation; repeated with GBO_AUDIT_PYTHON configured",
+    "passed": 8,
+    "remote": false
+  },
+  "base": "c93aa5ad3c729285a56182b964f29cf3ad9b253a",
+  "testDeployment": false,
+  "screenshots": [
+    "01-detalle-vertical-datos-ficticios.png",
+    "02-detalle-horizontal-datos-ficticios.png"
+  ],
+  "realDriveVerified": false,
+  "build": {
+    "validationBuild": true,
+    "certificateSha256": "b9fe89ed4ea039befde6a01c341559520e0739fe834f4222f4f185c5fc8db0ec",
+    "task": ":app:assembleDebug",
+    "versionCode": 16,
+    "applicationId": "com.tuempresa.inventariovial",
+    "apkSha256": "4ec97a900def4ef428873ae7385ce3cc659a33034084c561af3ef7d07cb6afc9",
+    "signingConfigurationChanged": false,
+    "result": "SUCCESS",
+    "log": "test-prompt7-scap-final.log",
+    "historicalDebugCertificateMatched": false,
+    "installed": false
+  },
+  "productionDeployment": false,
+  "timezone": "America/Lima",
+  "branch": "codex/flujo-operador-7",
+  "date": "2026-10-11",
+  "android": {
+    "cases": {
+      "com.tuempresa.inventariovial.SicExcelWriterTest.allZipContainsOnlyNonemptyFormatsAndPreservesRouteOrdering": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.lostAckThenEditReplaysExactPredecessorWithoutConflictingWithOwnDelivery": "PASSED",
+      "com.tuempresa.inventariovial.SicExcelWriterTest.officialFieldsAndNotApplicableValuesAreNotLostOrInvented": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.operatorConflictPersistsLocalEditAndCannotBeClearedByAnotherSave": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.conditionAndProgressiveEditsKeepIdentityConfirmedBaseAndGenerateActualPayloads": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7ScreenTest.detailNavigatesSheetGalleryExcelAndBackUsingSameUuid": "PASSED",
+      "com.tuempresa.inventariovial.ScapPendingNavigationTest.tappingRealPendingButtonsReachesIdentificationSupportTwoGlobalPhotoAndMetrado": "FAILED",
+      "com.tuempresa.inventariovial.OperatorFlow7ScreenTest.landscapeActionsRemainReachableAndReturnToHistory": "PASSED",
+      "com.tuempresa.inventariovial.AutomaticSyncRegressionTest.validatedSicQueuesInSameLocalTransactionWithoutNetwork": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7Test.routeWorkbookHasTwoRowsAndEditKeepsOtherRowAndColumns": "PASSED",
+      "com.tuempresa.inventariovial.SicExcelWriterTest.arbitraryTextCannotBecomeFormulasOrBreakXmlAndSheetNamesStayUnique": "PASSED",
+      "com.tuempresa.inventariovial.PhotoCategories5Test.replacementRetainsUuidRemoteIdentityOrderAndOriginalHistory": "PASSED",
+      "com.tuempresa.inventariovial.PhotoCategories5Test.replacementDraftSurvivesReopeningWithCategoryAndBaseRevision": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.staleLocalFormCannotOverwriteNewerConditionOrPhotos": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7ScreenTest.scapOrderDestinationOpensOnlyItsInspectionAndExistingSections": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7Test.photoGroupingKeepsGeneralOrderAndInspectionIsolation": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7ScreenTest.completingDraftOpensItsDetailAndSchedulesAutomaticDelivery": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.photoCategoryAddAndRemovePreserveOriginalFilesAndExistingPhotoUuid": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7Test.realXlsxOpenAndShareUseGrantedContentUri": "PASSED",
+      "com.tuempresa.inventariovial.SicExcelWriterTest.allSevenFormatsProduceReadablePackagesWithOfficialColumns": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.missingBackendConfirmationCannotMarkAnEditSynced": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.editDuringUploadRetainsLateAckAsBaseAndThenDeliversNewerRevision": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7Test.savedUuidOpensSameOfflineSnapshotWithObservations": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.pendingEditAndConfirmedIdentitySurviveDatabaseReopening": "PASSED",
+      "com.tuempresa.inventariovial.AutomaticSyncRegressionTest.draftSicCreatesNoDefinitiveQueue": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.nonblankButChangedFolderIdentityCannotAcknowledgeAnUpdate": "PASSED",
+      "com.tuempresa.inventariovial.AutomaticSyncRegressionTest.presentationCoversOfflineErrorsAndConfigurations": "PASSED",
+      "com.tuempresa.inventariovial.OperatorFlow7Test.syncRequiresAckAndOlderRemoteReceiptRemainsExplicit": "PASSED",
+      "com.tuempresa.inventariovial.SicExcelWriterTest.invalidOrIncompleteDataFailsInsteadOfProducingASuccessfulExport": "PASSED",
+      "com.tuempresa.inventariovial.SyncedRecordEdits2BTest.rejectionDuringAnotherSaveKeepsLatestLocalRevisionInConflict": "PASSED"
+    },
+    "runs": [
+      {
+        "folder": "docs/flujo-operador-7/initial-results",
+        "tests": 19,
+        "failures": 0
+      },
+      {
+        "folder": "docs/flujo-operador-7/initial-results/ui",
+        "tests": 8,
+        "failures": 2
+      },
+      {
+        "folder": "docs/flujo-operador-7/refined-results",
+        "tests": 15,
+        "failures": 1
+      },
+      {
+        "folder": "docs/flujo-operador-7/refined-results/final-attempt",
+        "tests": 10,
+        "failures": 1
+      },
+      {
+        "folder": "app/build/test-results/testDebugUnitTest",
+        "tests": 1,
+        "failures": 0
+      }
+    ],
+    "distinct": 30,
+    "passed": 29,
+    "failed": 1
+  }
+}

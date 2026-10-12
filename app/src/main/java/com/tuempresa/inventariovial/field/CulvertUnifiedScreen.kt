@@ -44,6 +44,9 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
 
 /** Mature SIC-18 is the base; the supplement has no independent location, photographs or record. */
 @Composable fun CulvertUnifiedScreen(vm:InventoryViewModel,id:String,initialExtra:Map<String,String> = emptyMap(),onBack:()->Unit) {
+    var showDetail by androidx.compose.runtime.saveable.rememberSaveable(id) {mutableStateOf(false)}
+    if(showDetail) {com.tuempresa.inventariovial.RecordDetailScreen(vm,id,onBack);return}
+    val returnToDetail=com.tuempresa.inventariovial.LocalRecordSaved.current
     val context=LocalContext.current
     val db=remember(context) {InventoryDatabase.getInstance(context)}
     val repo=remember(db) {SicFieldRepository(db)}
@@ -115,7 +118,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
                 snapshot=db.inventoryDao().snapshot(id);openedRevision=snapshot?.record?.updatedAt;extraComplete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE" || extraComplete
                 notice="✓ Alcantarilla finalizada · datos y detalle guardados"
             }
-            dirty=false;review=false;after?.invoke()
+            dirty=false;review=false;if(finalize) {if(returnToDetail!=null)returnToDetail(id) else showDetail=true};after?.invoke()
         } catch(e:Exception) {notice=e.message} finally {busy=false}}
     }
     BackHandler(enabled=!busy) {leave()}

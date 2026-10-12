@@ -38,8 +38,9 @@ internal val scapSections=linkedMapOf("A" to "Identificación", "B" to "Datos ge
     "G1" to "Condición estadística", "G2" to "Observaciones y recomendaciones", "SIC" to "Datos para SIC", "REVIEW" to "Revisión y exportación")
 
 @Composable
-fun ScapWorkspace(vm:InventoryViewModel,onBack:()->Unit) {
+fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,onBack:()->Unit) {
     val c=vm.scap
+    LaunchedEffect(initialInspectionId) {if(initialInspectionId!=null)c.select(initialInspectionId)}
     val catalog by c.catalog.collectAsState()
     val selected by c.selected.collectAsState()
     val snapshot by c.snapshot.collectAsState()
@@ -49,7 +50,7 @@ fun ScapWorkspace(vm:InventoryViewModel,onBack:()->Unit) {
     val error by c.error.collectAsState()
     val saved by c.saveState.collectAsState()
     val context=LocalContext.current
-    val goBack:()->Unit={if(selected!=null)c.select(null) else onBack()}
+    val goBack:()->Unit={if(initialInspectionId!=null) {c.select(null);onBack()} else if(selected!=null)c.select(null) else onBack()}
     BackHandler(onBack=goBack)
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween) {
@@ -95,7 +96,7 @@ internal fun statusLabel(status:String)=when(status){"COMPLETE"->"Completa";"IN_
 
 @Composable
 internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,vm:InventoryViewModel,saved:String,pending:Int,error:String?) {
-    var section by rememberSaveable(s.inspection.id){mutableStateOf("A")}
+    var section by rememberSaveable(s.inspection.id){mutableStateOf(if(s.inspection.status=="COMPLETE") "REVIEW" else "A")}
     var photoElement by rememberSaveable(s.inspection.id){mutableStateOf<String?>(null)}
     val destination by c.destination.collectAsState()
     LaunchedEffect(destination){destination?.second?.let{section=if(it.subsection=="FOTO")"F2" else it.subsection}}
@@ -121,6 +122,11 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
                 Text("$section · ${scapSections[section]} · ${statusLabel(s.inspection.status)}")
                 Text(saved,style=MaterialTheme.typography.labelMedium)
             }
+        }
+        LazyRow(contentPadding=PaddingValues(horizontal=12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+            item {OutlinedButton(onClick={section="A"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FICHA")}}
+            item {OutlinedButton(onClick={photoElement=null;section="F2"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FOTOGRAFÍAS (${s.photos.size})")}}
+            item {OutlinedButton(onClick={section="REVIEW"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER EXCEL SIC / SCAP")}}
         }
         if(savedDraft) Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween) {
             Text("Guardado localmente. Pendientes: ${completeness.pending.size}",Modifier.weight(1f).padding(top=12.dp))

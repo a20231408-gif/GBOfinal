@@ -71,6 +71,8 @@ fun RecordHistoryScreen(
     onScap: (() -> Unit)? = null,
     onBack: () -> Unit
 ) {
+    var detailId by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
+    detailId?.let { id -> RecordDetailScreen(viewModel,id) { detailId=null }; return }
     val ordered by viewModel.sequencedHistory.collectAsState()
     var showAnnulled by remember { mutableStateOf(false) }
     val visibleRecords = ordered.filter {
@@ -78,33 +80,7 @@ fun RecordHistoryScreen(
         (showAnnulled || it.item.record.status == "ACTIVE" || it.item.record.status=="DRAFT" && com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(it.item.record.sicCode)!=null)
     }
 
-    val elementRecords=visibleRecords.map {it.item.record}
-    val elementExtensions=visibleRecords.mapNotNull {it.item.sicExtension}
-    val records=visibleRecords // SIC-08 and SIC-09 reopen by their own UUID.
-
-    var extension by remember {mutableStateOf<Pair<String,com.tuempresa.inventariovial.sic.SicFieldFormat>?>(null)}
-    extension?.let {(id,format)->com.tuempresa.inventariovial.sic.InventoryElementWorkspace(viewModel,format,id) {extension=null};return}
-
-    var technicalId by remember { mutableStateOf<String?>(null) }
-    technicalId?.let { id ->
-        if(ordered.any {it.item.record.id==id && it.item.record.sicCode=="SIC-18"})
-            com.tuempresa.inventariovial.field.CulvertUnifiedScreen(viewModel,id,onBack={technicalId=null})
-        else com.tuempresa.inventariovial.field.EngineeringEditScreen(id) {technicalId=null}
-        return
-    }
-
-    var complementary by remember {
-        mutableStateOf<Pair<InventoryRecordEntity, SupplementaryFormat>?>(null)
-    }
-
-    complementary?.let { (record, format) ->
-        SupplementaryScreen(viewModel, record, format) {
-            complementary = null
-        }
-        return
-    }
-
-    var error by remember { mutableStateOf<String?>(null) }
+    val records=visibleRecords
 
     BackHandler(onBack = onBack)
 
@@ -144,7 +120,7 @@ fun RecordHistoryScreen(
                 Text("Mostrar también anulados")
             }
 
-            error?.let { ErrorText(it) }
+
         }
 
         if (records.isEmpty()) {
@@ -157,32 +133,33 @@ fun RecordHistoryScreen(
             items = records,
             key = { item: SequencedRecord -> item.item.record.id }
         ) { row ->
-            HistoryRecordCard(
-                row,
-                viewModel,
-                { val format=com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(row.item.record.sicCode)
-                    if(format!=null) extension=row.item.record.id to format else technicalId = row.item.record.id },
-                { complementary = row.item.record to it },
-                visibleRecords.filter {it.item.sicExtension?.sourceRecordId==row.item.record.id && it.item.record.sicCode=="SIC-09"}.map {it.item}
-            ) {
-                error = it
+            val r=row.item.record
+            Card(onClick={detailId=r.id},modifier=Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                    Text(RecordDetailPresentation.title(r),style=MaterialTheme.typography.titleLarge)
+                    Text("${r.sicCode} · ${r.routeCode} · ${r.roadbedCode}")
+                    Text(com.tuempresa.inventariovial.dashboard.DashboardDrafts.progressive(r))
+                    OutlinedButton(onClick={detailId=r.id},modifier=Modifier.heightIn(min=48.dp)) {Text("Ver detalle")}
+                }
             }
         }
     }
 }
 
 @Composable
-private fun HistoryRecordCard(
+internal fun HistoryRecordCard(
     row: SequencedRecord,
     viewModel: InventoryViewModel,
     onTechnical: ()->Unit,
     onSupplementary: (SupplementaryFormat)->Unit,
     fajaWidths: List<com.tuempresa.inventariovial.data.entity.InventoryRecordWithPhotos>,
+    startEditing: Boolean = false,
+    onFinished: () -> Unit = {},
     onError: (String) -> Unit
 ) {
     val item = row.item
     val record = item.record
-    var editing by remember { mutableStateOf(false) }
+    var editing by remember { mutableStateOf(startEditing) }
     var saving by remember { mutableStateOf(false) }
     // Keep the opened revision while editing; background ACKs must not discard typed fields.
     val openedRecord=remember(record.id,editing) {record}
@@ -205,6 +182,7 @@ private fun HistoryRecordCard(
 
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if(!startEditing) {
             Text(if(record.sicCode in setOf("SIC-08","SIC-09","SIC-13","SIC-34","SIC-18")) com.tuempresa.inventariovial.sic.InventoryElements.title(record.sicCode) else record.assetType, style = MaterialTheme.typography.titleLarge)
             Text(record.sicCode,style=MaterialTheme.typography.bodySmall)
             Text("${row.asset?.shortCode ?: "Sin número operativo"} · ${row.position.chainageM?.let { String.format(java.util.Locale.US,"%.2f m",it) } ?: "Posición no determinada"}")
@@ -273,7 +251,8 @@ private fun HistoryRecordCard(
                     val v=d.values()[f.key].orEmpty();Text("${f.label}: ${f.options.find {it.substringBefore(" - ")==v} ?: v}")
                 }
             }
-            if(record.status=="ACTIVE" && record.sicCode in listOf("SIC-17","SIC-18","SIC-19","SIC-20","SIC-21","SIC-22","SIC-23")) OutlinedButton(onClick=onTechnical) {Text(if(record.sicCode=="SIC-18") "Abrir alcantarilla / exportar formatos" else "Editar ficha técnica y fotografías")}
+            }
+            if(!startEditing && record.status=="ACTIVE" && record.sicCode in listOf("SIC-17","SIC-18","SIC-19","SIC-20","SIC-21","SIC-22","SIC-23")) OutlinedButton(onClick=onTechnical) {Text(if(record.sicCode=="SIC-18") "Abrir alcantarilla / exportar formatos" else "Editar ficha técnica y fotografías")}
             if(com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(record.sicCode)!=null) {
                 OutlinedButton(onClick=onTechnical) {Text(if(record.status=="DRAFT") "Editar borrador" else "Ver ficha / exportar")}
             } else if (!editing) {
@@ -346,12 +325,12 @@ private fun HistoryRecordCard(
                                     endDistanceM = if(record.sicCode=="SIC-22") record.endDistanceM else end, sideCode = side.trim().uppercase().ifBlank { null },
                                     locationSource = startSource, endLocationSource = endSource, routeSource = routeSource,
                                     observations = observations.trim().ifBlank { null }).withSuggestions(startSuggestion, endSuggestion),
-                                    onSuccess = { saving = false; editing = false },
+                                    onSuccess = { saving = false; editing = false; onFinished() },
                                     onError = { saving = false; editError = it })
                             }
                         }
                     }) { Text("Guardar cambios") }
-                    OutlinedButton(enabled = !saving, onClick = { editing = false }) { Text("Cancelar") }
+                    OutlinedButton(enabled = !saving, onClick = { editing = false; onFinished() }) { Text("Cancelar") }
                 }
             }
         }

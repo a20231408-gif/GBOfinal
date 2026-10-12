@@ -182,6 +182,7 @@ private fun rememberAuthGraph(): AuthGraph = AuthGraph.get(LocalContext.current)
 @Composable
 private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: AuthGraph) {
     SaveWarningsDialog(inventoryViewModel)
+    var detailId by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedDraft by remember { mutableStateOf<InventoryRecordEntity?>(null) }
     var newSicCode by rememberSaveable {mutableStateOf<String?>(null)}
     var newSicId by rememberSaveable {mutableStateOf<String?>(null)}
@@ -201,7 +202,7 @@ private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: Au
     val authSession by graph.sessions.current.collectAsState()
     val activeTrack by com.tuempresa.inventariovial.tracking.TrackCaptureService.activeRecordId.collectAsState()
     val pendingSave by inventoryViewModel.pendingSave.collectAsState()
-    val safeAtHome = newSicCode==null && selectedAsset == null && !showPavement && !showHistory && !showDelivery && !showExport && pendingSave == null
+    val safeAtHome = detailId==null && newSicCode==null && selectedAsset == null && !showPavement && !showHistory && !showDelivery && !showExport && pendingSave == null
     androidx.compose.runtime.SideEffect {com.tuempresa.inventariovial.diagnostics.StabilityDiagnostics.screen(when {
         showPavement->"PAVEMENT";selectedAsset==RoadAssetType.BRIDGE->"SCAP";selectedAsset==RoadAssetType.SIGNALIZATION->"SIGNALS";safeAtHome->"HOME";else->"INVENTORY"
     })}
@@ -232,6 +233,7 @@ private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: Au
         ) {
 
             when {
+                detailId!=null -> RecordDetailScreen(inventoryViewModel,detailId!!) {detailId=null}
                 newSicCode!=null -> com.tuempresa.inventariovial.sic.InventoryElementWorkspace(inventoryViewModel,
                     com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(newSicCode!!)!!,newSicId) {newSicCode=null;newSicId=null}
                 showDelivery -> AssetOrderScreen(inventoryViewModel) { showDelivery = false }
@@ -306,6 +308,7 @@ private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: Au
                             selectedSignalization = null
                         },
                         onSave = {
+                            detailId = inventoryViewModel.lastSavedRecord?.id
                             selectedSignalization = null
                             selectedAsset = null
                         }
@@ -323,6 +326,7 @@ private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: Au
                             selectedAsset = null
                         },
                         onSave = {
+                            detailId = inventoryViewModel.lastSavedRecord?.id
                             selectedAsset = null
                         }
                     )

@@ -18,12 +18,17 @@ import com.tuempresa.inventariovial.field.SurveyPreferences
 import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
 
 @Composable
 fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
+    var detailId by androidx.compose.runtime.saveable.rememberSaveable {mutableStateOf<String?>(null)}
+    detailId?.let {id->com.tuempresa.inventariovial.RecordDetailScreen(viewModel,id) {detailId=null};return}
+    var pavementId by androidx.compose.runtime.saveable.rememberSaveable {mutableStateOf<String?>(null)}
+    pavementId?.let {id->com.tuempresa.inventariovial.pavement.ui.PavementWorkspace(initialSampleId=id) {pavementId=null};return}
     val history by viewModel.orderingHistory.collectAsState()
     val reference by viewModel.field.reference.collectAsState()
     val referenceError by viewModel.field.referenceError.collectAsState()
@@ -120,7 +125,14 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
                         AssetOrderSource.MANUAL_CHAINAGE_FALLBACK -> "Estado: respaldo por PR (${asset.fallbackPosition.source})"
                         AssetOrderSource.CREATED_AT_FALLBACK -> "Estado: respaldo por fecha y UUID"
                     })
-                    Text("UUID: ${asset.recordId}")
+                    OutlinedButton(onClick={
+                        if(r.assetType=="PAVEMENT") scope.launch {
+                            val dao=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).pavementDao()
+                            val samples=dao.observeSamples().first()
+                            val match=samples.firstOrNull {sample->InventoryOrderingProjection.pavement(sample,dao.damages(sample.id)).any {it.record.id==r.id}}
+                            if(match!=null)pavementId=match.id else message="La muestra ya no está disponible."
+                        } else detailId=r.id
+                    }) {Text("Ver detalle")}
                     asset.warnings.forEach { Text(it, color = MaterialTheme.colorScheme.error) }
                     folders[asset.recordId]?.let { folder ->
                         Text("Carpeta prevista: ${folder.plannedPath ?: "Sin plan"}")

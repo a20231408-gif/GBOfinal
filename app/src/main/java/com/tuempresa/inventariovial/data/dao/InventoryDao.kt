@@ -23,6 +23,9 @@ import androidx.room.Upsert
 
 @Dao
 interface InventoryDao {
+    @Transaction
+    @Query("SELECT * FROM inventory_records WHERE id=:id")
+    fun observeSnapshot(id: String): Flow<InventorySnapshot?>
     @Insert(onConflict=OnConflictStrategy.ABORT) suspend fun insertPhotoHistory(history:PhotoHistoryEntity)
     @Query("SELECT * FROM photo_history WHERE recordId=:id ORDER BY revision,id") suspend fun photoHistory(id:String):List<PhotoHistoryEntity>
     @Upsert suspend fun saveSicExtension(detail:SicExtensionEntity)

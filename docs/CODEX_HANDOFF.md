@@ -1,3 +1,21 @@
+# Estado vigente — Prompt 7, 2026-10-11
+
+Base comprobada: `codex/dashboard-sesion-6` en `c93aa5ad3c729285a56182b964f29cf3ad9b253a`, árbol limpio al inicio. Nueva rama `codex/flujo-operador-7`. El checkpoint de entrega es la punta de esta rama (`git rev-parse HEAD`), con hash entregado después del commit. No fusionar main ni continuar con auditoría final o despliegues.
+
+Flujo implementado: finalizar SIC → detalle del mismo UUID; Mis registros e inventario ordenado → mismo detalle. Consulta completa del modelo contractual y complementos, galería categorizada con GENERAL/originales/historial, copia XLSX contractual por SIC/ruta de la tablet, apertura/compartir con URI autorizada y enlace al archivo remoto únicamente desde ACK real. Edición reutiliza formularios y revisión 2B; retorno al detalle observado por Room sin perder identidad. SCAP reutiliza su inspección y secciones; pavimentos su muestra, galerías y exportaciones propias.
+
+Entrega automática conservada: ningún sincronizador, worker, outbox, endpoint ni backend nuevo. Un validado programa la cola mediante los repositorios existentes, un borrador no programa entrega definitiva. Exportar local no confirma Drive ni reemplaza el consolidado global. Sincronizado exige ACK coincidente y se avisa cuando el archivo remoto puede representar una revisión anterior. Room 18/photo_history, syncProtocol 3/pathVersion 4/photoCategoryVersion 1, applicationId y versionCode 16 sin cambios.
+
+**29 pruebas Android distintas y 8 backend locales aprobadas; una regresión antigua SCAP pendiente.** El caso `ScapPendingNavigationTest` falla al buscar un pendiente inexistente de su fixture antes de montar Compose; no se modificaron sus catálogos/reglas para hacerlo pasar. Las cuatro pruebas UI nuevas aprobaron, incluida selección SCAP individual con dos inspecciones. Se conservan los intentos iniciales fallidos y los errores de entorno en evidencia local ignorada. Suite completa no ejecutada. [Entrega y archivos](flujo-operador-7/ENTREGA.md), [matriz](flujo-operador-7/MATRIZ.md), [evidencia](flujo-operador-7/VALIDACION.json).
+
+`:app:assembleDebug -PgboValidationBuild=true` aprobado. Dos capturas nativas Compose/Robolectric con datos ficticios revisadas visualmente (vertical/horizontal). No APK instalada ni Apps Script publicado; no prueba Drive real. La compilación usa la firma Debug preexistente de este equipo, **distinta del certificado Debug histórico**; no se cambió la configuración de firma ni se acredita compatibilidad de instalación. SHA del APK y certificado en la entrega. No distribuir como actualización de tablet de campo.
+
+Pendientes: prueba física en dispositivo secundario (lector XLSX, compartir, cámara, giro y accesibilidad), despliegue aislado compatible y prueba Drive real, reparación independiente de la fixture histórica SCAP. Los archivos de ejemplo 2B regenerados por las pruebas se conservaron localmente y se devolvieron a su versión base en Git; no forman parte del nuevo commit. No secretos, APK, cachés ni resultados crudos en la rama.
+
+---
+
+## Historial anterior; prevalece el estado vigente
+
 # Estado vigente — Prompt 6, 2026-10-11
 
 Entrega para otro desarrollador preparada en esta misma rama. Incluye ahora los recursos que la compilación requiere y que antes solo existían localmente: `app/proguard-rules.pro`, tres plantillas XLSX SCAP, sus tres mapas JSON y `tools/apk_identity_audit.ps1`. Los metadatos personales de autor de los XLSX fueron sustituidos por la identidad corporativa, sin alterar hojas, fórmulas ni contenido técnico. Se agregaron ejemplos vacíos de configuración y [guía de transferencia](ENTREGA_COLABORADOR.md), además del [encargo delimitado del Prompt 7](PROMPT_7_COLABORADOR.md). Credenciales, firma, APK, caches, logs y resultados crudos permanecen fuera de Git.

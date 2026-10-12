@@ -28,13 +28,13 @@ import java.util.UUID
 import kotlin.math.*
 
 @Composable
-fun PavementWorkspace(onBack: () -> Unit) {
+fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
     val context = LocalContext.current
     val graph = remember { AuthGraph.get(context) }
     val repo = remember { PavementRepository(graph.database, graph.sessions) }
     val session by graph.sessions.current.collectAsState()
     val samples by remember { repo.samples() }.collectAsState(emptyList())
-    var id by rememberSaveable { mutableStateOf<String?>(null) }
+    var id by rememberSaveable(initialSampleId) { mutableStateOf(initialSampleId) }
     var surface by rememberSaveable { mutableStateOf(PavementSurface.ASPHALT) }
     var filter by rememberSaveable { mutableStateOf("") }
     var inspectorFilter by rememberSaveable { mutableStateOf("") }

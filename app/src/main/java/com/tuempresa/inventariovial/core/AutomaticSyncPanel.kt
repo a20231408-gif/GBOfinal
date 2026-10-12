@@ -15,10 +15,15 @@ import java.text.DateFormat
 import java.util.Date
 
 object SyncIntentPresentation {
+    fun confirmed(intent:DriveSyncIntent?):Boolean = intent!=null && intent.state=="SYNCED" &&
+        intent.revision==intent.syncedRevision && intent.lastSyncedAt!=null && runCatching {
+            val ack=JSONObject(intent.receiptJson ?: return@runCatching false)
+            ack.optBoolean("ok") && ack.optString("key")==intent.key && ack.optLong("revision")==intent.revision
+        }.getOrDefault(false)
     fun label(intent:DriveSyncIntent?,validated:Boolean,connected:Boolean,configured:Boolean):String {
         if(intent?.state=="CONFLICT")return "Conflicto · edición local conservada"
         if(!validated)return if((intent?.syncedRevision ?: 0)>0) "Actualización pendiente · requiere cierre" else "Borrador"
-        if(intent?.state=="SYNCED" && intent.syncedRevision==intent.revision)return "Sincronizado"
+        if(confirmed(intent))return "Sincronizado"
         if(intent?.state=="BLOCKED")return "Bloqueado"
         if(intent?.state=="PENDING_VALIDATION" || intent==null)return "Pendiente de validación/ordenamiento"
         if(!configured || intent.state=="UNCONFIGURED")return "Sin configurar"

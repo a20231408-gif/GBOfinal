@@ -20,6 +20,32 @@ data class LocalExportState(val busy: Boolean = false, val prepared: PreparedSic
 data class SicSelectionReview(val complete:Int=0,val pending:List<String> = emptyList())
 
 class LocalSicExport(private val context: Context, private val database: InventoryDatabase, private val scope: CoroutineScope) {
+    private fun routeFile(format: SicExportFormat, route: String): File {
+        val routeKey = UUID.nameUUIDFromBytes(route.toByteArray(Charsets.UTF_8))
+        return File(context.cacheDir, "sic_exports/routes/$routeKey/${format.code}.xlsx")
+    }
+
+    fun cachedRoute(format: SicExportFormat, route: String): com.tuempresa.inventariovial.core.GeneratedFile? {
+        val file = routeFile(format, route)
+        if (!file.isFile || file.length() == 0L) return null
+        return com.tuempresa.inventariovial.core.GeneratedFile("${format.code}/$route", null, "SIC",
+            format.code, file.absolutePath, SicExcelWriter.XLSX_MIME, file.lastModified(), "LOCAL")
+    }
+
+    /** Local route snapshot only. This file is never uploaded as a global replacement. */
+    suspend fun prepareRoute(format: SicExportFormat, route: String): com.tuempresa.inventariovial.core.GeneratedFile = withContext(Dispatchers.IO) {
+        val rows = database.inventoryDao().recordsForExport(format.code, route).filter { format.appliesTo(it) }
+        require(rows.isNotEmpty()) { "No hay fichas validadas de este SIC y ruta en la tablet." }
+        rows.forEach { format.values(it) }
+        val file = routeFile(format, route)
+        check(file.parentFile!!.isDirectory || file.parentFile!!.mkdirs())
+        val atomic = android.util.AtomicFile(file)
+        val stream = atomic.startWrite()
+        try { SicExcelWriter.write(stream, rows, format, savedHeading); atomic.finishWrite(stream) }
+        catch (e: Exception) { atomic.failWrite(stream); throw e }
+        requireNotNull(cachedRoute(format, route))
+    }
+
     private val mutableState = MutableStateFlow(LocalExportState())
     val state = mutableState.asStateFlow()
     private val preferences = context.getSharedPreferences("sic_export", Context.MODE_PRIVATE)
