@@ -177,6 +177,7 @@ class UserAuthenticationTest {
         assertFalse(db.auditDao().recent().toString().contains(verifier.pinHash))
     }
     @Test fun fieldSessionOperatorComesFromAuthenticatedUser() = runBlocking {
+        android.provider.Settings.Secure.putString(context.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"robolectric-device9")
         seed(); assertNull(login("field"))
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
         try {

@@ -50,7 +50,7 @@ class Sic0809ScreenTest {
     }
     private fun waitLoaded() {compose.waitUntil(20_000) {
         compose.waitForIdle();shadowOf(android.os.Looper.getMainLooper()).idle()
-        compose.onAllNodesWithText("Guardar registro").fetchSemanticsNodes().isNotEmpty() ||
+        compose.onAllNodesWithText("Revisar y finalizar").fetchSemanticsNodes().isNotEmpty() ||
             compose.onAllNodesWithTag("legacy-inventory-form").fetchSemanticsNodes().isNotEmpty()
     }}
     private fun scroll(text:String) {compose.onNodeWithTag("legacy-inventory-form").performScrollToNode(hasText(text))}
@@ -64,7 +64,7 @@ class Sic0809ScreenTest {
     private fun saveAndReopen(format:SicFieldFormat) {
         var open by mutableStateOf(true)
         var id by mutableStateOf<String?>(null)
-        compose.setContent {InventarioVialTheme {Surface {if(open) SicFieldWorkspace(vm,format,id) {open=false} else Text("Ficha cerrada")}}}
+        compose.setContent {InventarioVialTheme {Surface {CompositionLocalProvider(LocalRecordSaved provides { _:String-> }) {if(open) SicFieldWorkspace(vm,format,id) {open=false} else Text("Ficha cerrada")}}}}
         waitLoaded()
         scroll(format.code);compose.onNodeWithText(format.code).assertExists();compose.onNodeWithText(format.title).assertExists()
         scroll("Ruta");compose.onAllNodesWithText("PE-22A").onFirst().assertExists()
@@ -85,7 +85,7 @@ class Sic0809ScreenTest {
         val notes="Inspección ${format.code}\nTexto completo con tildes áéíóú"
         scroll("OBSERVACIONES");compose.onNodeWithTag("sic-observations").performTextReplacement(notes)
         capture("${format.code}_observaciones")
-        scroll("Guardar registro");compose.onNodeWithText("Guardar registro").performClick()
+        scroll("Revisar y finalizar");compose.onNodeWithText("Revisar y finalizar").performClick();compose.onNodeWithText("Confirmar y guardar").performClick()
         compose.waitUntil(20_000) {runBlocking {vm.field.dao.observeAllRecords().first().any {it.sicCode==format.code && it.status=="ACTIVE"}}}
         val saved=runBlocking {vm.field.dao.observeAllRecords().first().single {it.sicCode==format.code}}
         assertNull(saved.latitude);assertNull(saved.longitude);assertEquals(notes,saved.observations);assertEquals("field-session",saved.sessionId)
@@ -94,7 +94,7 @@ class Sic0809ScreenTest {
         compose.runOnIdle {id=saved.id;open=true};waitLoaded()
         scroll("OBSERVACIONES");compose.onNodeWithTag("sic-observations").assertTextContains(notes)
         compose.onNodeWithTag("sic-observations").performTextReplacement(notes+"\nActualizado")
-        scroll("Guardar registro");compose.onNodeWithText("Guardar registro").performClick()
+        scroll("Revisar y finalizar");compose.onNodeWithText("Revisar y finalizar").performClick();compose.onNodeWithText("Confirmar y guardar").performClick()
         compose.waitUntil(20_000) {runBlocking {vm.field.dao.recordById(saved.id)?.observations==notes+"\nActualizado"}}
         assertEquals(saved.id,runBlocking {vm.field.dao.recordById(saved.id)}!!.id)
         assertEquals(0,android.provider.Settings.Secure.getInt(app.contentResolver,android.provider.Settings.Secure.LOCATION_MODE))

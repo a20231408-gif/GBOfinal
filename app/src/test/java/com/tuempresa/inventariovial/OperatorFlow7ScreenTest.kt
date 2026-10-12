@@ -14,6 +14,7 @@ import com.tuempresa.inventariovial.data.entity.*
 import com.tuempresa.inventariovial.sic.*
 import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
@@ -81,7 +82,7 @@ class OperatorFlow7ScreenTest {
         runBlocking {SicFieldRepository(db).save("draft7",fajaState(SicFieldFormat.SIC08),"operator7",false)}
         compose.setContent {com.tuempresa.inventariovial.ui.theme.InventarioVialTheme {Surface {SicFieldWorkspace(vm,SicFieldFormat.SIC08,"draft7") {}}}}
         compose.waitUntil(20_000) {compose.onAllNodesWithTag("legacy-inventory-form").fetchSemanticsNodes().isNotEmpty()}
-        click("Guardar registro");waitFor("VER FICHA")
+        click("Revisar y finalizar");waitFor("Confirmar y guardar");assertNull(runBlocking {db.automaticSyncDao().get("SIC/draft7")});compose.onNodeWithText("Confirmar y guardar").performClick();waitFor("VER FICHA")
         runBlocking {
             assertEquals("ACTIVE",db.inventoryDao().recordById("draft7")!!.status)
             assertNotNull(db.automaticSyncDao().get("SIC/draft7"))
@@ -102,11 +103,52 @@ class OperatorFlow7ScreenTest {
         waitFor("VER FOTOGRAFÍAS (1)")
         compose.onNodeWithText("VER FOTOGRAFÍAS (1)").performClick()
         waitFor("FOTOGRAFÍAS · F.2 PANEL FOTOGRÁFICO")
-        compose.onNode(hasText("INSPECCIÓN UNO") and hasSetTextAction()).assertExists()
+        compose.onAllNodes(hasScrollToIndexAction()).onLast().performScrollToNode(hasText("INSPECCIÓN UNO") and hasSetTextAction());compose.onNode(hasText("INSPECCIÓN UNO") and hasSetTextAction()).assertExists()
         compose.onNodeWithText("INSPECCIÓN DOS").assertDoesNotExist()
         compose.onNodeWithText("VER EXCEL SIC / SCAP").performScrollTo().performClick()
         compose.runOnIdle {assertEquals(ids.first,vm.scap.selected.value)}
         compose.onNodeWithText("VER FICHA").performScrollTo().performClick()
         compose.runOnIdle {assertEquals(ids.first,vm.scap.snapshot.value!!.inspection.id)}
     }
+    @Test fun commonModuleListShowsActiveDraftHistoricalAndOpensSamePhotoIdentity() {
+        seed()
+        runBlocking {
+            val original=db.inventoryDao().recordById("operator7-record")!!
+            db.inventoryDao().insertRecord(original.copy(id="draft-list9",status="DRAFT",createdAt=2))
+            db.inventoryDao().insertSic18(Sic18Entity("draft-list9","06","1",1,"1",1.0,1.0,"1","1"))
+            db.inventoryDao().insertRecord(original.copy(id="annulled-list9",status="ANNULLED",createdAt=3))
+            db.inventoryDao().insertSic18(Sic18Entity("annulled-list9","06","1",1,"1",1.0,1.0,"1","1"))
+        }
+        compose.setContent {com.tuempresa.inventariovial.ui.theme.InventarioVialTheme {Surface {com.tuempresa.inventariovial.field.ModuleElements(vm,"Alcantarillas",{it.sicCode=="SIC-18"},{}) {Text("Nuevo formulario")}}}}
+        waitFor("ALCANTARILLA 1")
+        compose.onNodeWithText("ALCANTARILLA 3").performScrollTo().assertExists()
+        compose.onNodeWithText("ALCANTARILLA 1").performScrollTo()
+        compose.onAllNodesWithText("Fotografías").onFirst().performClick()
+        waitFor("Fotografías (1)")
+        compose.onNodeWithText("Entrada (0)").assertExists()
+        assertEquals(3,runBlocking {db.inventoryDao().observeAllRecords().first().size})
+    }
+    @Test fun listReviewOpensSummaryWithoutCreatingDelivery() {
+        seed()
+        compose.setContent {com.tuempresa.inventariovial.ui.theme.InventarioVialTheme {Surface {
+            RecordDetailScreen(vm,"operator7-record",initialPage="REVIEW") {}
+        }}}
+        waitFor("Verificar registro antes de guardar")
+        compose.onNodeWithText("Confirmar y guardar").assertExists()
+        assertNull(runBlocking {db.automaticSyncDao().get("SIC/operator7-record")})
+        assertEquals("operator7-record",runBlocking {db.inventoryDao().snapshot("operator7-record")!!.record.id})
+    }
+    @Test fun visualConditionWritesOnlyOfficialCodeAndSurvivesRecomposition() {
+        seed();val scope=kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO)
+        compose.setContent {var value by remember {mutableStateOf("1")};com.tuempresa.inventariovial.ui.theme.InventarioVialTheme {
+            com.tuempresa.inventariovial.field.CatalogConditionSelector("Condición",""+value,com.tuempresa.inventariovial.catalog.SicCatalogRepository.options("sic18.structural.0")) {code->value=code;scope.launch {val s=db.inventoryDao().snapshot("operator7-record")!!;com.tuempresa.inventariovial.repository.EngineeringEdits.save(db,s.record.id,com.tuempresa.inventariovial.repository.EngineeringEdits.form(s).let {d->val state=(d as com.tuempresa.inventariovial.model.form.SicFormDetail.Sic18).state;com.tuempresa.inventariovial.model.form.SicFormDetail.Sic18(state.copy(structuralConditionCode=code))},s.photos.map {it.localPath},emptyMap())}}
+        }}
+        for(code in listOf("2","3","1")) {
+            compose.onNodeWithTag("condition-Condición-$code").performClick().assertIsSelected()
+            compose.waitUntil(20_000) {runBlocking {db.inventoryDao().snapshot("operator7-record")!!.sic18!!.structuralConditionCode==code}}
+            assertEquals(1,runBlocking {db.inventoryDao().observeAllRecords().first().size})
+        }
+        scope.cancel()
+    }
+
 }

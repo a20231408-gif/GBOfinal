@@ -31,11 +31,13 @@ class RoadPositionTest {
         assertEquals(4,annulled.size)
         assertEquals(listOf("A","D","B","C"),annulled.map {it.item.record.id})
     }
-    @Test fun tiesUseCreationThenUuidAndCountersRestartPerRouteAndRoadbed() {
+    @Test fun contractualTiesUseUuidAndCountersRestartPerRouteAndRoadbed() {
         val records=listOf(testRecord("B",created=2),testRecord("A",created=2),testRecord("C",created=1),
             testRecord("D",roadbed="UC"),testRecord("E",route="S"),testRecord("draft",status="DRAFT"))
         val sorted=RoadOrdering.order(records.map {InventoryRecordWithPhotos(it,emptyList())},ChainageCalculator())
-        assertEquals(listOf("C","A","B","D","E"),sorted.map {it.item.record.id})
+        // InventoryTechnicalOrder has used UUID ties since the contractual order
+        // integration. The separate local number/geometry never changes this order.
+        assertEquals(listOf("A","B","C","D","E"),sorted.map {it.item.record.id})
         assertEquals(listOf(1,2,3,1,1),sorted.map {it.computedSequence})
     }
     @Test fun unknownPrSortsAfterKnownRatherThanAsZero() {

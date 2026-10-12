@@ -40,8 +40,9 @@ class ScapCanonicalExportTest {
         return TemplateWorkbook(out.toByteArray().inputStream())
     }
     @Test fun bothTypesUseExactSourceAndKeepCorporateHeaderSheetNamesStylesGeometryAndDerivedFormulas() {
-        val hashes=mapOf(ScapBridgeType.SLAB to "2519524d02791a0e7c49b69a8ecfd28f051d7e2a7e35de6fa7f0944b8a653e57",
-            ScapBridgeType.MODULAR to "ac02633660b214639d8caff8895a5708e8e0891dbcb3d0d84767e960e49bdb89")
+        // Pin the existing repository templates, unchanged by Prompt 9B.
+        val hashes=mapOf(ScapBridgeType.SLAB to "64feb2e7d34ce3504befee74c9f09ebf845c432cc05cf3fab70ecff7410944c3",
+            ScapBridgeType.MODULAR to "ae6962149498506c8bf71f5b51d6f77231691161c1372132b82caefaf0058091")
         for(type in ScapBridgeType.entries) {
             val bytes=context.assets.open(type.templateAsset).use {it.readBytes()}
             assertEquals(hashes.getValue(type),ScapDelivery.sha256(bytes))
