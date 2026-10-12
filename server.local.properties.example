@@ -1,0 +1,9 @@
+# Copy this file to server.local.properties only when the users service is required.
+# Keep this service separate from the Drive Apps Script endpoint.
+SERVER_BASE_URL=https://replace-with-authorized-users-service.example
+ACCESS_CONTROL_ENABLED=false
+AI_ENABLED=false
+AI_SCAP_ENABLED=false
+SIC17A_ENABLED=false
+SIC17B_ENABLED=false
+SIC18A_ENABLED=false
