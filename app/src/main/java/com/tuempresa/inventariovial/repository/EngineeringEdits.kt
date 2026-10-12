@@ -21,16 +21,35 @@ object EngineeringEdits {
             signalCodeSource,signalDescription,signalObservation))}
         else -> error("Este editor requiere SIC-18 a SIC-22.")
     }
-    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null,observations:String?=null,coordinateEdit:Boolean=false,coordinate:com.tuempresa.inventariovial.location.GeoLocation?=null)=db.withTransaction {
-        val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
-        require(expectedUpdatedAt==null || r.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste. Conserva tus cambios y vuelve a abrir la revisión actual."}
-        require(r.status=="ACTIVE") {"Solo se pueden editar registros activos."}
+    fun reviewErrors(s:InventorySnapshot,detail:SicFormDetail,paths:List<String>):List<com.tuempresa.inventariovial.validation.ValidationError> {
+        val r=s.record
         val request=InventorySaveRequest(r.sicCode,r.assetType,r.routeCode,r.roadbedCode,r.startPrCode,r.startDistanceM.toString(),
             r.endPrCode,r.endDistanceM?.toString(),r.sideCode,r.latitude ?: Double.NaN,r.longitude ?: Double.NaN,r.gpsAccuracyM?.toFloat(),r.surveyDate,r.observations.orEmpty(),"",detail,photoPaths=paths)
         val unchangedLegacyType=detail is SicFormDetail.Sic22 && detail.state.typeCode==s.sic22?.typeCode && detail.state.typeCode in setOf("4","5","6")
         // NaN is only a validation sentinel; absent coordinates are never written or fabricated.
         val unchangedHistoricalSide=detail is SicFormDetail.Sic20 && detail.state.classCode==s.sic20?.classCode
-        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {(unchangedHistoricalSide && it.field=="side") || (unchangedLegacyType && it.field=="typeCode") || it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}
+        val errors=CaptureValidation.errors(request,validateLocation=r.latitude!=null || r.longitude!=null).filterNot {(unchangedHistoricalSide && it.field=="side") || (unchangedLegacyType && it.field=="typeCode") || r.status=="ACTIVE" && it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}
+        val draftErrors=buildList {
+            if(r.status=="DRAFT") {
+                fun dimension(field:String,value:String,allowZero:Boolean=false) {
+                    if(value.replace(',','.').toDoubleOrNull()?.let {it.isFinite() && if(allowZero) it>=0 else it>0}!=true)
+                        add(com.tuempresa.inventariovial.validation.ValidationError(field,"Completa la dimensión válida antes de finalizar."))
+                }
+                when(detail) {
+                    is SicFormDetail.Sic17 -> {dimension("dimension1LengthM",detail.state.dimension1LengthM);dimension("dimension2LowerHeightM",detail.state.dimension2LowerHeightM,true);dimension("dimension3UpperHeightM",detail.state.dimension3UpperHeightM,true)}
+                    is SicFormDetail.Sic20 -> {dimension("dimension1M",detail.state.dimension1M);if(detail.state.usesDimension2)dimension("dimension2M",detail.state.dimension2M)}
+                    is SicFormDetail.Sic23 -> detail.state.validationError()?.let {add(com.tuempresa.inventariovial.validation.ValidationError("detail",it))}
+                    else -> Unit
+                }
+            }
+        }
+        return errors+draftErrors
+    }
+    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null,observations:String?=null,coordinateEdit:Boolean=false,coordinate:com.tuempresa.inventariovial.location.GeoLocation?=null,finalize:Boolean=true)=db.withTransaction {
+        val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
+        require(expectedUpdatedAt==null || r.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste. Conserva tus cambios y vuelve a abrir la revisión actual."}
+        require(r.status in setOf("ACTIVE","DRAFT")) {"Restaura primero el registro anulado."}
+        val errors=if(finalize)reviewErrors(s,detail,paths) else emptyList()
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {
             is SicFormDetail.Sic17 -> with(detail.state) {dao.updateSic17(requireNotNull(s.sic17).copy(classCode=classCode,typeCode=typeCode,bridgeCode=bridgeCode,inventoriedCode=inventoriedCode,spans=spans.toIntOrNull(),dimension1LengthM=dimension1LengthM.replace(',','.').toDoubleOrNull(),dimension2LowerHeightM=dimension2LowerHeightM.replace(',','.').toDoubleOrNull(),structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,serviceTypeCode=serviceTypeCode,singularityCode=singularityCode,singularityName=singularityName,dimension3UpperHeightM=dimension3UpperHeightM.replace(',','.').toDoubleOrNull()))}
@@ -38,7 +57,7 @@ object EngineeringEdits {
 
             is SicFormDetail.Sic18 -> with(detail.state) {
                 val old=requireNotNull(s.sic18)
-                dao.updateSic18(old.copy(classCode=classCode,typeCode=typeCode,spans=spans.toInt(),crossSectionCode=crossSectionCode,
+                dao.updateSic18(old.copy(classCode=classCode,typeCode=typeCode,spans=spans.toIntOrNull(),crossSectionCode=crossSectionCode,
                     dimension1M=dimension1M.replace(',','.').toDoubleOrNull(),dimension2M=if(usesDimension2)dimension2M.replace(',','.').toDoubleOrNull() else old.dimension2M,
                     structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,sectionShape=sectionShape))
                 s.sic18a?.let {dao.saveSic18A(it.copy(classCode=classCode,typeCode=typeCode,spans=spans))}
@@ -78,6 +97,8 @@ object EngineeringEdits {
         }
         dao.markServerPending(id,revision)
         dao.markTechnicalExcelPending(id)
-        com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",id,revision)
+        dao.updateRecord(requireNotNull(dao.recordById(id)).copy(status=if(finalize) "ACTIVE" else "DRAFT"))
+        if(finalize) com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SIC",id,revision)
+        else com.tuempresa.inventariovial.core.AutomaticSync.draft(db,"SIC",id)
     }
 }

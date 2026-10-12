@@ -12,6 +12,19 @@ data class PhotoDimensions(val width: Int,val height: Int)
 object CaptureValidation {
     fun errors(request: InventorySaveRequest, validateLocation: Boolean = request.latitude.isFinite() || request.longitude.isFinite()): List<ValidationError> = buildList {
         val request=pointCapture(request)
+        fun condition(field:String,value:String,catalog:String) {
+            val codes=com.tuempresa.inventariovial.catalog.SicCatalogRepository.options(catalog).map {it.substringBefore(" - ")}
+            if(value !in codes) add(ValidationError(field,"Selecciona una condición válida del formato."))
+        }
+        when(val detail=request.detail) {
+            is SicFormDetail.Sic17 -> {condition("structuralConditionCode",detail.state.structuralConditionCode,"sic17.structural.0");condition("functionalConditionCode",detail.state.functionalConditionCode,"sic17.functional.0")}
+            is SicFormDetail.Sic18 -> {condition("structuralConditionCode",detail.state.structuralConditionCode,"sic18.structural.0");condition("functionalConditionCode",detail.state.functionalConditionCode,"sic18.functional.0")}
+            is SicFormDetail.Sic19 -> {condition("structuralConditionCode",detail.state.structuralConditionCode,"sic19.structural.0");condition("functionalConditionCode",detail.state.functionalConditionCode,"sic19.functional.0")}
+            is SicFormDetail.Sic20 -> {condition("structuralConditionCode",detail.state.structuralConditionCode,"sic20.structural.0");condition("functionalConditionCode",detail.state.functionalConditionCode,"sic20.functional.0")}
+            is SicFormDetail.Sic21 -> condition("conditionCode",detail.state.conditionCode,"sic21.condition.${when(detail.state.classCode){"18"->0;"20"->1;"19"->2;else->3}}")
+            is SicFormDetail.Sic22 -> condition("conditionCode",detail.state.conditionCode,"sic22.condition.0")
+            else -> Unit
+        }
         (request.detail as? SicFormDetail.Sic22)?.let {
             if(it.state.typeCode !in com.tuempresa.inventariovial.catalog.SicCatalogRepository.newSic22Types)
                 add(ValidationError("typeCode","Nueva señal SIC-22: selecciona Reglamento, Preventiva o Informativa. El hito kilométrico es Informativa."))

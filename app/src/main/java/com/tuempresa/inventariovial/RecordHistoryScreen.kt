@@ -77,7 +77,7 @@ fun RecordHistoryScreen(
     var showAnnulled by remember { mutableStateOf(false) }
     val visibleRecords = ordered.filter {
         it.item.record.sicCode != "SCAP" &&
-        (showAnnulled || it.item.record.status == "ACTIVE" || it.item.record.status=="DRAFT" && com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(it.item.record.sicCode)!=null)
+        (showAnnulled || it.item.record.status == "ACTIVE" || it.item.record.status=="DRAFT")
     }
 
     val records=visibleRecords

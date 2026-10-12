@@ -91,6 +91,7 @@ object StabilityDiagnostics {
 class GboApplication:Application() {
     override fun onCreate(){super.onCreate();StabilityDiagnostics.install(this)
         com.tuempresa.inventariovial.core.AutomaticSync.wake(this)
+        com.tuempresa.inventariovial.media.VideoSync.enqueue(this)
         registerActivityLifecycleCallbacks(object:ActivityLifecycleCallbacks {
             override fun onActivityResumed(activity:Activity){if(activity is com.tuempresa.inventariovial.core.FieldCameraActivity)StabilityDiagnostics.screen("CAMERA")}
             override fun onActivityCreated(activity:Activity,state:Bundle?){}

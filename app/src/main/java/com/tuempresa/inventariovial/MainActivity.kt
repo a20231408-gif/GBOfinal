@@ -300,36 +300,36 @@ private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: Au
                 selectedAsset == RoadAssetType.SIGNALIZATION &&
                         selectedSignalization != null -> {
 
+                    if(selectedDraft==null) ModuleElements(inventoryViewModel,selectedSignalization!!.title,{it.assetType==selectedSignalization!!.name},{selectedSignalization=null},familyFilter=setOf(when(selectedSignalization){SignalizationType.VERTICAL->com.tuempresa.inventariovial.road.AssetFamily.SENALIZACION_VERTICAL;SignalizationType.HORIZONTAL_STUDS->com.tuempresa.inventariovial.road.AssetFamily.TACHAS;SignalizationType.SAFETY->com.tuempresa.inventariovial.road.AssetFamily.SEGURIDAD_VIAL;else->com.tuempresa.inventariovial.road.AssetFamily.SENALIZACION_HORIZONTAL})) {done ->
                     SignalizationFormScreen(
                         draftRecord = selectedDraft,
                         signalizationType = selectedSignalization!!,
                         inventoryViewModel = inventoryViewModel,
-                        onBack = {
-                            selectedSignalization = null
-                        },
+                        onBack = done,
                         onSave = {
                             detailId = inventoryViewModel.lastSavedRecord?.id
                             selectedSignalization = null
                             selectedAsset = null
                         }
                     )
+                    } else SignalizationFormScreen(selectedSignalization!!,inventoryViewModel,{selectedSignalization=null},{detailId=inventoryViewModel.lastSavedRecord?.id;selectedDraft=null;selectedAsset=null;selectedSignalization=null},selectedDraft)
                 }
 
 
                 else -> {
 
+                    if(selectedDraft==null) ModuleElements(inventoryViewModel,selectedAsset!!.title,{it.assetType==selectedAsset!!.name || it.sicCode==when(selectedAsset){RoadAssetType.CULVERT->"SIC-18";RoadAssetType.DITCH->"SIC-19";RoadAssetType.RIGHT_OF_WAY->"SIC-23";else->""}},{selectedAsset=null},familyFilter=setOf(when(selectedAsset){RoadAssetType.WALL->com.tuempresa.inventariovial.road.AssetFamily.MURO;RoadAssetType.TUNNEL->com.tuempresa.inventariovial.road.AssetFamily.TUNEL;RoadAssetType.FORD->com.tuempresa.inventariovial.road.AssetFamily.BADEN;RoadAssetType.CULVERT->com.tuempresa.inventariovial.road.AssetFamily.ALCANTARILLA;RoadAssetType.DITCH->com.tuempresa.inventariovial.road.AssetFamily.CUNETA;RoadAssetType.RIGHT_OF_WAY->com.tuempresa.inventariovial.road.AssetFamily.DERECHO_DE_VIA;else->com.tuempresa.inventariovial.road.AssetFamily.PUENTE})) {done ->
                     AssetFormScreen(
                         draftRecord = selectedDraft,
                         assetType = selectedAsset!!,
                         inventoryViewModel = inventoryViewModel,
-                        onBack = {
-                            selectedAsset = null
-                        },
+                        onBack = done,
                         onSave = {
                             detailId = inventoryViewModel.lastSavedRecord?.id
                             selectedAsset = null
                         }
                     )
+                    } else AssetFormScreen(selectedAsset!!,inventoryViewModel,{selectedAsset=null},{detailId=inventoryViewModel.lastSavedRecord?.id;selectedDraft=null;selectedAsset=null},selectedDraft)
                 }
             }
         }
@@ -1515,27 +1515,9 @@ fun Sic21Fields(
 
 
     }
-    Text(
-        "Condición",
-        fontWeight = FontWeight.Bold
-    )
-
-    ChoiceSelector(
-        options = conditionOptions,
-        selected = optionForCode(
-            conditionOptions,
-            state.conditionCode
-        ),
-        onSelected = {
-
-            onStateChange(
-                state.copy(
-                    conditionCode =
-                        codeFromOption(it)
-                )
-            )
-        }
-    )
+    com.tuempresa.inventariovial.field.CatalogConditionSelector("Condición",state.conditionCode,conditionOptions) {
+        onStateChange(state.copy(conditionCode=it))
+    }
 }
 
 
@@ -3231,50 +3213,12 @@ fun Sic17Fields(
     )
 
 
-    Text(
-        "Condición estructural",
-        fontWeight = FontWeight.Bold
-    )
-
-    ChoiceSelector(
-        options = structuralOptions,
-        selected = optionForCode(
-            structuralOptions,
-            state.structuralConditionCode
-        ),
-        onSelected = {
-
-            onStateChange(
-                state.copy(
-                    structuralConditionCode =
-                        codeFromOption(it)
-                )
-            )
-        }
-    )
-
-
-    Text(
-        "Condición funcional",
-        fontWeight = FontWeight.Bold
-    )
-
-    ChoiceSelector(
-        options = functionalOptions,
-        selected = optionForCode(
-            functionalOptions,
-            state.functionalConditionCode
-        ),
-        onSelected = {
-
-            onStateChange(
-                state.copy(
-                    functionalConditionCode =
-                        codeFromOption(it)
-                )
-            )
-        }
-    )
+    com.tuempresa.inventariovial.field.CatalogConditionSelector("Condición estructural",state.structuralConditionCode,structuralOptions) {
+        onStateChange(state.copy(structuralConditionCode=it))
+    }
+    com.tuempresa.inventariovial.field.CatalogConditionSelector("Condición funcional",state.functionalConditionCode,functionalOptions) {
+        onStateChange(state.copy(functionalConditionCode=it))
+    }
 
 
     Text(

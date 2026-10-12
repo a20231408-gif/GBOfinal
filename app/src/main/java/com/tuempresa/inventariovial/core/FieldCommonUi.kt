@@ -48,10 +48,10 @@ fun PhotoPreview(file: File, onClose: () -> Unit) {
             if (file.isFile) com.tuempresa.inventariovial.camera.loadCorrectlyOrientedBitmap(file.path,1600) else null
         }
     }
-    Dialog(onDismissRequest = onClose) {
+    Dialog(onDismissRequest = onClose, properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {
         Surface(shape=MaterialTheme.shapes.medium) {
-            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (bitmap != null) Image(bitmap!!.asImageBitmap(), "Fotografía ampliada", Modifier.fillMaxWidth().heightIn(max=550.dp), contentScale = ContentScale.Fit)
+            Column(Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (bitmap != null) Image(bitmap!!.asImageBitmap(), "Fotografía ampliada", Modifier.fillMaxWidth().weight(1f), contentScale = ContentScale.Fit)
                 else Text("No se pudo abrir la fotografía")
                 TextButton(onClick=onClose) { Text("Cerrar") }
             }

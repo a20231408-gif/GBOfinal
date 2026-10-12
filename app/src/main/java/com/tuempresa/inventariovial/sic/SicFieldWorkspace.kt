@@ -43,37 +43,15 @@ fun InventoryElementWorkspace(vm:InventoryViewModel,format:SicFieldFormat,record
     when(format) {
         SicFieldFormat.SIC08,SicFieldFormat.SIC09 -> FajaWorkspace(vm,format,recordId,onBack)
         SicFieldFormat.SIC18A -> if(recordId!=null) CulvertUnifiedScreen(vm,recordId,onBack=onBack) else Text("Selecciona una alcantarilla desde el historial")
-        else -> SicFieldWorkspace(vm,format,recordId,onBack)
+        else -> if(recordId!=null) SicFieldWorkspace(vm,format,recordId,onBack) else com.tuempresa.inventariovial.field.ModuleElements(vm,format.title,{it.sicCode==format.code},onBack) {done->SicFieldWorkspace(vm,format,onBack=done)}
     }
 }
 
 @Composable
 fun FajaWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:String?=null,onBack:()->Unit) {
     require(format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09))
-    val context=LocalContext.current
-    val db=remember(context) {InventoryDatabase.getInstance(context)}
-    val records by db.inventoryDao().observeAllRecords().collectAsState(initial=emptyList())
-    var selected by rememberSaveable(format,recordId) {mutableStateOf(recordId)}
-    var creating by rememberSaveable(format,recordId) {mutableStateOf(false)}
-    if(creating || selected!=null) {
-        SicFieldWorkspace(vm,format,selected) {selected=null;creating=false;if(recordId!=null)onBack()}
-        return
-    }
-    BackHandler(onBack=onBack)
-    val visible=records.filter {it.sicCode==format.code && it.status in setOf("ACTIVE","DRAFT")}
-    LazyColumn(Modifier.fillMaxSize().padding(horizontal=24.dp),contentPadding=PaddingValues(vertical=24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
-        item {OutlinedButton(onClick=onBack) {Text("Volver")};Text(format.code,style=MaterialTheme.typography.headlineMedium);Text(format.title)}
-        item {Button(onClick={creating=true}) {Text("Nuevo registro")}}
-        if(visible.isEmpty()) item {Text("Todavía no hay registros guardados")}
-        items(visible,key={it.id}) {record->
-            Card(Modifier.fillMaxWidth()) {Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                Text("${record.routeCode} · ${record.roadbedCode}",style=MaterialTheme.typography.titleLarge)
-                Text("PR ${record.startPrCode}+${record.startDistanceM} → ${record.endPrCode.orEmpty()}+${record.endDistanceM ?: ""}")
-                Text(if(record.status=="DRAFT") "Borrador" else "Guardado")
-                OutlinedButton(onClick={selected=record.id}) {Text("Abrir")}
-            }}
-        }
-    }
+    if(recordId!=null) {SicFieldWorkspace(vm,format,recordId,onBack);return}
+    com.tuempresa.inventariovial.field.ModuleElements(vm,format.title,{it.sicCode==format.code},onBack) {done->SicFieldWorkspace(vm,format,onBack=done)}
 }
 
 @Composable
@@ -86,7 +64,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     val session by vm.field.session.collectAsState()
     val survey=remember(context) {com.tuempresa.inventariovial.field.SurveyPreferences(context)}
     var detailId by rememberSaveable(recordId) {mutableStateOf<String?>(null)}
-    detailId?.let { saved -> com.tuempresa.inventariovial.RecordDetailScreen(vm,saved,onBack); return }
+    detailId?.let { saved -> com.tuempresa.inventariovial.RecordDetailScreen(vm,saved,onBack=onBack); return }
     val returnToDetail=com.tuempresa.inventariovial.LocalRecordSaved.current
     val independent=format in setOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)
     var id by rememberSaveable(format,recordId) {mutableStateOf(recordId ?: UUID.randomUUID().toString())}
@@ -98,7 +76,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     var openedRevision by rememberSaveable(format,recordId) {mutableStateOf<Long?>(null)}
     var complete by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var dirty by rememberSaveable(format,recordId) {mutableStateOf(false)}
-    var review by rememberSaveable {mutableStateOf(false)}
+    var review by com.tuempresa.inventariovial.rememberRecordReview(id)
     var exit by remember {mutableStateOf(false)}
     var busy by remember {mutableStateOf(false)}
     var notice by remember {mutableStateOf<String?>(null)}
@@ -190,7 +168,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
         GeneratedElementFiles(files) {notice=it}
     }
     if(independent) FajaCaptureForm(state,!busy,notice,onChange=::change,onDraft={save(false)},onBack=::leave,
-        onSave={if(completion.canFinalize)save(true) else notice=completion.issues.joinToString("\n") {"${it.field}: ${it.reason}"}},
+        onSave={review=true},
         photoContent={com.tuempresa.inventariovial.field.LegacyInventoryPhotos(format.code,paths,categories,editable=!busy,captureLocation=false,captureMetadata=captures,
             onPhotoMetadata={path,metadata->captures=captures+(path to metadata)},
             onChange={p,c->paths=p;categories=c;photosChanged=true;dirty=true;files=emptyList()})},exportContent=exportContent)

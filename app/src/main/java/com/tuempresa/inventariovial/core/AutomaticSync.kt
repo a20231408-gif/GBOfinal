@@ -164,6 +164,7 @@ object AutomaticSyncDrain {
                         if(intent.kind=="SCAP")db.scapDao().inspection(intent.recordId)?.let {s->db.scapDao().syncState(s.id,s.updatedAt,"SYNCED")}
                     }
                 }
+            com.tuempresa.inventariovial.media.VideoSync.enqueue(context)
             }catch(e:CancellationException){throw e}
             catch(e:SyncPending){dao.state(intent.key,intent.revision,"PENDING_VALIDATION",e.message)}
             catch(e:SyncRejection){

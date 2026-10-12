@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun EngineeringEditScreen(id:String,onBack:()->Unit) {
     val context=LocalContext.current;val db=remember {InventoryDatabase.getInstance(context)};val scope=rememberCoroutineScope()
+    var snapshot by remember(id){mutableStateOf<com.tuempresa.inventariovial.data.entity.InventorySnapshot?>(null)}
+    var review by com.tuempresa.inventariovial.rememberRecordReview(id)
     var hasEnds by remember(id){mutableStateOf(false)}
     var observations by remember(id){mutableStateOf("")}
     var coordinate by remember(id){mutableStateOf<com.tuempresa.inventariovial.location.GeoLocation?>(null)}
@@ -29,12 +31,12 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
     var categories by remember(id) {mutableStateOf<Map<String,String>>(emptyMap())}
     var captures by remember(id) {mutableStateOf<Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap())}
     var error by remember {mutableStateOf<String?>(null)};var saving by remember {mutableStateOf(false)}
-    LaunchedEffect(id) {runCatching {val s=requireNotNull(db.inventoryDao().snapshot(id));hasEnds=!s.record.endPrCode.isNullOrBlank() && s.record.endDistanceM!=null;openedRevision=s.record.updatedAt;observations=s.record.observations.orEmpty();coordinate=s.record.let{r->if(r.latitude!=null && r.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(r.latitude,r.longitude,r.gpsAccuracyM?.toFloat() ?: Float.NaN,source=r.locationSource,timestamp=r.gpsTimestamp ?: 0) else null};detail=EngineeringEdits.form(s);paths=s.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.filter {it.scapInspectionId==null}.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()}.onFailure {error=it.message}}
+    LaunchedEffect(id) {runCatching {val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s;hasEnds=!s.record.endPrCode.isNullOrBlank() && s.record.endDistanceM!=null;openedRevision=s.record.updatedAt;observations=s.record.observations.orEmpty();coordinate=s.record.let{r->if(r.latitude!=null && r.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(r.latitude,r.longitude,r.gpsAccuracyM?.toFloat() ?: Float.NaN,source=r.locationSource,timestamp=r.gpsTimestamp ?: 0) else null};detail=EngineeringEdits.form(s);paths=s.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.filter {it.scapInspectionId==null}.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()}.onFailure {error=it.message}}
     BackHandler(enabled=!saving,onBack=onBack)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         OutlinedButton(enabled=!saving,onClick=onBack) {Text("Volver")}
         Text("Editar ficha técnica",style=MaterialTheme.typography.headlineMedium)
-        com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",id,true)
+        com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",id,snapshot?.record?.status=="ACTIVE")
         OptionalDeviceGps(coordinate,onChange={coordinate=it;coordinateEdited=true},onError={gpsError=it})
         when(val d=detail) {
             is SicFormDetail.Sic17 -> Sic17Fields(d.state) {detail=SicFormDetail.Sic17(it)}
@@ -58,8 +60,16 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
         }
         OutlinedTextField(observations,{observations=it},label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())
         error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
-        Button(enabled=detail!=null && !saving && gpsError==null,onClick={val d=detail ?: return@Button;saving=true;scope.launch {
-            try {EngineeringEdits.save(db,id,d,paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate);onBack()} catch(e:Exception){error=e.message} finally {saving=false}
-        }},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("Guardar cambios")}
+        OutlinedButton(enabled=detail!=null && !saving,onClick={val d=detail ?: return@OutlinedButton;saving=true;scope.launch {
+            try {EngineeringEdits.save(db,id,d,paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate,finalize=false);onBack()}catch(e:Exception){error=e.message}finally{saving=false}
+        }}) {Text("Guardar borrador")}
+        LegacyInventoryReviewButton(enabled=detail!=null && !saving && gpsError==null){review=true}
     }
+    if(review) snapshot?.let {original->detail?.let {d->
+        val errors=EngineeringEdits.reviewErrors(original,d,paths)
+        val request=com.tuempresa.inventariovial.model.form.InventorySaveRequest(original.record.sicCode,original.record.assetType,original.record.routeCode,original.record.roadbedCode,original.record.startPrCode,original.record.startDistanceM.toString(),original.record.endPrCode,original.record.endDistanceM?.toString(),original.record.sideCode,original.record.latitude ?: Double.NaN,original.record.longitude ?: Double.NaN,original.record.gpsAccuracyM?.toFloat(),original.record.surveyDate,observations,"",d,photoPaths=paths)
+        LegacyRecordReviewDialog(captureSummary(request),paths.map {java.io.File(it)},com.tuempresa.inventariovial.core.CompletionResult(errors.map {com.tuempresa.inventariovial.core.ValidationIssue(it.field,it.message,com.tuempresa.inventariovial.core.ValidationIssue.Severity.BLOCKING_EXPORT)}),enabled=!saving,onDismiss={review=false},onConfirm={saving=true;scope.launch {
+            try {EngineeringEdits.save(db,id,d,paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate);review=false;onBack()}catch(e:Exception){error=e.message;review=false}finally{saving=false}
+        }})
+    }}
 }

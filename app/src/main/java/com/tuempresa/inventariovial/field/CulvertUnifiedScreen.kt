@@ -45,7 +45,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
 /** Mature SIC-18 is the base; the supplement has no independent location, photographs or record. */
 @Composable fun CulvertUnifiedScreen(vm:InventoryViewModel,id:String,initialExtra:Map<String,String> = emptyMap(),onBack:()->Unit) {
     var showDetail by androidx.compose.runtime.saveable.rememberSaveable(id) {mutableStateOf(false)}
-    if(showDetail) {com.tuempresa.inventariovial.RecordDetailScreen(vm,id,onBack);return}
+    if(showDetail) {com.tuempresa.inventariovial.RecordDetailScreen(vm,id,onBack=onBack);return}
     val returnToDetail=com.tuempresa.inventariovial.LocalRecordSaved.current
     val context=LocalContext.current
     val db=remember(context) {InventoryDatabase.getInstance(context)}
@@ -61,7 +61,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     var categories by remember(id) {mutableStateOf<Map<String,String>>(emptyMap())}
     var captures by remember(id) {mutableStateOf<Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap())}
     var expanded by remember(id) {mutableStateOf(initialExtra.isNotEmpty())}
-    var review by remember {mutableStateOf(false)}
+    var review by com.tuempresa.inventariovial.rememberRecordReview(id)
     var dirty by remember {mutableStateOf(initialExtra.isNotEmpty())}
     var editingDraft by remember {mutableStateOf(false)}
     var busy by remember {mutableStateOf(false)}

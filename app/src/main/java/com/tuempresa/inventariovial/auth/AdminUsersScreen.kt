@@ -38,7 +38,7 @@ fun AuthHomePanel(graph: AuthGraph) {
             if (session?.closing == true) Text("Tu acceso fue desactivado. Guarda y finaliza el recorrido abierto para salir.")
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (session?.role == UserRole.ADMIN && session?.closing == false) OutlinedButton(onClick = { showAdmin = true }) { Text("Administración") }
-                OutlinedButton(onClick = { scope.launch {
+                OutlinedButton(colors=ButtonDefaults.outlinedButtonColors(contentColor=MaterialTheme.colorScheme.error),onClick = { scope.launch {
                     try { graph.logoutAtHome() } catch (_: Exception) { message = "Finaliza el recorrido antes de salir." }
                 } }) { Text("Cerrar sesión") }
             }

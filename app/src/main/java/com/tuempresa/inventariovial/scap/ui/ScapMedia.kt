@@ -119,7 +119,10 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
         if(sketch) item {ScapSketchDimensions(s,c,editable)}
         item {
             Text(if(sketch) "Croquis del puente" else "FOTOGRAFÍAS",style=MaterialTheme.typography.titleLarge)
-            if(!sketch) Text("Estas tomas son recordatorios; puedes registrar varias fotos por categoría.")
+            if(!sketch) {
+                Text("Estas tomas son recordatorios; puedes registrar varias fotos por categoría.")
+                com.tuempresa.inventariovial.media.VideoPanel("SCAP/${s.inspection.id}",photoLabels.map {(key,label)->com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(key,label,key)},editable)
+            }
             if(importing) LinearProgressIndicator(Modifier.fillMaxWidth())
             message?.let {Text(it,color=MaterialTheme.colorScheme.error)}
         }

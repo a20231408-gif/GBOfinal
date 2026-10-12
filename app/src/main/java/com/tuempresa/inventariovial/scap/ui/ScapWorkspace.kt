@@ -50,6 +50,8 @@ fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,onBack:
     val error by c.error.collectAsState()
     val saved by c.saveState.collectAsState()
     val context=LocalContext.current
+    val roadRecords by vm.field.dao.observeAllRecords().collectAsState(emptyList())
+    val numbers=remember(roadRecords){com.tuempresa.inventariovial.field.ElementNumbers(context).assign(roadRecords)}
     val goBack:()->Unit={if(initialInspectionId!=null) {c.select(null);onBack()} else if(selected!=null)c.select(null) else onBack()}
     BackHandler(onBack=goBack)
     Column(Modifier.fillMaxSize()) {
@@ -77,8 +79,17 @@ fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,onBack:
                 if(inspections.isEmpty()) item {Text("Aún no hay inspecciones SCAP.")}
                 items(inspections,key={it.id}) {i->Card(onClick={c.select(i.id)},modifier=Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(16.dp)) {
-                        Text(i.bridgeName.ifBlank {"Puente sin nombre"},style=MaterialTheme.typography.titleMedium)
+                        Text("PUENTE ${numbers[i.roadRecordId]} · ${i.bridgeName.ifBlank {"Sin nombre"}}",style=MaterialTheme.typography.titleMedium)
                         Text("${i.bridgeCode.ifBlank {"Código pendiente"}} · ${statusLabel(i.status)}")
+                        roadRecords.find {it.id==i.roadRecordId}?.let {r->Text("${r.routeCode} · ${com.tuempresa.inventariovial.dashboard.DashboardDrafts.progressive(r)}")}
+                        var details by remember(i.id,i.updatedAt){mutableStateOf<ScapInspectionSnapshot?>(null)}
+                        LaunchedEffect(i.id,i.updatedAt){details=vm.field.dao.let {com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).scapDao().snapshot(i.id)}}
+                        details?.let {snapshot->
+                            Text("Tipo: ${ScapBridgeType.from(snapshot)?.label ?: "Histórico"}")
+                            val condition=ScapConditionCalculator.calculate(ScapElementView.applicable(snapshot).map {e->ScapCalculationInput(e.element.elementCode,ScapElementView.factor(snapshot,e.element),e.condition?.let{ScapPercentages.values(it)} ?: List(6){null})})
+                            Text("Condición estadística: ${condition.value ?: "pendiente"} · ${condition.classification}")
+                        }
+                        com.tuempresa.inventariovial.field.ElementActions {page->c.select(i.id);c.navigate(ScapFieldRoute(when(page){"PHOTOS"->"F2";"REVIEW"->"REVIEW";else->"A"}))}
                         com.tuempresa.inventariovial.core.AutomaticSyncPanel("SCAP",i.id,i.status=="COMPLETE",compact=true)
                         Text("Último cambio: ${SimpleDateFormat("dd/MM/yyyy HH:mm",Locale.getDefault()).format(Date(i.updatedAt))}")
                     }
@@ -168,7 +179,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
         }
         if(editable) Row(Modifier.fillMaxWidth().padding(12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick={c.submit{it.saveDraft(s.inspection.id);savedDraft=true}},modifier=Modifier.weight(1f)){Text("Guardar borrador")}
-            Button(enabled=pending==0 && error==null,onClick={section="REVIEW";confirm=true},modifier=Modifier.weight(1f)){Text("Finalizar ficha")}
+            Button(enabled=pending==0 && error==null,onClick={section="REVIEW";confirm=true},modifier=Modifier.weight(1f)){Text("Revisar y finalizar")}
         }
     }
     if(confirm) AlertDialog(onDismissRequest={confirm=false},title={Text("Confirmar cierre SCAP")},

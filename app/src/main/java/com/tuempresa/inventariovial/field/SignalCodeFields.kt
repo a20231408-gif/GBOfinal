@@ -69,6 +69,5 @@ fun SignalCodeFields(state: Sic22FormState, onChange: (Sic22FormState) -> Unit) 
             }
         }
     }
-    Text("Condición")
-    ChoiceSelector(conditions, option(conditions, state.conditionCode)) { onChange(state.copy(conditionCode = it.substringBefore(" - "))) }
+    CatalogConditionSelector("Condición",state.conditionCode,conditions) { onChange(state.copy(conditionCode=it)) }
 }

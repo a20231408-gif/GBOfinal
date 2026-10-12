@@ -50,14 +50,16 @@ import com.tuempresa.inventariovial.pavement.*
 
 }
 
-@Composable internal fun PavementSampleCard(sample: PavementSampleEntity,userId: String?,onOpen: (String)->Unit) {
+@Composable internal fun PavementSampleCard(sample: PavementSampleEntity,userId: String?,onAction:((String,String)->Unit)?=null,onOpen: (String)->Unit) {
     OutlinedCard(onClick={onOpen(sample.id)},modifier=Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
             Text("${sample.tramo.ifBlank { "Borrador" }} · muestra ${sample.muestra}")
             Text("${PavementHistory.dateLabel(sample.fecha)} · ${sample.inspectorNombre}")
             Text("Estado: ${PavementHistory.statusLabel(sample.status)}")
             com.tuempresa.inventariovial.core.AutomaticSyncPanel("PAVEMENT",sample.id,sample.status=="CLOSED",compact=true)
-            TextButton(onClick={onOpen(sample.id)}) { Text(if(PavementHistory.canContinue(sample,userId)) "Continuar" else "Ver") }
+            TextButton(onClick={onOpen(sample.id)}) {Text(if(PavementHistory.canContinue(sample,userId)) "Continuar" else "Ver")}
+            Text("${sample.ruta} · PR ${sample.prInicial} → ${sample.prFinal} · ${sample.surface}")
+            com.tuempresa.inventariovial.field.ElementActions {page->if(onAction!=null)onAction(sample.id,page) else onOpen(sample.id)}
         }
     }
 }

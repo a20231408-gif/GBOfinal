@@ -34,6 +34,7 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
     val repo = remember { PavementRepository(graph.database, graph.sessions) }
     val session by graph.sessions.current.collectAsState()
     val samples by remember { repo.samples() }.collectAsState(emptyList())
+    var initialPage by rememberSaveable {mutableStateOf("DETAIL")}
     var id by rememberSaveable(initialSampleId) { mutableStateOf(initialSampleId) }
     var surface by rememberSaveable { mutableStateOf(PavementSurface.ASPHALT) }
     var filter by rememberSaveable { mutableStateOf("") }
@@ -43,7 +44,7 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
     BackHandler { if (id != null) id = null else onBack() }
     if (id != null) {
         val sample by remember(id) { repo.observeSample(id!!) }.collectAsState(null)
-        sample?.let { s -> key(s.id) { PavementEditor(s, repo, session?.id, onBack = { id = null }) } }
+        sample?.let { s -> key(s.id) { PavementEditor(s, repo, session?.id, initialPage=initialPage,onBack = { id = null }) } }
     } else Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Surface(color=MaterialTheme.colorScheme.primary,contentColor=MaterialTheme.colorScheme.onPrimary,shape=androidx.compose.foundation.shape.RoundedCornerShape(20.dp)) {
             Row(Modifier.fillMaxWidth().padding(20.dp),verticalAlignment=androidx.compose.ui.Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(16.dp)) {
@@ -67,7 +68,7 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
         error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Text("MUESTRAS", style=MaterialTheme.typography.titleMedium)
         PavementHistory.visible(samples, surface, filter, inspectorFilter).forEach { s ->
-            PavementSampleCard(s,session?.id) { id=it }
+            PavementSampleCard(s,session?.id,onOpen={id=it;initialPage="DETAIL"},onAction={record,page->id=record;initialPage=page})
         }
     }
 }
@@ -84,7 +85,7 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
 }
 
 @Composable
-private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepository, userId: String?, onBack: () -> Unit) {
+private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepository, userId: String?, initialPage:String="DETAIL",onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val surface = PavementSurface.valueOf(sample.surface)
@@ -100,7 +101,8 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
     var first by remember { mutableStateOf<Pair<Double,Double>?>(null) }
     var slabSet by remember { mutableStateOf(emptySet<Int>()) }
     var message by remember { mutableStateOf("") }
-    var closeConfirm by remember { mutableStateOf(false) }
+    var closeConfirm by remember { mutableStateOf(initialPage=="REVIEW" && editable) }
+    var mediaDialog by remember {mutableStateOf(initialPage=="PHOTOS")}
     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
     var photoDamage by rememberSaveable { mutableStateOf<String?>(null) }
     var photoRevision by remember { mutableIntStateOf(0) }
@@ -150,7 +152,7 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                     Text("${surface.label} · ${sample.tramo} · muestra ${sample.muestra}",style=MaterialTheme.typography.bodyMedium)
                 }
                 if(!editable && sample.inspectorUserId==userId) TextButton(onClick={scope.launch {runCatching {repo.reopenSample(sample.id)}.onFailure {message=it.message.orEmpty()}}}) {Text("Reabrir para corregir")}
-                if (editable) Button(onClick = { closeConfirm = true },colors=ButtonDefaults.buttonColors(containerColor=MaterialTheme.colorScheme.surface,contentColor=MaterialTheme.colorScheme.primary)) { Text("Cierre") }
+                if (editable) Button(onClick = { closeConfirm = true },colors=ButtonDefaults.buttonColors(containerColor=MaterialTheme.colorScheme.surface,contentColor=MaterialTheme.colorScheme.primary)) { Text("Revisar y finalizar") }
             }
         }
         if (message.isNotBlank()) Text(message, color = MaterialTheme.colorScheme.primary)
@@ -222,6 +224,7 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                             }
                         }
                     }
+                    com.tuempresa.inventariovial.media.VideoPanel("PAVEMENT/${sample.id}",listOf(com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category("GENERAL","General","GENERAL")),editable)
                     PavementOutputPanel(sample, damages, repo)
                     PavementSicPanel(sample, damages, repo, sample.inspectorUserId==userId)
                 }
@@ -230,9 +233,23 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
             else Column { Box(Modifier.height(420.dp)) { scheme() }; Box(Modifier.weight(1f)) { panel() } }
         }
     }
+    if(mediaDialog) androidx.compose.ui.window.Dialog(onDismissRequest={mediaDialog=false},properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {
+        Surface(Modifier.fillMaxSize()){Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
+            TextButton(onClick={mediaDialog=false}){Text("Cerrar fotografías")}
+            damages.forEach {damage->Text("${damage.correlativo}. ${damage.name}");PhotoGallery(damage.id,photoRevision,repo,false,{},{message=it})}
+            com.tuempresa.inventariovial.media.VideoPanel("PAVEMENT/${sample.id}",listOf(com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category("GENERAL","General","GENERAL")),editable)
+        }}
+    }
     if (header) SampleDialog(sample, message, { header = false }) { updated -> scope.launch { runCatching { repo.saveSample(updated) }.onSuccess { header = false; message = "Cabecera guardada." }.onFailure { message = it.message.orEmpty() } } }
     draft?.let { damage -> DamageDialog(damage, message, { draft = null }) { updated -> scope.launch { runCatching { repo.saveDamage(updated) }.onSuccess { draft = null; slabSet = emptySet(); message = "Daño guardado." }.onFailure { message = it.message.orEmpty() } } } }
-if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title = { Text("Cerrar muestra") }, text = { Text("Se conservarán los registros y la muestra quedará de solo lectura. El índice permanecerá pendiente si faltan curvas. Revisa antes las advertencias y las medidas.") }, confirmButton = { TextButton(onClick = { scope.launch { runCatching { repo.closeSample(sample.id, PavementCalculator(context))
+if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title = { Text("Cerrar muestra") }, text = { Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+    Text("${sample.ruta} · ${sample.tramo} · muestra ${sample.muestra} · ${surface.label}")
+    Text("PR ${sample.prInicial} → ${sample.prFinal} · ${sample.anchoM} × ${sample.largoM} m")
+    Text("Daños (${damages.size})")
+    damages.sortedBy{it.correlativo}.forEach {Text("${it.correlativo}. ${it.name} · ${it.severity.orEmpty()} · ${it.lengthM ?: it.areaM2 ?: it.quantity ?: "sin medida"}")}
+    if(sample.anchoM<=0 || sample.largoM<=0 || sample.tramo.isBlank())Text("Completa la cabecera antes de finalizar",color=MaterialTheme.colorScheme.error)
+    Text("Los registros se conservan. El índice permanece pendiente si faltan curvas. La entrega solo se crea al confirmar el cierre.")
+} }, confirmButton = { TextButton(enabled=sample.anchoM>0 && sample.largoM>0 && sample.tramo.isNotBlank(),onClick = { scope.launch { runCatching { repo.closeSample(sample.id, PavementCalculator(context))
                 val saved=repo.observeSample(sample.id).first()!!
                 if(com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null) com.tuempresa.inventariovial.core.PavementSyncAdapter.enqueue(context,saved) }.onFailure { message = it.message.orEmpty() }; closeConfirm = false } }) { Text("Cerrar") } }, dismissButton = { TextButton(onClick = { closeConfirm = false }) { Text("Volver") } })
 }

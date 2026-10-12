@@ -39,9 +39,11 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
     val orderData = remember(history, reference, route) {
         buildAssetOrderUiData(history, reference, route)
     }
-    val rows = orderData.rows.map {com.tuempresa.inventariovial.core.DriveInventorySchema.bind(LocalContext.current,it)}
-    val folders = orderData.folders
+    var localRevision by remember {mutableStateOf(0)}
     val context = LocalContext.current
+    val local=remember(context,route,localRevision){LocalVisualOrder(context)}
+    val rows = orderData.rows.map {com.tuempresa.inventariovial.core.DriveInventorySchema.bind(LocalContext.current,it)}.sortedBy {local.position(it.item.record).meters ?: Double.MAX_VALUE}
+    val folders = orderData.folders
     val scope = rememberCoroutineScope()
     var exporting by remember { mutableStateOf(false) }
     var showDrivePanel by remember(route) { mutableStateOf(false) }
@@ -69,13 +71,15 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
             } else {
                 ChoiceSelector(routeCodes, route) { if (!exporting) route = it }
             }
+            LocalGeometryControls(route){localRevision++}
+            LocalOperatorPosition(route)
             Text("Orden por posición sobre eje. El orden técnico es independiente del número estable asignado por Drive.")
             Text("El mapa funciona sin Internet con los ejes incluidos en la app y se actualiza al guardar nuevos registros.")
             orderData.error?.let {
                 Text("No se pudo preparar toda la vista de orden: $it", color = MaterialTheme.colorScheme.error)
             }
             if (route.isNotBlank()) {
-                LiveRoadMap(routeCode = route, reference = reference, assets = rows)
+                LiveRoadMap(routeCode = route, reference = local.active(route)?.let {reference.copy(segments=LocalVisualOrder.cumulative(it.segments,local.reversed(route)))} ?: reference, assets = rows)
             }
             Text("Sin matching: al final, por PR calculable; luego fecha de captura y UUID. El PR ingresado se conserva.")
             OutlinedButton(enabled = !busy, onClick = { viewModel.recalculateOrder(route) }) {
@@ -118,6 +122,8 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
                     Text("${asset.shortCode} · ${asset.assetFamily.label} · ${com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(asset.assetFamily)}", style = MaterialTheme.typography.titleMedium)
                     Text(asset.axisMeasureM?.let { String.format(Locale.US, "Posición sobre eje: %.3f km", it / 1000) } ?: "Posición sobre eje no determinada")
                     Text(r.distanceToRoadAxisM?.let { String.format(Locale.US, "Distancia al eje: %.1f m", it) } ?: "Distancia al eje: no determinada")
+                    Text("Orden local: ${local.position(r).meters ?: "sin posición"} m · ${local.position(r).warning}")
+                    ManualVisualPosition(r){localRevision++}
                     Text("PR ingresado: ${r.startPrCode} + ${r.startDistanceM} m")
                     Text("GPS: ${r.latitude}, ${r.longitude} · ± ${r.gpsAccuracyM ?: "?"} m")
                     Text(when (asset.orderSource) {

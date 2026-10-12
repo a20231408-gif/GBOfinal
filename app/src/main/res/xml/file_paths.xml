@@ -14,4 +14,5 @@
     <files-path name="scap_deliveries" path="scap_deliveries/" />
     <files-path name="scap_exports" path="scap_exports/" />
     <files-path name="scap_drive" path="scap-drive/" />
+    <files-path name="inspection_videos" path="videos/" />
 </paths>

@@ -53,7 +53,7 @@ fun FieldSecondaryTools(viewModel:InventoryViewModel) {
     var showSettings by remember {mutableStateOf(false)}
     var message by remember {mutableStateOf<String?>(null)}
     val session by viewModel.field.session.collectAsState()
-    if(session!=null) OutlinedButton(onClick={viewModel.field.endSession {message=it}}) {Text("Finalizar sesión de campo")}
+    if(session!=null) OutlinedButton(colors=ButtonDefaults.outlinedButtonColors(contentColor=MaterialTheme.colorScheme.error),onClick={viewModel.field.endSession {message=it}}) {Text("Finalizar sesión de campo")}
     OutlinedButton(onClick={showSettings=true}) {Text("Ajustar umbrales GNSS")}
     KmlControls(viewModel)
     ObservationReportButton(viewModel)
@@ -99,7 +99,11 @@ private fun SettingsDialog(field: FieldController,onClose: ()->Unit) {
         OutlinedTextField(accuracy,{accuracy=it},label={Text("Precisión máxima para recorrido")})
         OutlinedTextField(distance,{distance=it},label={Text("Separación mínima de puntos")})
         OutlinedTextField(quality,{quality=it},label={Text("Umbral de aviso de precisión")})
-        Text("Los umbrales no certifican la precisión del receptor.")
+        Text("La precisión ±m es la incertidumbre estimada por Android; una cifra menor permite ubicar mejor el punto.")
+        Text("Distancia al eje: rechaza posiciones alejadas más de ${settings.axisThresholdM} m. El orden GNSS requiere además precisión de hasta ${settings.matchConfig().maxAccuracyM} m.")
+        Text("Recorrido: acepta puntos con precisión hasta ${settings.trackAccuracyM} m; separa puntos al menos ${settings.minTrackDistanceM} m para evitar ruido.")
+        Text("Aviso: señala precisión peor que ${settings.qualityAccuracyM} m. No mejora ni certifica el receptor.")
+        Text("El GPS de la tablet permite estimar el orden interno; no reemplaza la georreferenciación contractual externa.")
         error?.let { ErrorText(it) }
     }},confirmButton={TextButton(onClick={
         fun number(text:String)=text.replace(',','.').toDoubleOrNull() ?: Double.NaN

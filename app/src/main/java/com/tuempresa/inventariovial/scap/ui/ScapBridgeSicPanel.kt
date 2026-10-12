@@ -66,7 +66,8 @@ internal fun sicMapping(s:ScapInspectionSnapshot,format:String)=when(format) {
                     if(field.kind==FieldKind.CODE || field.kind==FieldKind.DESCRIBED_CODE) {
                         val selected=if(field.key=="wearingSurface") overlay[field.key] ?: s.values()["sic17b.wearingSurfaceDescription"] ?: s.sic17b?.wearingSurface?.takeIf{it.contains(" - ")} ?: field.options.singleOrNull{it.substringBefore(" - ")==raw} ?: raw
                             else field.options.find{it.substringBefore(" - ")==raw} ?: raw
-                        Box(Modifier.testTag("sic-field-${field.key}")) { ScapChoice(field.label,selected,field.options,editable) {c.editSic(s.inspection.id,format,field.key,if(field.key=="wearingSurface") it else it.substringBefore(" - "))} }
+                        if(field.key in setOf("structuralConditionCode","functionalConditionCode")) com.tuempresa.inventariovial.field.CatalogConditionSelector(field.label,raw,field.options,editable) {c.editSic(s.inspection.id,format,field.key,it)}
+                        else Box(Modifier.testTag("sic-field-${field.key}")) { ScapChoice(field.label,selected,field.options,editable) {c.editSic(s.inspection.id,format,field.key,if(field.key=="wearingSurface") it else it.substringBefore(" - "))} }
                         if(field.key=="wearingSurface") Text("El documento fuente repite 3 para Concreto pobre y Acero. Se conserva el código y la descripción elegida, sin renumerar.",style=MaterialTheme.typography.bodySmall)
                         if(error) Text("${field.label}: revisa el código.",color=MaterialTheme.colorScheme.error)
                     } else OutlinedTextField(raw,{c.editSic(s.inspection.id,format,field.key,it)},label={Text(field.label)},enabled=editable,isError=error,

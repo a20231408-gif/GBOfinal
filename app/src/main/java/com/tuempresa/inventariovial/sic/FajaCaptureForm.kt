@@ -58,7 +58,7 @@ fun FajaCaptureForm(state:SicFieldState,editable:Boolean,notice:String?,onChange
             OutlinedTextField(state.text("observations"),{onChange("observations",it)},enabled=editable,
                 label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth().testTag("sic-observations"))
         }
-        item {Button(onClick=onSave,enabled=editable,modifier=Modifier.fillMaxWidth().height(64.dp)) {Text("Guardar registro")}}
+        item {Button(onClick=onSave,enabled=editable,modifier=Modifier.fillMaxWidth().height(64.dp)) {Text("Revisar y finalizar")}}
         item {exportContent()}
     }
 }

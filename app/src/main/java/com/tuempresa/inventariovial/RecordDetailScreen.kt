@@ -28,16 +28,22 @@ import java.util.Date
 
 /** A successful edit returns to the already-open detail instead of stacking another detail. */
 val LocalRecordSaved = staticCompositionLocalOf<((String) -> Unit)?> { null }
+val LocalReviewOnOpen = staticCompositionLocalOf { false }
+
+@Composable fun rememberRecordReview(key:Any?=null):MutableState<Boolean> {
+    val initial=LocalReviewOnOpen.current
+    return rememberSaveable(key) {mutableStateOf(initial)}
+}
 
 @Composable
-fun RecordDetailScreen(vm: InventoryViewModel, id: String, onBack: () -> Unit) {
+fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="DETAIL", onBack: () -> Unit) {
     val context = LocalContext.current
     val db = remember(context) { InventoryDatabase.getInstance(context) }
     val loaded by remember(db, id) { db.inventoryDao().observeSnapshot(id).map { true to it } }.collectAsState(false to null)
     val snapshot=loaded.second
     val intents by remember(db) { db.automaticSyncDao().observe() }.collectAsState(emptyList())
     val ordered by vm.sequencedHistory.collectAsState()
-    var page by rememberSaveable(id) { mutableStateOf("DETAIL") }
+    var page by rememberSaveable(id) { mutableStateOf(initialPage) }
     var supplemental by remember(id) { mutableStateOf<SupplementaryFormat?>(null) }
     var message by remember(id) { mutableStateOf<String?>(null) }
     var deliveryExpanded by rememberSaveable(id) {mutableStateOf(false)}
@@ -58,13 +64,21 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, onBack: () -> Unit) {
     }
     val sync = intents.find { it.key == "SIC/$id" }
     supplemental?.let { format -> SupplementaryScreen(vm,r,format) { supplemental=null }; return }
-    if (page == "TECHNICAL") {
+    if (page == "TECHNICAL" || page == "REVIEW") {
         val format = SicFieldFormat.fromCode(r.sicCode)
-        CompositionLocalProvider(LocalRecordSaved provides { _:String -> page="DETAIL" }) {
+        CompositionLocalProvider(LocalRecordSaved provides { _:String -> page="DETAIL" },LocalReviewOnOpen provides (page=="REVIEW")) {
         when {
             r.sicCode == "SIC-18" -> CulvertUnifiedScreen(vm,id,onBack={page="DETAIL"})
             format != null -> InventoryElementWorkspace(vm,format,id) { page="DETAIL" }
-            else -> EngineeringEditScreen(id) { page="DETAIL" }
+            else -> if(r.status=="DRAFT" && page!="REVIEW") {
+                if(r.sicCode in setOf("SIC-21","SIC-22")) {
+                    val signal=com.tuempresa.inventariovial.model.SignalizationType.entries.find {it.name==r.assetType} ?: when {r.sicCode=="SIC-22"->com.tuempresa.inventariovial.model.SignalizationType.VERTICAL;s.sic21?.classCode=="20"->com.tuempresa.inventariovial.model.SignalizationType.HORIZONTAL_STUDS;s.sic21?.classCode=="19"->com.tuempresa.inventariovial.model.SignalizationType.SAFETY;else->com.tuempresa.inventariovial.model.SignalizationType.HORIZONTAL_MARKS}
+                    SignalizationFormScreen(signal,vm,{page="DETAIL"},{page="DETAIL"},r)
+                } else {
+                    val type=when(r.sicCode){"SIC-17"->com.tuempresa.inventariovial.model.RoadAssetType.BRIDGE;"SIC-19"->com.tuempresa.inventariovial.model.RoadAssetType.DITCH;"SIC-23"->com.tuempresa.inventariovial.model.RoadAssetType.RIGHT_OF_WAY;else->when(s.sic20?.classCode){"13"->com.tuempresa.inventariovial.model.RoadAssetType.TUNNEL;"14"->com.tuempresa.inventariovial.model.RoadAssetType.WALL;else->com.tuempresa.inventariovial.model.RoadAssetType.FORD}}
+                    AssetFormScreen(type,vm,{page="DETAIL"},{page="DETAIL"},r)
+                }
+            } else EngineeringEditScreen(id) { page="DETAIL" }
         }
         }
         return
@@ -110,6 +124,8 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, onBack: () -> Unit) {
             "PHOTOS" -> item {
                 Column(Modifier.fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                     RecordPhotoSheet(s,db)
+                    Button(onClick={page="TECHNICAL"}) {Text("Añadir / editar fotografías")}
+                    com.tuempresa.inventariovial.media.VideoPanel("SIC/$id",PhotoCategoryPolicy.categories(r.sicCode,r.assetType,s.sic20?.classCode ?: s.sic19?.classCode ?: s.sic21?.classCode ?: s.sic23?.classCode ?: "",s.sic21?.typeCode ?: "",r.endPrCode!=null),editable=r.status!="ANNULLED")
                 }
             }
             "EDIT" -> {
@@ -179,7 +195,9 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, onBack: () -> Unit) {
     Text("Fotografías (${groups.values.sumOf {it.size}})",style=MaterialTheme.typography.titleLarge)
     if(groups.isEmpty()) Text("Este elemento no tiene fotografías locales.")
     val labels=(PhotoCategoryPolicy.linear+PhotoCategoryPolicy.vertical+PhotoCategoryPolicy.culvert).associate {it.key to it.label}
-    groups.forEach { (category,photos) ->
+    val defaults=PhotoCategoryPolicy.categories(s.record.sicCode,s.record.assetType,s.sic20?.classCode ?: s.sic19?.classCode ?: s.sic21?.classCode ?: s.sic23?.classCode ?: "",s.sic21?.typeCode ?: s.sic23?.typeCode ?: "",hasEnds=s.record.endPrCode!=null)
+    (defaults.map {it.key}+groups.keys).distinct().forEach { category ->
+        val photos=groups[category].orEmpty()
         Text("${labels[category] ?: category} (${photos.size})",style=MaterialTheme.typography.titleMedium)
         InventoryPhotoReview(photos.map {it.localPath})
         val originals=photos.filter {it.originalPath.isNotBlank() && it.originalPath!=it.localPath}

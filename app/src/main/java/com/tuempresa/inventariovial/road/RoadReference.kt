@@ -63,7 +63,7 @@ object RoadOrdering {
             SequencedRecord(asset.item, asset.sequence, asset.axisMeasureM?.let { RoadPosition(it, PositionSource.AXIS_GEOMETRY) }
                 ?: asset.fallbackPosition, asset)
         }
-        return active + order(records.filter { it.record.status != "ACTIVE" || it.record.sicCode == "SCAP" }, calculator)
+        return active + order(records.filter { it.record.status != "ACTIVE" || it.record.sicCode == "SCAP" }, calculator) + records.filter {it.record.status=="DRAFT"}.map {SequencedRecord(it,null,calculator.calculate(it.record))}
     }
 
     fun order(records: List<InventoryRecordWithPhotos>, calculator: ChainageCalculator): List<SequencedRecord> {

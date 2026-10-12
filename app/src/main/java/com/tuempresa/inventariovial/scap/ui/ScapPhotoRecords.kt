@@ -37,20 +37,22 @@ import java.util.Locale
     LaunchedEffect(destination,photos.map{it.id}) {
         destination?.second?.takeIf{it.subsection=="F2"}?.let{route->
             val index=photos.indexOfFirst{it.id==route.repeatableItemId}
-            list.scrollToItem(if(index<0)0 else index+1)
+            list.scrollToItem(if(index<0)0 else index+2)
         }
     }
     var adding by remember{mutableStateOf(false)};var name by rememberSaveable{mutableStateOf("")}
     var description by rememberSaveable{mutableStateOf("")}
+    var categoryName by rememberSaveable {mutableStateOf<String?>(null)}
     var target by rememberSaveable{mutableStateOf<String?>(null)}
     var cameraPath by rememberSaveable{mutableStateOf<String?>(null)}
     var busy by remember{mutableStateOf(false)};var message by remember{mutableStateOf<String?>(null)}
     var remove by remember{mutableStateOf<Pair<String,Boolean>?>(null)}
     val camera=rememberLauncherForActivityResult(com.tuempresa.inventariovial.core.FieldTakePicture()){ok->
         val path=cameraPath;val id=target
-        if(ok&&path!=null&&id!=null) {
+        if(ok&&path!=null) {
             val capture=PhotoCaptureMetadata(System.currentTimeMillis(),null)
-            c.submit{it.replacePhoto(s.inspection.id,id,path,capture)}
+            val category=categoryName
+            c.submit{repo->val photoId=id ?: repo.addPhotoRecord(s.inspection.id,category.orEmpty());repo.replacePhoto(s.inspection.id,photoId,path,capture)}
             PhotoCaptureMetadata.capture(context,capture.capturedAt!!) {metadata->
                 c.submit{it.updatePhotoCapture(s.inspection.id,path,metadata)}
             }
@@ -60,11 +62,13 @@ import java.util.Locale
     fun take() {runCatching{val file=createPhotoFile(context,"SCAP");cameraPath=file.file.absolutePath;camera.launch(file.uri)}
         .onFailure{message="No se pudo abrir la cámara."}}
     val permission=rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()){if(it)take() else message="Permiso de cámara no concedido. Puedes seleccionar una imagen."}
-    val importer=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){uri->
+    val importer=rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()){uris->
         val id=target
-        if(uri!=null&&id!=null)scope.launch {
+        val category=categoryName
+        if(uris.isNotEmpty())scope.launch {
             busy=true
             try {
+                for(uri in if(id!=null)uris.take(1) else uris) {
                 val path=withContext(Dispatchers.IO) {
                     val suffix=when(context.contentResolver.getType(uri)){"image/png"->".png";"image/webp"->".webp";else->".jpg"}
                     val file=File.createTempFile("SCAP_IMPORT_",suffix,File(context.filesDir,"images").apply{mkdirs()})
@@ -74,7 +78,8 @@ import java.util.Locale
                         require(bounds.outWidth>0&&bounds.outHeight>0);file.absolutePath
                     }catch(e:Exception){file.delete();throw e}
                 }
-                c.submit{it.replacePhoto(s.inspection.id,id,path)}
+                c.submit{repo->val photoId=id ?: repo.addPhotoRecord(s.inspection.id,category.orEmpty());repo.replacePhoto(s.inspection.id,photoId,path)}
+                }
             }catch(e:Exception){message="No se pudo leer la imagen seleccionada."}finally{busy=false;target=null}
         }
     }
@@ -83,8 +88,21 @@ import java.util.Locale
             Text("FOTOGRAFÍAS · F.2 PANEL FOTOGRÁFICO",style=MaterialTheme.typography.headlineSmall)
             Text("NRO. · FECHA · DESCRIPCIÓN · DIGITAL")
             ScapFieldTarget("inspection","addPhoto"){OutlinedButton(enabled=editable&&!busy,onClick={adding=true}){Text("+ Añadir registro fotográfico")}}
+            com.tuempresa.inventariovial.media.VideoPanel("SCAP/${s.inspection.id}",catalog.photoNames.map {label->val key="T_"+com.tuempresa.inventariovial.delivery.sha256(label.toByteArray()).take(16).uppercase();com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(key,label,key)},editable)
             if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())
             message?.let{Text(it,color=MaterialTheme.colorScheme.error)}
+        }
+        item {
+            catalog.photoNames.forEach {label->
+                val count=photos.count {ScapElementView.photoName(s,it.id,it.photoCategory)==label && it.localPath.isNotBlank()}
+                Card(Modifier.fillMaxWidth().padding(vertical=4.dp)) {Column(Modifier.padding(12.dp)) {
+                    Text("$label ($count)",style=MaterialTheme.typography.titleMedium)
+                    if(editable) Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                        Button(enabled=!busy,onClick={target=null;categoryName=label;if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)take() else permission.launch(Manifest.permission.CAMERA)}) {Text("Tomar foto")}
+                        OutlinedButton(enabled=!busy,onClick={target=null;categoryName=label;importer.launch(arrayOf("image/*"))}) {Text("Incorporar fotos")}
+                    }
+                }}
+            }
         }
         items(photos,key={it.id}){photo->
             val values=scapValues(s,c,photo.id)
