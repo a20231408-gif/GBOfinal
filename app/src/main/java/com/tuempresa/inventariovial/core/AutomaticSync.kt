@@ -43,10 +43,26 @@ object AutomaticSync {
         count
     }
     /** Persistent drain also repairs an interruption between the Room commit and WorkManager enqueue. */
+    suspend fun recoverJpegBlocked(context:Context,db:InventoryDatabase):Int=db.withTransaction {
+        var count=0
+        for(old in db.automaticSyncDao().all()) {
+            if(old.state!="BLOCKED" || old.error?.contains("(NOT_JPEG)")!=true || old.syncedRevision>=old.revision || !AutomaticDelivery.validated(db,old))continue
+            // Only a definitively rejected current revision can be rebuilt. Lost ACKs and predecessors are replayed unchanged.
+            val prepared=old.preparedJson?.let(::JSONObject)
+            if(prepared!=null && prepared.optLong("revision")!=old.revision)continue
+            val dir=java.io.File(context.filesDir,"automatic_drive/${com.tuempresa.inventariovial.delivery.sha256(old.key.toByteArray())}/${old.revision}")
+            if(dir.exists())check(dir.renameTo(java.io.File(dir.parentFile,"${old.revision}_NOT_JPEG_${java.util.UUID.randomUUID()}"))) {"No se pudo conservar la preparación rechazada."}
+            db.automaticSyncDao().put(old.copy(state=if(old.syncedRevision>0)"UPDATE_PENDING" else "QUEUED",error=null,preparedJson=null,attempts=0))
+            count++
+        }
+        count
+    }
+
     fun wake(context:Context) {
         val c=context.applicationContext
         scope.launch {
             recoverGpsBlocked(InventoryDatabase.getInstance(c))
+            recoverJpegBlocked(c,InventoryDatabase.getInstance(c))
             // Periodic work is a recovery mechanism; the immediate work handles ordinary closure.
             val periodic=PeriodicWorkRequestBuilder<AutomaticSyncWorker>(15,TimeUnit.MINUTES)
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build()
@@ -66,7 +82,9 @@ object AutomaticSync {
             val old=db.automaticSyncDao().get(key) ?: return@withTransaction
             require(old.state!="CONFLICT") {"Conflicto de revisiones: conserva la edición local y concilia con el responsable antes de reenviar."}
             require(old.state!="DRAFT") {"Valida primero la ficha."}
-            db.automaticSyncDao().put(old.copy(state="QUEUED",error=null,attempts=0,origin="MANUAL_APP"))
+            if(old.state=="BLOCKED" && old.error?.contains("(NOT_JPEG)")==true) {
+                recoverJpegBlocked(context,db)
+            } else db.automaticSyncDao().put(old.copy(state="QUEUED",error=null,attempts=0,origin="MANUAL_APP"))
         }
         enqueue(context)
     }
@@ -103,6 +121,7 @@ object AutomaticSyncDrain {
         transportFactory:()->AutomaticDriveTransport={AutomaticDriveHttp()},
         configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0):Boolean {
         AutomaticSync.recoverGpsBlocked(db)
+        AutomaticSync.recoverJpegBlocked(context,db)
         val dao=db.automaticSyncDao()
         var retry=false
         val pending=dao.all().filter {it.state in setOf("QUEUED","UPDATE_PENDING","UPLOADING","ERROR","UNCONFIGURED","PENDING_VALIDATION") && AutomaticDelivery.validated(db,it)}

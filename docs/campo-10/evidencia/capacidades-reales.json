@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "photoCategoryVersion": 1,
+  "photoNamingVersion": null,
+  "videoProtocol": null,
+  "stableFamilyNumbering": true,
+  "technicalDeliveryWithoutGps": true,
+  "rootMatchesRepository": false
+}

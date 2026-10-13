@@ -1,0 +1,17 @@
+# Bloque A — 12/10/2026
+
+Base publicada: `44453aecb2ac03e39124ab39ad7b9724e50e9d80`; rama `codex/correcciones-campo-10`.
+
+Se verifica el JPEG final antes de staging, se localiza EOI mediante marcadores JPEG (sin confundir bytes dentro de EXIF con fin de imagen), se retira solo el trailer de la copia de entrega y se exige decodificación. PNG/WebP se convierten a JPEG. El original y la orientación EXIF permanecen intactos; SHA-256 se calcula después de la transformación. Archivos corruptos y videos no pasan por la ruta de fotos. HEIC depende del decodificador Android; falta probarlo en la tablet concreta.
+
+`NOT_JPEG` se genera en `SyncV3Core.validate` llamando a `v3Store.isJpeg`, después de recuperar staging y comprobar SHA-256, antes de modificar las entregas definitivas. La condición del servidor exige SOI al inicio y EOI al final. Se reprodujeron dos causas: PNG etiquetado como JPEG (incluido cache histórico) y JPEG decodificable con bytes después de EOI. No se debilitó la validación del servidor. Sin UUID/bytes de las tres fichas de campo, **no se atribuye todavía su causa exacta a una de estas variantes**.
+
+La recuperación automática y el botón de reintento respaldan la preparación rechazada completa y reconstruyen únicamente una revisión BLOCKED explícitamente rechazada con NOT_JPEG, aún sin ACK de esa revisión. Conservan UUID/revisión/baseRevision/fotos y recibos anteriores. No reconstruyen conflictos, predecesores ni una entrega con ACK perdido. No borran la evidencia rechazada. La ficha sigue pendiente hasta ACK válido.
+
+Videos: interfaz, importación y sincronización limitadas a `SCAP/<inspectionId>`. SIC y pavimentos conservan sus fotografías. Los videos anteriores fuera de SCAP se mantienen en la base y en disco; no se envían. Puentes muestra una tarjeta por categoría con FOTO/VIDEO en la misma fila, contadores independientes, importación múltiple, vista previa y retiro/reemplazo conservando originales. Se incluyen categorías históricas. El video remoto permanece desactivado.
+
+Resultados locales: **30/30 pruebas de transporte/recuperación/ACK/video y 4/4 de interfaz**, incluidas orientación vertical/horizontal y fotografías de pavimentos. Primer intento de compilación falló por iconos de una dependencia ausente; se corrigió con recursos vectoriales locales. Logs y XML en `evidencia/` conservan ambos resultados.
+
+Prueba real autorizada: ficha enteramente ficticia en `GBO_PRUEBA_10`, sin SIC contractual ni registros de ingenieros. PNG enviado como JPEG recibió NOT_JPEG; JPEG válido de la misma identidad/revisión recibió ACK; reintento conservó IDs. Descarga independiente mediante Google Drive: JPEG decodificable de 726 bytes y SHA-256 idéntico al enviado. Evidencia: `evidencia/prueba-drive-real-ficticia.json`, fotos enviadas/recibidas y `tools/prueba_drive_ficticia_10.py`. No se borró esa ficha ni se desplegó Apps Script.
+
+Las revisiones `1791844103713`, `1791844288555`, `1791848119143` comunicadas por el usuario siguen pendientes de aceptación física. Para obtener su UUID: abrir la ficha → Detalles de entrega Drive / reintentar → copiar **Identidad: SIC/UUID** (o SCAP/UUID/PAVEMENT/UUID) y la revisión local; este texto se incorpora en la APK 10. En la APK anterior puede localizarse la ficha por revisión en el panel y registrar formato/ruta/PR; no extraer credenciales, borrar datos ni forzar una captura nueva. La alcantarilla PE-3N/ALCANTARILLA 1 es un éxito ajeno al rechazo.

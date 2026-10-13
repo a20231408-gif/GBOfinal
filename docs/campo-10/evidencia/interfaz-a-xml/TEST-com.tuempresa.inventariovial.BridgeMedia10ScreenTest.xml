@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.BridgeMedia10ScreenTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-13T00:36:18.928Z" hostname="JULIAN" time="11.399">
+  <properties/>
+  <testcase name="singleCategoryPortraitHasSideBySideActionsAndSeparateCounters" classname="com.tuempresa.inventariovial.BridgeMedia10ScreenTest" time="10.926"/>
+  <testcase name="singleCategoryLandscapeHasSideBySideActionsAndSeparateCounters" classname="com.tuempresa.inventariovial.BridgeMedia10ScreenTest" time="0.281"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

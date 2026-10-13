@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-13T00:33:24.088Z" hostname="JULIAN" time="10.617">
+  <properties/>
+  <testcase name="pngBecomesRealJpegWithoutChangingOriginal" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="10.161"/>
+  <testcase name="jpegOrientationAndPixelsRemainPreserved" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.141"/>
+  <testcase name="invalidMediaCannotBePreparedAsJpeg" classname="com.tuempresa.inventariovial.AutomaticSyncRegressionTest" time="0.071"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

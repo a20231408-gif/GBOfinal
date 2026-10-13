@@ -51,6 +51,7 @@ class AutomaticDriveHttp internal constructor(
         for(n in 0 until files.length()) {
             val file=files.getJSONObject(n);val local=File(file.getString("localFile"));val bytes=local.readBytes()
             require(sha256(bytes)==file.getString("sha256")) {"La copia preparada cambió."}
+            if(file.getString("mimeType")=="image/jpeg")require(JpegEnvelope.valid(bytes)) {"La copia preparada no es un JPEG completo. Original conservado."}
             val staged=JSONObject(file.toString()).apply {remove("localFile");put("base64",Base64.encodeToString(bytes,Base64.NO_WRAP))}
             val ack=send(JSONObject().put("action","stageRecordV3").put("syncProtocol",3).put("key",commit.getString("key"))
                 .put("revision",commit.getLong("revision")).put("file",staged))

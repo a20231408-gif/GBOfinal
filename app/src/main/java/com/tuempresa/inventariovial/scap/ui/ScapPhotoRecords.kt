@@ -33,11 +33,12 @@ import java.util.Locale
 @Composable internal fun ScapPhotoRecords(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,editable:Boolean) {
     val context=LocalContext.current;val scope=rememberCoroutineScope()
     val list=rememberLazyListState();val photos=s.photos.sortedBy{it.photoIndex}
+    val historicVideos by remember(s.inspection.id) {com.tuempresa.inventariovial.media.VideoDatabase.get(context).videos().observe("SCAP/${s.inspection.id}")}.collectAsState(emptyList())
     val destination=LocalScapDestination.current
     LaunchedEffect(destination,photos.map{it.id}) {
         destination?.second?.takeIf{it.subsection=="F2"}?.let{route->
             val index=photos.indexOfFirst{it.id==route.repeatableItemId}
-            list.scrollToItem(if(index<0)0 else index+2)
+            list.scrollToItem(if(index<0)0 else (catalog.photoNames+photos.map {ScapElementView.photoName(s,it.id,it.photoCategory)}).distinct().indexOf(ScapElementView.photoName(s,photos[index].id,photos[index].photoCategory)).coerceAtLeast(0)+1)
         }
     }
     var adding by remember{mutableStateOf(false)};var name by rememberSaveable{mutableStateOf("")}
@@ -88,23 +89,20 @@ import java.util.Locale
             Text("FOTOGRAFÍAS · F.2 PANEL FOTOGRÁFICO",style=MaterialTheme.typography.headlineSmall)
             Text("NRO. · FECHA · DESCRIPCIÓN · DIGITAL")
             ScapFieldTarget("inspection","addPhoto"){OutlinedButton(enabled=editable&&!busy,onClick={adding=true}){Text("+ Añadir registro fotográfico")}}
-            com.tuempresa.inventariovial.media.VideoPanel("SCAP/${s.inspection.id}",catalog.photoNames.map {label->val key="T_"+com.tuempresa.inventariovial.delivery.sha256(label.toByteArray()).take(16).uppercase();com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(key,label,key)},editable)
             if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())
             message?.let{Text(it,color=MaterialTheme.colorScheme.error)}
         }
-        item {
-            catalog.photoNames.forEach {label->
-                val count=photos.count {ScapElementView.photoName(s,it.id,it.photoCategory)==label && it.localPath.isNotBlank()}
-                Card(Modifier.fillMaxWidth().padding(vertical=4.dp)) {Column(Modifier.padding(12.dp)) {
-                    Text("$label ($count)",style=MaterialTheme.typography.titleMedium)
-                    if(editable) Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                        Button(enabled=!busy,onClick={target=null;categoryName=label;if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)take() else permission.launch(Manifest.permission.CAMERA)}) {Text("Tomar foto")}
-                        OutlinedButton(enabled=!busy,onClick={target=null;categoryName=label;importer.launch(arrayOf("image/*"))}) {Text("Incorporar fotos")}
-                    }
-                }}
-            }
-        }
-        items(photos,key={it.id}){photo->
+        val labels=(catalog.photoNames+photos.map {ScapElementView.photoName(s,it.id,it.photoCategory)}+historicVideos.map {it.categoryLabel}).distinct()
+        labels.forEach {label->
+            val categoryPhotos=photos.filter {ScapElementView.photoName(s,it.id,it.photoCategory)==label}
+            item(key="category:$label") {
+                val cat= historicVideos.firstOrNull {it.categoryLabel==label}?.category ?: "T_"+com.tuempresa.inventariovial.delivery.sha256(label.toByteArray()).take(16).uppercase()
+                com.tuempresa.inventariovial.media.BridgeMediaCategory("SCAP/${s.inspection.id}",com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(cat,label,cat),editable&&!busy,
+                    photoCount=categoryPhotos.count {it.localPath.isNotBlank()},
+                    onPhoto={target=null;categoryName=label;if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)take() else permission.launch(Manifest.permission.CAMERA)},
+                    onImportPhotos={target=null;categoryName=label;importer.launch(arrayOf("image/*"))}) {
+                    categoryPhotos.forEach {photo->
+
             val values=scapValues(s,c,photo.id)
             ScapElementCard("NRO. ${photo.photoIndex}") {
                 ScapFieldTarget(photo.id,"photoName") {
@@ -135,6 +133,9 @@ import java.util.Locale
                     TextButton(enabled=editable&&photo!=photos.firstOrNull(),onClick={c.submit{it.movePhoto(s.inspection.id,photo.id,-1)}}){Text("↑ Subir")}
                     TextButton(enabled=editable&&photo!=photos.lastOrNull(),onClick={c.submit{it.movePhoto(s.inspection.id,photo.id,1)}}){Text("↓ Bajar")}
                     TextButton(enabled=editable,onClick={remove=photo.id to true}){Text("Eliminar registro")}
+                }
+            }
+                    }
                 }
             }
         }

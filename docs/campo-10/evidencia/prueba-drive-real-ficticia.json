@@ -1,0 +1,55 @@
+{
+  "source": "REAL APPS SCRIPT/DRIVE; isolated fictitious record authorized by owner",
+  "identity": {
+    "recordId": "prompt10-ficticio-3e7a15e0-2337-4eb6-9c09-82df817ffb9e",
+    "revision": 1791851680352,
+    "routeCode": "GBO_PRUEBA_10"
+  },
+  "rejectedCode": "NOT_JPEG",
+  "ack": {
+    "ok": true,
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC/prompt10-ficticio-3e7a15e0-2337-4eb6-9c09-82df817ffb9e",
+    "revision": 1791851680352,
+    "contentHash": "ca780484762b2f23f2f4d48d94761783b640dbdafce831fee11682af6328822f",
+    "folderId": "1hzf_scerWPOMbune-5FEmxNJBZqFZb9l",
+    "logicalPath": "GBO_PRUEBA_10/ALCANTARILLAS/ALCANTARILLA 1",
+    "files": [
+      {
+        "key": "photo/prompt10-ficticio-3e7a15e0-2337-4eb6-9c09-82df817ffb9e-photo",
+        "sha256": "95adde4609705b8380251a94116aea4f9f96b1bd6b811a64876ec200ebcaf60b",
+        "fileId": "1_EVDQA9z0racHnvrylgCCT7zMcUp4Qsv",
+        "folderId": "1KheCkDmeKhPRXq7xP_nJUIUjwDeM6TD1",
+        "requestedPath": "PANORAMICA/F_73898920b7859c76.jpg",
+        "logicalPath": "GBO_PRUEBA_10/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/F_73898920b7859c76.jpg"
+      },
+      {
+        "key": "metadata",
+        "sha256": "ad2ca8cd0c3788dea76e458836b7116f5a75264963a2b06be0394bf2b4b514d8",
+        "fileId": "1Uyhx04gySULI3Dxn3ya0DZv5vouf6G9z",
+        "folderId": "1hzf_scerWPOMbune-5FEmxNJBZqFZb9l",
+        "requestedPath": "metadata.json",
+        "logicalPath": "GBO_PRUEBA_10/ALCANTARILLAS/ALCANTARILLA 1/metadata.json"
+      }
+    ],
+    "sicFiles": [],
+    "retainedSicFormats": [],
+    "alreadyExists": false,
+    "technicalDeliveryStatus": "DELIVERED",
+    "georeferencingStatus": "PENDING_EXTERNAL",
+    "externalGeoreferencingStatus": "PENDING",
+    "orderSource": "CONTRACTUAL_PR"
+  },
+  "retrySameIds": true,
+  "jpegSha256": "95adde4609705b8380251a94116aea4f9f96b1bd6b811a64876ec200ebcaf60b",
+  "jpegMd5": "e06276b128c33fb2df6781154c1baaa4",
+  "photoFileId": "1_EVDQA9z0racHnvrylgCCT7zMcUp4Qsv",
+  "independentDriveReadback": {
+    "sha256Matches": true,
+    "decodedFormat": "JPEG",
+    "bytes": 726,
+    "fileId": "1_EVDQA9z0racHnvrylgCCT7zMcUp4Qsv"
+  },
+  "realBlockedRecordsRecovered": false
+}

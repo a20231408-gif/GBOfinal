@@ -68,6 +68,7 @@ object VideoSync {
         var retry=false
         for(initial in dao.all().filter {!it.retired && it.state!="SYNCED"}) {
             var v=dao.get(initial.id) ?: continue
+            if(!VideoPolicy.bridgeOnly(v.parentKey)){dao.saveSync(v.copy(state="SCOPE_RESTRICTED",error="Video histórico conservado; entrega restringida a Puentes / SCAP"));continue}
             if(!enabled){dao.saveSync(v.copy(state="BACKEND_REQUIRED",error="Subida remota de videos deshabilitada hasta validar Apps Script"));continue}
             val parent=revision(v.parentKey)
             if(parent==null){dao.saveSync(v.copy(state="WAITING_PARENT",error="Finaliza y sincroniza primero la ficha"));continue}

@@ -58,6 +58,7 @@ object SyncIntentPresentation {
             intent?.let {
                 Text("Origen: ${if(it.origin=="AUTOMATIC") "Automática" else "Manual desde la app"}")
                 Text("Revisión local: ${it.revision} · confirmada: ${it.syncedRevision}")
+                androidx.compose.foundation.text.selection.SelectionContainer {Text("Identidad: ${it.key}")}
                 Text("Última confirmación: ${it.lastSyncedAt?.let {time->DateFormat.getDateTimeInstance().format(Date(time))} ?: "Aún no confirmada"}")
                 val prepared=it.preparedJson?.let(::JSONObject);val receipt=it.receiptJson?.let(::JSONObject)
                 if(prepared?.optJSONObject("georeferencing")?.optString("externalSubmetricStatus")=="PENDING")

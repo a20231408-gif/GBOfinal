@@ -36,6 +36,7 @@ internal val sketchLabels=linkedMapOf("ELEVATION" to "Elevación", "PLAN" to "Pl
 fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,editable:Boolean,sketch:Boolean,initialElementCode:String?=null) {
     if(!sketch && catalog.bridgeType!=null) {ScapPhotoRecords(s,c,catalog,editable);return}
     val context=LocalContext.current
+    val historicVideos by remember(s.inspection.id) {com.tuempresa.inventariovial.media.VideoDatabase.get(context).videos().observe("SCAP/${s.inspection.id}")}.collectAsState(emptyList())
     val scope=rememberCoroutineScope()
     var category by rememberSaveable(sketch){mutableStateOf(if(sketch) "ELEVATION" else "GENERAL")}
     var code by rememberSaveable(initialElementCode) {mutableStateOf(initialElementCode.orEmpty())}
@@ -121,7 +122,6 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
             Text(if(sketch) "Croquis del puente" else "FOTOGRAFÍAS",style=MaterialTheme.typography.titleLarge)
             if(!sketch) {
                 Text("Estas tomas son recordatorios; puedes registrar varias fotos por categoría.")
-                com.tuempresa.inventariovial.media.VideoPanel("SCAP/${s.inspection.id}",photoLabels.map {(key,label)->com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(key,label,key)},editable)
             }
             if(importing) LinearProgressIndicator(Modifier.fillMaxWidth())
             message?.let {Text(it,color=MaterialTheme.colorScheme.error)}
@@ -136,15 +136,17 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
             }
         } else {
             val categories=com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.primary.keys.toList() +
-                s.photos.map {it.photoCategory.orEmpty()}.distinct().filter {it !in com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.primary}
+                (s.photos.map {it.photoCategory.orEmpty()}+historicVideos.map {it.category}).distinct().filter {it !in com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.primary}
             categories.forEach {cat->
                 val photos=s.photos.filter {it.photoCategory.orEmpty()==cat}.sortedBy {it.photoIndex}
-                item(key="category:$cat") {ScapElementCard("${com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.label(cat)} · ${photos.size} fotos") {
-                    if(cat=="DEFECT") ScapChoice("Elemento SCAP (opcional)",catalog.element(code)?.let {"${it.code} · ${it.name}"}.orEmpty(),elementOptions,editable) {code=it.substringBefore(" · ")}
-                    captureButtons(cat.ifBlank {"OTHER"},if(cat=="DEFECT") code else "")
-                }}
-                items(photos,key={it.id}) {photo->
-                    ScapPhotoCard(s,c,catalog,photo,editable,onRemove={removing=photo.id},onReplace={replaceTarget=photo.id;replacementPicker()})
+                item(key="category:$cat") {
+                    com.tuempresa.inventariovial.media.BridgeMediaCategory("SCAP/${s.inspection.id}",com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(cat.ifBlank {"GENERAL"},com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.label(cat),cat),editable&&!importing,
+                        photoCount=photos.size,
+                        onPhoto={captureCategory=cat.ifBlank {"OTHER"};captureCode=if(cat=="DEFECT")code else "";if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)takePhoto() else permission.launch(Manifest.permission.CAMERA)},
+                        onImportPhotos={captureCategory=cat.ifBlank {"OTHER"};captureCode=if(cat=="DEFECT")code else "";importer.launch(arrayOf("image/*"))}) {
+                        if(cat=="DEFECT")ScapChoice("Elemento SCAP (opcional)",catalog.element(code)?.let {"${it.code} · ${it.name}"}.orEmpty(),elementOptions,editable){code=it.substringBefore(" · ")}
+                        photos.forEach {photo->ScapPhotoCard(s,c,catalog,photo,editable,onRemove={removing=photo.id},onReplace={replaceTarget=photo.id;replacementPicker()})}
+                    }
                 }
             }
             item {
@@ -164,6 +166,7 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
 @Composable
 private fun ScapPhotoCard(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,photo:com.tuempresa.inventariovial.data.entity.PhotoEntity,editable:Boolean,onRemove:()->Unit,onReplace:()->Unit) {
     val context=LocalContext.current
+    val historicVideos by remember(s.inspection.id) {com.tuempresa.inventariovial.media.VideoDatabase.get(context).videos().observe("SCAP/${s.inspection.id}")}.collectAsState(emptyList())
     ScapElementCard("Foto ${photo.photoIndex} · ${com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.label(photo.photoCategory)}") {
         Text("Fecha: ${java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale.getDefault()).format(java.util.Date(photo.createdAt))}")
         var description by remember(photo.id) {mutableStateOf(photo.description.orEmpty())}

@@ -125,7 +125,6 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
                 Column(Modifier.fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                     RecordPhotoSheet(s,db)
                     Button(onClick={page="TECHNICAL"}) {Text("Añadir / editar fotografías")}
-                    com.tuempresa.inventariovial.media.VideoPanel("SIC/$id",PhotoCategoryPolicy.categories(r.sicCode,r.assetType,s.sic20?.classCode ?: s.sic19?.classCode ?: s.sic21?.classCode ?: s.sic23?.classCode ?: "",s.sic21?.typeCode ?: "",r.endPrCode!=null),editable=r.status!="ANNULLED")
                 }
             }
             "EDIT" -> {

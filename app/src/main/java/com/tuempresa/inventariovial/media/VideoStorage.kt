@@ -32,6 +32,7 @@ abstract class VideoDatabase:RoomDatabase() {
     }
 }
 object VideoPolicy {
+    fun bridgeOnly(key:String)=key.matches(Regex("SCAP/[A-Za-z0-9_-]{1,80}"))
     const val MAX_BYTES=32L*1024*1024
     const val CHUNK_BYTES=512*1024
     val mimeTypes=setOf("video/mp4","video/webm","video/3gpp")
@@ -48,7 +49,7 @@ class VideoStorage(private val context:Context,private val dao:VideoDao=VideoDat
     val retriever=MediaMetadataRetriever();try {retriever.setDataSource(file.path);require(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO)=="yes"){"El archivo no contiene una pista de video"}} finally {retriever.release()}
 },private val schedule:(Context)->Unit=VideoSync::enqueue) {
     suspend fun import(key:String,category:String,label:String,uri:Uri):VideoEntity {
-        require(key.matches(Regex("(SIC|SCAP|PAVEMENT)/[A-Za-z0-9_-]{1,80}")))
+        require(VideoPolicy.bridgeOnly(key)) {"Los videos son exclusivos de Puentes / SCAP."}
         require(category.matches(Regex("[A-Z0-9_]{1,80}")) && label.isNotBlank() && label.length<=120 && '/' !in label && '\\' !in label)
         val mime=context.contentResolver.getType(uri) ?: error("No se conoce el MIME del video")
         require(mime in VideoPolicy.mimeTypes){"Formato no admitido: usa MP4, WebM o 3GP"}
@@ -68,5 +69,5 @@ class VideoStorage(private val context:Context,private val dao:VideoDao=VideoDat
         }catch(e:Exception){file.delete();throw e}
     }
     suspend fun retire(id:String) {dao.get(id)?.let {dao.put(it.copy(retired=true,state="RETIRED",sessionUrl=null,error=null))}}
-    suspend fun retry(id:String) {dao.get(id)?.takeIf {!it.retired}?.let {dao.saveSync(it.copy(state="QUEUED",error=null));VideoSync.enqueue(context)}}
+    suspend fun retry(id:String) {dao.get(id)?.takeIf {!it.retired && VideoPolicy.bridgeOnly(it.parentKey)}?.let {dao.saveSync(it.copy(state="QUEUED",error=null));VideoSync.enqueue(context)}}
 }

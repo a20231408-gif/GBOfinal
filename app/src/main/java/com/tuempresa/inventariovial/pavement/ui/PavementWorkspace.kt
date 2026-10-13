@@ -224,7 +224,6 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                             }
                         }
                     }
-                    com.tuempresa.inventariovial.media.VideoPanel("PAVEMENT/${sample.id}",listOf(com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category("GENERAL","General","GENERAL")),editable)
                     PavementOutputPanel(sample, damages, repo)
                     PavementSicPanel(sample, damages, repo, sample.inspectorUserId==userId)
                 }
@@ -237,7 +236,6 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
         Surface(Modifier.fillMaxSize()){Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
             TextButton(onClick={mediaDialog=false}){Text("Cerrar fotografías")}
             damages.forEach {damage->Text("${damage.correlativo}. ${damage.name}");PhotoGallery(damage.id,photoRevision,repo,false,{},{message=it})}
-            com.tuempresa.inventariovial.media.VideoPanel("PAVEMENT/${sample.id}",listOf(com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category("GENERAL","General","GENERAL")),editable)
         }}
     }
     if (header) SampleDialog(sample, message, { header = false }) { updated -> scope.launch { runCatching { repo.saveSample(updated) }.onSuccess { header = false; message = "Cabecera guardada." }.onFailure { message = it.message.orEmpty() } } }

@@ -19,7 +19,7 @@ import java.io.File
 @RunWith(RobolectricTestRunner::class) @Config(sdk=[34],application=Application::class)
 class VideoContinuation9Test {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
-    private fun video(id:String):VideoEntity {val f=File(context.filesDir,"$id.mp4");f.writeBytes(ByteArray(700000){(it%251).toByte()});return VideoEntity(id,"SIC/parent9","GENERAL","General",f.path,"video/mp4",f.length(),VideoPolicy.hash(f),1)}
+    private fun video(id:String):VideoEntity {val f=File(context.filesDir,"$id.mp4");f.writeBytes(ByteArray(700000){(it%251).toByte()});return VideoEntity(id,"SCAP/parent9","GENERAL","General",f.path,"video/mp4",f.length(),VideoPolicy.hash(f),1)}
     private class Transport:VideoTransport {
         var calls=0;var sent=0L;var fail=false;var wrongAck=false;var expired=false;var advertised=true
         override fun available()=advertised.also{calls++}
@@ -27,6 +27,15 @@ class VideoContinuation9Test {
         override fun offset(video:VideoEntity):Long {if(expired){expired=false;throw ExpiredVideoSession()};return sent}
         override fun chunk(video:VideoEntity,start:Long,count:Int):Long {assertEquals(sent,start);require(count<=VideoPolicy.CHUNK_BYTES);sent+=count;if(fail){fail=false;throw java.io.IOException("lost response")};return sent}
         override fun finish(video:VideoEntity)=JSONObject().put("ok",true).put("complete",true).put("videoProtocol",1).put("mediaId",video.id).put("parentKey",video.parentKey).put("sizeBytes",video.sizeBytes).put("sha256",if(wrongAck)"wrong" else video.sha256).put("fileId",video.fileId)
+    }
+    @Test fun historicalNonBridgeVideosArePreservedAndNeverReachTransport()=runBlocking {
+        Room.inMemoryDatabaseBuilder(context,VideoDatabase::class.java).build().use {db->
+            for(kind in listOf("SIC","PAVEMENT")) {val v=video("legacy10-$kind").copy(parentKey="$kind/parent9");db.videos().put(v)}
+            val t=Transport();VideoSync.run(context,db.videos(),t,true,{20})
+            assertEquals(0,t.calls);assertEquals(2,db.videos().all().size)
+            db.videos().all().forEach {assertEquals("SCOPE_RESTRICTED",it.state);assertTrue(File(it.localPath).isFile);assertFalse(it.retired)}
+            assertFalse(VideoPolicy.bridgeOnly("SIC/parent"));assertFalse(VideoPolicy.bridgeOnly("PAVEMENT/parent"));assertTrue(VideoPolicy.bridgeOnly("SCAP/parent"))
+        }
     }
     @Test fun disabledUploadNeverCallsRemoteOrPretendsToBeSynced()=runBlocking {Room.inMemoryDatabaseBuilder(context,VideoDatabase::class.java).build().use {db->val v=video("disabled9");db.videos().put(v);val t=Transport();assertFalse(VideoSync.run(context,db.videos(),t,false,{20}));assertEquals(0,t.calls);assertEquals("BACKEND_REQUIRED",db.videos().get(v.id)!!.state);assertTrue(File(v.localPath).isFile)}}
     @Test fun resumableRetryAfterLostChunkResponseUsesSameUuidAndFileId()=runBlocking {Room.inMemoryDatabaseBuilder(context,VideoDatabase::class.java).build().use {db->val v=video("resume9");db.videos().put(v);val t=Transport();t.fail=true;assertTrue(VideoSync.run(context,db.videos(),t,true,{20}));val failed=db.videos().get(v.id)!!;assertEquals("ERROR",failed.state);assertEquals("fixed-${v.id}",failed.fileId);assertFalse(VideoSync.run(context,db.videos(),t,true,{20}));val saved=db.videos().get(v.id)!!;assertEquals("SYNCED",saved.state);assertEquals(v.sizeBytes,t.sent);assertEquals(v.sha256,saved.sha256);assertEquals(1,db.videos().all().size)}}
@@ -66,14 +75,14 @@ class VideoContinuation9Test {
             org.robolectric.shadows.ShadowContentResolver.registerProviderInternal("videos.test",provider)
             fun uri(file:File)=android.net.Uri.parse("content://videos.test/${file.name}")
             val storage=VideoStorage(context,db.videos(),inspect={require(it.isFile)},schedule={})
-            val a=storage.import("SIC/import9","GENERAL","General",uri(source))
-            val b=storage.import("SIC/import9","GENERAL","General",uri(source))
+            val a=storage.import("SCAP/import9","GENERAL","General",uri(source))
+            val b=storage.import("SCAP/import9","GENERAL","General",uri(source))
             assertNotEquals(a.id,b.id);assertEquals(a.sha256,b.sha256);assertEquals(2,db.videos().all().size)
             assertEquals(source.readBytes().toList(),File(a.localPath).readBytes().toList());assertTrue(source.isFile)
             val invalid=File(directory,"mime9.jpg").apply {writeText("not a video")}
-            assertTrue(runCatching {storage.import("SIC/import9","GENERAL","General",uri(invalid))}.isFailure)
+            assertTrue(runCatching {storage.import("SCAP/import9","GENERAL","General",uri(invalid))}.isFailure)
             val large=File(directory,"large9.mp4");java.io.RandomAccessFile(large,"rw").use {it.setLength(VideoPolicy.MAX_BYTES+1)}
-            assertTrue(runCatching {storage.import("SIC/import9","GENERAL","General",uri(large))}.isFailure)
+            assertTrue(runCatching {storage.import("SCAP/import9","GENERAL","General",uri(large))}.isFailure)
             assertEquals(2,db.videos().all().size);assertTrue(large.isFile)
         }
     }

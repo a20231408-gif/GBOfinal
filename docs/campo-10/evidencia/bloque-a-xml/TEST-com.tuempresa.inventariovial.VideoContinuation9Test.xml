@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.VideoContinuation9Test" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-13T00:34:09.001Z" hostname="JULIAN" time="8.603">
+  <properties/>
+  <testcase name="badAckAndChangedOriginalCannotBecomeSynced" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="7.394"/>
+  <testcase name="historicalNonBridgeVideosArePreservedAndNeverReachTransport" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.097"/>
+  <testcase name="photographicNumbersAreStableAcrossOrderRetryAndHistoricalFiles" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.097"/>
+  <testcase name="waitingParentAndMissingCapabilityPreserveOriginalAndQueue" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.089"/>
+  <testcase name="retiredVideoCannotBeResurrectedByWorkerProgress" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.064"/>
+  <testcase name="disabledUploadNeverCallsRemoteOrPretendsToBeSynced" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.064"/>
+  <testcase name="importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.204"/>
+  <testcase name="offlineDatabaseReopenRetainsCategoriesHashOriginalAndIdentity" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.218"/>
+  <testcase name="sessionHostAndOffsetsRejectForeignOrMalformedResponses" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.052"/>
+  <testcase name="expiredSessionClearsSecretAndRetryKeepsId" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.114"/>
+  <testcase name="resumableRetryAfterLostChunkResponseUsesSameUuidAndFileId" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.117"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
