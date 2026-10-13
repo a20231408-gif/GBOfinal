@@ -25,10 +25,14 @@ interface VideoTransport {
     fun chunk(video:VideoEntity,start:Long,count:Int):Long
     fun finish(video:VideoEntity):JSONObject
 }
-class VideoHttp(private val client:OkHttpClient=OkHttpClient.Builder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(120,TimeUnit.SECONDS).writeTimeout(120,TimeUnit.SECONDS).followRedirects(false).build()):VideoTransport {
+class VideoHttp internal constructor(
+    private val client:OkHttpClient=OkHttpClient.Builder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(120,TimeUnit.SECONDS).writeTimeout(120,TimeUnit.SECONDS).followRedirects(false).build(),
+    private val endpoint:String=DriveConfig.WEB_APP_URL,
+    private val apiToken:String=DriveConfig.API_TOKEN
+):VideoTransport {
     private val scripts=client.newBuilder().followRedirects(true).build()
-    private fun request(payload:JSONObject):JSONObject=scripts.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).post(payload.put("token",DriveConfig.API_TOKEN).toString().toRequestBody("application/json".toMediaType())).build()).execute().use {require(it.isSuccessful);JSONObject(it.body?.string() ?: "{}")}
-    override fun available()=scripts.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).get().build()).execute().use {it.isSuccessful && JSONObject(it.body?.string() ?: "{}").let {c->c.optInt("videoProtocol")==1 && c.optString("videoScope")=="SCAP_ONLY"}}
+    private fun request(payload:JSONObject):JSONObject=scripts.newCall(Request.Builder().url(endpoint).post(payload.put("token",apiToken).toString().toRequestBody("application/json".toMediaType())).build()).execute().use {require(it.isSuccessful);JSONObject(it.body?.string() ?: "{}")}
+    override fun available()=scripts.newCall(Request.Builder().url(endpoint).get().build()).execute().use {it.isSuccessful && JSONObject(it.body?.string() ?: "{}").let {c->c.optBoolean("ok") && c.optInt("videoProtocol")==1 && c.optString("videoScope")=="SCAP_ONLY"}}
     private fun payload(v:VideoEntity,action:String)=JSONObject().put("action",action).put("videoProtocol",1).put("parentKey",v.parentKey).put("mediaId",v.id).put("category",v.category).put("categoryLabel",v.categoryLabel).put("mimeType",v.mimeType).put("sizeBytes",v.sizeBytes).put("sha256",v.sha256)
     override fun begin(video:VideoEntity,revision:Long)=request(payload(video,"beginVideoV1").put("parentRevision",revision).put("resetSession",video.fileId!=null && video.sessionUrl==null))
     override fun finish(video:VideoEntity)=request(payload(video,"finishVideoV1").put("parentRevision",video.parentRevision).put("fileId",video.fileId))
@@ -95,7 +99,11 @@ object VideoSync {
                 dao.saveSync(v.copy(state="SYNCED",sessionUrl=null,uploadedBytes=v.sizeBytes,error=null))
             }catch(e:CancellationException){throw e}
             catch(e:ExpiredVideoSession){dao.saveSync(v.copy(state="ERROR",sessionUrl=null,error=e.message));retry=true}
-            catch(e:Exception){dao.saveSync(v.copy(state="ERROR",error=e.message?.take(200)));retry=true}
+            // Transport exceptions can contain a bearer resumable-session URL.
+            // Only public, fixed diagnostics reach Room/the operator's screen.
+            catch(e:Exception){dao.saveSync(v.copy(state="ERROR",error=if(e is java.io.IOException)
+                "Conexión interrumpida durante la entrega del video. Reintenta; el original y la cola se conservan."
+                else "No se pudo validar la entrega del video. Revisa la confirmación del servidor; el original se conserva."));retry=true}
         }
         retry
     }

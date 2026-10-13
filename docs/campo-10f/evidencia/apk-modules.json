@@ -1,0 +1,9 @@
+{
+  "sic/SicFieldWorkspaceKt": true,
+  "scap/ui/ScapWorkspaceKt": true,
+  "pavement/ui/PavementWorkspaceKt": true,
+  "core/ReadablePhotoNames": true,
+  "media/VideoHttp": true,
+  "media/VideoSync": true,
+  "media/VideoWorker": true
+}

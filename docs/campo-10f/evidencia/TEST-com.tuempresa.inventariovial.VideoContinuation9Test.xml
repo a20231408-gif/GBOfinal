@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.VideoContinuation9Test" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-13T09:47:08.038Z" hostname="JULIAN" time="0.883">
+  <properties/>
+  <testcase name="badAckAndChangedOriginalCannotBecomeSynced" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.076"/>
+  <testcase name="historicalNonBridgeVideosArePreservedAndNeverReachTransport" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.068"/>
+  <testcase name="waitingParentAndMissingCapabilityPreserveOriginalAndQueue" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.067"/>
+  <testcase name="retiredVideoCannotBeResurrectedByWorkerProgress" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.058"/>
+  <testcase name="disabledUploadNeverCallsRemoteOrPretendsToBeSynced" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.06"/>
+  <testcase name="importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.198"/>
+  <testcase name="offlineDatabaseReopenRetainsCategoriesHashOriginalAndIdentity" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.121"/>
+  <testcase name="sessionHostAndOffsetsRejectForeignOrMalformedResponses" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.028"/>
+  <testcase name="expiredSessionClearsSecretAndRetryKeepsId" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.097"/>
+  <testcase name="resumableRetryAfterLostChunkResponseUsesSameUuidAndFileId" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.105"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

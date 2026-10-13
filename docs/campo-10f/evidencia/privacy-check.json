@@ -1,0 +1,7 @@
+{
+  "privateValueMatches": 0,
+  "scope": "tracked text files at current HEAD plus 10F additions; not an audit of Git history",
+  "privateFilesTracked": false,
+  "apkOrKeystoresTracked": false,
+  "preexistingReleaseDirectoryPreserved": true
+}

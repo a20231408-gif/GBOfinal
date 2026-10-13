@@ -1,0 +1,113 @@
+{
+  "androidTests": 17,
+  "nodeAdapterTests": 3,
+  "totalPassed": 20,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "suite": "com.tuempresa.inventariovial.DeviceFingerprintTest",
+      "case": "blankAndroidIdIsRejectedInsteadOfCreatingRandomIdentity",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.DeviceFingerprintTest",
+      "case": "differentAndroidIdsProduceDifferentFingerprints",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.DeviceFingerprintTest",
+      "case": "sameAndroidIdAlwaysProducesSame64HexFingerprint",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.PhotoNamesIntegration10ETest",
+      "case": "managerAndRoomRecreationPreserveTabletIdentityAndPendingRecords",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoClosure10FTest",
+      "case": "realHttpTransportResumesLostChunkAndLostFinalAckWithoutDuplicatingBytesOrFile",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoClosure10FTest",
+      "case": "capabilityRequiresSuccessfulResponseProtocolOneAndScapOnly",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoClosure10FTest",
+      "case": "networkErrorCannotExposeResumableSessionCredentialInRoomOrUi",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "badAckAndChangedOriginalCannotBecomeSynced",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "historicalNonBridgeVideosArePreservedAndNeverReachTransport",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "waitingParentAndMissingCapabilityPreserveOriginalAndQueue",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "retiredVideoCannotBeResurrectedByWorkerProgress",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "disabledUploadNeverCallsRemoteOrPretendsToBeSynced",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "importCopiesMultipleOriginalsAndRejectsMimeSizeWithoutFictitiousRows",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "offlineDatabaseReopenRetainsCategoriesHashOriginalAndIdentity",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "sessionHostAndOffsetsRejectForeignOrMalformedResponses",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "expiredSessionClearsSecretAndRetryKeepsId",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.VideoContinuation9Test",
+      "case": "resumableRetryAfterLostChunkResponseUsesSameUuidAndFileId",
+      "passed": true
+    }
+  ],
+  "ordinaryDebugBuild": "SUCCESS",
+  "normalFlags": "V2=true; remote videos=false; access control=false",
+  "initialFocusedFindings": {
+    "tests": 2,
+    "failures": 2,
+    "resolved": true,
+    "evidence": "findings-before-fix.xml"
+  },
+  "selection": "VideoClosure10FTest (3), VideoContinuation9Test (10 video methods only), DeviceFingerprintTest (3), PhotoNamesIntegration10ETest.managerAndRoomRecreationPreserveTabletIdentityAndPendingRecords (1)",
+  "tasks": [
+    ":app:assembleDebug",
+    ":app:testDebugUnitTest"
+  ],
+  "validationBuild": false,
+  "specialPhotoOverride": false,
+  "realServerOperations": "GET capabilities only",
+  "realRemoteWriteExecuted": false,
+  "releaseBuilt": false,
+  "installed": false
+}

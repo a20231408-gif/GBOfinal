@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.VideoClosure10FTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-13T09:46:49.782Z" hostname="JULIAN" time="10.647">
+  <properties/>
+  <testcase name="realHttpTransportResumesLostChunkAndLostFinalAckWithoutDuplicatingBytesOrFile" classname="com.tuempresa.inventariovial.VideoClosure10FTest" time="10.205"/>
+  <testcase name="capabilityRequiresSuccessfulResponseProtocolOneAndScapOnly" classname="com.tuempresa.inventariovial.VideoClosure10FTest" time="0.078"/>
+  <testcase name="networkErrorCannotExposeResumableSessionCredentialInRoomOrUi" classname="com.tuempresa.inventariovial.VideoClosure10FTest" time="0.107"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

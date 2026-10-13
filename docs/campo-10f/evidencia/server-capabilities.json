@@ -1,0 +1,16 @@
+{
+  "operation": "GET capabilities only",
+  "remoteWriteExecuted": false,
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "photoCategoryVersion": 1,
+  "photoNamingVersion": 1,
+  "readablePhotoNamingVersion": 2,
+  "videoProtocol": 0,
+  "ok": true,
+  "stableFamilyNumbering": true,
+  "technicalDeliveryWithoutGps": true,
+  "videoScopeIsScapOnly": true,
+  "v2Negotiable": true,
+  "checkedAtUtc": "2026-10-13T08:44:10.511242+00:00"
+}
