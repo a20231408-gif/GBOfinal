@@ -3,7 +3,7 @@ var VideoV1 = (() => {
   const MAX_BYTES=32*1024*1024;
   function reject(code){const e=Error(code);e.code=code;throw e;}
   function validate(p) {
-    if(!p || p.videoProtocol!==1 || !/^(SIC|SCAP|PAVEMENT)\/[A-Za-z0-9_-]{1,80}$/.test(p.parentKey) ||
+    if(!p || p.videoProtocol!==1 || !/^SCAP\/[A-Za-z0-9_-]{1,80}$/.test(p.parentKey) ||
       !/^[A-Za-z0-9_-]{1,80}$/.test(p.mediaId) || !/^[A-Z0-9_]{1,80}$/.test(p.category) ||
       typeof p.categoryLabel!=='string' || !p.categoryLabel.trim() || p.categoryLabel.length>120 || /[\\/\x00-\x1f]/.test(p.categoryLabel) ||
       !['video/mp4','video/webm','video/3gpp'].includes(p.mimeType) || !Number.isSafeInteger(p.sizeBytes) || p.sizeBytes<1 || p.sizeBytes>MAX_BYTES ||
@@ -12,6 +12,7 @@ var VideoV1 = (() => {
   function bound(p,s) {
     validate(p);const parent=s.parent(p.parentKey);
     if(!parent?.receipt?.folderId || parent.pathVersion!==4 || parent.revision<p.parentRevision)reject('VIDEO_PARENT_NOT_SYNCED');
+    if(parent.kind!=='SCAP' || parent.family!=='PUENTE')reject('VIDEO_BRIDGES_ONLY');
     const old=s.get(p.mediaId);
     if(old && ['parentKey','category','mimeType','sizeBytes','sha256'].some(k=>old[k]!==p[k]))reject('VIDEO_IDENTITY_CONFLICT');
     if(old && old.folderId!==parent.receipt.folderId)reject('VIDEO_RELOCATION_REQUIRES_MIGRATION');

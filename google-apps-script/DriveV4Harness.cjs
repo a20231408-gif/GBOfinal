@@ -42,7 +42,7 @@ function environment() {
     ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({setMimeType:()=>JSON.parse(s)})}
   });
   vm.runInContext(`const ROOT_FOLDER_ID=${JSON.stringify(root.id)};function jsonResponse(x){return x;}function getOrCreateFolder(p,n){const i=p.getFoldersByName(n);if(i.hasNext()){const f=i.next();if(i.hasNext())throw Error('duplicate folder');return f;}return p.createFolder(n);}`+
-    fs.readFileSync(__dirname+'/SyncV3Core.js','utf8')+'\n'+fs.readFileSync(__dirname+'/SyncV3.gs','utf8'),context);
+    fs.readFileSync(__dirname+'/PhotoNamesV2Core.js','utf8')+'\n'+fs.readFileSync(__dirname+'/SyncV3Core.js','utf8')+'\n'+fs.readFileSync(__dirname+'/SyncV3.gs','utf8'),context);
   return {root,objects,state,context,send:p=>context.commitRecordV3(JSON.parse(JSON.stringify({...p,contentHash:hash(core.canonical(p))}))),get updates(){return updateCount;}};
 }
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');

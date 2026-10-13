@@ -82,21 +82,7 @@ function v3Store() {
     });
     return Utilities.zip(parts,'consolidated.xlsx').getBytes();
   }
-  return {
-    hash,decode,unpackWorkbook,packWorkbook,
-    fileBytes(p,f) {
-      if(!f.stageFileId)return decode(f.base64);
-      const file=DriveApp.getFileById(f.stageFileId),meta=JSON.parse(file.getDescription());
-      if(meta.key!==p.key || meta.revision!==p.revision || meta.fileKey!==f.key || meta.sha256!==f.sha256)SyncV3.reject('STAGE_OWNERSHIP_CONFLICT');
-      const expected=hash(p.key)+'_'+p.revision;
-      const stage=parent(file);
-      if(stage.getName()!==expected || parent(stage).getName()!=='STAGING' || parent(parent(stage)).getId()!==registry.getId())SyncV3.reject('STAGE_LOCATION_CONFLICT');
-      return file.getBlob().getBytes();
-    },
-    isJpeg:bytes=>(bytes[0]&255)===255 && (bytes[1]&255)===216 && (bytes[bytes.length-2]&255)===255 && (bytes[bytes.length-1]&255)===217,
-    get:key=>read(filename(key)),
-    all:()=>list(registry.getFiles()).filter(f=>f.getName().startsWith('record_')).map(f=>JSON.parse(f.getBlob().getDataAsString())),
-    begin(p,next,all) {
+  function elementLocation(p) {
       const identity=p.identityId || p.recordId;
       const bindingName=(p.pathVersion===4?'binding_v4_':'binding_')+hash(identity)+'.json';let previousBinding=read(bindingName);
       if(p.pathVersion===4 && read('binding_'+hash(identity)+'.json'))SyncV3.reject('HISTORICAL_MIGRATION_REQUIRED');
@@ -132,7 +118,34 @@ function v3Store() {
         previousBinding={...previousBinding,folderId:folder.getId(),logicalPath};
         jsonFile(bindingName,previousBinding).setDescription('gbo-v3-metadata:'+bindingName);
       }
-      const archive=getOrCreateFolder(getOrCreateFolder(folder,'REVISIONES'),p.revision+'_'+p.contentHash.substring(0,8));
+      return {folder,logicalPath,sequence,identity,scope,bindingName,previousBinding,changed,target};
+  }
+  return {
+    hash,decode,unpackWorkbook,packWorkbook,
+    readablePhotoName(p,f) {const names=read('photo_names_v2_'+hash(p.identityId || p.recordId)+'.json');const saved=names?.photos?.[f.key.substring(6)];if(!saved || saved.category!==f.photoCategory)SyncV3.reject('PHOTO_NAME_RESERVATION_REQUIRED');return saved.name;},
+    reserveReadablePhotos(p) {
+      const family=SyncV3.families[p.family];
+      if(p.kind!=='PAVEMENT' && (!family || p.familyPath!==family[0]) || p.kind==='SCAP' && p.family!=='PUENTE' ||
+         p.kind==='SIC' && p.identityId!=null && p.identityId!==p.recordId || p.kind==='SCAP' && !SyncV3.component(p.identityId) ||
+         p.kind==='PAVEMENT' && (p.family!=='MUESTRA' || !SyncV3.component(p.tramo) || !['ASFALTICO','RIGIDO','NO_PAVIMENTADO'].includes(p.surface)))SyncV3.reject('INVALID_FAMILY_LOCATION');
+      return PhotoNamesV2.reserve(p,{record:key=>read(filename(key)),element:elementLocation,
+        names:id=>read('photo_names_v2_'+hash(id)+'.json'),saveNames:(id,value)=>jsonFile('photo_names_v2_'+hash(id)+'.json',value)});
+    },
+    fileBytes(p,f) {
+      if(!f.stageFileId)return decode(f.base64);
+      const file=DriveApp.getFileById(f.stageFileId),meta=JSON.parse(file.getDescription());
+      if(meta.key!==p.key || meta.revision!==p.revision || meta.fileKey!==f.key || meta.sha256!==f.sha256)SyncV3.reject('STAGE_OWNERSHIP_CONFLICT');
+      const expected=hash(p.key)+'_'+p.revision;
+      const stage=parent(file);
+      if(stage.getName()!==expected || parent(stage).getName()!=='STAGING' || parent(parent(stage)).getId()!==registry.getId())SyncV3.reject('STAGE_LOCATION_CONFLICT');
+      return file.getBlob().getBytes();
+    },
+    isJpeg:bytes=>(bytes[0]&255)===255 && (bytes[1]&255)===216 && (bytes[bytes.length-2]&255)===255 && (bytes[bytes.length-1]&255)===217,
+    get:key=>read(filename(key)),
+    all:()=>list(registry.getFiles()).filter(f=>f.getName().startsWith('record_')).map(f=>JSON.parse(f.getBlob().getDataAsString())),
+    begin(p,next,all) {
+      const {folder,logicalPath,sequence,identity,scope,bindingName,previousBinding,changed,target}=elementLocation(p);
+      const archive=getOrCreateFolder(getOrCreateFolder(getOrCreateFolder(registry,'REVISIONS'),hash(p.key)),p.revision+'_'+p.contentHash.substring(0,8));
       const journal={name:'journal_'+hash(p.key)+'.json',status:'PENDING',archiveId:archive.getId(),operations:[]};
       const persist=()=>jsonFile(journal.name,journal);persist();
       const old=read(filename(p.key));const oldFiles=old?.files || [];
@@ -166,7 +179,7 @@ function v3Store() {
           let requestedPath=f.path;let path=f.path;
           if(p.kind==='PAVEMENT') {
             path=path.replace(/(HC_|M_)\d+(\.)/,(_,prefix,suffix)=>prefix+String(sequence).padStart(3,'0')+suffix);
-            if(f.key.startsWith('photo/'))path=path.replace(/[^/]+$/,name=>'M'+String(sequence).padStart(3,'0')+'_'+name);
+            if(f.key.startsWith('photo/') && (p.photoNamingVersion!==2 || read('photo_names_v2_'+hash(p.identityId || p.recordId)+'.json')?.photos?.[f.key.substring(6)]?.historical))path=path.replace(/[^/]+$/,name=>'M'+String(sequence).padStart(3,'0')+'_'+name);
           }
           const pieces=path.split('/');const name=pieces.pop();let dest=folder;pieces.forEach(part=>dest=getOrCreateFolder(dest,part));
           const previous=oldFiles.find(x=>x.key===f.key);
@@ -213,4 +226,14 @@ function v3Store() {
       return transaction;
     }
   };
+}
+
+function reservePhotoNamesV2(p) {
+  const lock=LockService.getScriptLock();let held=false;
+  try {
+    if(!v3Enabled() || PropertiesService.getScriptProperties().getProperty('GBO_PHOTO_NAMES_V2_ENABLED')!=='true' || typeof PhotoNamesV2==='undefined')SyncV3.reject('READABLE_NAMES_DISABLED');
+    held=lock.tryLock(30000);if(!held)SyncV3.reject('BUSY',true);
+    return jsonResponse(v3Store().reserveReadablePhotos(p));
+  }catch(e){return jsonResponse({ok:false,code:e.code || 'NAME_RESERVATION_ERROR',retryable:e.retryable===true});}
+  finally {if(held)lock.releaseLock();}
 }

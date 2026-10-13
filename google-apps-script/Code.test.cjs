@@ -65,7 +65,7 @@ test('health only advertises no-GPS technical delivery when V3 engine, Drive and
   vm.runInContext('var SyncV3={}; var Drive={}; function v3Enabled(){return PropertiesService.getScriptProperties().getProperty("GBO_SYNC_V3_ENABLED")==="true";}',e.context);
   assert.equal(e.context.doGet().technicalDeliveryWithoutGps,false);
   e.properties.set('GBO_SYNC_V3_ENABLED','true');const health=e.context.doGet();
-  assert.equal(health.technicalDeliveryWithoutGps,true);assert.equal(health.syncProtocol,3);assert.equal(health.pathVersion,3);
+  assert.equal(health.technicalDeliveryWithoutGps,true);assert.equal(health.syncProtocol,3);assert.equal(health.pathVersion,4);
   assert.equal(typeof health.rootFolderId,'string');assert.ok(health.rootFolderId);
 });
 test('competing request cannot reach Drive and can retry after the first finishes', () => {
@@ -149,7 +149,8 @@ test('pavement protocol archives a changed revision instead of silently overwrit
   const field=surface.folders.find(f=>f.name==='07_HOJAS_CAMPO').folders[0];
   assert.equal(field.files.length,1);
   assert.equal(field.files[0].getName(),'HC_002.pdf');
-  assert.equal(field.folders.find(f=>f.name==='REVISIONES').files.length,1);
+  assert.equal(field.folders.some(f=>f.name==='REVISIONES'),false);
+
 });
 
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -213,7 +214,7 @@ test('SCAP human protocol stores three bridges captured at 10/30/20 km as PUENTE
     assert.ok(bridge.folders.some(f => f.name === 'fotos'));
   });
   assert.equal(e.registry.size, count);
-  assert.deepEqual(e.root.folders.map(f => f.name), ['PE-3N']);
+  assert.deepEqual(e.root.folders.filter(f=>f.name!=='._GBO_SYNC_V3').map(f => f.name), ['PE-3N']);
 });
 
 test('SCAP human protocol ignores stale bindings outside the reviewed route and repairs them', () => {
@@ -492,4 +493,19 @@ test('SIC-18A shares its parent element UUID and folder with SIC-18', () => {
   const extra=e.send(delivery({...common,sicCode:'SIC-18A',fileName:'SIC-18A.xlsx'}));
   assert.equal(parent.ok,true);assert.equal(extra.ok,true);assert.equal(parent.folderId,extra.folderId);
   assert.deepEqual(e.registry.get(parent.folderId).files.map(f=>f.getName()),['SIC-18.xlsx','SIC-18A.xlsx']);
+});
+
+test('readable V2 advertises a separate capability and preserves legacy V1',()=>{
+  const e=environment();vm.runInContext('var SyncV3={}; var PhotoNamesV2={}; function v3Enabled(){return true;}',e.context);
+  e.properties.set('GBO_PHOTO_NAMES_V2_ENABLED','true');const h=e.context.doGet();
+  assert.equal(h.photoNamingVersion,1);assert.equal(h.readablePhotoNamingVersion,2);
+});
+
+test('shared Drive token cannot authorize annul or restore and makes no inventory writes',()=>{
+ const e=environment();const before=e.registry.size;
+ for(const action of ['annulRecordV1','restoreRecordV1']) {
+   const response=e.send({action,recordId:'fictional',revision:1});
+   assert.equal(response.ok,false);assert.equal(response.code,'INDIVIDUAL_INVENTORY_AUTH_REQUIRED');
+ }
+ assert.equal(e.registry.size,before);assert.equal(e.reads,0);assert.equal(e.root.folders.length,0);
 });

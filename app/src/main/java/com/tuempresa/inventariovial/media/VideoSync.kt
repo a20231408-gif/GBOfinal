@@ -28,7 +28,7 @@ interface VideoTransport {
 class VideoHttp(private val client:OkHttpClient=OkHttpClient.Builder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(120,TimeUnit.SECONDS).writeTimeout(120,TimeUnit.SECONDS).followRedirects(false).build()):VideoTransport {
     private val scripts=client.newBuilder().followRedirects(true).build()
     private fun request(payload:JSONObject):JSONObject=scripts.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).post(payload.put("token",DriveConfig.API_TOKEN).toString().toRequestBody("application/json".toMediaType())).build()).execute().use {require(it.isSuccessful);JSONObject(it.body?.string() ?: "{}")}
-    override fun available()=scripts.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).get().build()).execute().use {it.isSuccessful && JSONObject(it.body?.string() ?: "{}").optInt("videoProtocol")==1}
+    override fun available()=scripts.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).get().build()).execute().use {it.isSuccessful && JSONObject(it.body?.string() ?: "{}").let {c->c.optInt("videoProtocol")==1 && c.optString("videoScope")=="SCAP_ONLY"}}
     private fun payload(v:VideoEntity,action:String)=JSONObject().put("action",action).put("videoProtocol",1).put("parentKey",v.parentKey).put("mediaId",v.id).put("category",v.category).put("categoryLabel",v.categoryLabel).put("mimeType",v.mimeType).put("sizeBytes",v.sizeBytes).put("sha256",v.sha256)
     override fun begin(video:VideoEntity,revision:Long)=request(payload(video,"beginVideoV1").put("parentRevision",revision).put("resetSession",video.fileId!=null && video.sessionUrl==null))
     override fun finish(video:VideoEntity)=request(payload(video,"finishVideoV1").put("parentRevision",video.parentRevision).put("fileId",video.fileId))

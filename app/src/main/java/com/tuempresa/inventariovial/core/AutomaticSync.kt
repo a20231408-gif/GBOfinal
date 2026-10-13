@@ -151,6 +151,14 @@ object AutomaticSyncDrain {
                     }
                     intent=dao.get(intent.key) ?: continue
                 }
+                val cached=java.io.File(context.filesDir,"automatic_drive/${com.tuempresa.inventariovial.delivery.sha256(intent.key.toByteArray())}/${intent.revision}/prepared-path4.json")
+                if(com.tuempresa.inventariovial.BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED && intent.preparedJson==null && !cached.isFile) {
+                    if(!transport.supportsReadablePhotoNames())throw SyncPending("Nombres representativos pendientes de activar readablePhotoNamingVersion=2 en Apps Script.")
+                    val preview=AutomaticDelivery.prepare(context,db,intent,readable=false,persist=false)
+                    val reservation=transport.reservePhotoNames(preview)
+                    if(!reservation.optBoolean("ok"))throw SyncRejection(reservation.optString("code"),reservation.optBoolean("retryable"))
+                    ReadablePhotoNames.remember(context,preview,reservation)
+                }
                 val prepared=AutomaticDelivery.prepare(context,db,intent)
                 dao.prepared(intent.key,intent.revision,prepared.toString())
                 if(prepared.optInt("technicalDeliveryVersion")==1 && !transport.supportsTechnicalDeliveryWithoutGps()) {

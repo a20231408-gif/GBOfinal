@@ -1,0 +1,750 @@
+✔ several photos share route and SIB and retry does not create another file (7.7361ms)
+✖ health only advertises no-GPS technical delivery when V3 engine, Drive and enable flag exist (3.2867ms)
+✔ competing request cannot reach Drive and can retry after the first finishes (1.6587ms)
+✔ busy lock does not release another execution lock or touch Drive (1.3274ms)
+✔ Drive failure releases lock and a later request can proceed (1.474ms)
+✔ duplicate existing folders are selected consistently without deleting either (1.2832ms)
+✔ unauthorized and invalid codes do not access Drive (1.6106ms)
+✔ SIC remains optional and canonical codes remain compatible with Android (1.4377ms)
+✔ malformed JSON is handled without creating folders (1.7701ms)
+✔ production strict mode rejects legacy loose photos before touching Drive (1.8891ms)
+✔ pavement protocol stores field sheet, native data, group Excel and photo in the evaluation tree (4.6646ms)
+✔ pavement protocol archives a changed revision instead of silently overwriting it (1.816ms)
+✔ Drive V2 SCAP publishes under the same persistent bridge folder as SIC (10.1423ms)
+✖ SCAP human protocol stores three bridges captured at 10/30/20 km as PUENTE 1/3/2 and retries without duplicates (7.6185ms)
+✔ SCAP human protocol ignores stale bindings outside the reviewed route and repairs them (2.4675ms)
+✔ SCAP human protocol preserves the previous revision and its hashes when publishing and retrying a newer one (3.4603ms)
+✔ SCAP human protocol recovers interrupted publication without duplicate files (4.9083ms)
+✔ SCAP human protocol rejects changed route/order and occupied bridge folder without mixing identities (3.0845ms)
+✔ SCAP human protocol groups inspections by full bridgeCode while preserving both UUID revisions and v1 files (4.0351ms)
+✔ SCAP human protocol rejects a changed hash for the same inspection revision (3.5077ms)
+✔ supplied v3 SIC Excel and ZIP exports retain content validation and idempotency (2.5615ms)
+✔ SCAP stores its workbook, separate photos and ZIP; retry confirms the same file (2.3435ms)
+✔ bridge identity uses the full code, groups inspections and never groups only by name (2.3808ms)
+✔ legacy SCAP ignores a stale bridge mapping outside the current SCAP root (1.9535ms)
+✔ missing code uses inspection UUID; later code retains the folder and can group future inspections (2.5684ms)
+✔ conflicting existing identity requires review instead of merging or moving files (2.1817ms)
+✔ SCAP rejects unauthorized requests, hash mismatches, unsafe entries and old protocol before touching Drive (1.2589ms)
+✔ SCAP lock contention and partial Drive failures retry without duplicate completed files (1.7264ms)
+✔ Drive V2 keeps multiple clean culvert photos in explicit categories and freezes persistent element identity (3.3748ms)
+✔ Drive V2 pavement has a stable sample folder, ACK identity, and explicit SIC export category (2.5729ms)
+✔ delivery protocol stores multiple photos, two elements, metadata and SIC in final route/SIB structure (4.243ms)
+✔ delivery retry is idempotent by photo identity and hash, including partial failure (2.6109ms)
+✔ delivery rejects token, traversal, arbitrary paths, unsupported protocol and bad hashes before Drive access (1.9243ms)
+✔ delivery metadata cannot include secrets or private Android paths (2.6549ms)
+✔ delivery refuses changed content, changed order or reused names without renaming or overwriting (1.4261ms)
+✔ delivery lock contention retries and legacy SIC/SCAP endpoints still work alongside a delivery (1.4495ms)
+✔ Drive V2 stores SIC workbooks under each persistent element while legacy route exports remain compatible (1.5732ms)
+✔ Drive V2 lets SCAP join a bridge folder that already contains its SIC workbook (2.7222ms)
+✔ Drive V2 accepts the new SIC families without changing ACK or idempotency (4.1514ms)
+✔ SIC-18A shares its parent element UUID and folder with SIC-18 (2.1941ms)
+✔ readable catalog covers every V4 family and contractual photo category within 20 characters (4.4433ms)
+✔ two tablets reserve by photo UUID, idempotently, without reusing retired counters (8.761ms)
+✖ reserved names deliver real JPEG and preserve ACK, folder and file IDs on retries (775.6131ms)
+✔ unreserved or forged photo labels cannot silently rename a photo (4.4218ms)
+✖ historical photos retain exact names while a new UUID gets a readable name (355.4828ms)
+✖ new technical backups live in internal registry; visible folders and old ACKs are stable (327.5476ms)
+✔ video rejects conventional SIC and pavements before allocating or touching a file (0.5923ms)
+✔ lost begin response and retries retain one remote file and session (5.1236ms)
+✔ expired or rejected session restarts the same file ID (0.2932ms)
+✔ finish and lost ACK retry verify hash, size, identity (0.3048ms)
+✔ wrong content, MIME, parent, category and file binding are rejected (0.5431ms)
+✔ server never acknowledges incomplete, corrupt or wrong-MIME video (0.3616ms)
+✔ limits, invalid MIME and unconfirmed/relocated parent fail before upload (1.3791ms)
+✔ multiple videos and categories allocate independent immutable identities (0.2707ms)
+✔ photographic prefix preserves category/hash and legacy compatibility (0.7601ms)
+✖ baden5 actual Android categories JPEG Excel and idempotent V3 receipt (431.9198ms)
+✖ muro5 actual Android categories JPEG Excel and idempotent V3 receipt (417.2874ms)
+✖ tunel5 actual Android categories JPEG Excel and idempotent V3 receipt (351.6021ms)
+✖ cuneta5 actual Android categories JPEG Excel and idempotent V3 receipt (351.0956ms)
+✖ guardavia5 actual Android categories JPEG Excel and idempotent V3 receipt (332.956ms)
+✖ tacha5 actual Android categories JPEG Excel and idempotent V3 receipt (308.8296ms)
+✖ senal5 actual Android categories JPEG Excel and idempotent V3 receipt (278.7921ms)
+✖ alcantarilla5 actual Android categories JPEG Excel and idempotent V3 receipt (310.6178ms)
+✖ historical GENERAL remains visible without migration or subtype folder (272.8689ms)
+✔ backend rejects a photo path that contradicts its internal category before writing (8.7161ms)
+✖ SIC08 and SIC09 cannot inherit linear categories even if they have two PRs (287.1461ms)
+✖ adding an observation retains previous fileIds and family numbering (275.5754ms)
+✖ explicit recategorization moves the same remote identity and archives prior placement (280.5835ms)
+✖ replacement updates fileId safely and preserves original archive (291.2953ms)
+✖ confirmed retirement archives only owned photo and retains another record and all Excel rows (304.413ms)
+✖ two photo editors conflict without overwriting the winner; winner retry is harmless (278.8329ms)
+✖ SCAP inspections share bridge identity but keep separate photo and packet paths (4.2799ms)
+✔ a malformed or tampered category signature cannot commit any files (84.1665ms)
+✖ ford keeps physical INICIO and FIN even when its contractual location has one PR (281.3077ms)
+✖ actual Android condition and PR updates preserve element/files and all consolidated rows (402.0151ms)
+✖ two operators on one UUID conflict without overwriting the winner or other engineer (377.3622ms)
+✖ same-number different-content and stale revisions are rejected with remote revision (349.7235ms)
+✖ identical retries do not create new folders files or archives (310.6042ms)
+✖ photo recategorization add replace and removal preserve fileIds originals and history (347.6573ms)
+✖ failure during edit rolls back Excel metadata and photos then retries on same IDs (274.3704ms)
+✖ busy lock and identity substitution cannot touch another row or folder (295.3915ms)
+✖ technical delivery remains independent of external georeferencing on edits (294.0579ms)
+✔ Apps Script disabled flag creates no remote objects (4.7829ms)
+✔ Apps Script adapter retains generated ID and resumes binary session (3.6454ms)
+✔ Apps Script verifies Drive binary SHA256 before confirming (2.0973ms)
+ℹ tests 85
+ℹ suites 0
+ℹ pass 55
+ℹ fail 30
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5383.5028
+
+✖ failing tests:
+
+test at google-apps-script\Code.test.cjs:63:1
+✖ health only advertises no-GPS technical delivery when V3 engine, Drive and enable flag exist (3.2867ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  4 !== 3
+  
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\Code.test.cjs:68:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 4,
+    expected: 3,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\Code.test.cjs:198:1
+✖ SCAP human protocol stores three bridges captured at 10/30/20 km as PUENTE 1/3/2 and retries without duplicates (7.6185ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'PE-3N',
+  +   '._GBO_SYNC_V3'
+    ]
+  
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\Code.test.cjs:217:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'PE-3N', '._GBO_SYNC_V3' ],
+    expected: [ 'PE-3N' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\Field10.test.cjs:24:1
+✖ reserved names deliver real JPEG and preserve ACK, folder and file IDs on retries (775.6131ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\Field10.test.cjs:27:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\Field10.test.cjs:36:1
+✖ historical photos retain exact names while a new UUID gets a readable name (355.4828ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\Field10.test.cjs:37:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\Field10.test.cjs:45:1
+✖ new technical backups live in internal registry; visible folders and old ACKs are stable (327.5476ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\Field10.test.cjs:46:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ baden5 actual Android categories JPEG Excel and idempotent V3 receipt (431.9198ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ muro5 actual Android categories JPEG Excel and idempotent V3 receipt (417.2874ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ tunel5 actual Android categories JPEG Excel and idempotent V3 receipt (351.6021ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ cuneta5 actual Android categories JPEG Excel and idempotent V3 receipt (351.0956ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ guardavia5 actual Android categories JPEG Excel and idempotent V3 receipt (332.956ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ tacha5 actual Android categories JPEG Excel and idempotent V3 receipt (308.8296ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ senal5 actual Android categories JPEG Excel and idempotent V3 receipt (278.7921ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:12:102
+✖ alcantarilla5 actual Android categories JPEG Excel and idempotent V3 receipt (310.6178ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:14:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:21:1
+✖ historical GENERAL remains visible without migration or subtype folder (272.8689ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:22:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:32:1
+✖ SIC08 and SIC09 cannot inherit linear categories even if they have two PRs (287.1461ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:37:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:41:1
+✖ adding an observation retains previous fileIds and family numbering (275.5754ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:42:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:48:1
+✖ explicit recategorization moves the same remote identity and archives prior placement (280.5835ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:49:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:54:1
+✖ replacement updates fileId safely and preserves original archive (291.2953ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:55:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:60:1
+✖ confirmed retirement archives only owned photo and retains another record and all Excel rows (304.413ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:61:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:68:1
+✖ two photo editors conflict without overwriting the winner; winner retry is harmless (278.8329ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:69:44)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:74:1
+✖ SCAP inspections share bridge identity but keep separate photo and packet paths (4.2799ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:81:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\PhotoCategories5.test.cjs:91:1
+✖ ford keeps physical INICIO and FIN even when its contractual location has one PR (281.3077ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at ack (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:8:44)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\PhotoCategories5.test.cjs:93:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:13:1
+✖ actual Android condition and PR updates preserve element/files and all consolidated rows (402.0151ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:16:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:31:1
+✖ two operators on one UUID conflict without overwriting the winner or other engineer (377.3622ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:32:47)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:38:1
+✖ same-number different-content and stale revisions are rejected with remote revision (349.7235ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:39:47)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:44:1
+✖ identical retries do not create new folders files or archives (310.6042ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:45:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:50:1
+✖ photo recategorization add replace and removal preserve fileIds originals and history (347.6573ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:51:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:62:1
+✖ failure during edit rolls back Excel metadata and photos then retries on same IDs (274.3704ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:63:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:70:1
+✖ busy lock and identity substitution cannot touch another row or folder (295.3915ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:71:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at google-apps-script\SyncedEdits2B.test.cjs:76:1
+✖ technical delivery remains independent of external georeferencing on edits (294.0579ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"code":"COMMUNICATION_OR_STORAGE_ERROR","retryable":true}
+  
+  false !== true
+  
+      at check (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:11:27)
+      at TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\SyncedEdits2B.test.cjs:77:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

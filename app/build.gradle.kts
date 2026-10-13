@@ -80,7 +80,7 @@ android {
         buildConfigField("String", "DRIVE_API_TOKEN", "\"$driveApiToken\"")
         buildConfigField("String", "DRIVE_WEB_APP_URL", "\"$driveWebAppUrl\"")
         buildConfigField("String", "SERVER_BASE_URL", "\"${localString("SERVER_BASE_URL")}\"")
-        for (flag in listOf("ACCESS_CONTROL_ENABLED", "AI_ENABLED", "AI_SCAP_ENABLED", "SIC17A_ENABLED", "SIC17B_ENABLED", "SIC18A_ENABLED", "GBO_PHOTO_NUMBERS_ENABLED", "GBO_VIDEO_REMOTE_ENABLED")) {
+        for (flag in listOf("ACCESS_CONTROL_ENABLED", "AI_ENABLED", "AI_SCAP_ENABLED", "SIC17A_ENABLED", "SIC17B_ENABLED", "SIC18A_ENABLED", "GBO_PHOTO_NUMBERS_ENABLED", "GBO_VIDEO_REMOTE_ENABLED", "GBO_PHOTO_NAMES_V2_ENABLED")) {
             buildConfigField("boolean", flag, localFlag(flag))
         }
         applicationId = "com.tuempresa.inventariovial"

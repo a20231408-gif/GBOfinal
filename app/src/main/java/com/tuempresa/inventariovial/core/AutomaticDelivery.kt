@@ -24,6 +24,8 @@ interface AutomaticDriveTransport {
     fun supportsTechnicalDeliveryWithoutGps():Boolean = false
 
     fun supportsFamilyPaths():Boolean = false
+    fun supportsReadablePhotoNames():Boolean = false
+    fun reservePhotoNames(payload:JSONObject):JSONObject = throw SyncPending("El servicio no admite reservas fotográficas V2.")
     fun post(payload:JSONObject):JSONObject
 }
 class AutomaticDriveHttp internal constructor(
@@ -39,6 +41,14 @@ class AutomaticDriveHttp internal constructor(
     }
     override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")==3
     override fun supportsFamilyPaths()=supportsV3() && capabilities.optInt("pathVersion")==4 && capabilities.optBoolean("stableFamilyNumbering") && capabilities.optInt("photoCategoryVersion")==1
+    override fun supportsReadablePhotoNames()=supportsFamilyPaths() && capabilities.optInt("readablePhotoNamingVersion")==2
+    override fun reservePhotoNames(payload:JSONObject):JSONObject {
+        if(!supportsReadablePhotoNames())throw SyncPending("El backend aún no anuncia readablePhotoNamingVersion=2. Cola conservada.")
+        val request=JSONObject().put("action","reservePhotoNamesV2").put("photoNamingVersion",2)
+        for(key in listOf("pathVersion","kind","key","recordId","revision","baseRevision","identityId","routeCode","familyPath","family","tramo","surface"))if(payload.has(key))request.put(key,payload.get(key))
+        val files=payload.getJSONArray("files");request.put("photos",JSONArray((0 until files.length()).map {files.getJSONObject(it)}.filter {it.getString("key").startsWith("photo/")}.map {JSONObject().put("id",it.getString("key").substringAfter("photo/")).put("category",it.optString("photoCategory","GENERAL"))}))
+        return send(request)
+    }
     override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
     private fun send(payload:JSONObject)=client.newCall(Request.Builder().url(endpoint)
         .post(JSONObject(payload.toString()).put("token",apiToken).toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()).execute().use {
@@ -46,7 +56,8 @@ class AutomaticDriveHttp internal constructor(
         JSONObject(it.body?.string() ?: "{}")
     }
     override fun post(payload:JSONObject):JSONObject {
-        if(payload.optInt("photoNamingVersion")==1 && capabilities.optInt("photoNamingVersion")!=1)throw SyncPending("El backend aún no admite prefijos fotográficos. Cola conservada.")
+        if(payload.optInt("photoNamingVersion")==1 && capabilities.optInt("photoNamingVersion") !in setOf(1,2))throw SyncPending("El backend aún no admite prefijos fotográficos. Cola conservada.")
+        if(payload.optInt("photoNamingVersion")==2 && !supportsReadablePhotoNames())throw SyncPending("El backend no admite nombres fotográficos V2; copia conservada.")
         val commit=JSONObject(payload.toString());val files=commit.getJSONArray("files")
         for(n in 0 until files.length()) {
             val file=files.getJSONObject(n);val local=File(file.getString("localFile"));val bytes=local.readBytes()
@@ -107,7 +118,7 @@ object AutomaticDelivery {
     suspend fun current(db:InventoryDatabase,i:DriveSyncIntent,p:JSONObject)=
         db.automaticSyncDao().get(i.key)?.let {it.revision==i.revision && it.syncedRevision==p.getLong("baseRevision")}==true && validated(db,i) && sha256(source(db,i).toByteArray())==p.getString("sourceHash")
 
-    suspend fun prepare(c:Context,db:InventoryDatabase,i:DriveSyncIntent):JSONObject {
+    suspend fun prepare(c:Context,db:InventoryDatabase,i:DriveSyncIntent,readable:Boolean=BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED,persist:Boolean=true):JSONObject {
         if(!validated(db,i))throw SyncPending("Valida o confirma el cierre antes de enviar.")
         val directory=File(c.filesDir,"automatic_drive/${sha256(i.key.toByteArray())}/${i.revision}").apply {check(isDirectory || mkdirs())}
         val cache=File(directory,"prepared-path4.json")
@@ -118,11 +129,13 @@ object AutomaticDelivery {
             }
             throw SyncPending("La ficha cambió; guarda y valida la revisión actual.")
         }
+        fun photoName(photo:com.tuempresa.inventariovial.data.entity.PhotoEntity)=if(readable)ReadablePhotoNames.name(c,photo) else StablePhotoNames.name(c,photo,BuildConfig.GBO_PHOTO_NUMBERS_ENABLED)
         val files=JSONArray();val rows=JSONArray()
         val p=JSONObject().put("action","commitRecordV3").put("syncProtocol",3).put("pathVersion",4)
             .put("key",i.key).put("kind",i.kind).put("recordId",i.recordId).put("revision",i.revision)
             .put("baseRevision",i.syncedRevision).put("origin",i.origin).put("warningsConfirmed",i.warningsConfirmed)
             .put("files",files).put("sicRows",rows).put("removeMissingOwnedFiles",true)
+        if(readable)p.put("photoNamingVersion",2)
         fun add(key:String,path:String,mime:String,bytes:ByteArray,aggregate:Boolean=false) {
             require(path.split('/').all {FileNameComplianceValidator.safeComponent(it) && it.length<=80}) {"Nombre de entrega inválido: $path"}
             require(bytes.isNotEmpty()) {"Archivo vacío: $path"}
@@ -175,7 +188,7 @@ object AutomaticDelivery {
                     p.put("pendingSic",pending)
                 }
                 s.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.forEachIndexed {n,photo->
-                    val name=StablePhotoNames.name(c,photo,BuildConfig.GBO_PHOTO_NUMBERS_ENABLED)
+                    val name=photoName(photo)
                     val target=File(directory,name)
                     DeliveryJpeg.copy(File(photo.originalPath.ifBlank {photo.localPath}),target,photo)
                     add("photo/${photo.id}","${DriveInventorySchema.category(photo.photoCategory)}/$name","image/jpeg",target.readBytes())
@@ -195,9 +208,9 @@ object AutomaticDelivery {
                         .put("id",photo.id).put("recordId",r.id).put("sicCode",r.sicCode).put("roadbedCode",r.roadbedCode)
                         .put("order",photo.photoIndex).put("categoryOrder",s.photos.filter {it.scapInspectionId==null && (it.photoCategory ?: "GENERAL")== (photo.photoCategory ?: "GENERAL")}.sortedBy {it.photoIndex}.indexOfFirst {it.id==photo.id}+1)
                         .put("category",photo.photoCategory ?: "GENERAL").put("revision",i.revision)
-                        .put("nameSource","LOCAL_UUID_SEQUENCE").put("contractualLabelStatus","PENDING_EXTERNAL_DATABASE")
+                        .put("nameSource",if(readable)"SERVER_RESERVED_UUID" else "LOCAL_UUID_SEQUENCE").put("contractualLabelStatus","PENDING_EXTERNAL_DATABASE")
                         .put("fileKey","photo/${photo.id}").put("previousFileId",photo.driveFileId ?: JSONObject.NULL)
-                        .put("path","${DriveInventorySchema.category(photo.photoCategory)}/${StablePhotoNames.name(c,photo,BuildConfig.GBO_PHOTO_NUMBERS_ENABLED)}")
+                        .put("path","${DriveInventorySchema.category(photo.photoCategory)}/${photoName(photo)}")
                         .put("capturedAt",photo.capturedAt ?: JSONObject.NULL)
                         .put("latitude",photo.photoLatitude ?: JSONObject.NULL).put("longitude",photo.photoLongitude ?: JSONObject.NULL)
                         .put("accuracyM",photo.photoGpsAccuracyM ?: JSONObject.NULL)})).toString().toByteArray())
@@ -222,7 +235,7 @@ object AutomaticDelivery {
                         val metadata=if(e.name.startsWith("fotos/")) {
                             val photoId=layout.photoPaths.entries.single {it.value==e.name}.key
                             val photo=s.photos.single {it.id==photoId}
-                            "SCAP/${s.inspection.id}/"+DriveInventorySchema.category(photo.photoCategory)+"/${StablePhotoNames.name(c,photo,BuildConfig.GBO_PHOTO_NUMBERS_ENABLED)}"
+                            "SCAP/${s.inspection.id}/"+DriveInventorySchema.category(photo.photoCategory)+"/${photoName(photo)}"
                         } else "SCAP/${s.inspection.id}/"+e.name
                         val key=when {e.name.startsWith("fotos/")->"photo/"+layout.photoPaths.entries.single {it.value==e.name}.key
                             e.name.startsWith("croquis/")->"sketch/"+layout.sketchPaths.entries.single {it.value==e.name}.key
@@ -232,7 +245,7 @@ object AutomaticDelivery {
                                 val f=entries.getJSONObject(n);val oldPath=f.optString("path")
                                 if(oldPath.startsWith("fotos/")) {
                                     val photo=s.photos.single {layout.photoPaths[it.id]==oldPath}
-                                    f.put("path","SCAP/${s.inspection.id}/"+DriveInventorySchema.category(photo.photoCategory)+"/${StablePhotoNames.name(c,photo,BuildConfig.GBO_PHOTO_NUMBERS_ENABLED)}")
+                                    f.put("path","SCAP/${s.inspection.id}/"+DriveInventorySchema.category(photo.photoCategory)+"/${photoName(photo)}")
                                 } else f.put("path","SCAP/${s.inspection.id}/"+oldPath)
                             } }
 }.toString().toByteArray() else zip.readBytes())
@@ -267,9 +280,10 @@ object AutomaticDelivery {
                 add("sample_json","DATOS_APP/M_${s.muestra.toString().padStart(3,'0')}.json","application/json",PavementDriveUploader.nativeJson(s,damages,result,photos).toString().toByteArray())
                 var n=0
                 photos.entries.sortedBy {it.key}.forEach {(_,items)->items.sortedBy {it.createdAt}.forEach {photo->
-                    n++;val name="%03d_F%02d.jpg".format(n,n);val f=File(directory,name)
+                    n++;val name=if(readable)ReadablePhotoNames.name(c,photo.id,"GENERAL") else "%03d_F%02d.jpg".format(n,n);val f=File(directory,name)
                     DeliveryJpeg.copy(File(photo.localPath),f)
                     add("photo/${photo.id}","PANEL_FOTOGRAFICO/$name","image/jpeg",f.readBytes())
+                    files.getJSONObject(files.length()-1).put("photoCategory","GENERAL")
                 }}
                 PavementSicFormat.entries.filter {it.surface==s.surface}.forEach {format->
                     if(PavementSic.status(s,damages,format).complete) {
@@ -297,9 +311,10 @@ object AutomaticDelivery {
                 .put("direction",InventoryTechnicalOrder.direction(r)).put("startPrNumber",r.startPrCode.toInt()).put("startDistanceM",r.startDistanceM)
         }
         p.put("sourceHash",sha256(source(db,i).toByteArray()))
-        if(i.kind in setOf("SIC","SCAP") && (BuildConfig.GBO_PHOTO_NUMBERS_ENABLED || (0 until files.length()).any {files.getJSONObject(it).optString("path").substringAfterLast('/').matches(Regex("[0-9]{3,10}_F_[a-f0-9]{16}\\.jpg"))})) p.put("photoNamingVersion",1)
+        if(!readable && i.kind in setOf("SIC","SCAP") && (BuildConfig.GBO_PHOTO_NUMBERS_ENABLED || (0 until files.length()).any {files.getJSONObject(it).optString("path").substringAfterLast('/').matches(Regex("[0-9]{3,10}_F_[a-f0-9]{16}\\.jpg"))})) p.put("photoNamingVersion",1)
         val content=contentHash(p)
         p.put("contentHash",content)
+        if(!persist)return p
         val atomic=android.util.AtomicFile(cache);val out=atomic.startWrite()
         try {out.write(p.toString().toByteArray());atomic.finishWrite(out)}catch(e:Exception){atomic.failWrite(out);throw e}
         return p
@@ -314,7 +329,7 @@ object AutomaticDelivery {
             "\t"+p.getJSONObject("georeferencing").getString("status")+"\t"+p.getJSONObject("georeferencing").getString("externalSubmetricStatus")+
             "\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","orderAxis","orderSource")) else ""
         return sha256((header+"\n"+lines(p.getJSONArray("files"),listOf("key","path","mimeType","sha256"))+"\n"+
-            lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical+"\npathVersion=4\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","roadbedCode","direction","startPrNumber","startDistanceM"))+photos+(if(p.optInt("photoNamingVersion")==1) "\nphotoNamingVersion=1" else "")).toByteArray())
+            lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical+"\npathVersion=4\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","roadbedCode","direction","startPrNumber","startDistanceM"))+photos+(if(p.has("photoNamingVersion")) "\nphotoNamingVersion=${p.getInt("photoNamingVersion")}" else "")).toByteArray())
     }
     fun validAck(p:JSONObject,a:JSONObject,previous:JSONObject?=null):Boolean {
         if(previous?.optInt("pathVersion")==4) {

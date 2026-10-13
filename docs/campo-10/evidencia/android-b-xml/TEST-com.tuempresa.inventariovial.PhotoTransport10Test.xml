@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PhotoTransport10Test" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-13T00:45:58.778Z" hostname="JULIAN" time="12.805">
+  <properties/>
+  <testcase name="allExifOrientationsAndCapturedMetadataSurviveWithoutChangingPixelsOrOriginal" classname="com.tuempresa.inventariovial.PhotoTransport10Test" time="9.961"/>
+  <testcase name="videoCorruptionAndTruncatedJpegNeverBecomePhotos" classname="com.tuempresa.inventariovial.PhotoTransport10Test" time="0.08"/>
+  <testcase name="pngAndWebpMislabeledJpgBecomeVerifiedJpegAndRetainOriginal" classname="com.tuempresa.inventariovial.PhotoTransport10Test" time="0.146"/>
+  <testcase name="jpegCameraWithTrailingBytesReproducesServerRejectionAndCopyRecovers" classname="com.tuempresa.inventariovial.PhotoTransport10Test" time="0.072"/>
+  <testcase name="rejectedCachedRevisionIsBackedUpAndRebuiltWithSameIdentityAndPhoto" classname="com.tuempresa.inventariovial.PhotoTransport10Test" time="2.274"/>
+  <testcase name="unknownAckAndConflictsAreNeverRebuilt" classname="com.tuempresa.inventariovial.PhotoTransport10Test" time="0.097"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: readable catalog covers every V4 family and contractual photo category within 20 characters
+ok 1 - readable catalog covers every V4 family and contractual photo category within 20 characters
+  ---
+  duration_ms: 3.5089
+  type: 'test'
+  ...
+# Subtest: two tablets reserve by photo UUID, idempotently, without reusing retired counters
+ok 2 - two tablets reserve by photo UUID, idempotently, without reusing retired counters
+  ---
+  duration_ms: 10.0956
+  type: 'test'
+  ...
+# Subtest: reserved names deliver real JPEG and preserve ACK, folder and file IDs on retries
+ok 3 - reserved names deliver real JPEG and preserve ACK, folder and file IDs on retries
+  ---
+  duration_ms: 461.6452
+  type: 'test'
+  ...
+# Subtest: unreserved or forged photo labels cannot silently rename a photo
+ok 4 - unreserved or forged photo labels cannot silently rename a photo
+  ---
+  duration_ms: 3.2011
+  type: 'test'
+  ...
+# Subtest: historical photos retain exact names while a new UUID gets a readable name
+ok 5 - historical photos retain exact names while a new UUID gets a readable name
+  ---
+  duration_ms: 676.1445
+  type: 'test'
+  ...
+# Subtest: new technical backups live in internal registry; visible folders and old ACKs are stable
+ok 6 - new technical backups live in internal registry; visible folders and old ACKs are stable
+  ---
+  duration_ms: 607.2613
+  type: 'test'
+  ...
+# Subtest: video rejects conventional SIC and pavements before allocating or touching a file
+ok 7 - video rejects conventional SIC and pavements before allocating or touching a file
+  ---
+  duration_ms: 1.1692
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1913.9427

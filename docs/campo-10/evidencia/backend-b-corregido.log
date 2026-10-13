@@ -1,0 +1,703 @@
+TAP version 13
+# Subtest: several photos share route and SIB and retry does not create another file
+ok 1 - several photos share route and SIB and retry does not create another file
+  ---
+  duration_ms: 46.3768
+  type: 'test'
+  ...
+# Subtest: health only advertises no-GPS technical delivery when V3 engine, Drive and enable flag exist
+ok 2 - health only advertises no-GPS technical delivery when V3 engine, Drive and enable flag exist
+  ---
+  duration_ms: 5.4757
+  type: 'test'
+  ...
+# Subtest: competing request cannot reach Drive and can retry after the first finishes
+ok 3 - competing request cannot reach Drive and can retry after the first finishes
+  ---
+  duration_ms: 28.8004
+  type: 'test'
+  ...
+# Subtest: busy lock does not release another execution lock or touch Drive
+ok 4 - busy lock does not release another execution lock or touch Drive
+  ---
+  duration_ms: 4.8234
+  type: 'test'
+  ...
+# Subtest: Drive failure releases lock and a later request can proceed
+ok 5 - Drive failure releases lock and a later request can proceed
+  ---
+  duration_ms: 3.8382
+  type: 'test'
+  ...
+# Subtest: duplicate existing folders are selected consistently without deleting either
+ok 6 - duplicate existing folders are selected consistently without deleting either
+  ---
+  duration_ms: 3.0647
+  type: 'test'
+  ...
+# Subtest: unauthorized and invalid codes do not access Drive
+ok 7 - unauthorized and invalid codes do not access Drive
+  ---
+  duration_ms: 3.35
+  type: 'test'
+  ...
+# Subtest: SIC remains optional and canonical codes remain compatible with Android
+ok 8 - SIC remains optional and canonical codes remain compatible with Android
+  ---
+  duration_ms: 3.2907
+  type: 'test'
+  ...
+# Subtest: malformed JSON is handled without creating folders
+ok 9 - malformed JSON is handled without creating folders
+  ---
+  duration_ms: 5.4921
+  type: 'test'
+  ...
+# Subtest: production strict mode rejects legacy loose photos before touching Drive
+ok 10 - production strict mode rejects legacy loose photos before touching Drive
+  ---
+  duration_ms: 8.8378
+  type: 'test'
+  ...
+# Subtest: pavement protocol stores field sheet, native data, group Excel and photo in the evaluation tree
+ok 11 - pavement protocol stores field sheet, native data, group Excel and photo in the evaluation tree
+  ---
+  duration_ms: 76.2745
+  type: 'test'
+  ...
+# Subtest: pavement protocol archives a changed revision instead of silently overwriting it
+ok 12 - pavement protocol archives a changed revision instead of silently overwriting it
+  ---
+  duration_ms: 19.0188
+  type: 'test'
+  ...
+# Subtest: Drive V2 SCAP publishes under the same persistent bridge folder as SIC
+ok 13 - Drive V2 SCAP publishes under the same persistent bridge folder as SIC
+  ---
+  duration_ms: 36.2604
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol stores three bridges captured at 10/30/20 km as PUENTE 1/3/2 and retries without duplicates
+ok 14 - SCAP human protocol stores three bridges captured at 10/30/20 km as PUENTE 1/3/2 and retries without duplicates
+  ---
+  duration_ms: 10.0471
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol ignores stale bindings outside the reviewed route and repairs them
+ok 15 - SCAP human protocol ignores stale bindings outside the reviewed route and repairs them
+  ---
+  duration_ms: 8.6053
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol preserves the previous revision and its hashes when publishing and retrying a newer one
+ok 16 - SCAP human protocol preserves the previous revision and its hashes when publishing and retrying a newer one
+  ---
+  duration_ms: 25.7607
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol recovers interrupted publication without duplicate files
+ok 17 - SCAP human protocol recovers interrupted publication without duplicate files
+  ---
+  duration_ms: 17.9197
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol rejects changed route/order and occupied bridge folder without mixing identities
+ok 18 - SCAP human protocol rejects changed route/order and occupied bridge folder without mixing identities
+  ---
+  duration_ms: 8.7359
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol groups inspections by full bridgeCode while preserving both UUID revisions and v1 files
+ok 19 - SCAP human protocol groups inspections by full bridgeCode while preserving both UUID revisions and v1 files
+  ---
+  duration_ms: 13.6528
+  type: 'test'
+  ...
+# Subtest: SCAP human protocol rejects a changed hash for the same inspection revision
+ok 20 - SCAP human protocol rejects a changed hash for the same inspection revision
+  ---
+  duration_ms: 11.8298
+  type: 'test'
+  ...
+# Subtest: supplied v3 SIC Excel and ZIP exports retain content validation and idempotency
+ok 21 - supplied v3 SIC Excel and ZIP exports retain content validation and idempotency
+  ---
+  duration_ms: 6.8491
+  type: 'test'
+  ...
+# Subtest: SCAP stores its workbook, separate photos and ZIP; retry confirms the same file
+ok 22 - SCAP stores its workbook, separate photos and ZIP; retry confirms the same file
+  ---
+  duration_ms: 6.4886
+  type: 'test'
+  ...
+# Subtest: bridge identity uses the full code, groups inspections and never groups only by name
+ok 23 - bridge identity uses the full code, groups inspections and never groups only by name
+  ---
+  duration_ms: 4.6288
+  type: 'test'
+  ...
+# Subtest: legacy SCAP ignores a stale bridge mapping outside the current SCAP root
+ok 24 - legacy SCAP ignores a stale bridge mapping outside the current SCAP root
+  ---
+  duration_ms: 18.8616
+  type: 'test'
+  ...
+# Subtest: missing code uses inspection UUID; later code retains the folder and can group future inspections
+ok 25 - missing code uses inspection UUID; later code retains the folder and can group future inspections
+  ---
+  duration_ms: 70.4251
+  type: 'test'
+  ...
+# Subtest: conflicting existing identity requires review instead of merging or moving files
+ok 26 - conflicting existing identity requires review instead of merging or moving files
+  ---
+  duration_ms: 6.8776
+  type: 'test'
+  ...
+# Subtest: SCAP rejects unauthorized requests, hash mismatches, unsafe entries and old protocol before touching Drive
+ok 27 - SCAP rejects unauthorized requests, hash mismatches, unsafe entries and old protocol before touching Drive
+  ---
+  duration_ms: 4.1555
+  type: 'test'
+  ...
+# Subtest: SCAP lock contention and partial Drive failures retry without duplicate completed files
+ok 28 - SCAP lock contention and partial Drive failures retry without duplicate completed files
+  ---
+  duration_ms: 8.5481
+  type: 'test'
+  ...
+# Subtest: Drive V2 keeps multiple clean culvert photos in explicit categories and freezes persistent element identity
+ok 29 - Drive V2 keeps multiple clean culvert photos in explicit categories and freezes persistent element identity
+  ---
+  duration_ms: 7.0877
+  type: 'test'
+  ...
+# Subtest: Drive V2 pavement has a stable sample folder, ACK identity, and explicit SIC export category
+ok 30 - Drive V2 pavement has a stable sample folder, ACK identity, and explicit SIC export category
+  ---
+  duration_ms: 5.3883
+  type: 'test'
+  ...
+# Subtest: delivery protocol stores multiple photos, two elements, metadata and SIC in final route/SIB structure
+ok 31 - delivery protocol stores multiple photos, two elements, metadata and SIC in final route/SIB structure
+  ---
+  duration_ms: 8.809
+  type: 'test'
+  ...
+# Subtest: delivery retry is idempotent by photo identity and hash, including partial failure
+ok 32 - delivery retry is idempotent by photo identity and hash, including partial failure
+  ---
+  duration_ms: 4.2584
+  type: 'test'
+  ...
+# Subtest: delivery rejects token, traversal, arbitrary paths, unsupported protocol and bad hashes before Drive access
+ok 33 - delivery rejects token, traversal, arbitrary paths, unsupported protocol and bad hashes before Drive access
+  ---
+  duration_ms: 3.5866
+  type: 'test'
+  ...
+# Subtest: delivery metadata cannot include secrets or private Android paths
+ok 34 - delivery metadata cannot include secrets or private Android paths
+  ---
+  duration_ms: 6.3916
+  type: 'test'
+  ...
+# Subtest: delivery refuses changed content, changed order or reused names without renaming or overwriting
+ok 35 - delivery refuses changed content, changed order or reused names without renaming or overwriting
+  ---
+  duration_ms: 3.5368
+  type: 'test'
+  ...
+# Subtest: delivery lock contention retries and legacy SIC/SCAP endpoints still work alongside a delivery
+ok 36 - delivery lock contention retries and legacy SIC/SCAP endpoints still work alongside a delivery
+  ---
+  duration_ms: 3.5043
+  type: 'test'
+  ...
+# Subtest: Drive V2 stores SIC workbooks under each persistent element while legacy route exports remain compatible
+ok 37 - Drive V2 stores SIC workbooks under each persistent element while legacy route exports remain compatible
+  ---
+  duration_ms: 3.3221
+  type: 'test'
+  ...
+# Subtest: Drive V2 lets SCAP join a bridge folder that already contains its SIC workbook
+ok 38 - Drive V2 lets SCAP join a bridge folder that already contains its SIC workbook
+  ---
+  duration_ms: 5.3287
+  type: 'test'
+  ...
+# Subtest: Drive V2 accepts the new SIC families without changing ACK or idempotency
+ok 39 - Drive V2 accepts the new SIC families without changing ACK or idempotency
+  ---
+  duration_ms: 11.14
+  type: 'test'
+  ...
+# Subtest: SIC-18A shares its parent element UUID and folder with SIC-18
+ok 40 - SIC-18A shares its parent element UUID and folder with SIC-18
+  ---
+  duration_ms: 5.5658
+  type: 'test'
+  ...
+# Subtest: readable catalog covers every V4 family and contractual photo category within 20 characters
+ok 41 - readable catalog covers every V4 family and contractual photo category within 20 characters
+  ---
+  duration_ms: 20.1778
+  type: 'test'
+  ...
+# Subtest: two tablets reserve by photo UUID, idempotently, without reusing retired counters
+ok 42 - two tablets reserve by photo UUID, idempotently, without reusing retired counters
+  ---
+  duration_ms: 64.5042
+  type: 'test'
+  ...
+# Subtest: reserved names deliver real JPEG and preserve ACK, folder and file IDs on retries
+not ok 43 - reserved names deliver real JPEG and preserve ACK, folder and file IDs on retries
+  ---
+  duration_ms: 2148.5532
+  type: 'test'
+  location: 'D:\\Downloads\\GBO_PRUEBAS_8B\\google-apps-script\\Field10.test.cjs:24:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Values have same structure but are not reference-equal:
+    
+    ... Skipped lines
+    [
+      {
+        fileId: 'file-13',
+        folderId: 'folder-12',
+        key: 'photo/a8ddde77-66b8-317b-acd1-663d368d7b22',
+        logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/001_ALC1_PAN.jpg',
+        requestedPath: 'PANORAMICA/001_ALC1_PAN.jpg',
+        sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      },
+      {
+        fileId: 'file-14',
+        folderId: 'folder-12',
+        key: 'photo/56041bb0-7e9f-30d5-b2dd-01f0e31287ac',
+        logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/002_ALC1_PAN.jpg',
+        requestedPath: 'PANORAMICA/002_ALC1_PAN.jpg',
+        sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      },
+      {
+        fileId: 'file-16',
+        folderId: 'folder-15',
+        key: 'photo/d6a211e5-9d58-3f94-8c05-d652e03c35c7',
+        logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/003_ALC1_ENT.jpg',
+        requestedPath: 'ENTRADA/003_ALC1_ENT.jpg',
+        sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      },
+      {
+        fileId: 'file-17',
+        folderId: 'folder-15',
+        key: 'photo/32b79326-75c6-3410-9de2-a5fd0f189214',
+        logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/004_ALC1_ENT.jpg',
+        requestedPath: 'ENTRADA/004_ALC1_ENT.jpg',
+        sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      },
+      {
+        fileId: 'file-19',
+        folderId: 'folder-18',
+        key: 'photo/d809dd33-a9e9-3f7a-9c83-e31fae7ce1d6',
+        logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/SALIDA/005_ALC1_SAL.jpg',
+        requestedPath: 'SALIDA/005_ALC1_SAL.jpg',
+        sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      },
+      {
+        fileId: 'file-20',
+        folderId: 'folder-18',
+        key: 'photo/97cfb151-3501-3e7e-be95-6b54645de92c',
+        logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/SALIDA/006_ALC1_SAL.jpg',
+        requestedPath: 'SALIDA/006_ALC1_SAL.jpg',
+        sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      },
+      {
+    ...}
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      key: 'photo/a8ddde77-66b8-317b-acd1-663d368d7b22'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-13'
+      folderId: 'folder-12'
+      requestedPath: 'PANORAMICA/001_ALC1_PAN.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/001_ALC1_PAN.jpg'
+    1:
+      key: 'photo/56041bb0-7e9f-30d5-b2dd-01f0e31287ac'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-14'
+      folderId: 'folder-12'
+      requestedPath: 'PANORAMICA/002_ALC1_PAN.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/002_ALC1_PAN.jpg'
+    2:
+      key: 'photo/d6a211e5-9d58-3f94-8c05-d652e03c35c7'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-16'
+      folderId: 'folder-15'
+      requestedPath: 'ENTRADA/003_ALC1_ENT.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/003_ALC1_ENT.jpg'
+    3:
+      key: 'photo/32b79326-75c6-3410-9de2-a5fd0f189214'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-17'
+      folderId: 'folder-15'
+      requestedPath: 'ENTRADA/004_ALC1_ENT.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/004_ALC1_ENT.jpg'
+    4:
+      key: 'photo/d809dd33-a9e9-3f7a-9c83-e31fae7ce1d6'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-19'
+      folderId: 'folder-18'
+      requestedPath: 'SALIDA/005_ALC1_SAL.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/SALIDA/005_ALC1_SAL.jpg'
+    5:
+      key: 'photo/97cfb151-3501-3e7e-be95-6b54645de92c'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-20'
+      folderId: 'folder-18'
+      requestedPath: 'SALIDA/006_ALC1_SAL.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/SALIDA/006_ALC1_SAL.jpg'
+    6:
+      key: 'photo/ef43f108-afaf-3bdc-ae9c-afbc4c70c0f7'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-22'
+      folderId: 'folder-21'
+      requestedPath: 'GENERAL/007_ALC1_GEN.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/GENERAL/007_ALC1_GEN.jpg'
+    7:
+      key: 'metadata'
+      sha256: '8264d1131ce5c8445a79f39e5cbbc6b8d6c06feb45bb83de540a905759d62c66'
+      fileId: 'file-23'
+      folderId: 'folder-6'
+      requestedPath: 'metadata.json'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/metadata.json'
+  actual:
+    0:
+      key: 'photo/a8ddde77-66b8-317b-acd1-663d368d7b22'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-13'
+      folderId: 'folder-12'
+      requestedPath: 'PANORAMICA/001_ALC1_PAN.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/001_ALC1_PAN.jpg'
+    1:
+      key: 'photo/56041bb0-7e9f-30d5-b2dd-01f0e31287ac'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-14'
+      folderId: 'folder-12'
+      requestedPath: 'PANORAMICA/002_ALC1_PAN.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/PANORAMICA/002_ALC1_PAN.jpg'
+    2:
+      key: 'photo/d6a211e5-9d58-3f94-8c05-d652e03c35c7'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-16'
+      folderId: 'folder-15'
+      requestedPath: 'ENTRADA/003_ALC1_ENT.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/003_ALC1_ENT.jpg'
+    3:
+      key: 'photo/32b79326-75c6-3410-9de2-a5fd0f189214'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-17'
+      folderId: 'folder-15'
+      requestedPath: 'ENTRADA/004_ALC1_ENT.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/ENTRADA/004_ALC1_ENT.jpg'
+    4:
+      key: 'photo/d809dd33-a9e9-3f7a-9c83-e31fae7ce1d6'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-19'
+      folderId: 'folder-18'
+      requestedPath: 'SALIDA/005_ALC1_SAL.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/SALIDA/005_ALC1_SAL.jpg'
+    5:
+      key: 'photo/97cfb151-3501-3e7e-be95-6b54645de92c'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-20'
+      folderId: 'folder-18'
+      requestedPath: 'SALIDA/006_ALC1_SAL.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/SALIDA/006_ALC1_SAL.jpg'
+    6:
+      key: 'photo/ef43f108-afaf-3bdc-ae9c-afbc4c70c0f7'
+      sha256: '32fabbb6fb39b0acb271c0f145a9bc51ece2c7516a84f6100cb6dddfdb8b46c4'
+      fileId: 'file-22'
+      folderId: 'folder-21'
+      requestedPath: 'GENERAL/007_ALC1_GEN.jpg'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/GENERAL/007_ALC1_GEN.jpg'
+    7:
+      key: 'metadata'
+      sha256: '8264d1131ce5c8445a79f39e5cbbc6b8d6c06feb45bb83de540a905759d62c66'
+      fileId: 'file-23'
+      folderId: 'folder-6'
+      requestedPath: 'metadata.json'
+      logicalPath: 'PE-22A/ALCANTARILLAS/ALCANTARILLA 1/metadata.json'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (D:\Downloads\GBO_PRUEBAS_8B\google-apps-script\Field10.test.cjs:27:117)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: unreserved or forged photo labels cannot silently rename a photo
+ok 44 - unreserved or forged photo labels cannot silently rename a photo
+  ---
+  duration_ms: 10.5667
+  type: 'test'
+  ...
+# Subtest: historical photos retain exact names while a new UUID gets a readable name
+ok 45 - historical photos retain exact names while a new UUID gets a readable name
+  ---
+  duration_ms: 1993.0322
+  type: 'test'
+  ...
+# Subtest: new technical backups live in internal registry; visible folders and old ACKs are stable
+ok 46 - new technical backups live in internal registry; visible folders and old ACKs are stable
+  ---
+  duration_ms: 2073.1858
+  type: 'test'
+  ...
+# Subtest: video rejects conventional SIC and pavements before allocating or touching a file
+ok 47 - video rejects conventional SIC and pavements before allocating or touching a file
+  ---
+  duration_ms: 0.7992
+  type: 'test'
+  ...
+# Subtest: lost begin response and retries retain one remote file and session
+ok 48 - lost begin response and retries retain one remote file and session
+  ---
+  duration_ms: 13.5813
+  type: 'test'
+  ...
+# Subtest: expired or rejected session restarts the same file ID
+ok 49 - expired or rejected session restarts the same file ID
+  ---
+  duration_ms: 0.9753
+  type: 'test'
+  ...
+# Subtest: finish and lost ACK retry verify hash, size, identity
+ok 50 - finish and lost ACK retry verify hash, size, identity
+  ---
+  duration_ms: 0.7409
+  type: 'test'
+  ...
+# Subtest: wrong content, MIME, parent, category and file binding are rejected
+ok 51 - wrong content, MIME, parent, category and file binding are rejected
+  ---
+  duration_ms: 1.7563
+  type: 'test'
+  ...
+# Subtest: server never acknowledges incomplete, corrupt or wrong-MIME video
+ok 52 - server never acknowledges incomplete, corrupt or wrong-MIME video
+  ---
+  duration_ms: 1.2301
+  type: 'test'
+  ...
+# Subtest: limits, invalid MIME and unconfirmed/relocated parent fail before upload
+ok 53 - limits, invalid MIME and unconfirmed/relocated parent fail before upload
+  ---
+  duration_ms: 3.3972
+  type: 'test'
+  ...
+# Subtest: multiple videos and categories allocate independent immutable identities
+ok 54 - multiple videos and categories allocate independent immutable identities
+  ---
+  duration_ms: 1.0602
+  type: 'test'
+  ...
+# Subtest: photographic prefix preserves category/hash and legacy compatibility
+ok 55 - photographic prefix preserves category/hash and legacy compatibility
+  ---
+  duration_ms: 4.4618
+  type: 'test'
+  ...
+# Subtest: baden5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 56 - baden5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 2098.3544
+  type: 'test'
+  ...
+# Subtest: muro5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 57 - muro5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1251.6664
+  type: 'test'
+  ...
+# Subtest: tunel5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 58 - tunel5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1540.0531
+  type: 'test'
+  ...
+# Subtest: cuneta5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 59 - cuneta5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1228.1893
+  type: 'test'
+  ...
+# Subtest: guardavia5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 60 - guardavia5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1544.9733
+  type: 'test'
+  ...
+# Subtest: tacha5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 61 - tacha5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1425.866
+  type: 'test'
+  ...
+# Subtest: senal5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 62 - senal5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1265.9094
+  type: 'test'
+  ...
+# Subtest: alcantarilla5 actual Android categories JPEG Excel and idempotent V3 receipt
+ok 63 - alcantarilla5 actual Android categories JPEG Excel and idempotent V3 receipt
+  ---
+  duration_ms: 1513.9968
+  type: 'test'
+  ...
+# Subtest: historical GENERAL remains visible without migration or subtype folder
+ok 64 - historical GENERAL remains visible without migration or subtype folder
+  ---
+  duration_ms: 768.2497
+  type: 'test'
+  ...
+# Subtest: backend rejects a photo path that contradicts its internal category before writing
+ok 65 - backend rejects a photo path that contradicts its internal category before writing
+  ---
+  duration_ms: 28.3911
+  type: 'test'
+  ...
+# Subtest: SIC08 and SIC09 cannot inherit linear categories even if they have two PRs
+ok 66 - SIC08 and SIC09 cannot inherit linear categories even if they have two PRs
+  ---
+  duration_ms: 1415.7825
+  type: 'test'
+  ...
+# Subtest: adding an observation retains previous fileIds and family numbering
+ok 67 - adding an observation retains previous fileIds and family numbering
+  ---
+  duration_ms: 2974.1226
+  type: 'test'
+  ...
+# Subtest: explicit recategorization moves the same remote identity and archives prior placement
+ok 68 - explicit recategorization moves the same remote identity and archives prior placement
+  ---
+  duration_ms: 2117.5666
+  type: 'test'
+  ...
+# Subtest: replacement updates fileId safely and preserves original archive
+ok 69 - replacement updates fileId safely and preserves original archive
+  ---
+  duration_ms: 1663.1966
+  type: 'test'
+  ...
+# Subtest: confirmed retirement archives only owned photo and retains another record and all Excel rows
+ok 70 - confirmed retirement archives only owned photo and retains another record and all Excel rows
+  ---
+  duration_ms: 2713.5133
+  type: 'test'
+  ...
+# Subtest: two photo editors conflict without overwriting the winner; winner retry is harmless
+ok 71 - two photo editors conflict without overwriting the winner; winner retry is harmless
+  ---
+  duration_ms: 2441.3515
+  type: 'test'
+  ...
+# Subtest: SCAP inspections share bridge identity but keep separate photo and packet paths
+ok 72 - SCAP inspections share bridge identity but keep separate photo and packet paths
+  ---
+  duration_ms: 18.3544
+  type: 'test'
+  ...
+# Subtest: a malformed or tampered category signature cannot commit any files
+ok 73 - a malformed or tampered category signature cannot commit any files
+  ---
+  duration_ms: 168.1721
+  type: 'test'
+  ...
+# Subtest: ford keeps physical INICIO and FIN even when its contractual location has one PR
+ok 74 - ford keeps physical INICIO and FIN even when its contractual location has one PR
+  ---
+  duration_ms: 570.6796
+  type: 'test'
+  ...
+# Subtest: actual Android condition and PR updates preserve element/files and all consolidated rows
+ok 75 - actual Android condition and PR updates preserve element/files and all consolidated rows
+  ---
+  duration_ms: 6968.8307
+  type: 'test'
+  ...
+# Subtest: two operators on one UUID conflict without overwriting the winner or other engineer
+ok 76 - two operators on one UUID conflict without overwriting the winner or other engineer
+  ---
+  duration_ms: 4641.4189
+  type: 'test'
+  ...
+# Subtest: same-number different-content and stale revisions are rejected with remote revision
+ok 77 - same-number different-content and stale revisions are rejected with remote revision
+  ---
+  duration_ms: 1949.5133
+  type: 'test'
+  ...
+# Subtest: identical retries do not create new folders files or archives
+ok 78 - identical retries do not create new folders files or archives
+  ---
+  duration_ms: 2037.4529
+  type: 'test'
+  ...
+# Subtest: photo recategorization add replace and removal preserve fileIds originals and history
+ok 79 - photo recategorization add replace and removal preserve fileIds originals and history
+  ---
+  duration_ms: 3705.9272
+  type: 'test'
+  ...
+# Subtest: failure during edit rolls back Excel metadata and photos then retries on same IDs
+ok 80 - failure during edit rolls back Excel metadata and photos then retries on same IDs
+  ---
+  duration_ms: 3504.8377
+  type: 'test'
+  ...
+# Subtest: busy lock and identity substitution cannot touch another row or folder
+ok 81 - busy lock and identity substitution cannot touch another row or folder
+  ---
+  duration_ms: 1178.6706
+  type: 'test'
+  ...
+# Subtest: technical delivery remains independent of external georeferencing on edits
+ok 82 - technical delivery remains independent of external georeferencing on edits
+  ---
+  duration_ms: 1808.2677
+  type: 'test'
+  ...
+# Subtest: Apps Script disabled flag creates no remote objects
+ok 83 - Apps Script disabled flag creates no remote objects
+  ---
+  duration_ms: 10.7469
+  type: 'test'
+  ...
+# Subtest: Apps Script adapter retains generated ID and resumes binary session
+ok 84 - Apps Script adapter retains generated ID and resumes binary session
+  ---
+  duration_ms: 6.8187
+  type: 'test'
+  ...
+# Subtest: Apps Script verifies Drive binary SHA256 before confirming
+ok 85 - Apps Script verifies Drive binary SHA256 before confirming
+  ---
+  duration_ms: 3.0927
+  type: 'test'
+  ...
+1..85
+# tests 85
+# suites 0
+# pass 84
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 27494.5645

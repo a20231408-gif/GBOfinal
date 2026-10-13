@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),crypto=require('node:crypto');
 const core=require('./VideoV1Core.js');
 function environment() {
-  const objects=new Map(),files=new Map();let seq=0,held=false,enabled=true,sessionCount=0;const parent={pathVersion:4,revision:20,receipt:{folderId:'parent'}};
+  const objects=new Map(),files=new Map();let seq=0,held=false,enabled=true,sessionCount=0;const parent={kind:'SCAP',family:'PUENTE',pathVersion:4,revision:20,receipt:{folderId:'parent'}};
   const iterator=a=>{let n=0;return {hasNext:()=>n<a.length,next:()=>a[n++]};};
   const blob=(value,mime,name)=>({getDataAsString:()=>String(value),getName:()=>name,getContentType:()=>mime});
   class Folder {
@@ -24,7 +24,7 @@ function environment() {
   vm.runInContext(fs.readFileSync('google-apps-script/VideoV1.gs','utf8'),context);
   return {context,files,parent,setEnabled:b=>enabled=b,get starts(){return sessionCount;}};
 }
-const p=()=>({action:'beginVideoV1',videoProtocol:1,parentKey:'SIC/parent',mediaId:'media9',category:'GENERAL',categoryLabel:'General',mimeType:'video/mp4',sizeBytes:300,sha256:crypto.createHash('sha256').update('content').digest('hex'),parentRevision:20});
+const p=()=>({action:'beginVideoV1',videoProtocol:1,parentKey:'SCAP/parent',mediaId:'media9',category:'GENERAL',categoryLabel:'General',mimeType:'video/mp4',sizeBytes:300,sha256:crypto.createHash('sha256').update('content').digest('hex'),parentRevision:20});
 test('Apps Script disabled flag creates no remote objects',()=>{const e=environment();e.setEnabled(false);assert.equal(e.context.videoV1Action(p()).code,'VIDEO_DISABLED');assert.equal(e.files.size,0);});
 test('Apps Script adapter retains generated ID and resumes binary session',()=>{const e=environment(),a=e.context.videoV1Action(p()),b=e.context.videoV1Action(p());assert.equal(a.ok,true);assert.equal(a.fileId,b.fileId);assert.equal(e.files.size,1);assert.equal(e.starts,1);const f=e.files.get(a.fileId);f.size=300;f.sha256Checksum=p().sha256;const receipt=e.context.videoV1Action({...p(),action:'finishVideoV1',fileId:a.fileId});assert.equal(receipt.complete,true);assert.equal(e.files.size,1);});
 test('Apps Script verifies Drive binary SHA256 before confirming',()=>{const e=environment(),a=e.context.videoV1Action(p()),f=e.files.get(a.fileId);f.size=300;assert.equal(e.context.videoV1Action({...p(),action:'finishVideoV1',fileId:a.fileId}).code,'VIDEO_CHECKSUM_NOT_AVAILABLE');f.sha256Checksum='a'.repeat(64);assert.equal(e.context.videoV1Action({...p(),action:'finishVideoV1',fileId:a.fileId}).code,'VIDEO_HASH_OR_SIZE_MISMATCH');});

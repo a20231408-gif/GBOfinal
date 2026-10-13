@@ -21,7 +21,7 @@ function doGet() {
   return jsonResponse({
     ok: true,
     message: "Inventario Vial API funcionando",
-    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoCategoryVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 1 : 0, videoProtocol: typeof videoV1Enabled!=="undefined" && typeof VideoV1!=="undefined" && videoV1Enabled() ? 1 : 0, photoNamingVersion: typeof SyncV3!=="undefined" && v3Enabled() ? 1 : 0, photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
+    version: "v7.0 · Integración Drive V2", syncProtocol: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 3 : 0, scapProtocol: 2, scapBundleVersion: 6, pathVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 4 : 2, stableFamilyNumbering: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), photoCategoryVersion: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled() ? 1 : 0, videoProtocol: typeof videoV1Enabled!=="undefined" && typeof VideoV1!=="undefined" && videoV1Enabled() ? 1 : 0, photoNamingVersion: typeof SyncV3!=="undefined" && v3Enabled() ? 1 : 0, readablePhotoNamingVersion: typeof SyncV3!=="undefined" && v3Enabled() && typeof PhotoNamesV2!=="undefined" && PropertiesService.getScriptProperties().getProperty("GBO_PHOTO_NAMES_V2_ENABLED")==="true" ? 2 : 0, technicalRevisionStorage: 1, inventoryLifecycleVersion: 0, videoScope: "SCAP_ONLY", photoPolicy: "ORIGINAL_CLEAN", deliveryProtocol: 1, pavementProtocol: 1, strictElementFoldering: STRICT_ELEMENT_FOLDERING,
     technicalDeliveryWithoutGps: typeof SyncV3!=="undefined" && typeof Drive!=="undefined" && v3Enabled(), rootFolderId: ROOT_FOLDER_ID
   });
 }
@@ -70,6 +70,8 @@ function doPost(e) {
     }
 
     if (data.action === "beginVideoV1" || data.action === "finishVideoV1") return videoV1Action(data);
+    if (data.action === "reservePhotoNamesV2") return reservePhotoNamesV2(data);
+    if (data.action === "annulRecordV1" || data.action === "restoreRecordV1") return jsonResponse({ok:false,code:"INDIVIDUAL_INVENTORY_AUTH_REQUIRED",retryable:false});
     if (data.action === "stageRecordV3") return stageRecordV3(data);
     if (data.action === "commitRecordV3") return commitRecordV3(data);
     if (typeof SyncV3 !== "undefined" && v3Enabled()) {
@@ -666,7 +668,7 @@ function storeHumanScap(data, manifest, entries, zip, hashes) {
   const pending = properties.getProperty(pendingKey);
   if (pending) publishHumanScap(bridge, JSON.parse(pending), properties, currentKey, pendingKey);
 
-  const revisions = getOrCreateFolder(bridge, "REVISIONES");
+  const revisions = gboTechnicalRevisions("SCAP/" + bridge.getId());
   const versionName = data.revision + "_" + data.scapInspectionId + "_" + data.sha256;
   const version = getOrCreateFolder(revisions, versionName);
   const savedFiles = [];
@@ -800,7 +802,7 @@ function pavementSurfaceFolder(surface) {
 function pavementArchiveExisting(target, fileName) {
   const it = target.getFilesByName(fileName);
   if (!it.hasNext()) return;
-  const revisions = getOrCreateFolder(target, "REVISIONES");
+  const revisions = gboTechnicalRevisions("PAVEMENT/" + target.getId());
   while (it.hasNext()) {
     const old = it.next();
     const dot = fileName.lastIndexOf(".");
@@ -1021,4 +1023,10 @@ function uploadDeliveryFile(data) {
   } catch (_) {
     return jsonResponse({ok: false, retryable: true, error: "No se completó la entrega en Drive. Reintentar."});
   } finally { if (acquired) lock.releaseLock(); }
+}
+
+// New backups only. Historical revision folders are never moved by this helper.
+function gboTechnicalRevisions(owner) {
+  const digest=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,owner).map(b=>(b&255).toString(16).padStart(2,'0')).join('');
+  return getOrCreateFolder(getOrCreateFolder(getOrCreateFolder(DriveApp.getFolderById(ROOT_FOLDER_ID),'._GBO_SYNC_V3'),'REVISIONS'),digest);
 }
