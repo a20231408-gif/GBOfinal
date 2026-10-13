@@ -13,3 +13,5 @@ Video remoto exige SCAP y familia PUENTE tanto en Android como en el parche del 
 Validación: Android **27/27** (nombres, fotos, familias y ediciones). Backend: primera ejecución 55/85, segunda 84/85; se corrigió el contexto del asignador y dos expectativas históricas de estructura/capacidades. El último fallo era comparación estricta entre arrays de dos contextos VM, resuelta mediante comparación serializada; ejecución final focalizada **7/7 Field10**. Los otros 78 escenarios ya pasaron en la segunda ejecución y no se repitieron. Total de resultado vigente: **85 aprobadas** entre esas ejecuciones, no una única ejecución final de 85. Evidencia preservada en `evidencia/`.
 
 Compatibilidad: doGet mantiene photoNamingVersion=1 para clientes anteriores y anuncia la reserva V2 mediante readablePhotoNamingVersion=2. Los payloads nuevos sí llevan photoNamingVersion=2. La capacidad avanzada no bloquea a clientes V1 existentes.
+
+Cierre posterior: cuarta prueba Android de capacidad separada y prueba backend de compatibilidad 1/1 aprobadas. ReadablePhotoNames10Test final 4/4; junto a InventoryLifecycle10Test 1/1, cierre focalizado 5/5. Commit B: 2ef12a5.

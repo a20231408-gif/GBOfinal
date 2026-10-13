@@ -1,0 +1,24 @@
+{
+  "build": "SUCCESS",
+  "tasks": [
+    "assembleDebug",
+    "assembleDebugAndroidTest"
+  ],
+  "validationBuild": false,
+  "apk": "app\\build\\outputs\\apk\\debug\\app-debug.apk",
+  "bytes": 40207690,
+  "sha256": "51407d5166f98b0effcb5b950bc2f6daeec0d4c5f0edb463a8e14c0a835e8a36",
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "driveEndpointPresent": true,
+  "driveTokenPresent": true,
+  "userServiceEndpointPresent": true,
+  "photoNamesV2Enabled": false,
+  "remoteVideosEnabled": false,
+  "accessControlEnabled": false,
+  "releaseBuilt": false,
+  "heicInstrumentationCompiled": true,
+  "heicInstrumentationExecuted": false,
+  "signatureVerified": true,
+  "certificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+}

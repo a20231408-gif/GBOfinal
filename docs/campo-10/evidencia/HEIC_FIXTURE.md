@@ -1,0 +1,1 @@
+Imagen completamente sintética RGB azul de 96 × 64, generada con Pillow y pillow-heif 1.8.1. SHA-256: 2c6a6dea6c3eb4fc600f6d5f82af3fb71acaef51bd2956560e4ed192c9af8d37. No contiene EXIF ni datos de campo. Test instrumentado preparado; NO ejecutado en tablet.
