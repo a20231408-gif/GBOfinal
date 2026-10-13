@@ -1,0 +1,14 @@
+✔ individual PIN and explicit route permission issue only target-bound opaque hashed grants (10.2496ms)
+✔ ADMIN or TABLET_ADMIN claims alone never grant inventory permission (2.5019ms)
+✔ bad PIN, tablet token and wrong route cannot obtain a grant (0.6852ms)
+✔ Drive token cannot introspect grants and tokens cannot switch tablet, UUID, user, route or kind (1.1009ms)
+✔ revocation, permission removal and expiry are checked again for every request (1.139ms)
+✔ restoration requires its own permission and reason/revision/operation identifiers remain mandatory (1.016ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 256.7056

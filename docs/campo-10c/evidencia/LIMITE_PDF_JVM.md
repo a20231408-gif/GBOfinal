@@ -1,0 +1,5 @@
+# PDF en JVM: alcance de la evidencia
+
+La preparación falló antes de HTTP con `document is closed!`, al primer startPage. El código de Android construye el documento mediante nativeCreateDocument y considera cerrado un handle 0. Código primario consultado: [PdfDocument en AOSP](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/graphics/java/android/graphics/pdf/PdfDocument.java). El fallo y la ausencia del shadow PDF en la dependencia local son evidencia de una limitación del entorno JVM, no un diagnóstico de fallo físico de Android. No se modificó PavementPdf.
+
+PdfDocument10CShadow solo sustituye ese contenedor en los dos tests anotados. El renderer sigue dibujando en bitmap nativo, el Excel se genera normalmente y las fotos se convierten realmente y se verifican por JPEG/SHA-256. El ACK proviene del backend simulado. El archivo PDF de esas ejecuciones es una marca sintética de test, no evidencia de validez de PDF real. Ninguno se sube a Drive ni se entrega a los ingenieros como documento contractual. Se requiere comprobar un PDF real en tablet.

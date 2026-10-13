@@ -1,0 +1,24 @@
+{
+  "build": "SUCCESS",
+  "tasks": [
+    "assembleDebug"
+  ],
+  "validationBuild": false,
+  "apk": "app\\build\\outputs\\apk\\debug\\app-debug.apk",
+  "bytes": 40849044,
+  "sha256": "eaea285a0793964b682f1d9a0d4955dfdad41c92d54d2960ba05c56cb1c236a7",
+  "sourceCommit": "fc3854a33f29015c51e8ee5b919f9f45e5768f6d",
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "driveEndpointPresent": true,
+  "driveTokenPresent": true,
+  "userServiceEndpointPresent": true,
+  "photoNamesV2Enabled": false,
+  "remoteVideosEnabled": false,
+  "accessControlEnabled": false,
+  "releaseBuilt": false,
+  "signatureVerified": true,
+  "certificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+  "physicalTabletTestExecuted": false,
+  "remoteWriteExecuted": false
+}

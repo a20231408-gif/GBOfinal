@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PavementParallelCTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-13T02:03:33.056Z" hostname="JULIAN" time="16.28">
+  <properties/>
+  <testcase name="migration12to13PreservesChildrenClosedSnapshotsAndBackfillsSlabGeometry" classname="com.tuempresa.inventariovial.PavementParallelCTest" time="15.934"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
