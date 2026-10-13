@@ -39,6 +39,19 @@ class FieldCameraActivity:ComponentActivity() {
     private val thread=HandlerThread("field-camera")
     private lateinit var handler:Handler
     private var opening=false
+    private var previewSize:android.util.Size?=null
+    private var sensorOrientation=0
+    private val displayListener=object:android.hardware.display.DisplayManager.DisplayListener {
+        override fun onDisplayAdded(id:Int)=Unit
+        override fun onDisplayRemoved(id:Int)=Unit
+        override fun onDisplayChanged(id:Int) {if(id==texture.display?.displayId)updatePreviewTransform()}
+    }
+    private fun updatePreviewTransform() {
+        val size=previewSize ?: return
+        if(texture.width<=0 || texture.height<=0)return
+        val degrees=(texture.display?.rotation ?: Surface.ROTATION_0)*90
+        texture.setTransform(cameraPreviewTransform(texture.width,texture.height,size.width,size.height,sensorOrientation,degrees))
+    }
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
         thread.start();handler=Handler(thread.looper)
@@ -52,13 +65,13 @@ class FieldCameraActivity:ComponentActivity() {
         setContentView(layout)
         texture.surfaceTextureListener=object:TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(s:SurfaceTexture,w:Int,h:Int) { open() }
-            override fun onSurfaceTextureSizeChanged(s:SurfaceTexture,w:Int,h:Int) = Unit
+            override fun onSurfaceTextureSizeChanged(s:SurfaceTexture,w:Int,h:Int) {updatePreviewTransform()}
             override fun onSurfaceTextureUpdated(s:SurfaceTexture) = Unit
             override fun onSurfaceTextureDestroyed(s:SurfaceTexture):Boolean { close();return true }
         }
     }
-    override fun onResume() { super.onResume();if(texture.isAvailable) open() }
-    override fun onPause() { close();super.onPause() }
+    override fun onResume() { super.onResume();(getSystemService(Context.DISPLAY_SERVICE) as android.hardware.display.DisplayManager).registerDisplayListener(displayListener,Handler(mainLooper));if(texture.isAvailable) open() }
+    override fun onPause() { (getSystemService(Context.DISPLAY_SERVICE) as android.hardware.display.DisplayManager).unregisterDisplayListener(displayListener);close();super.onPause() }
     private fun fail(e:Throwable) { runOnUiThread { label.text="No se pudo usar esta cámara: ${e.message}";button.isEnabled=false } }
     @Suppress("MissingPermission") private fun open() {
         if(opening || device!=null || !texture.isAvailable) return
@@ -67,6 +80,7 @@ class FieldCameraActivity:ComponentActivity() {
             val manager=getSystemService(Context.CAMERA_SERVICE) as CameraManager
             val id=requireNotNull(intent.getStringExtra("cameraId"))
             val chars=manager.getCameraCharacteristics(id)
+            sensorOrientation=chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
             val map=requireNotNull(chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP))
             val jpeg=map.getOutputSizes(android.graphics.ImageFormat.JPEG).maxBy { it.width.toLong()*it.height }
             reader=ImageReader.newInstance(jpeg.width,jpeg.height,android.graphics.ImageFormat.JPEG,2)
@@ -83,6 +97,7 @@ class FieldCameraActivity:ComponentActivity() {
             val size=map.getOutputSizes(SurfaceTexture::class.java).filter { it.width<=1920 }.maxByOrNull { it.width.toLong()*it.height }
                 ?: map.getOutputSizes(SurfaceTexture::class.java).first()
             texture.surfaceTexture!!.setDefaultBufferSize(size.width,size.height)
+            previewSize=size;runOnUiThread {updatePreviewTransform()}
             preview=Surface(texture.surfaceTexture)
             manager.openCamera(id,object:CameraDevice.StateCallback() {
                 override fun onOpened(camera:CameraDevice) {

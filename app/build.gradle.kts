@@ -9,6 +9,8 @@ plugins {
 
 // Validation APKs omit machine-local endpoints/credentials without editing their files.
 val gboValidationBuild = providers.gradleProperty("gboValidationBuild").orNull == "true"
+// Explicit Debug test override; does not edit private settings or enable remote capability.
+val gboPhotoNamesV2Test = providers.gradleProperty("gboPhotoNamesV2Test").orNull == "true"
 val driveProperties = Properties().apply {
     val config = rootProject.file("drive.local.properties")
     if (!gboValidationBuild && config.exists()) config.inputStream().use { load(it) }
@@ -106,6 +108,9 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            if(gboPhotoNamesV2Test) buildConfigField("boolean", "GBO_PHOTO_NAMES_V2_ENABLED", "true")
+        }
         release {
             if (releaseSigningReady) signingConfig = signingConfigs.getByName("gboHistoricalRelease")
             isDebuggable = false

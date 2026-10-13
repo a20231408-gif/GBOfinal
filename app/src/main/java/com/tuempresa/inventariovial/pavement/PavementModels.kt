@@ -15,7 +15,7 @@ enum class PavementGeometry { LINEAR, AREA, POTHOLE, SLABS, GLOBAL }
 data class PavementDamageDefinition(
     val code: Int, val name: String, val unit: String?, val geometry: PavementGeometry,
     val severities: List<String> = listOf("L", "M", "H")
-)
+) : java.io.Serializable
 
 object PavementCatalog {
     private val asphalt = listOf(
@@ -75,7 +75,7 @@ data class PavementSampleEntity(
     val slabWidthM: Double? = null,
     val slabLengthM: Double? = null,
     val sicDataJson: String? = null
-)
+) : java.io.Serializable
 
 @Entity(tableName = "pavement_damages", foreignKeys = [ForeignKey(entity = PavementSampleEntity::class, parentColumns = ["id"], childColumns = ["sampleId"], onDelete = ForeignKey.CASCADE)], indices = [Index("sampleId")])
 data class PavementDamageEntity(
@@ -94,11 +94,11 @@ data class PavementDamageEntity(
     @ColumnInfo(defaultValue = "''") val inspectorUserId: String = "",
     @ColumnInfo(defaultValue = "''") val inspectorName: String = "",
     val depthMm: Double? = null
-)
+) : java.io.Serializable
 
 @Entity(tableName = "pavement_damage_photos", foreignKeys = [ForeignKey(entity = PavementDamageEntity::class, parentColumns = ["id"], childColumns = ["damageId"], onDelete = ForeignKey.CASCADE)], indices = [Index("damageId")])
 data class PavementDamagePhotoEntity(
     @PrimaryKey val id: String, val damageId: String, val localPath: String,
     val createdAt: Long = System.currentTimeMillis(),
     val retiredAt: Long? = null, val replacedByPhotoId: String? = null
-)
+) : java.io.Serializable

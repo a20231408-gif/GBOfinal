@@ -93,18 +93,18 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
     val surface = PavementSurface.valueOf(sample.surface)
     val editable = sample.status == "DRAFT" && sample.inspectorUserId == userId
     val damages by remember(sample.id) { repo.damages(sample.id) }.collectAsState(emptyList())
-    var header by remember { mutableStateOf(false) }
-    var draft by remember { mutableStateOf<PavementDamageEntity?>(null) }
+    var header by rememberSaveable(sample.id) { mutableStateOf(false) }
+    var draft by rememberSaveable(sample.id) { mutableStateOf<PavementDamageEntity?>(null) }
     var selected by rememberSaveable(sample.id) { mutableStateOf<String?>(null) }
-    var movingId by remember { mutableStateOf<String?>(null) }
-    var definition by remember { mutableStateOf(PavementCatalog.forSurface(surface).first()) }
-    var showMeasurement by remember { mutableStateOf(false) }
-    var severity by remember { mutableStateOf(definition.severities.firstOrNull()) }
-    var first by remember { mutableStateOf<Pair<Double,Double>?>(null) }
-    var slabSet by remember { mutableStateOf(emptySet<Int>()) }
+    var movingId by rememberSaveable(sample.id) { mutableStateOf<String?>(null) }
+    var definition by rememberSaveable(sample.id) { mutableStateOf(PavementCatalog.forSurface(surface).first()) }
+    var showMeasurement by rememberSaveable(sample.id) { mutableStateOf(false) }
+    var severity by rememberSaveable(sample.id) { mutableStateOf(definition.severities.firstOrNull()) }
+    var first by rememberSaveable(sample.id) { mutableStateOf<Pair<Double,Double>?>(null) }
+    var slabSet by rememberSaveable(sample.id) { mutableStateOf(emptySet<Int>()) }
     var message by remember { mutableStateOf("") }
-    var closeConfirm by remember { mutableStateOf(initialPage=="REVIEW" && editable) }
-    var mediaDialog by remember {mutableStateOf(initialPage=="PHOTOS")}
+    var closeConfirm by rememberSaveable(sample.id) { mutableStateOf(initialPage=="REVIEW" && editable) }
+    var mediaDialog by rememberSaveable(sample.id) {mutableStateOf(initialPage=="PHOTOS")}
     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
     var photoDamage by rememberSaveable { mutableStateOf<String?>(null) }
     var photoRevision by remember { mutableIntStateOf(0) }
@@ -300,8 +300,8 @@ if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title
     val scope=rememberCoroutineScope()
     val photos by remember(id,repo) {repo.observePhotos(id)}.collectAsState(emptyList())
     val history by remember(id,repo) {repo.photoHistory(id)}.collectAsState(emptyList())
-    var remove by remember(id) {mutableStateOf<PavementDamagePhotoEntity?>(null)}
-    var replace by remember(id) {mutableStateOf<PavementDamagePhotoEntity?>(null)}
+    var remove by rememberSaveable(id) {mutableStateOf<PavementDamagePhotoEntity?>(null)}
+    var replace by rememberSaveable(id) {mutableStateOf<PavementDamagePhotoEntity?>(null)}
     var showHistory by rememberSaveable(id) {mutableStateOf(false)}
     val context=LocalContext.current
     com.tuempresa.inventariovial.core.PhotoCaptureCard("Fotografías del daño · ${photos.size}",photos.map {File(it.localPath)},

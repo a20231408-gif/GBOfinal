@@ -70,7 +70,8 @@ class FormRotation10DTest {
         compose.onNode(hasSetTextAction() and hasText("OBSERVACIONES")).performTextInput("Unsaved rotation 10D")
         val before=runBlocking {vm.field.dao.observeAllRecords().first().map {it.id to it.updatedAt}}
         restore.emulateSavedInstanceStateRestore()
-        waitForm();scroll("OBSERVACIONES")
+        // The restored LazyColumn is already at OBSERVACIONES; the header is not composed.
+        compose.onNodeWithTag("legacy-inventory-form").assertExists();scroll("OBSERVACIONES")
         compose.onNode(hasSetTextAction() and hasText("OBSERVACIONES")).assertTextContains("Unsaved rotation 10D")
         compose.onNodeWithText("NUEVO REGISTRO").assertDoesNotExist()
         assertEquals(before,runBlocking {vm.field.dao.observeAllRecords().first().map {it.id to it.updatedAt}})
@@ -106,7 +107,8 @@ class FormRotation10DTest {
         compose.onNodeWithTag("review-photo-0").performClick()
         compose.waitUntil(10000){compose.onAllNodesWithText("Cerrar").fetchSemanticsNodes().size==1}
         restore.emulateSavedInstanceStateRestore()
-        compose.waitUntil(10000){compose.onAllNodesWithText("Cerrar").fetchSemanticsNodes().size==1}
+        try {compose.waitUntil(10000){compose.onAllNodesWithText("Cerrar").fetchSemanticsNodes().size==1}}
+        catch(e:Exception){println(compose.onAllNodes(isRoot(),useUnmergedTree=true).printToString());throw e}
         compose.onNodeWithText("Cerrar").performClick();assertArrayEquals(bytes,file.readBytes())
     }
 }

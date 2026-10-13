@@ -5,6 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -38,19 +39,19 @@ internal object PavementTechnicalText {
 @Composable internal fun SampleDialog(s: PavementSampleEntity, feedback: String, dismiss: () -> Unit, save: (PavementSampleEntity) -> Unit) {
     val context=LocalContext.current
     val projectRoutes=remember(context){ProjectRouteCatalog.load(context)}
-    var ruta by remember { mutableStateOf(s.ruta) }
-    var tramo by remember { mutableStateOf(s.tramo.ifBlank { projectRoutes.find(ruta)?.segmentCode.orEmpty() }) }
-    var carril by remember { mutableStateOf(s.carril) }; var calzada by remember { mutableStateOf(s.calzada) }
-    var start by remember { mutableStateOf(s.prInicial) }
-    var width by remember { mutableStateOf(s.anchoM.toString()) }; var length by remember { mutableStateOf(s.largoM.toString()) }
-    var rows by remember { mutableStateOf(s.slabRows.toString()) }; var cols by remember { mutableStateOf(s.slabColumns.toString()) }
-    var slabWidth by remember { mutableStateOf(PavementHeader.slabWidth(s).toString()) }
-    var slabLength by remember { mutableStateOf(PavementHeader.slabLength(s).toString()) }
+    var ruta by rememberSaveable { mutableStateOf(s.ruta) }
+    var tramo by rememberSaveable { mutableStateOf(s.tramo.ifBlank { projectRoutes.find(ruta)?.segmentCode.orEmpty() }) }
+    var carril by rememberSaveable { mutableStateOf(s.carril) }; var calzada by rememberSaveable { mutableStateOf(s.calzada) }
+    var start by rememberSaveable { mutableStateOf(s.prInicial) }
+    var width by rememberSaveable { mutableStateOf(s.anchoM.toString()) }; var length by rememberSaveable { mutableStateOf(s.largoM.toString()) }
+    var rows by rememberSaveable { mutableStateOf(s.slabRows.toString()) }; var cols by rememberSaveable { mutableStateOf(s.slabColumns.toString()) }
+    var slabWidth by rememberSaveable { mutableStateOf(PavementHeader.slabWidth(s).toString()) }
+    var slabLength by rememberSaveable { mutableStateOf(PavementHeader.slabLength(s).toString()) }
     val rigid = s.surface == "RIGID"
     val geometricLength = if (rigid) (rows.toIntOrNull() ?: 0) * (slabLength.replace(',', '.').toDoubleOrNull() ?: 0.0) else length.replace(',', '.').toDoubleOrNull() ?: 0.0
     val end = runCatching { PavementChainage.format(PavementChainage.parse(start) + geometricLength) }.getOrDefault("Revisa progresiva y dimensiones")
-    var laneWidth by remember { mutableStateOf(s.laneWidthM?.toString().orEmpty()) }
-    var sampleNumber by remember { mutableStateOf(s.muestra.toString()) }; var error by remember { mutableStateOf("") }
+    var laneWidth by rememberSaveable { mutableStateOf(s.laneWidthM?.toString().orEmpty()) }
+    var sampleNumber by rememberSaveable { mutableStateOf(s.muestra.toString()) }; var error by rememberSaveable { mutableStateOf("") }
     EditorDialog("Cabecera de muestra", dismiss, {
         runCatching {
             val w = if (rigid) cols.toInt() * number(slabWidth) else number(width)
@@ -95,14 +96,14 @@ internal object PavementTechnicalText {
 private fun number(value: String): Double = value.replace(',', '.').toDouble().also { require(it.isFinite()) { "Número no válido." } }
 
 @Composable internal fun DamageDialog(d: PavementDamageEntity, feedback: String, dismiss: () -> Unit, save: (PavementDamageEntity) -> Unit) {
-    var x1 by remember { mutableStateOf(d.x1?.toString().orEmpty()) }; var y1 by remember { mutableStateOf(d.y1?.toString().orEmpty()) }
-    var x2 by remember { mutableStateOf(d.x2?.toString().orEmpty()) }; var y2 by remember { mutableStateOf(d.y2?.toString().orEmpty()) }
-    var diameter by remember { mutableStateOf(d.diameterM?.toString().orEmpty()) }
-    var depth by remember { mutableStateOf(d.depthMm?.toString().orEmpty()) }
-    var holeArea by remember { mutableStateOf(d.areaM2?.toString().orEmpty()) }
-    var measure by remember { mutableStateOf((if(d.geometry=="AREA")d.areaM2 else d.lengthM)?.toString().orEmpty()) }; var crack by remember { mutableStateOf(d.crackWidthMm?.toString().orEmpty()) }
-    var observation by remember { mutableStateOf(d.observation.orEmpty()) }; var slabs by remember { mutableStateOf(d.slabs) }
-    var severity by remember { mutableStateOf(PavementSeverity.canonical(d.severity)) }; var error by remember { mutableStateOf("") }
+    var x1 by rememberSaveable { mutableStateOf(d.x1?.toString().orEmpty()) }; var y1 by rememberSaveable { mutableStateOf(d.y1?.toString().orEmpty()) }
+    var x2 by rememberSaveable { mutableStateOf(d.x2?.toString().orEmpty()) }; var y2 by rememberSaveable { mutableStateOf(d.y2?.toString().orEmpty()) }
+    var diameter by rememberSaveable { mutableStateOf(d.diameterM?.toString().orEmpty()) }
+    var depth by rememberSaveable { mutableStateOf(d.depthMm?.toString().orEmpty()) }
+    var holeArea by rememberSaveable { mutableStateOf(d.areaM2?.toString().orEmpty()) }
+    var measure by rememberSaveable { mutableStateOf((if(d.geometry=="AREA")d.areaM2 else d.lengthM)?.toString().orEmpty()) }; var crack by rememberSaveable { mutableStateOf(d.crackWidthMm?.toString().orEmpty()) }
+    var observation by rememberSaveable { mutableStateOf(d.observation.orEmpty()) }; var slabs by rememberSaveable { mutableStateOf(d.slabs) }
+    var severity by rememberSaveable { mutableStateOf(PavementSeverity.canonical(d.severity)) }; var error by rememberSaveable { mutableStateOf("") }
     val definition = PavementCatalog.forSurface(PavementSurface.valueOf(d.surface)).first { it.code == d.code }
     EditorDialog("${d.code} · ${d.name}", dismiss, {
         runCatching {

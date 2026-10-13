@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.tuempresa.inventariovial.camera.loadCorrectlyOrientedBitmap
@@ -40,7 +42,7 @@ import kotlinx.coroutines.withContext
 /** Reuses the current local decoder for review; no capture or storage infrastructure. */
 @Composable fun InventoryPhotoReview(paths: List<String>) {
     var preview by rememberSaveable { mutableStateOf<String?>(null) }
-    LazyRow(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+    LazyRow(Modifier.fillMaxWidth().testTag("photo-review-gallery").semantics {stateDescription=if(preview!=null)"Vista previa abierta" else "Galería"},horizontalArrangement=Arrangement.spacedBy(8.dp)) {
         itemsIndexed(paths) {index,path->
             LocalPhotoImage(path,480,Modifier.size(148.dp,112.dp).testTag("review-photo-$index").clickable {preview=path})
         }
