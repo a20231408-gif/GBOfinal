@@ -1,0 +1,119 @@
+{
+  "uniqueCases": 22,
+  "passed": 22,
+  "failed": 0,
+  "physicalTabletTestExecuted": false,
+  "realDriveWriteExecuted": false,
+  "cases": {
+    "com.tuempresa.inventariovial.FormRotation10DTest.editingRestoresUnsavedTextAndKeepsHistoricalEndWhenCoreIsSaved": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/rotacion-intento-1.xml",
+      "seconds": 69.711
+    },
+    "com.tuempresa.inventariovial.FormRotation10DTest.workspaceRestoresIncompleteCulvertWithoutReturningHomeOrCreatingRoomRevision": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.FormRotation10DTest.xml",
+      "seconds": 29.057
+    },
+    "com.tuempresa.inventariovial.FormRotation10DTest.createAndEditCoreHaveIdenticalFieldsForEveryLegacySicAndNoCulvertEndOrGnssSuggestion": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/rotacion-intento-1.xml",
+      "seconds": 3.037
+    },
+    "com.tuempresa.inventariovial.FormRotation10DTest.photoPreviewRestoresAndDecoderRespectsExifWithoutChangingOriginal": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.FormRotation10DTest.xml",
+      "seconds": 1.241
+    },
+    "com.tuempresa.inventariovial.SyncRecovery10DTest.lostFinalHttpAckReplaysCommitAndNeverRestagesVerifiedFiles": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/sync-5-aprobadas.xml",
+      "seconds": 2.603
+    },
+    "com.tuempresa.inventariovial.SyncRecovery10DTest.validAckConfirmsButIncompleteAckConservesSnapshot": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/sync-5-aprobadas.xml",
+      "seconds": 3.444
+    },
+    "com.tuempresa.inventariovial.SyncRecovery10DTest.editDuringDeliveryKeepsUuidAndUsesLateAckAsBaseOnly": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/sync-5-aprobadas.xml",
+      "seconds": 5.068
+    },
+    "com.tuempresa.inventariovial.SyncRecovery10DTest.inactiveUploadingNeverLooksActiveAndProgressUsesOnlyRealFileCounts": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/sync-5-aprobadas.xml",
+      "seconds": 0.103
+    },
+    "com.tuempresa.inventariovial.SyncRecovery10DTest.cancelledWorkerClearsActiveStateAndRetainsExactPreparation": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/sync-5-aprobadas.xml",
+      "seconds": 3.618
+    },
+    "com.tuempresa.inventariovial.BridgeMedia10ScreenTest.singleCategoryPortraitHasSideBySideActionsAndSeparateCounters": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.BridgeMedia10ScreenTest.xml",
+      "seconds": 6.238
+    },
+    "com.tuempresa.inventariovial.CameraPreview10DTest.previewHasUniformPixelScaleAndFitsAfterAllSensorAndDisplayRotations": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.CameraPreview10DTest.xml",
+      "seconds": 0.048
+    },
+    "com.tuempresa.inventariovial.PavementPhotos10CTest.existingQueueAcceptsJpegAndOnlyConfirmsValidAckWithIdempotentRetry": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml",
+      "seconds": 1.036
+    },
+    "com.tuempresa.inventariovial.PavementPhotos10CTest.migration18to19KeepsExistingPhotoIdsPathsAndClosedSamples": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml",
+      "seconds": 0.258
+    },
+    "com.tuempresa.inventariovial.PavementPhotos10CTest.replacementAndRetirementKeepOriginalsAndHistory": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml",
+      "seconds": 0.121
+    },
+    "com.tuempresa.inventariovial.PavementPhotos10CTest.cameraAndImportsStayBoundToExactDamageAndShareSamplePanel": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml",
+      "seconds": 0.106
+    },
+    "com.tuempresa.inventariovial.PavementPhotos10CTest.originalsAndActiveAndRetiredAssociationSurviveOfflineReopen": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml",
+      "seconds": 0.156
+    },
+    "com.tuempresa.inventariovial.PavementPhotoUi10CTest.generalPanelObservesTheSamePhotoRowsWithoutManualRefresh": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/pavimentos-ui-corregido.xml",
+      "seconds": 14.11
+    },
+    "com.tuempresa.inventariovial.ReadablePhotoNames10Test.wrongIdentityCategoryLengthDuplicateOrRevisionNeverOverwritesAReservation": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml",
+      "seconds": 0.096
+    },
+    "com.tuempresa.inventariovial.ReadablePhotoNames10Test.serverReservationPersistsStableNameWithoutClaimingDeliveryAck": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml",
+      "seconds": 0.098
+    },
+    "com.tuempresa.inventariovial.ReadablePhotoNames10Test.namingV2CapabilityGateMakesNoPostToAnOldBackend": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml",
+      "seconds": 0.213
+    },
+    "com.tuempresa.inventariovial.VideoContinuation9Test.historicalNonBridgeVideosArePreservedAndNeverReachTransport": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml",
+      "seconds": 0.128
+    },
+    "com.tuempresa.inventariovial.VideoContinuation9Test.waitingParentAndMissingCapabilityPreserveOriginalAndQueue": {
+      "result": "passed",
+      "evidence": "docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml",
+      "seconds": 0.106
+    }
+  }
+}

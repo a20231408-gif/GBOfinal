@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PavementPhotoUi10CTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-13T07:18:52.624Z" hostname="JULIAN" time="14.388">
+  <properties/>
+  <testcase name="generalPanelObservesTheSamePhotoRowsWithoutManualRefresh" classname="com.tuempresa.inventariovial.PavementPhotoUi10CTest" time="14.11"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

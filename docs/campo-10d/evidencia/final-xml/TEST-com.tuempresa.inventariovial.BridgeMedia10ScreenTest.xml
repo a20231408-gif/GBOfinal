@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.BridgeMedia10ScreenTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-13T07:00:02.746Z" hostname="JULIAN" time="6.424">
+  <properties/>
+  <testcase name="singleCategoryPortraitHasSideBySideActionsAndSeparateCounters" classname="com.tuempresa.inventariovial.BridgeMedia10ScreenTest" time="6.238"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

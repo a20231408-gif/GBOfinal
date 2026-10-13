@@ -22,8 +22,24 @@ La ruta activa, tipo de elemento, borrador, campos crudos, categorías, destinos
 
 Resultados e intentos en MATRIZ_10D y campo-10d/evidencia. Las pruebas locales usan datos ficticios y respuestas simuladas; no equivalen a cámara física, proceso Android real, Huawei o Drive real. Los fallos iniciales de compilación y el intento interrumpido por presión de memoria se conservan. No se repiten baterías generales 8B/9/10.
 
-Primer bloque: 5 pruebas de sincronización y 2 de formularios aprobadas localmente; las 2 restantes de restauración se repiten tras corregir la navegación/espera del montaje de prueba. El código principal compila. Estado final de Debug: pendiente del cierre. VersionCode 16 / versión 1.4.2, mismo applicationId y firma Debug habitual. No Release, desinstalación, borrado de campo, renombrado histórico o despliegue.
+Resultado local: **22 casos focalizados aprobados, sin fallos pendientes**, con todos los intentos fallidos conservados. Ambas APK Debug compiladas y verificadas: ordinaria y prueba V2. VersionCode 16 / versión 1.4.2, mismo applicationId y firma Debug habitual. No Release, desinstalación, borrado de campo, renombrado histórico o despliegue.
 
 Anulación remota: sigue deshabilitada hasta disponer de autoridad individual y motor lifecycle compatible. Ver PENDIENTES_BACKEND_10D. La comprobación física se detalla en PRUEBAS_TABLET_10D.
 
 Observación del propietario: la ficha consultada ahora muestra «Drive: Sincronizado». No se recibió UUID/revisiones ni se consultó esa ficha desde esta ejecución; no permite atribuir una causa concreta al caso real anterior.
+
+Etapas publicadas: 1ddbafcc260929637a6bba5e9a0e4cb22b71b6a3 y bb10c4644d0481c87ca98f1fad45c092b7b5cdc9, ambas verificadas con git ls-remote. La segunda mantiene diálogos/campos de Pavimentos con estado serializable sin cambiar tablas, cálculos PCI/URCI o malla.
+
+La vista previa Camera2 llenaba TextureView sin compensar la proporción del buffer: ahora aplica escala uniforme y compensación del display, incluyendo giro de 180 grados mediante DisplayListener. Se basa en la [guía oficial Camera2](https://developer.android.com/codelabs/android-camera2-preview); el resultado físico en Huawei sigue pendiente. El lector de fotos continúa respetando los ocho estados EXIF y usa ContentScale.Fit sin reescribir originales.
+
+V2: compilación de prueba preparada con la opción Gradle -PgboPhotoNamesV2Test=true solo para Debug. Instrucciones en PRUEBAS_TABLET_10D. No se activa el flag en configuraciones privadas ni la capacidad publicada.
+
+APK de pruebas V2: app/build/outputs/apk/debug/app-debug-10d-names-v2-test.apk, generada con configuración local, GBO_PHOTO_NAMES_V2_ENABLED=true y video remoto false. SHA-256 37f2b721e1056b4a19fe1f9569dfddc65f0f2484ba8a0eacbfc96ddb5e385b9a. Solo para ficha/dispositivo de prueba coordinados; servidor sigue anunciando capacidad V2 0 según el propietario. No se instaló ni se efectuó escritura real de Drive.
+
+Fuente de compilación: f8f2904be01eb4beb7ed95701aa6027097ac165b (incluye las etapas críticas y el ajuste del entorno de prueba). La opción Debug true/false explícita fue publicada en 4bf32fae6704e83459c1a3b16e5be7ffc483a67a. El último commit de cierre añadirá resultados/documentación; no cambia el código compilado.
+
+Los fallos de pruebas UI se resolvieron con navegación/espera/desplazamiento adecuados y WorkManager en la Application sintética. Se conserva el error de invocación Gradle V2 (opción --tests asociada a assembleDebug) junto a su ejecución corregida exitosa. No quedan casos focalizados fallidos; esto no acredita pruebas físicas de cámara/rotación/Drive en la Huawei.
+
+APK para la primera comprobación en tablet: **app/build/outputs/apk/debug/app-debug-10d.apk** (copia de app-debug.apk). Compilación Debug ordinaria SUCCESS en 2 min 33 s; nombres V2 false, video remoto false. SHA-256 **a57857e2a4cd182b09db97dc7b3b02c39d286524153acc7fc5aff63c3b127318**; 40897573 bytes. Firma Debug verificada con certificado d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872. Configuración compilada: endpoint Drive, token Drive y endpoint de usuarios presentes; control de acceso conserva false según configuración local. No se exportan valores privados.
+
+Antes de entregar a ingenieros: instalar como actualización únicamente sobre una firma compatible, conservar la instalación/datos si Android rechaza la firma y completar el protocolo Huawei/Drive ficticio de PRUEBAS_TABLET_10D. No hay pruebas físicas 10D realizadas, ni escritura/despliegue de Apps Script en esta ejecución. Anulación remota bloqueada por falta de autoridad efectiva; activación V2/video remotos pendientes de coordinación del propietario.

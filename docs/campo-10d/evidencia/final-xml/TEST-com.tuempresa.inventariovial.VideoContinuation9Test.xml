@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.VideoContinuation9Test" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-13T07:02:17.297Z" hostname="JULIAN" time="0.239">
+  <properties/>
+  <testcase name="historicalNonBridgeVideosArePreservedAndNeverReachTransport" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.128"/>
+  <testcase name="waitingParentAndMissingCapabilityPreserveOriginalAndQueue" classname="com.tuempresa.inventariovial.VideoContinuation9Test" time="0.106"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[System.logW: A resource failed to call close. 
+]]></system-err>
+</testsuite>

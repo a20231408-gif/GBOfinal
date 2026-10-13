@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.CameraPreview10DTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-13T07:00:09.218Z" hostname="JULIAN" time="0.052">
+  <properties/>
+  <testcase name="previewHasUniformPixelScaleAndFitsAfterAllSensorAndDisplayRotations" classname="com.tuempresa.inventariovial.CameraPreview10DTest" time="0.048"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

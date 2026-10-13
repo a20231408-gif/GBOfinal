@@ -4,7 +4,7 @@ Dispositivo indicado por el propietario: Huawei MatePad 12 X, LRT-W09, HarmonyOS
 
 ## Instalación
 
-Usar la APK Debug de app/build/outputs/apk/debug/app-debug.apk con las configuraciones locales privadas. Copiarla a un dispositivo de pruebas y abrirla, o usar `adb install -r app/build/outputs/apk/debug/app-debug.apk`. Si falla por firma frente a la APK de campo, no desinstalar, no usar pm clear ni borrar almacenamiento. Detener la instalación y conservar los datos. La APK incluye configuración privada: compartir solo con las personas autorizadas; no publicar en Git.
+Usar la APK ordinaria app/build/outputs/apk/debug/app-debug-10d.apk (copia de app-debug.apk) con las configuraciones locales privadas. Copiarla a un dispositivo de pruebas y abrirla, o usar `adb install -r app/build/outputs/apk/debug/app-debug.apk`. Si falla por firma frente a la APK de campo, no desinstalar, no usar pm clear ni borrar almacenamiento. Detener la instalación y conservar los datos. La APK incluye configuración privada: compartir solo con las personas autorizadas; no publicar en Git.
 
 ## Formularios y giro
 
@@ -34,3 +34,22 @@ Usar solo fichas completamente ficticias. No editar/borrar registros de los inge
 No activar nombres V2 o video en producción unilateralmente. Cuando el propietario active la capacidad correspondiente, usar una ficha ficticia para comprobar reserva, máximo 20 caracteres, prefijo estable, reintento/ACK y nombres reales; conservar nombres/bindings históricos. Video únicamente SCAP, con padre confirmado y videoProtocol=1. Anulación remota permanece deshabilitada.
 
 Registro de resultado: fecha, modelo/API real, APK SHA-256, orientación inicial/final, tipo de cámara, UUID ficticio, revisión local/confirmada, resultado y captura del mensaje. Ninguna prueba física 10D está aprobada todavía.
+
+## Compilación de prueba V2 preparada
+
+La opción Gradle `-PgboPhotoNamesV2Test=true` fuerza GBO_PHOTO_NAMES_V2_ENABLED=true únicamente en Debug, sin editar server.local.properties. El cliente sigue exigiendo readablePhotoNamingVersion=2; con la capacidad actual 0 conserva pendiente la revisión sin efectuar la reserva o carga V2. Esta APK es exclusiva de una prueba ficticia coordinada.
+
+Desde el repositorio en PowerShell:
+
+```powershell
+$env:JAVA_HOME='D:\Android Studio\jbr'
+.\gradlew.bat :app:assembleDebug -PgboValidationBuild=false -PgboPhotoNamesV2Test=true '-Pkotlin.compiler.execution.strategy=in-process' --no-daemon --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1024m -Dfile.encoding=UTF-8'
+# Copiar esa APK a una ubicación de pruebas antes de recompilar la ordinaria.
+.\gradlew.bat :app:assembleDebug -PgboValidationBuild=false -PgboPhotoNamesV2Test=false '-Pkotlin.compiler.execution.strategy=in-process' --no-daemon --max-workers=1 '-Dorg.gradle.jvmargs=-Xmx1024m -Dfile.encoding=UTF-8'
+```
+
+La APK ordinaria se entrega con V2 y video remotos desactivados. La APK V2 de prueba ya se generó en app/build/outputs/apk/debug/app-debug-10d-names-v2-test.apk con servicios locales y firma Debug verificada. Usar primero la APK ordinaria; la V2 está reservada para el ensayo ficticio coordinado. Esa compilación no equivale a una prueba remota aprobada ni a activación del Apps Script. No alterar applicationId, versionCode o firma para evadir una incompatibilidad de instalación.
+
+## Obtener UUID de una entrega bloqueada
+
+Abrir la ficha correspondiente y desplegar Detalles de entrega Drive. Copiar **Identidad: SIC/UUID** (o el prefijo del módulo), revisión local, revisión confirmada y error completo. El texto Identidad permite selección/copia. Consultar esos datos no modifica la ficha. Una ruta de otra entrega exitosa no identifica el registro bloqueado con NOT_JPEG.

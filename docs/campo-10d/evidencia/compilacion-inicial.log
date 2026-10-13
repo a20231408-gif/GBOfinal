@@ -1,0 +1,290 @@
+Calculating task graph as configuration cache cannot be reused because file 'app\build.gradle.kts' has changed.
+> Task :buildSrc:compileJava UP-TO-DATE
+> Task :buildSrc:compileGroovy NO-SOURCE
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+
+> Configure project :app
+WARNING: The option setting 'android.disallowKotlinSourceSets=false' is experimental.
+The current default is 'true'.
+Add android.sync.suppressAgpWarnings=UNSUPPORTED_PROJECT_OPTION_USE to the gradle.properties file to suppress this warning.
+Kotlin does not yet support 25 JDK target, falling back to Kotlin JVM_24 JVM target
+Kotlin does not yet support 25 JDK target, falling back to Kotlin JVM_24 JVM target
+
+> Task :app:scapTemplateAssets UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:generateDebugBuildConfig
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:kspDebugKotlin
+
+> Task :app:compileDebugKotlin
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:869:18 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:927:119 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:939:42 Unresolved reference 'ErrorText'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1044:17 Unresolved reference 'ErrorText'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1056:13 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1087:17 Unresolved reference 'ErrorText'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1203:49 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1336:5 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1361:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1363:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1371:32 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1371:47 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1372:121 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1372:136 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1385:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1387:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1396:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1396:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1929:25 'else' entry must be the last one in a 'when' expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1994:52 No value passed for parameter 'onSuccess'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1994:52 No value passed for parameter 'onError'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1997:41 No value passed for parameter 'longitude'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1997:41 No value passed for parameter 'gpsAccuracyM'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1997:41 No value passed for parameter 'surveyDate'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1997:41 No value passed for parameter 'observations'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1997:41 No value passed for parameter 'photoPath'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:1997:41 No value passed for parameter 'detail'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2029:49 Unresolved reference 'item'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2030:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2037:47 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2041:21 Unresolved reference 'Sic18Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2045:64 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2051:107 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2051:134 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2051:218 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2052:47 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2056:25 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2057:60 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2063:21 Unresolved reference 'Sic19Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2066:42 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2073:21 Unresolved reference 'Sic20Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2077:42 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2084:21 Unresolved reference 'Sic17Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2087:42 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2094:21 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2102:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2108:48 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2113:10 Syntax error: Expecting ','.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2114:9 'if' must have both main and 'else' branches when used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2119:13 Unresolved reference 'item'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2124:31 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2130:21 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2146:17 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2151:17 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2158:17 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2163:30 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2169:19 Syntax error: Expecting an element.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2169:21 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2169:27 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2171:13 Unresolved reference 'item'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2172:17 Unresolved reference 'ErrorText'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2177:9 Unresolved reference 'item'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2179:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2184:13 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2186:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2191:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2196:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2212:18 Syntax error: Expecting an element.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2212:20 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2212:26 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2214:13 Unresolved reference 'item'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2215:17 Unresolved reference 'ErrorText'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2219:9 Unresolved reference 'item'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2219:50 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2219:87 Unresolved reference 'saveAsset'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2219:98 Syntax error: Expecting ')'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2221:68 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2226:31 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2227:52 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2229:97 Unresolved reference 'currentDraftRequest'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2241:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2267:5 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2284:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2286:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2295:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2295:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2308:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2310:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2319:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2319:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2354:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2356:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2365:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2365:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2374:9 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2375:56 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2376:34 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2447:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2447:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2448:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2448:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2464:5 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2468:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2472:27 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2476:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2481:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2483:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2492:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2492:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2499:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2504:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2506:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2515:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2515:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2522:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2527:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2529:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2538:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2538:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2546:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2547:46 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2552:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2553:25 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2554:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2556:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2560:27 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2570:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2570:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2571:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2571:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2598:5 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2602:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2606:27 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2610:10 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2613:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2618:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2620:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2629:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2629:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2636:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2673:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2709:31 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2710:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2711:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2721:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2721:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2722:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2722:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2754:5 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2758:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2761:31 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2765:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2770:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2772:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2781:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2781:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2790:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2795:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2797:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2806:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2806:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2813:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2832:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2837:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2839:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2848:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2848:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2855:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2876:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2897:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2918:40 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2921:40 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2926:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2931:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2933:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2942:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2942:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2949:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2954:5 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2956:20 Unresolved reference 'optionForCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2965:25 Unresolved reference 'codeFromOption'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2965:40 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2972:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:2999:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3036:1 Unresolved reference 'internal'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3036:14 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3046:14 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3055:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3055:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3056:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3057:5 Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3057:39 Argument type mismatch: actual type is 'Boolean', but 'Function1<String, Unit>' was expected.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3057:45 Too many arguments for 'fun ChoiceSelector(options: List<String>, selected: String, onSelected: (String) -> Unit): <ERROR TYPE REF: Recursion with local function: local final fun ChoiceSelector(options: R|kotlin/collections/List<kotlin/String>|, selected: R|kotlin/String|, onSelected: R|(kotlin/String) -> kotlin/Unit|): <implicit> {
+    ^ChoiceSelector R?C|<local>/ChoiceSelector|(R|<local>/options|, R|<local>/selected|, Boolean(true), R|<local>/onSelected|)
+}
+>'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3059:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3059:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3060:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3060:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3067:21 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3069:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3076:12 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3083:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3083:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3084:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3084:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3088:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3097:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3097:2 Classifier 'annotation class Composable : Annotation' does not have a companion object, so it cannot be used as an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3098:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3098:5 Functions which invoke @Composable functions must be marked with the @Composable annotation
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3102:5 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3105:27 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3116:1 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3122:5 Anonymous functions with names are prohibited.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3132:2 Syntax error: Expecting '->'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt:3132:2 Syntax error: Expecting an expression.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:14:37 Unresolved reference 'Sic18Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:35:38 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:38:42 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:144:19 Unresolved reference 'Sic18Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:145:17 @Composable invocations can only happen from the context of a @Composable function
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:146:17 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:148:82 Unresolved reference 'structuralConditionCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt:148:111 Unresolved reference 'functionalConditionCode'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:37:114 Suspend function 'suspend fun loadFromAssets(assetPath: String = ...): RoadReferenceData' can only be called from a coroutine or another suspend function.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:47:39 Unresolved reference 'Sic17Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:47:88 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:49:40 Unresolved reference 'Sic18Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:49:89 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:50:39 Unresolved reference 'Sic19Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:50:88 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:51:39 Unresolved reference 'Sic20Fields'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:51:88 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:51:110 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt:74:174 Unresolved reference 'message'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/SicFormCore.kt:7:37 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/SicFormCore.kt:60:9 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/SicFormCore.kt:60:121 Unresolved reference 'it'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/field/SicFormCore.kt:67:34 Unresolved reference 'SectionTitle'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/repository/EngineeringEdits.kt:55:90 Unresolved reference 'message'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt:15:37 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt:37:9 Unresolved reference 'ChoiceSelector'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt:37:78 Cannot infer type for this parameter. Specify it explicitly.
+
+> Task :app:compileDebugKotlin FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 20s
+11 actionable tasks: 3 executed, 8 up-to-date
+Configuration cache entry stored.

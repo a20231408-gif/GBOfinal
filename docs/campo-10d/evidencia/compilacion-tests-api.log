@@ -1,0 +1,88 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Calculating task graph as configuration cache cannot be reused because Gradle property 'kotlin.compiler.execution.strategy' has changed.
+> Task :buildSrc:compileJava UP-TO-DATE
+> Task :buildSrc:compileGroovy NO-SOURCE
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+
+> Configure project :app
+WARNING: The option setting 'android.disallowKotlinSourceSets=false' is experimental.
+The current default is 'true'.
+Add android.sync.suppressAgpWarnings=UNSUPPORTED_PROJECT_OPTION_USE to the gradle.properties file to suppress this warning.
+Kotlin does not yet support 25 JDK target, falling back to Kotlin JVM_24 JVM target
+Kotlin does not yet support 25 JDK target, falling back to Kotlin JVM_24 JVM target
+Kotlin does not yet support 25 JDK target, falling back to Kotlin JVM_24 JVM target
+Kotlin does not yet support 25 JDK target, falling back to Kotlin JVM_24 JVM target
+
+> Task :app:scapTemplateAssets UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:kspDebugKotlin
+> Task :app:compileDebugKotlin
+w: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/core/InventoryDraftStore.kt:55:38 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Array<(out) CapturedType(*)!>?'.
+w: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/core/InventoryDraftStore.kt:55:89 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Any?'.
+w: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/diagnostics/StabilityDiagnostics.kt:111:145 'static field TRIM_MEMORY_COMPLETE: Int' is deprecated. Deprecated in Java.
+w: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/main/java/com/tuempresa/inventariovial/repository/EngineeringEdits.kt:81:13 'when' is exhaustive so 'else' is redundant here.
+
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:kspDebugUnitTestKotlin UP-TO-DATE
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:compileDebugUnitTestKotlin
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:64:21 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:64:44 Argument type mismatch: actual type is 'AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>', but 'ComposeUiTest' was expected.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:65:9 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:65:17 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:71:9 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:71:17 Unresolved reference 'emulateSavedInstanceStateRestore'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:80:21 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:80:44 Argument type mismatch: actual type is 'AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>', but 'ComposeUiTest' was expected.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:81:9 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:81:17 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:84:9 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:84:17 Unresolved reference 'emulateSavedInstanceStateRestore'.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:103:21 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:103:44 Argument type mismatch: actual type is 'AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>', but 'ComposeUiTest' was expected.
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:104:9 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:104:17 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:106:9 This testing API is experimental and is likely to be changed or removed entirely
+e: file:///D:/Downloads/GBO_PRUEBAS_8B/app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt:106:17 Unresolved reference 'emulateSavedInstanceStateRestore'.
+
+> Task :app:compileDebugUnitTestKotlin FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugUnitTestKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 13m 58s
+27 actionable tasks: 5 executed, 22 up-to-date
+Configuration cache entry stored.

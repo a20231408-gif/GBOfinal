@@ -21,3 +21,5 @@ Después de obtenerla: integrar InventoryAuthorization10C.gs en Servicio de Usua
 No se desplegó ni modificó Apps Script publicado, ni se cambiaron permisos o credenciales reales. La anulación remota sigue pendiente y deshabilitada; el descarte reversible local de 10C se conserva.
 
 Consulta de lectura al conector Google Drive (13/10/2026): búsqueda «GBO Servicio de Usuarios» sin resultados; «GBO Usuarios» encontró únicamente la hoja «GBO - Usuarios Inventario Vial». No se leyó su tabla de usuarios/PIN ni se obtuvo la fuente del proyecto Apps Script o la revisión desplegada. La hoja no acredita el router ni la autoridad requerida.
+
+Cierre: APK ordinaria compilada con flags V2/video false; APK de prueba V2 con V2 true/video false. La generación de esa variante no modifica capacidades ni ScriptProperties de producción. No hay despliegue ni prueba remota nueva.
