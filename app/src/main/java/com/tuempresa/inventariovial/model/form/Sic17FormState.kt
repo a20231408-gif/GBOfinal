@@ -81,4 +81,4 @@ data class Sic17FormState(
     // Dimensión 3:
     // altura libre superior.
     val dimension3UpperHeightM: String = ""
-)
+) : java.io.Serializable

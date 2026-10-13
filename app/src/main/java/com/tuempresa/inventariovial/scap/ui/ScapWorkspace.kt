@@ -115,9 +115,9 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
         if(section=="F3") section="F2"
         if(section=="G") section="REVIEW"
     }
-    var confirm by remember {mutableStateOf(false)}
-    var savedDraft by remember(s.inspection.id){mutableStateOf(false)}
-    var showPending by remember(s.inspection.id){mutableStateOf(false)}
+    var confirm by rememberSaveable {mutableStateOf(false)}
+    var savedDraft by rememberSaveable(s.inspection.id){mutableStateOf(false)}
+    var showPending by rememberSaveable(s.inspection.id){mutableStateOf(false)}
     val values=scapValues(s,c,"inspection")
     val editable=s.inspection.status!="COMPLETE"
     val review=remember(s,catalog){ScapValidation.review(s,catalog)}

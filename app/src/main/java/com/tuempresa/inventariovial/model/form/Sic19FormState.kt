@@ -42,4 +42,4 @@ data class Sic19FormState(
     // 3 - Mala / totalmente obstruida
     val functionalConditionCode: String = "1",
     val structuralCriterion: String = ""
-)
+) : java.io.Serializable

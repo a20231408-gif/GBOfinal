@@ -57,7 +57,7 @@ data class Sic20FormState(
     val functionalConditionCode: String = "1",
     val wallLengthMeters: String = "",
     val lengthMode: String = "AUTO"
-) {
+) : java.io.Serializable {
 
     val usesDimension2: Boolean
         get() = classCode != "14"

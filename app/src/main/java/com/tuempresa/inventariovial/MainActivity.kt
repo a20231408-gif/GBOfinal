@@ -180,22 +180,22 @@ fun InventarioVialApp(
 private fun rememberAuthGraph(): AuthGraph = AuthGraph.get(LocalContext.current)
 
 @Composable
-private fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: AuthGraph) {
+internal fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: AuthGraph) {
     SaveWarningsDialog(inventoryViewModel)
     var detailId by rememberSaveable { mutableStateOf<String?>(null) }
-    var selectedDraft by remember { mutableStateOf<InventoryRecordEntity?>(null) }
+    var selectedDraft by rememberSaveable { mutableStateOf<InventoryRecordEntity?>(null) }
     var newSicCode by rememberSaveable {mutableStateOf<String?>(null)}
     var newSicId by rememberSaveable {mutableStateOf<String?>(null)}
     var showExport by rememberSaveable { mutableStateOf(false) }
-    var showHistory by remember { mutableStateOf(false) }
-    var showDelivery by remember { mutableStateOf(false) }
+    var showHistory by rememberSaveable { mutableStateOf(false) }
+    var showDelivery by rememberSaveable { mutableStateOf(false) }
     var showPavement by rememberSaveable { mutableStateOf(false) }
     var syncMessage by remember { mutableStateOf<String?>(null) }
-    var selectedAsset by remember {
+    var selectedAsset by rememberSaveable {
         mutableStateOf<RoadAssetType?>(null)
     }
 
-    var selectedSignalization by remember {
+    var selectedSignalization by rememberSaveable {
         mutableStateOf<SignalizationType?>(null)
     }
 
@@ -568,7 +568,7 @@ fun SignalizationFormScreen(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
-    var location by remember { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
+    var location by rememberSaveable { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
         GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
     }) }
     val prReference by inventoryViewModel.field.reference.collectAsState()
@@ -577,8 +577,8 @@ fun SignalizationFormScreen(
     var endLocationSource by rememberSaveable { mutableStateOf(draftRecord?.endLocationSource ?: "MANUAL") }
     var sideSource by rememberSaveable { mutableStateOf("MANUAL") }
     var stampedPaths by remember { mutableStateOf<Map<String,String>>(emptyMap()) }
-    var photoCaptures by remember { mutableStateOf<Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap()) }
-    var photoCategories by remember {mutableStateOf<Map<String,String>>(emptyMap())}
+    var photoCaptures by rememberSaveable { mutableStateOf<Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap()) }
+    var photoCategories by rememberSaveable {mutableStateOf<Map<String,String>>(emptyMap())}
     var photoGpsWarning by remember { mutableStateOf<String?>(null) }
     var routeSource by rememberSaveable { mutableStateOf(draftRecord?.routeSource ?: LocationSource.MANUAL) }
     var startSuggestion by remember { mutableStateOf<LocationSuggestion?>(null) }
@@ -607,23 +607,23 @@ fun SignalizationFormScreen(
         stampedPaths = emptyMap()
     }
 
-    var endPr by remember {
+    var endPr by rememberSaveable {
         mutableStateOf("")
     }
 
-    var endDistance by remember {
+    var endDistance by rememberSaveable {
         mutableStateOf("")
     }
 
-    var side by remember {
+    var side by rememberSaveable {
         mutableStateOf("D - Derecho")
     }
 
-    var observations by remember {
+    var observations by rememberSaveable {
         mutableStateOf("")
     }
 
-    val registrationDate = remember {
+    val registrationDate = rememberSaveable {
         draftRecord?.surveyDate ?: SimpleDateFormat(
             "dd/MM/yyyy",
             Locale.getDefault()
@@ -631,13 +631,13 @@ fun SignalizationFormScreen(
     }
 
     // Foto
-    var capturedPhotos by remember { mutableStateOf<List<String>>(emptyList()) }
-    var endLocation by remember { mutableStateOf<GeoLocation?>(null) }
-    var photoPath by remember {
+    var capturedPhotos by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
+    var endLocation by rememberSaveable { mutableStateOf<GeoLocation?>(null) }
+    var photoPath by rememberSaveable {
         mutableStateOf<String?>(null)
     }
 
-    var photoCaptured by remember {
+    var photoCaptured by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -646,15 +646,15 @@ fun SignalizationFormScreen(
     }
 
     // GPS
-    var latitude by remember {
+    var latitude by rememberSaveable {
         mutableStateOf<Double?>(location?.latitude)
     }
 
-    var longitude by remember {
+    var longitude by rememberSaveable {
         mutableStateOf<Double?>(location?.longitude)
     }
 
-    var gpsAccuracy by remember {
+    var gpsAccuracy by rememberSaveable {
         mutableStateOf<Float?>(location?.horizontalAccuracy)
     }
 
@@ -675,7 +675,7 @@ fun SignalizationFormScreen(
     // ESTADOS SIC CALIFICADOS
     // =========================================================
 
-    var sic21State by remember(signalizationType) {
+    var sic21State by rememberSaveable(signalizationType) {
 
         mutableStateOf(
 
@@ -712,7 +712,7 @@ fun SignalizationFormScreen(
     }
 
 
-    var sic22State by remember(signalizationType) {
+    var sic22State by rememberSaveable(signalizationType) {
 
         mutableStateOf(
             Sic22FormState()
@@ -874,7 +874,11 @@ fun SignalizationFormScreen(
         sessionId=if(draftRecord!=null) draftRecord.sessionId else fieldSession?.sessionId,segment=segment,direction=direction,
         photoCaptures=photoCaptures,photoCategories=photoCategories) }
     var draftNotice by remember { mutableStateOf("") }
+    var savedPhotoFingerprint by rememberSaveable { mutableStateOf<String?>(null) }
+    var draftLoaded by rememberSaveable(draftRecord?.id) { mutableStateOf(false) }
     LaunchedEffect(draftRecord?.id) {
+        if(draftLoaded)return@LaunchedEffect
+        draftLoaded=true
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
         if(raw!=null) {
             startDistance=raw.getString("startDistanceM")
@@ -898,12 +902,29 @@ fun SignalizationFormScreen(
                     if(m.isNull("altitude"))null else m.getDouble("altitude"),timestamp=m.optLong("timestamp"))
                 com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(m.isNull("capturedAt"))null else m.getLong("capturedAt"),fix,m.getString("source"),if(m.isNull("replacesPath"))null else m.getString("replacesPath"))
             }
+        } else if(draftRecord!=null) {
+            val snapshot=inventoryViewModel.field.dao.snapshot(draftRecord.id)
+            if(snapshot!=null) {
+                observations=snapshot.record.observations.orEmpty();side=snapshot.record.sideCode ?: side
+                endPr=snapshot.record.endPrCode.orEmpty();endDistance=snapshot.record.endDistanceM?.toString().orEmpty()
+                capturedPhotos=snapshot.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.map {it.localPath}
+                photoCategories=snapshot.photos.filter {it.scapInspectionId==null}.associate {it.localPath to (it.photoCategory ?: "GENERAL")}
+                photoPath=capturedPhotos.lastOrNull();photoCaptured=capturedPhotos.isNotEmpty()
+                when(val detail=com.tuempresa.inventariovial.repository.EngineeringEdits.form(snapshot)) {
+                    is SicFormDetail.Sic21->sic21State=detail.state
+                    is SicFormDetail.Sic22->sic22State=detail.state
+                    else->Unit
+                }
+            }
         }
+        if(draftRecord!=null)savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString()
     }
     LaunchedEffect(capturedPhotos,photoCaptures,photoCategories) {
+        val fingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString()
+        if(savedPhotoFingerprint==fingerprint)return@LaunchedEffect
         if(capturedPhotos.isNotEmpty() || draftId!=null) {
             kotlinx.coroutines.delay(400)
-            if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
+            if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString();draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
         }
     }
 
@@ -912,14 +933,17 @@ fun SignalizationFormScreen(
         com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),prReference.prs,direction)
     com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
         title="Registrar ${signalizationType.title}",subtitle="${signalizationType.sicCode} · ${signalizationType.subtitle}",
-        onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
+        onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString();draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
         onBack=onBack,draftNotice=draftNotice
     ) {
         item {
-            SurveyHeader(survey, segment, route, roadbed, direction,
-                onSegment={ segment=it },
-                onRoute={ route=it; routeSource=LocationSource.MANUAL_OVERRIDE; locationSource=LocationSource.MANUAL_OVERRIDE; endLocationSource=LocationSource.MANUAL_OVERRIDE },
-                onRoadbed={ roadbed=it; locationSource=LocationSource.edited(locationSource, startSuggestion != null); endLocationSource=LocationSource.edited(endLocationSource, endSuggestion != null) }, onDirection={ direction=it })
+            com.tuempresa.inventariovial.field.SicFormCore(com.tuempresa.inventariovial.field.SicFormMode.CREATE,
+                if(signalizationType==SignalizationType.VERTICAL) "SIC-22" else "SIC-21",signalizationType.name,if(signalizationType==SignalizationType.VERTICAL)sic22State.classCode else sic21State.classCode,prReference,
+                com.tuempresa.inventariovial.field.SicCoreDraft(route,roadbed,startPr,startDistance,endPr,endDistance,codeFromOption(side),segment,direction)) {next->
+                route=next.route;roadbed=next.roadbed;startPr=next.startPr;startDistance=next.startDistance
+                endPr=next.endPr;endDistance=next.endDistance;side=next.side;segment=next.segment;direction=next.direction
+                routeSource=LocationSource.MANUAL_OVERRIDE;locationSource=LocationSource.MANUAL_OVERRIDE;endLocationSource=LocationSource.MANUAL_OVERRIDE
+            }
         }
         item {
             com.tuempresa.inventariovial.field.OptionalDeviceGps(location,onChange={fix->
@@ -927,130 +951,7 @@ fun SignalizationFormScreen(
                 locationSource=fix?.source ?: "CONTRACTUAL_PR_ONLY"
             },onError={gpsInputError=it})
         }
-
-        locationError?.let { error ->
-
-            item {
-                ErrorText(error)
-            }
-        }
-
-        item {
-            HorizontalDivider()
-        }
-
-        // UBICACIÓN VIAL COMÚN
-        item {
-
-            SectionTitle(if(signalizationType==SignalizationType.VERTICAL) "Ubicación del elemento" else "Ubicación inicio")
-            com.tuempresa.inventariovial.field.ContractualPrField(
-                value = startPr,
-                onValueChange = {
-                    locationSource = LocationSource.edited(locationSource, startSuggestion != null)
-                    startPr = it
-                },
-                label = {
-                    Text(if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) if(signalizationType==SignalizationType.VERTICAL) "Kilómetro de progresiva (PR)" else "Kilómetro de progresiva inicial (PR)" else if(signalizationType==SignalizationType.VERTICAL) "Código PR" else "Código PR inicial")
-                },
-                placeholder = {
-                    Text("4 dígitos, ej. 0010")
-                },
-                modifier =
-                    Modifier.fillMaxWidth()
-            )
-
-            Spacer(
-                modifier =
-                    Modifier.height(10.dp)
-            )
-
-            com.tuempresa.inventariovial.field.PrDistanceField(
-                value = startDistance,
-                onValueChange = {
-                    locationSource = LocationSource.edited(locationSource, startSuggestion != null)
-                    startDistance = it
-                },
-                label = {
-                    Text(if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) if(signalizationType==SignalizationType.VERTICAL) "Metros desde el kilómetro" else "Metros desde el kilómetro inicial" else if(signalizationType==SignalizationType.VERTICAL) "Metros desde el PR" else "Metros desde el PR inicial")
-                },
-                placeholder = {
-                    Text("Ej. 125.50")
-                },
-                modifier =
-                    Modifier.fillMaxWidth()
-            )
-        }
-
-        if (signalizationType != SignalizationType.VERTICAL) {
-        item {
-
-            SectionTitle("Ubicación fin")
-            com.tuempresa.inventariovial.field.ContractualPrField(
-                value = endPr,
-                onValueChange = {
-                    endLocationSource = LocationSource.edited(endLocationSource, endSuggestion != null)
-                    endPr = it
-                },
-                label = {
-                    Text(if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) "Kilómetro de progresiva final (PR)" else "Código PR final")
-                },
-                placeholder = {
-                    Text("4 dígitos, ej. 0010")
-                },
-                modifier =
-                    Modifier.fillMaxWidth()
-            )
-
-            Spacer(
-                modifier =
-                    Modifier.height(10.dp)
-            )
-
-            com.tuempresa.inventariovial.field.PrDistanceField(
-                value = endDistance,
-                onValueChange = {
-                    endLocationSource = LocationSource.edited(endLocationSource, endSuggestion != null)
-                    endDistance = it
-                },
-                label = {
-                    Text(if (ContractualPrInput.catalog(prReference.prs,route,roadbed).isEmpty()) "Metros desde el kilómetro final" else "Metros desde el PR final")
-                },
-                placeholder = {
-                    Text("Ej. 180.25")
-                },
-                modifier =
-                    Modifier.fillMaxWidth()
-            )
-        }
-
-        }
-
-        item {
-
-            Text(
-                text = "Lado",
-                fontWeight =
-                    FontWeight.Bold
-            )
-
-            ChoiceSelector(
-                options = listOf(
-                    "D - Derecho",
-                    "I - Izquierdo",
-                    "S - Sin objeto"
-                ),
-                selected = side,
-                onSelected = {
-                    sideSource = "MANUAL"
-                    side = it
-                }
-            )
-        }
-
-        item {
-            HorizontalDivider()
-        }
-
+        locationError?.let {error->item {ErrorText(error)}}
         // CAMPOS SEGÚN TIPO
         item {
 
@@ -1536,12 +1437,12 @@ fun AssetFormScreen(
 
     var culvertExtraRaw by rememberSaveable {mutableStateOf("{}")}
     var culvertExpanded by rememberSaveable {mutableStateOf(false)}
-    var pendingCulvertCondition by remember {mutableStateOf<Sic18FormState?>(null)}
+    var pendingCulvertCondition by rememberSaveable {mutableStateOf<Sic18FormState?>(null)}
     var culvertDraftError by remember {mutableStateOf<String?>(null)}
     var culvertExtraDirty by rememberSaveable {mutableStateOf(false)}
-    var showCulvertExit by remember {mutableStateOf(false)}
+    var showCulvertExit by rememberSaveable {mutableStateOf(false)}
     fun culvertExtra() = org.json.JSONObject(culvertExtraRaw).let {j->j.keys().asSequence().associateWith {j.getString(it)}}
-    var savedCulvert by remember {mutableStateOf<InventoryRecordEntity?>(null)}
+    var savedCulvert by rememberSaveable {mutableStateOf<InventoryRecordEntity?>(null)}
     savedCulvert?.let {record->
         com.tuempresa.inventariovial.field.CulvertUnifiedScreen(inventoryViewModel,record.id,culvertExtra(),onSave)
         return
@@ -1574,7 +1475,7 @@ fun AssetFormScreen(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
-    var location by remember { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
+    var location by rememberSaveable { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
         GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
     }) }
     val prReference by inventoryViewModel.field.reference.collectAsState()
@@ -1583,7 +1484,7 @@ fun AssetFormScreen(
     var endLocationSource by rememberSaveable { mutableStateOf(draftRecord?.endLocationSource ?: "MANUAL") }
     var sideSource by rememberSaveable { mutableStateOf("MANUAL") }
     var stampedPaths by remember { mutableStateOf<Map<String,String>>(emptyMap()) }
-    var photoCaptures by remember { mutableStateOf<Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap()) }
+    var photoCaptures by rememberSaveable { mutableStateOf<Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap()) }
     var photoGpsWarning by remember { mutableStateOf<String?>(null) }
     var routeSource by rememberSaveable { mutableStateOf(draftRecord?.routeSource ?: LocationSource.MANUAL) }
     var startSuggestion by remember { mutableStateOf<LocationSuggestion?>(null) }
@@ -1611,37 +1512,37 @@ fun AssetFormScreen(
         stampedPaths = emptyMap()
     }
 
-    var endPr by remember {
+    var endPr by rememberSaveable {
         mutableStateOf("")
     }
 
-    var endDistance by remember {
+    var endDistance by rememberSaveable {
         mutableStateOf("")
     }
 
-    var side by remember {
+    var side by rememberSaveable {
         mutableStateOf("D - Derecho")
     }
 
-    var observations by remember {
+    var observations by rememberSaveable {
         mutableStateOf("")
     }
 
-    val registrationDate = remember {
+    val registrationDate = rememberSaveable {
         draftRecord?.surveyDate ?: SimpleDateFormat(
             "dd/MM/yyyy",
             Locale.getDefault()
         ).format(Date())
     }
 
-    var capturedPhotos by remember { mutableStateOf<List<String>>(emptyList()) }
-    var photoCategories by remember {mutableStateOf<Map<String,String>>(emptyMap())}
-    var endLocation by remember { mutableStateOf<GeoLocation?>(null) }
-    var photoPath by remember {
+    var capturedPhotos by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
+    var photoCategories by rememberSaveable {mutableStateOf<Map<String,String>>(emptyMap())}
+    var endLocation by rememberSaveable { mutableStateOf<GeoLocation?>(null) }
+    var photoPath by rememberSaveable {
         mutableStateOf<String?>(null)
     }
 
-    var photoCaptured by remember {
+    var photoCaptured by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -1649,15 +1550,15 @@ fun AssetFormScreen(
         mutableStateOf<String?>(null)
     }
 
-    var latitude by remember {
+    var latitude by rememberSaveable {
         mutableStateOf<Double?>(location?.latitude)
     }
 
-    var longitude by remember {
+    var longitude by rememberSaveable {
         mutableStateOf<Double?>(location?.longitude)
     }
 
-    var gpsAccuracy by remember {
+    var gpsAccuracy by rememberSaveable {
         mutableStateOf<Float?>(location?.horizontalAccuracy)
     }
 
@@ -1678,32 +1579,32 @@ fun AssetFormScreen(
     // ESTADOS SIC CALIFICADOS
     // =========================================================
 
-    var sic17State by remember(assetType) {
+    var sic17State by rememberSaveable(assetType) {
         mutableStateOf(
             Sic17FormState()
         )
     }
 
-    var sic18State by remember(assetType) {
+    var sic18State by rememberSaveable(assetType) {
         mutableStateOf(
             Sic18FormState()
         )
     }
 
-    var sic19State by remember(assetType) {
+    var sic19State by rememberSaveable(assetType) {
         mutableStateOf(
             Sic19FormState()
         )
     }
 
-    var sic20State by remember(assetType) {
+    var sic20State by rememberSaveable(assetType) {
         mutableStateOf(
             Sic20FormState(classCode = when(assetType) { RoadAssetType.TUNNEL -> "13"; RoadAssetType.WALL -> "14"; else -> "12" })
         )
     }
 
 
-    var sic23State by remember(assetType) { mutableStateOf(Sic23FormState()) }
+    var sic23State by rememberSaveable(assetType) { mutableStateOf(Sic23FormState()) }
 
     fun hasLocationPermission(): Boolean {
 
@@ -2204,7 +2105,11 @@ fun AssetFormScreen(
         sessionId=if(draftRecord!=null) draftRecord.sessionId else fieldSession?.sessionId,segment=segment,direction=direction,
         photoCaptures=photoCaptures,photoCategories=photoCategories) }
     var draftNotice by remember { mutableStateOf("") }
+    var savedPhotoFingerprint by rememberSaveable { mutableStateOf<String?>(null) }
+    var draftLoaded by rememberSaveable(draftRecord?.id) { mutableStateOf(false) }
     LaunchedEffect(draftRecord?.id) {
+        if(draftLoaded)return@LaunchedEffect
+        draftLoaded=true
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
         if(raw!=null) {
             startDistance=raw.getString("startDistanceM")
@@ -2233,27 +2138,49 @@ fun AssetFormScreen(
                     if(m.isNull("altitude"))null else m.getDouble("altitude"),timestamp=m.optLong("timestamp"))
                 com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(m.isNull("capturedAt"))null else m.getLong("capturedAt"),fix,m.getString("source"),if(m.isNull("replacesPath"))null else m.getString("replacesPath"))
             }
+        } else if(draftRecord!=null) {
+            val snapshot=inventoryViewModel.field.dao.snapshot(draftRecord.id)
+            if(snapshot!=null) {
+                observations=snapshot.record.observations.orEmpty();side=snapshot.record.sideCode ?: side
+                endPr=snapshot.record.endPrCode.orEmpty();endDistance=snapshot.record.endDistanceM?.toString().orEmpty()
+                capturedPhotos=snapshot.photos.filter {it.scapInspectionId==null}.sortedBy {it.photoIndex}.map {it.localPath}
+                photoCategories=snapshot.photos.filter {it.scapInspectionId==null}.associate {it.localPath to (it.photoCategory ?: "GENERAL")}
+                photoPath=capturedPhotos.lastOrNull();photoCaptured=capturedPhotos.isNotEmpty()
+                when(val detail=com.tuempresa.inventariovial.repository.EngineeringEdits.form(snapshot)) {
+                    is SicFormDetail.Sic17->sic17State=detail.state
+                    is SicFormDetail.Sic18->sic18State=detail.state
+                    is SicFormDetail.Sic19->sic19State=detail.state
+                    is SicFormDetail.Sic20->sic20State=detail.state
+                    is SicFormDetail.Sic23->sic23State=detail.state
+                    else->Unit
+                }
+            }
         }
+        if(draftRecord!=null)savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString()
     }
     LaunchedEffect(capturedPhotos,photoCaptures,photoCategories) {
+        val fingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString()
+        if(savedPhotoFingerprint==fingerprint)return@LaunchedEffect
         if(capturedPhotos.isNotEmpty() || draftId!=null) {
             kotlinx.coroutines.delay(400)
-            if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
+            if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString();persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})
         }
     }
 
     com.tuempresa.inventariovial.field.LegacyInventoryFormScaffold(
         title="Registrar ${assetType.title}",subtitle="${assetType.sicCode} · ${assetType.subtitle}",
-        onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
+        onSaveDraft={if(gpsInputError==null) inventoryViewModel.saveDraft(currentDraftRequest(),{draftId=it;savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString();persistCulvertExtra(it);draftNotice="✓ Guardado en tablet · Borrador"},{draftNotice=it})},
         onBack={if(assetType==RoadAssetType.CULVERT && culvertExtraDirty) showCulvertExit=true else onBack()},draftNotice=draftNotice,
         draftErrors={culvertDraftError?.let {ErrorText(it)}}
     ) {
-        // FOTO
         item {
-            SurveyHeader(survey, segment, route, roadbed, direction,
-                onSegment={ segment=it },
-                onRoute={ route=it; routeSource=LocationSource.MANUAL_OVERRIDE; locationSource=LocationSource.MANUAL_OVERRIDE; endLocationSource=LocationSource.MANUAL_OVERRIDE },
-                onRoadbed={ roadbed=it; locationSource=LocationSource.edited(locationSource, startSuggestion != null); endLocationSource=LocationSource.edited(endLocationSource, endSuggestion != null) }, onDirection={ direction=it })
+            com.tuempresa.inventariovial.field.SicFormCore(com.tuempresa.inventariovial.field.SicFormMode.CREATE,
+                assetType.sicCode,assetType.name,if(assetType.sicCode=="SIC-20")sic20State.classCode else "",prReference,
+                com.tuempresa.inventariovial.field.SicCoreDraft(route,roadbed,startPr,startDistance,endPr,endDistance,codeFromOption(side),segment,direction)) {next->
+                route=next.route;roadbed=next.roadbed;startPr=next.startPr;startDistance=next.startDistance
+                endPr=next.endPr;endDistance=next.endDistance;side=next.side;segment=next.segment;direction=next.direction
+                routeSource=LocationSource.MANUAL_OVERRIDE;locationSource=LocationSource.MANUAL_OVERRIDE;endLocationSource=LocationSource.MANUAL_OVERRIDE
+            }
         }
         item {
             com.tuempresa.inventariovial.field.OptionalDeviceGps(location,onChange={fix->
@@ -2261,67 +2188,10 @@ fun AssetFormScreen(
                 locationSource=fix?.source ?: "CONTRACTUAL_PR_ONLY"
             },onError={gpsInputError=it})
         }
-
-        locationError?.let { error ->
-
-            item {
-                ErrorText(error)
-            }
-        }
-
-        item {
-            HorizontalDivider()
-        }
-
-        item {
-            com.tuempresa.inventariovial.field.LegacyLocationSection(prReference,prSettings.matchConfig(),route,roadbed,
-                location,startPr,startDistance,locationSource,"inicio",
-                {if(it!=null && (locationSource!=LocationSource.MANUAL_OVERRIDE || (startSuggestion==null && draftRecord?.suggestedRouteCode==null && draftRecord?.suggestedPrCode==null)))startSuggestion=it},
-                {suggestion->
-                    startSuggestion=suggestion;route=suggestion.suggestedRouteCode ?: route
-                    segment=inventoryViewModel.field.projectRoutes.find(route)?.segmentCode.orEmpty()
-                    routeSource=LocationSource.GNSS_CONFIRMED
-                    suggestion.pr?.let {startPr=it.suggestedPrCode;startDistance=it.distanceText}
-                    locationSource=if(suggestion.pr==null)LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
-                },{locationSource=LocationSource.MANUAL_OVERRIDE;routeSource=LocationSource.MANUAL_OVERRIDE},
-                {locationSource=LocationSource.edited(locationSource,startSuggestion!=null);startPr=it},
-                {locationSource=LocationSource.edited(locationSource,startSuggestion!=null);startDistance=it},inventoryViewModel.field)
-        }
-        if(needsEndLocation) item {
-            com.tuempresa.inventariovial.field.LegacyLocationSection(prReference,prSettings.matchConfig(),route,roadbed,
-                endLocation,endPr,endDistance,endLocationSource,"fin",
-                {if(it!=null && (endLocationSource!=LocationSource.MANUAL_OVERRIDE || (endSuggestion==null && draftRecord?.endSuggestedPrCode==null)))endSuggestion=it},
-                {suggestion->if(route==suggestion.suggestedRouteCode) {
-                    endSuggestion=suggestion;suggestion.pr?.let {endPr=it.suggestedPrCode;endDistance=it.distanceText}
-                    endLocationSource=if(suggestion.pr==null)LocationSource.GNSS_CONFIRMED else LocationSource.GNSS_PR_CONFIRMED
-                }},{endLocationSource=LocationSource.MANUAL_OVERRIDE},
-                {endLocationSource=LocationSource.edited(endLocationSource,endSuggestion!=null);endPr=it},
-                {endLocationSource=LocationSource.edited(endLocationSource,endSuggestion!=null);endDistance=it})
-        }
+        locationError?.let {error->item {ErrorText(error)}}
         if(assetType in setOf(RoadAssetType.WALL,RoadAssetType.DITCH,RoadAssetType.FORD)) item {
             com.tuempresa.inventariovial.field.TechnicalLengthField(assetLength,
                 if(assetType==RoadAssetType.WALL) {{metres:Double->wallManual=false;sic20State=sic20State.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO")}} else null)
-        }
-
-        if (needsSide) {
-
-            item {
-
-                Text(
-                    text = "Lado",
-                    fontWeight =
-                        FontWeight.Bold
-                )
-
-                ChoiceSelector(
-                    options = sideOptions,
-                    selected = side,
-                    onSelected = {
-                        sideSource = "MANUAL"
-                        side = it
-                    }
-                )
-            }
         }
 
         item {

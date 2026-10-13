@@ -21,7 +21,7 @@ data class GeoLocation(
     val hdop: Double? = null,
     val correctionAge: Double? = null,
     val isRtkFixed: Boolean = false
-) {
+) : java.io.Serializable {
     val horizontalAccuracy: Float get() = accuracyHorizontal
 }
 

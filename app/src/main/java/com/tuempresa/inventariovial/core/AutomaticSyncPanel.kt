@@ -13,6 +13,9 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.text.DateFormat
 import java.util.Date
+import androidx.work.WorkManager
+import androidx.work.WorkInfo
+import kotlinx.coroutines.flow.combine
 
 object SyncIntentPresentation {
     fun confirmed(intent:DriveSyncIntent?):Boolean = intent!=null && intent.state=="SYNCED" &&
@@ -20,26 +23,37 @@ object SyncIntentPresentation {
             val ack=JSONObject(intent.receiptJson ?: return@runCatching false)
             ack.optBoolean("ok") && ack.optString("key")==intent.key && ack.optLong("revision")==intent.revision
         }.getOrDefault(false)
-    fun label(intent:DriveSyncIntent?,validated:Boolean,connected:Boolean,configured:Boolean):String {
+    fun label(intent:DriveSyncIntent?,validated:Boolean,connected:Boolean,configured:Boolean,running:Boolean=false,retrying:Boolean=false):String {
         if(intent?.state=="CONFLICT")return "Conflicto · edición local conservada"
         if(!validated)return if((intent?.syncedRevision ?: 0)>0) "Actualización pendiente · requiere cierre" else "Borrador"
         if(confirmed(intent))return "Sincronizado"
         if(intent?.state=="BLOCKED")return "Bloqueado"
         if(intent?.state=="PENDING_VALIDATION" || intent==null)return "Pendiente de validación/ordenamiento"
         if(!configured || intent.state=="UNCONFIGURED")return "Sin configurar"
-        if(intent.state=="ERROR")return "Error"
-        if(intent.state=="UPLOADING")return "Subiendo"
         if(!connected)return if(intent.syncedRevision>0) "Actualización pendiente · sin conexión" else "Pendiente de conexión"
+        if(running)return "Subiendo"
+        if(retrying)return "Reintentando · esperando ejecución de Android"
+        if(intent.state=="ERROR")return "Error"
+        if(intent.state=="UPLOADING")return "Pendiente de confirmación · esperando ejecución de Android"
         if(intent.state=="UPDATE_PENDING")return "Actualización pendiente"
         return "En cola"
     }
 }
 
+@Composable private fun observedDriveWork():List<WorkInfo> {
+    val context=LocalContext.current
+    val flow=remember(context) {val manager=WorkManager.getInstance(context)
+        combine(manager.getWorkInfosForUniqueWorkFlow("automatic-drive-drain"),manager.getWorkInfosForUniqueWorkFlow("automatic-drive-recovery")){a,b->(a+b).distinctBy {it.id}}
+    }
+    return flow.collectAsState(emptyList()).value
+}
+
 @Composable fun AutomaticSyncSummary() {
     val context=LocalContext.current;val db=remember(context){InventoryDatabase.getInstance(context)}
     val intents by remember(db){db.automaticSyncDao().observe()}.collectAsState(emptyList())
+    val work=observedDriveWork()
     Text("Drive · SIC, SCAP y pavimentos")
-    Text("Pendientes: ${intents.count {it.state !in setOf("SYNCED","DRAFT")}} · Subiendo: ${intents.count {it.state=="UPLOADING"}} · Confirmadas: ${intents.count {it.state=="SYNCED" && it.revision==it.syncedRevision}}")
+    Text("Pendientes: ${intents.count {it.state !in setOf("SYNCED","DRAFT")}} · Subiendo: ${intents.count {SyncProgressPresentation.running(it,work)}} · Confirmadas: ${intents.count {SyncIntentPresentation.confirmed(it)}}")
     Text("El cierre programa el envío. Android puede diferirlo; la cola queda guardada.",style=MaterialTheme.typography.bodySmall)
 }
 
@@ -47,13 +61,27 @@ object SyncIntentPresentation {
     val context=LocalContext.current;val db=remember(context){InventoryDatabase.getInstance(context)}
     val intents by remember(db){db.automaticSyncDao().observe()}.collectAsState(emptyList())
     val intent=intents.find {it.key=="$kind/$id"};val scope=rememberCoroutineScope()
+    val work=observedDriveWork()
+    val progress by remember(context){SyncProgressStore.get(context).flow}.collectAsState()
+    val active=SyncProgressPresentation.running(intent,work)
+    val retrying=work.any {it.state==WorkInfo.State.ENQUEUED && it.runAttemptCount>0}
+    val currentProgress=progress["$kind/$id"]?.takeIf {it.revision==intent?.revision}
     var message by remember {mutableStateOf<String?>(null)}
     var tick by remember {mutableIntStateOf(0)}
     LaunchedEffect(Unit){while(true){kotlinx.coroutines.delay(3000);tick++}}
     val connected=remember(tick){val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         manager.getNetworkCapabilities(manager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)==true}
     Column {
-        Text("Drive: ${SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null)}")
+        Text("Drive: ${SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null,active,retrying)}")
+        currentProgress?.let {p->
+            if(active)Text(SyncProgressPresentation.phase(p))
+            if(SyncIntentPresentation.confirmed(intent))Text("Sincronización completada")
+            Text(SyncProgressPresentation.files(p))
+            if(!SyncIntentPresentation.confirmed(intent)) {
+                Text(SyncProgressPresentation.elapsed(p,System.currentTimeMillis()))
+                Text("Tiempo restante no disponible")
+            }
+        }
         if(!compact) {
             intent?.let {
                 Text("Origen: ${if(it.origin=="AUTOMATIC") "Automática" else "Manual desde la app"}")

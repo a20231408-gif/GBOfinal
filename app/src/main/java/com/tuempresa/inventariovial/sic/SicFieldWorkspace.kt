@@ -77,16 +77,16 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     var complete by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var dirty by rememberSaveable(format,recordId) {mutableStateOf(false)}
     var review by com.tuempresa.inventariovial.rememberRecordReview(id)
-    var exit by remember {mutableStateOf(false)}
+    var exit by rememberSaveable {mutableStateOf(false)}
     var busy by remember {mutableStateOf(false)}
     var notice by remember {mutableStateOf<String?>(null)}
     var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
     var paths by rememberSaveable {mutableStateOf<List<String>>(emptyList())}
     var photosChanged by rememberSaveable(format,recordId) {mutableStateOf(false)}
-    var categories by remember {mutableStateOf<Map<String,String>>(emptyMap())}
-    var captures by remember {mutableStateOf<Map<String,PhotoCaptureMetadata>>(emptyMap())}
-    var fix by remember {mutableStateOf<GeoLocation?>(null)}
-    var endFix by remember {mutableStateOf<GeoLocation?>(null)}
+    var categories by rememberSaveable {mutableStateOf<Map<String,String>>(emptyMap())}
+    var captures by rememberSaveable {mutableStateOf<Map<String,PhotoCaptureMetadata>>(emptyMap())}
+    var fix by rememberSaveable {mutableStateOf<GeoLocation?>(null)}
+    var endFix by rememberSaveable {mutableStateOf<GeoLocation?>(null)}
     fun values(json:String)=JSONObject(json).let {j->j.keys().asSequence().associateWith {j.getString(it)}}
     val state=SicFieldState(format,values(raw),source)
     val completion=state.completion()

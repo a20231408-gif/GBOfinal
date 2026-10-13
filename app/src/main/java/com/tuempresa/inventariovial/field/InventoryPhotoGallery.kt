@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -38,7 +39,7 @@ import kotlinx.coroutines.withContext
 
 /** Reuses the current local decoder for review; no capture or storage infrastructure. */
 @Composable fun InventoryPhotoReview(paths: List<String>) {
-    var preview by remember { mutableStateOf<String?>(null) }
+    var preview by rememberSaveable { mutableStateOf<String?>(null) }
     LazyRow(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
         itemsIndexed(paths) {index,path->
             LocalPhotoImage(path,480,Modifier.size(148.dp,112.dp).testTag("review-photo-$index").clickable {preview=path})

@@ -9,7 +9,7 @@ import java.io.File
 
 /** Raw editing drafts for an ACTIVE culvert; never replace contractual Room data until finalization. */
 data class CulvertEditingDraft(val base:Sic18FormState,val extra:Map<String,String>,val photos:List<String>,val categories:Map<String,String>,
-    val captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),val baseRevision:Long?=null,val observations:String?=null)
+    val captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),val baseRevision:Long?=null,val observations:String?=null,val core:SicCoreDraft?=null)
 object CulvertEditDraft {
     private fun file(context:Context,id:String,owner:String):File {
         require(id.matches(Regex("[A-Za-z0-9_-]{1,100}")) && owner.isNotBlank())
@@ -33,6 +33,7 @@ object CulvertEditDraft {
                         .put("satellites",f.satellites ?: JSONObject.NULL).put("hdop",f.hdop ?: JSONObject.NULL).put("correctionAge",f.correctionAge ?: JSONObject.NULL).put("isRtkFixed",f.isRtkFixed)
                 } ?: JSONObject.NULL))
             }})
+        draft.core?.let {c->json.put("core",JSONObject().put("route",c.route).put("roadbed",c.roadbed).put("startPr",c.startPr).put("startDistance",c.startDistance).put("endPr",c.endPr).put("endDistance",c.endDistance).put("side",c.side).put("segment",c.segment).put("direction",c.direction))}
         val atomic=AtomicFile(file(context,id,owner));val out=atomic.startWrite()
         try {out.write(json.toString().toByteArray());atomic.finishWrite(out)} catch(e:Exception){atomic.failWrite(out);throw e}
     }
@@ -44,7 +45,7 @@ object CulvertEditDraft {
         return CulvertEditingDraft(Sic18FormState(b.getString("classCode"),b.getString("typeCode"),b.getString("spans"),b.getString("crossSectionCode"),b.getString("dimension1M"),b.getString("dimension2M"),b.getString("structuralConditionCode"),b.getString("functionalConditionCode"),sectionShape=b.optString("sectionShape"),structuralDamagePercent=b.optString("structuralDamagePercent"),functionalObstructionPercent=b.optString("functionalObstructionPercent")),
             map(j.getJSONObject("extra")),(0 until p.length()).map {p.getString(it)},map(j.getJSONObject("categories")),
             captures.keys().asSequence().associateWith {path->val c=captures.getJSONObject(path)
-                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(c.isNull("capturedAt"))null else c.getLong("capturedAt"),com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(c.optJSONObject("fix")),c.getString("source"),if(c.isNull("replacesPath"))null else c.getString("replacesPath"))},baseRevision=if(j.isNull("baseRevision"))null else j.getLong("baseRevision"),observations=if(j.isNull("observations"))null else j.getString("observations"))
+                com.tuempresa.inventariovial.camera.PhotoCaptureMetadata(if(c.isNull("capturedAt"))null else c.getLong("capturedAt"),com.tuempresa.inventariovial.core.InventoryDraftStore.restoreFix(c.optJSONObject("fix")),c.getString("source"),if(c.isNull("replacesPath"))null else c.getString("replacesPath"))},baseRevision=if(j.isNull("baseRevision"))null else j.getLong("baseRevision"),observations=if(j.isNull("observations"))null else j.getString("observations"),core=j.optJSONObject("core")?.let {c->SicCoreDraft(c.getString("route"),c.getString("roadbed"),c.getString("startPr"),c.getString("startDistance"),c.optString("endPr"),c.optString("endDistance"),c.optString("side","D"),c.optString("segment"),c.optString("direction","INCREASING"))})
     }
     fun clear(context:Context,id:String,owner:String) {file(context,id,owner).delete()}
 }

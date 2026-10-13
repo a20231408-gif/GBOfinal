@@ -32,4 +32,4 @@ data class Sic21FormState(
     // 2 - Regular
     // 3 - Mala
     val conditionCode: String = "1"
-)
+) : java.io.Serializable

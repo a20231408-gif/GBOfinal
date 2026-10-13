@@ -9,7 +9,7 @@ data class Sic23FormState(
     val typeCode: String = "1",
     val widthM: String = "",
     val description: String = ""
-) {
+) : java.io.Serializable {
     val typeOptions: List<String>
         get() = when (classCode) {
             "21" -> listOf("1 - Ancho total", "2 - Berma central", "3 - Obstrucción",

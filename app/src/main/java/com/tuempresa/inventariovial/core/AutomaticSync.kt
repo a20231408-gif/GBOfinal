@@ -104,7 +104,8 @@ object AutomaticSync {
 
 class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWorker(context,params) {
     override suspend fun doWork():Result=withContext(Dispatchers.IO) {
-        val retry=AutomaticSyncDrain.run(applicationContext,InventoryDatabase.getInstance(applicationContext),attempt=runAttemptCount)
+        val retry=AutomaticSyncDrain.run(applicationContext,InventoryDatabase.getInstance(applicationContext),attempt=runAttemptCount,
+            onProgress={key,revision,_->setProgressAsync(workDataOf("activeKey" to key,"activeRevision" to revision)).get()})
         if(retry)Result.retry() else Result.success()
     }
 }
@@ -114,12 +115,14 @@ object AutomaticSyncDrain {
     private val mutex=Mutex()
     suspend fun run(context:Context,db:InventoryDatabase,
         transportFactory:()->AutomaticDriveTransport={AutomaticDriveHttp()},
-        configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0):Boolean = mutex.withLock {
-        drain(context,db,transportFactory,configurationError,attempt)
+        configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0,
+        onProgress:(String,Long,DeliveryProgress)->Unit={_,_,_->}):Boolean = mutex.withLock {
+        drain(context,db,transportFactory,configurationError,attempt,onProgress)
     }
     private suspend fun drain(context:Context,db:InventoryDatabase,
         transportFactory:()->AutomaticDriveTransport={AutomaticDriveHttp()},
-        configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0):Boolean {
+        configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0,
+        onProgress:(String,Long,DeliveryProgress)->Unit):Boolean {
         AutomaticSync.recoverGpsBlocked(db)
         AutomaticSync.recoverJpegBlocked(context,db)
         val dao=db.automaticSyncDao()
@@ -130,8 +133,12 @@ object AutomaticSyncDrain {
             var intent=dao.get(queued.key) ?: continue
             if(intent.state=="CONFLICT" || !AutomaticDelivery.validated(db,intent))continue
             if(configurationError!=null) {dao.state(intent.key,intent.revision,"UNCONFIGURED",configurationError);continue}
+            var last=DeliveryProgress("PREPARING")
+            fun progress(p:DeliveryProgress) {last=p;SyncProgressStore.get(context).record(intent.key,intent.revision,p);onProgress(intent.key,intent.revision,p)}
             try {
+                progress(last)
                 val transport=transportFactory()
+                transport.progress(::progress)
                 if(!transport.supportsV3()) {dao.state(intent.key,intent.revision,"UNCONFIGURED","El servicio requiere syncProtocol 3. Se comprobará automáticamente de nuevo; la copia anterior se conserva.");continue}
                 if(!transport.supportsFamilyPaths()) {
                     dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend requiere pathVersion 4, stableFamilyNumbering=true y photoCategoryVersion=1. No se envió contenido; la cola se conserva.")
@@ -166,7 +173,10 @@ object AutomaticSyncDrain {
                     continue
                 }
                 dao.state(intent.key,intent.revision,"UPLOADING",null)
-                if(!AutomaticDelivery.current(db,intent,prepared))continue
+                if(!AutomaticDelivery.current(db,intent,prepared)) {
+                    dao.state(intent.key,intent.revision,"PENDING_VALIDATION","La ficha cambió antes del envío. Guarda y valida la revisión actual; preparación conservada.")
+                    continue
+                }
                 val ack=transport.post(prepared)
                 if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"),ack.optLong("remoteRevision").takeIf {it>0})
                 if(!AutomaticDelivery.validAck(prepared,ack,intent.receiptJson?.let(::JSONObject)))throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
@@ -189,10 +199,17 @@ object AutomaticSyncDrain {
                             if(prepared.getJSONArray("sicRows").length()>0)db.inventoryDao().markTechnicalExcelSynced(intent.recordId)
                         }
                         if(intent.kind=="SCAP")db.scapDao().inspection(intent.recordId)?.let {s->db.scapDao().syncState(s.id,s.updatedAt,"SYNCED")}
+                    } else {
+                        // A valid late receipt confirms its base, never an unsaved/newer local source.
+                        dao.state(intent.key,intent.revision,"PENDING_VALIDATION","La entrega anterior está confirmada; guarda y valida los cambios locales para enviar otra revisión.")
                     }
                 }
+                progress(DeliveryProgress("COMPLETE",prepared.getJSONArray("files").length(),prepared.getJSONArray("files").length()))
             com.tuempresa.inventariovial.media.VideoSync.enqueue(context)
-            }catch(e:CancellationException){throw e}
+            }catch(e:CancellationException){
+                withContext(NonCancellable) {dao.state(intent.key,intent.revision,"ERROR","Envío interrumpido por Android; confirmación pendiente. Se reintentará el mismo snapshot.")}
+                throw e
+            }
             catch(e:SyncPending){dao.state(intent.key,intent.revision,"PENDING_VALIDATION",e.message)}
             catch(e:SyncRejection){
                 val pending=e.code=="ORDERING_REQUIRED"
@@ -209,8 +226,13 @@ object AutomaticSyncDrain {
             }catch(_:Exception){
                 dao.state(intent.key,intent.revision,"ERROR","No se confirmó la entrega. Archivos locales conservados; reintenta la comunicación.")
                 retry=retry || attempt<4
+            } finally {
+                // A stopped WorkManager worker may reject progress; preserve its cancellation.
+                runCatching {onProgress("",0,last)}
             }
         }
+        // An edit validated during this drain must not wait for the 15-minute recovery job.
+        if(dao.all().any {it.state in setOf("QUEUED","UPDATE_PENDING") && AutomaticDelivery.validated(db,it)})retry=true
         return retry
     }
 }

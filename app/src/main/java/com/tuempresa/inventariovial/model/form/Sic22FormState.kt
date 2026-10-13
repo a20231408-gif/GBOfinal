@@ -60,7 +60,7 @@ data class Sic22FormState(
     val signalCodeSource: String = SignalCodeSource.CATALOG,
     val signalDescription: String = "",
     val signalObservation: String = ""
-) {
+) : java.io.Serializable {
 
     val usesSignalCode: Boolean
         get() =

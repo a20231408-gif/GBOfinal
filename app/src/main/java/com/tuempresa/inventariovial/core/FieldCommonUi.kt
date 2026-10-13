@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -65,9 +66,9 @@ fun PhotoCaptureCard(title: String, photos: List<File>, onTakePhoto: (cameraId: 
     onSelectFile: () -> Unit, onDelete: (File) -> Unit, captureEnabled: Boolean = true, editable: Boolean = true, onReplace: ((File)->Unit)? = null) {
     val context = LocalContext.current
     val available = remember(context) { FieldCameraCatalog.cameras(context) }
-    var chosen by remember { mutableStateOf(FieldCameraSelection.chosen(context)) }
-    var expanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableStateOf<File?>(null) }
+    var chosen by rememberSaveable { mutableStateOf(FieldCameraSelection.chosen(context)) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableStateOf<File?>(null) }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, style=MaterialTheme.typography.titleMedium)
@@ -133,8 +134,8 @@ fun ValidationSummaryCard(completion: CompletionResult) {
 
 @Composable
 fun RecordReviewSection(title: String, fields: List<Pair<String,String>>, photos: List<File>, completion: CompletionResult, initiallyExpanded: Boolean = false) {
-    var preview by remember { mutableStateOf<File?>(null) }
-    var expanded by remember { mutableStateOf(initiallyExpanded) }
+    var preview by rememberSaveable { mutableStateOf<File?>(null) }
+    var expanded by rememberSaveable { mutableStateOf(initiallyExpanded) }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp)) {
             TextButton(onClick={expanded=!expanded}) { Text("$title · ${if (expanded) "Ocultar" else "Revisar"}") }

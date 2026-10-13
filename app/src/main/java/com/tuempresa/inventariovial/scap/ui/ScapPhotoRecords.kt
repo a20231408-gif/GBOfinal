@@ -41,7 +41,7 @@ import java.util.Locale
             list.scrollToItem(if(index<0)0 else (catalog.photoNames+photos.map {ScapElementView.photoName(s,it.id,it.photoCategory)}).distinct().indexOf(ScapElementView.photoName(s,photos[index].id,photos[index].photoCategory)).coerceAtLeast(0)+1)
         }
     }
-    var adding by remember{mutableStateOf(false)};var name by rememberSaveable{mutableStateOf("")}
+    var adding by rememberSaveable{mutableStateOf(false)};var name by rememberSaveable{mutableStateOf("")}
     var description by rememberSaveable{mutableStateOf("")}
     var categoryName by rememberSaveable {mutableStateOf<String?>(null)}
     var target by rememberSaveable{mutableStateOf<String?>(null)}

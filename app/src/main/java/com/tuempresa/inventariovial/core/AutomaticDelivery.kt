@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
 import java.util.zip.ZipInputStream
 
 interface AutomaticDriveTransport {
+    fun progress(observer:(DeliveryProgress)->Unit) {}
     fun supportsV3():Boolean
     fun supportsTechnicalDeliveryWithoutGps():Boolean = false
 
@@ -33,6 +34,8 @@ class AutomaticDriveHttp internal constructor(
     private val endpoint:String=DriveConfig.WEB_APP_URL,
     private val apiToken:String=DriveConfig.API_TOKEN
 ):AutomaticDriveTransport {
+    private var observer:(DeliveryProgress)->Unit = {}
+    override fun progress(observer:(DeliveryProgress)->Unit) {this.observer=observer}
     private val capabilities:JSONObject by lazy {
         client.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
             if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
@@ -50,19 +53,39 @@ class AutomaticDriveHttp internal constructor(
         return send(request)
     }
     override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
-    private fun send(payload:JSONObject)=client.newCall(Request.Builder().url(endpoint)
-        .post(JSONObject(payload.toString()).put("token",apiToken).toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()).execute().use {
+    private fun send(payload:JSONObject,onWritten:()->Unit = {}):JSONObject {
+        val body=JSONObject(payload.toString()).put("token",apiToken).toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+        val tracked=object:RequestBody() {
+            override fun contentType()=body.contentType()
+            override fun contentLength()=body.contentLength()
+            override fun writeTo(sink:okio.BufferedSink) {body.writeTo(sink);onWritten()}
+        }
+        return client.newCall(Request.Builder().url(endpoint).post(tracked).build()).execute().use {
         if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
         JSONObject(it.body?.string() ?: "{}")
+        }
     }
     override fun post(payload:JSONObject):JSONObject {
         if(payload.optInt("photoNamingVersion")==1 && capabilities.optInt("photoNamingVersion") !in setOf(1,2))throw SyncPending("El backend aún no admite prefijos fotográficos. Cola conservada.")
         if(payload.optInt("photoNamingVersion")==2 && !supportsReadablePhotoNames())throw SyncPending("El backend no admite nombres fotográficos V2; copia conservada.")
         val commit=JSONObject(payload.toString());val files=commit.getJSONArray("files")
+        // Local journal reuses only verified stage IDs for this endpoint and exact snapshot.
+        // A lost final HTTP response replays commitRecordV3, whose server receipt is idempotent.
+        val first=files.optJSONObject(0)?.optString("localFile")?.takeIf {it.isNotBlank()}
+        val journal=first?.let {File(File(it).parentFile,"stages-${sha256((endpoint+commit.getString("key")+commit.getLong("revision")+commit.getString("contentHash")).toByteArray())}.json")}
+        val saved=runCatching {journal?.takeIf {it.isFile}?.readText()?.let(::JSONObject)}.getOrNull() ?: JSONObject()
+        var done=0
         for(n in 0 until files.length()) {
             val file=files.getJSONObject(n);val local=File(file.getString("localFile"));val bytes=local.readBytes()
             require(sha256(bytes)==file.getString("sha256")) {"La copia preparada cambió."}
             if(file.getString("mimeType")=="image/jpeg")require(JpegEnvelope.valid(bytes)) {"La copia preparada no es un JPEG completo. Original conservado."}
+            val cached=saved.optJSONObject(file.getString("key"))
+            if(cached?.optString("sha256")==file.getString("sha256") && cached.optString("stageFileId").isNotBlank()) {
+                file.remove("localFile");file.put("stageFileId",cached.getString("stageFileId"));done++
+                observer(DeliveryProgress(if(file.getString("key").startsWith("photo/"))"PHOTOS" else "DOCUMENTS",done,files.length()))
+                continue
+            }
+            observer(DeliveryProgress(if(file.getString("key").startsWith("photo/"))"PHOTOS" else "DOCUMENTS",done,files.length()))
             val staged=JSONObject(file.toString()).apply {remove("localFile");put("base64",Base64.encodeToString(bytes,Base64.NO_WRAP))}
             val ack=send(JSONObject().put("action","stageRecordV3").put("syncProtocol",3).put("key",commit.getString("key"))
                 .put("revision",commit.getLong("revision")).put("file",staged))
@@ -70,8 +93,15 @@ class AutomaticDriveHttp internal constructor(
             require(ack.optString("key")==commit.getString("key") && ack.optLong("revision")==commit.getLong("revision") &&
                 ack.optString("fileKey")==file.getString("key") && ack.optString("sha256")==file.getString("sha256") && ack.optString("stageFileId").isNotBlank())
             file.remove("localFile");file.put("stageFileId",ack.getString("stageFileId"))
+            saved.put(file.getString("key"),JSONObject().put("sha256",file.getString("sha256")).put("stageFileId",ack.getString("stageFileId")))
+            journal?.let {target->
+                val atomic=android.util.AtomicFile(target);val out=atomic.startWrite()
+                try {out.write(saved.toString().toByteArray());atomic.finishWrite(out)}catch(e:Exception){atomic.failWrite(out);throw e}
+            }
+            done++;observer(DeliveryProgress(if(file.getString("key").startsWith("photo/"))"PHOTOS" else "DOCUMENTS",done,files.length()))
         }
-        return send(commit)
+        observer(DeliveryProgress("DOCUMENTS",done,files.length()))
+        return send(commit) {observer(DeliveryProgress("CONFIRMING",done,files.length()))}
     }
 }
 

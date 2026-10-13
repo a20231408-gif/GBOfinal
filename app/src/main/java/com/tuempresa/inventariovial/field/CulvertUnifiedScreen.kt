@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -52,32 +53,35 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     val repo=remember(db) {SicFieldRepository(db)}
     val scope=rememberCoroutineScope()
     var snapshot by remember(id) {mutableStateOf<InventorySnapshot?>(null)}
-    var observations by remember(id){mutableStateOf("")}
-    var openedRevision by remember(id) {mutableStateOf<Long?>(null)}
-    var base by remember(id) {mutableStateOf(Sic18FormState())}
-    var extra by remember(id) {mutableStateOf(initialExtra)}
-    var extraComplete by remember(id) {mutableStateOf(false)}
-    var paths by remember(id) {mutableStateOf<List<String>>(emptyList())}
-    var categories by remember(id) {mutableStateOf<Map<String,String>>(emptyMap())}
-    var captures by remember(id) {mutableStateOf<Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap())}
-    var expanded by remember(id) {mutableStateOf(initialExtra.isNotEmpty())}
+    var observations by rememberSaveable(id){mutableStateOf("")}
+    var openedRevision by rememberSaveable(id) {mutableStateOf<Long?>(null)}
+    var base by rememberSaveable(id) {mutableStateOf(Sic18FormState())}
+    var extra by rememberSaveable(id) {mutableStateOf(initialExtra)}
+    var extraComplete by rememberSaveable(id) {mutableStateOf(false)}
+    var paths by rememberSaveable(id) {mutableStateOf<List<String>>(emptyList())}
+    var categories by rememberSaveable(id) {mutableStateOf<Map<String,String>>(emptyMap())}
+    var captures by rememberSaveable(id) {mutableStateOf<Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata>>(emptyMap())}
+    var expanded by rememberSaveable(id) {mutableStateOf(initialExtra.isNotEmpty())}
     var review by com.tuempresa.inventariovial.rememberRecordReview(id)
-    var dirty by remember {mutableStateOf(initialExtra.isNotEmpty())}
-    var editingDraft by remember {mutableStateOf(false)}
+    var dirty by rememberSaveable {mutableStateOf(initialExtra.isNotEmpty())}
+    var editingDraft by rememberSaveable {mutableStateOf(false)}
     var busy by remember {mutableStateOf(false)}
-    var exit by remember {mutableStateOf(false)}
+    var exit by rememberSaveable {mutableStateOf(false)}
     var notice by remember {mutableStateOf<String?>(null)}
-    var conditionChange by remember {mutableStateOf<Sic18FormState?>(null)}
+    var conditionChange by rememberSaveable {mutableStateOf<Sic18FormState?>(null)}
     var files by remember {mutableStateOf<List<GeneratedFile>>(emptyList())}
+    var loaded by rememberSaveable(id) {mutableStateOf(false)}
+    var core by rememberSaveable(id){mutableStateOf<SicCoreDraft?>(null)}
+    val reference by vm.field.reference.collectAsState()
     LaunchedEffect(id) {try {
-        val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s;observations=s.record.observations.orEmpty();openedRevision=s.record.updatedAt
+        val s=requireNotNull(db.inventoryDao().snapshot(id));snapshot=s;if(loaded)return@LaunchedEffect;loaded=true;core=SicCoreDraft.from(s.record);observations=s.record.observations.orEmpty();openedRevision=s.record.updatedAt
         base=(EngineeringEdits.form(s) as SicFormDetail.Sic18).state
         val saved=repo.load(id,SicFieldFormat.SIC18A)!!
         extra=saved.values+initialExtra
         extraComplete=initialExtra.isEmpty() && (s.sicExtension?.status=="COMPLETE" || s.sicExtension==null && s.sic18a!=null && saved.completion().canFinalize)
         paths=s.photos.sortedBy {it.photoIndex}.map {it.localPath};categories=s.photos.mapNotNull {p->p.photoCategory?.let {p.localPath to it}}.toMap()
         val owner=vm.field.auth.sessions.requireUser().id
-        CulvertEditDraft.read(context,id,owner)?.let {draft->openedRevision=draft.baseRevision ?: openedRevision;base=draft.base;observations=draft.observations ?: observations;extra=draft.extra;paths=draft.photos;categories=draft.categories;captures=draft.captures;dirty=true;editingDraft=true;expanded=true;notice="Borrador de edición recuperado"}
+        CulvertEditDraft.read(context,id,owner)?.let {draft->openedRevision=draft.baseRevision ?: openedRevision;core=draft.core ?: core;base=draft.base;observations=draft.observations ?: observations;extra=draft.extra;paths=draft.photos;categories=draft.categories;captures=draft.captures;dirty=true;editingDraft=true;expanded=true;notice="Borrador de edición recuperado"}
     } catch(e:Exception) {notice=e.message}}
     val required=InventoryElements.requiresCulvertDetail(base.structuralConditionCode,base.functionalConditionCode)
     val hasExtra=extra.any {it.key in culvertAdditionalKeys && it.value.isNotBlank()}
@@ -89,14 +93,15 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             source=extra["_coordinateSource"] ?: "MANUAL_COORDINATES",timestamp=extra["_gpsTimestamp"]?.toLongOrNull() ?: 0) else null
     } else r?.let{record->if(record.latitude!=null && record.longitude!=null) com.tuempresa.inventariovial.location.GeoLocation(record.latitude,record.longitude,record.gpsAccuracyM?.toFloat() ?: Float.NaN,source=record.locationSource,timestamp=record.gpsTimestamp ?: 0) else null}
 
-    val extraState=SicFieldState(SicFieldFormat.SIC18A,(r?.let {SicFieldRepository.core(it)} ?: emptyMap())+extra+mapOf("classCode" to base.classCode,"typeCode" to base.typeCode,"spans" to base.spans,
-        "structuralConditionCode" to base.structuralConditionCode,"functionalConditionCode" to base.functionalConditionCode),id)
+    val editedRecord=r?.let {record->core?.takeIf {it.errors(false).isEmpty()}?.applyTo(record,false,false) ?: record}
+    val extraState=SicFieldState(SicFieldFormat.SIC18A,extra+(editedRecord?.let {SicFieldRepository.core(it)} ?: emptyMap())+mapOf("classCode" to base.classCode,"typeCode" to base.typeCode,"spans" to base.spans,
+        "structuralConditionCode" to base.structuralConditionCode,"functionalConditionCode" to base.functionalConditionCode,"_segment" to core?.segment.orEmpty(),"_direction" to (core?.direction ?: "INCREASING")),id)
     fun baseIssues():List<ValidationIssue> {
         val record=r ?: return listOf(ValidationIssue("Alcantarilla","Cargando datos",ValidationIssue.Severity.MISSING_USER_INPUT))
         val request=InventorySaveRequest(record.sicCode,record.assetType,record.routeCode,record.roadbedCode,record.startPrCode,record.startDistanceM.toString(),record.endPrCode,record.endDistanceM?.toString(),record.sideCode,record.latitude ?: Double.NaN,record.longitude ?: Double.NaN,record.gpsAccuracyM?.toFloat(),record.surveyDate,record.observations.orEmpty(),"",SicFormDetail.Sic18(base),photoPaths=paths)
         return CaptureValidation.errors(request,validateLocation=record.latitude!=null || record.longitude!=null).filterNot{it.field in setOf("startPrCode","startDistanceM","endPrCode","endDistanceM")}.map {ValidationIssue(it.field,it.message,ValidationIssue.Severity.MISSING_USER_INPUT)}
     }
-    val completion=CompletionResult(baseIssues()+(if(extra["_gpsError"].isNullOrBlank())emptyList() else listOf(ValidationIssue("GPS",extra["_gpsError"].orEmpty(),ValidationIssue.Severity.MISSING_USER_INPUT)))+extraState.completion().issues)
+    val completion=CompletionResult(baseIssues()+core?.errors(false).orEmpty()+(if(extra["_gpsError"].isNullOrBlank())emptyList() else listOf(ValidationIssue("GPS",extra["_gpsError"].orEmpty(),ValidationIssue.Severity.MISSING_USER_INPUT)))+extraState.completion().issues)
     fun leave() {if(dirty)exit=true else onBack()}
     fun save(finalize:Boolean,after:(()->Unit)?=null) {
         if(busy || r==null)return
@@ -104,13 +109,13 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
         scope.launch {try {
             val owner=vm.field.auth.sessions.requireUser().id
             if(!finalize) {
-                CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures,baseRevision=openedRevision,observations=observations))
+                CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures,baseRevision=openedRevision,observations=observations,core=core))
                 editingDraft=true
                 notice="✓ Borrador guardado en tablet"
             } else {
                 require(completion.canFinalize) {"Completa los pendientes antes de finalizar"}
                 db.withTransaction {
-                    EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate)
+                    EngineeringEdits.save(db,id,SicFormDetail.Sic18(base),paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate,core=core)
                     repo.save(id,extraState,owner,true)
                 }
                 CulvertEditDraft.clear(context,id,owner)
@@ -126,8 +131,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
         onSaveDraft={save(false)},onBack=::leave,draftNotice=notice.orEmpty(),enabled=!busy && snapshot!=null) {
         r?.let {record->
             item {
-                val survey=remember(context) {SurveyPreferences(context)}
-                SurveyHeader(survey,record.segment.orEmpty(),record.routeCode,record.roadbedCode,record.surveyDirection ?: "INCREASING",{},{},{},{})
+                core?.let {draft->SicFormCore(SicFormMode.EDIT,"SIC-18",record.assetType,base.classCode,reference,draft){core=it;dirty=true;review=false}}
             }
             item {OptionalDeviceGps(coordinate,editable=!busy,onChange={gps->
                 extra=extra+mapOf("_gpsExplicit" to "true","_latitude" to gps?.latitude?.toString().orEmpty(),"_longitude" to gps?.longitude?.toString().orEmpty(),

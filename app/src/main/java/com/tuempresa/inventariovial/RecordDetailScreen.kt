@@ -44,7 +44,7 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
     val intents by remember(db) { db.automaticSyncDao().observe() }.collectAsState(emptyList())
     val ordered by vm.sequencedHistory.collectAsState()
     var page by rememberSaveable(id) { mutableStateOf(initialPage) }
-    var supplemental by remember(id) { mutableStateOf<SupplementaryFormat?>(null) }
+    var supplemental by rememberSaveable(id) { mutableStateOf<SupplementaryFormat?>(null) }
     var message by remember(id) { mutableStateOf<String?>(null) }
     var deliveryExpanded by rememberSaveable(id) {mutableStateOf(false)}
     val back = { if (page == "DETAIL") onBack() else page = "DETAIL" }
@@ -104,7 +104,7 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
                     }.forEach { (label,value) -> Text("$label: $value") }
                     Text("Observaciones: ${r.observations?.takeIf {it.isNotBlank()} ?: "Sin observaciones"}")
                 }
-                item { DetailActions({page="SHEET"},{page="PHOTOS"},{page="EXCEL"},{page=if(SicFieldFormat.fromCode(r.sicCode)!=null) "TECHNICAL" else "EDIT"}) }
+                item { DetailActions({page="SHEET"},{page="PHOTOS"},{page="EXCEL"},{page="TECHNICAL"}) }
                 item {
                     TextButton(onClick={deliveryExpanded=!deliveryExpanded}) {Text(if(deliveryExpanded) "Ocultar entrega Drive" else "Detalles de entrega Drive / reintentar")}
                     if(deliveryExpanded) AutomaticSyncPanel("SIC",id,r.status=="ACTIVE")
@@ -121,7 +121,7 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
             }
             "SHEET" -> {
                 item { Text("Ficha completa · consulta",style=MaterialTheme.typography.titleLarge); RecordSheet(s) }
-                item { Button(onClick={page=if(SicFieldFormat.fromCode(r.sicCode)!=null) "TECHNICAL" else "EDIT"},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("EDITAR")} }
+                item { Button(onClick={page="TECHNICAL"},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("EDITAR")} }
             }
             "PHOTOS" -> item {
                 Column(Modifier.fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(8.dp)) {

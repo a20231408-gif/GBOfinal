@@ -1,7 +1,7 @@
 package com.tuempresa.inventariovial.model.form
 
 
-sealed interface SicFormDetail {
+sealed interface SicFormDetail : java.io.Serializable {
 
     data class Sic23(val state: Sic23FormState) : SicFormDetail
 

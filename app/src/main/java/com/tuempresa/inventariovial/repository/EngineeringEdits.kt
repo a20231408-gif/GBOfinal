@@ -45,10 +45,16 @@ object EngineeringEdits {
         }
         return errors+draftErrors
     }
-    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null,observations:String?=null,coordinateEdit:Boolean=false,coordinate:com.tuempresa.inventariovial.location.GeoLocation?=null,finalize:Boolean=true)=db.withTransaction {
+    suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null,observations:String?=null,coordinateEdit:Boolean=false,coordinate:com.tuempresa.inventariovial.location.GeoLocation?=null,finalize:Boolean=true,core:com.tuempresa.inventariovial.field.SicCoreDraft?=null)=db.withTransaction {
         val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
         require(expectedUpdatedAt==null || r.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste. Conserva tus cambios y vuelve a abrir la revisión actual."}
         require(r.status in setOf("ACTIVE","DRAFT")) {"Restaura primero el registro anulado."}
+        if(core!=null) {
+            val cls=when(detail){is SicFormDetail.Sic20->detail.state.classCode;else->""}
+            val ends=com.tuempresa.inventariovial.field.SicFormPolicy.hasEnds(r.sicCode,r.assetType,cls)
+            require(core.errors(ends).isEmpty()){core.errors(ends).joinToString("\n"){it.reason}}
+            dao.updateRecord(core.applyTo(r,ends,com.tuempresa.inventariovial.field.SicFormPolicy.sides(r.sicCode,cls).isNotEmpty()))
+        }
         val errors=if(finalize)reviewErrors(s,detail,paths) else emptyList()
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {

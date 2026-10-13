@@ -122,4 +122,4 @@ data class InventoryRecordEntity(
     val endMatchedSegmentId: String? = null,
     val endProjectedLatitude: Double? = null,
     val endProjectedLongitude: Double? = null
-)
+) : java.io.Serializable

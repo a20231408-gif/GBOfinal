@@ -49,6 +49,6 @@ data class Sic18FormState(
     val sectionShape: String = "CIRCULAR",
     val structuralDamagePercent: String = "",
     val functionalObstructionPercent: String = ""
-) {
+) : java.io.Serializable {
     val usesDimension2: Boolean get() = crossSectionCode != "2" || sectionShape != "CIRCULAR"
 }

@@ -26,7 +26,7 @@ object RecordDetailPresentation {
         sync?.state == "CONFLICT" -> "Conflicto · edición local conservada"
         !active -> if ((sync?.syncedRevision ?: 0) > 0) "Actualización pendiente · borrador" else "Borrador"
         sync?.state == "ERROR" || sync?.state == "BLOCKED" -> "Error"
-        sync?.state == "UPLOADING" -> "Sincronizando"
+        sync?.state == "UPLOADING" -> "Pendiente de confirmación"
         com.tuempresa.inventariovial.core.SyncIntentPresentation.confirmed(sync) -> "Sincronizado"
         (sync?.syncedRevision ?: 0) > 0 -> "Actualización pendiente"
         else -> "Pendiente de sincronización"
