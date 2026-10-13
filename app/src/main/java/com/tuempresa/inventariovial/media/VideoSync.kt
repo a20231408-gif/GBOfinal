@@ -31,11 +31,22 @@ class VideoHttp internal constructor(
     private val apiToken:String=DriveConfig.API_TOKEN
 ):VideoTransport {
     private val scripts=client.newBuilder().followRedirects(true).build()
+    private var namingVersion=0
     private fun request(payload:JSONObject):JSONObject=scripts.newCall(Request.Builder().url(endpoint).post(payload.put("token",apiToken).toString().toRequestBody("application/json".toMediaType())).build()).execute().use {require(it.isSuccessful);JSONObject(it.body?.string() ?: "{}")}
-    override fun available()=scripts.newCall(Request.Builder().url(endpoint).get().build()).execute().use {it.isSuccessful && JSONObject(it.body?.string() ?: "{}").let {c->c.optBoolean("ok") && c.optInt("videoProtocol")==1 && c.optString("videoScope")=="SCAP_ONLY"}}
+    override fun available():Boolean {
+        namingVersion=0
+        return scripts.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
+            it.isSuccessful && JSONObject(it.body?.string() ?: "{}").let {c->
+                val available=c.optBoolean("ok") && c.optInt("videoProtocol")==1 && c.optString("videoScope")=="SCAP_ONLY"
+                if(available && c.optInt("readableVideoNamingVersion")==2)namingVersion=2
+                available
+            }
+        }
+    }
     private fun payload(v:VideoEntity,action:String)=JSONObject().put("action",action).put("videoProtocol",1).put("parentKey",v.parentKey).put("mediaId",v.id).put("category",v.category).put("categoryLabel",v.categoryLabel).put("mimeType",v.mimeType).put("sizeBytes",v.sizeBytes).put("sha256",v.sha256)
-    override fun begin(video:VideoEntity,revision:Long)=request(payload(video,"beginVideoV1").put("parentRevision",revision).put("resetSession",video.fileId!=null && video.sessionUrl==null))
-    override fun finish(video:VideoEntity)=request(payload(video,"finishVideoV1").put("parentRevision",video.parentRevision).put("fileId",video.fileId))
+    private fun namedPayload(v:VideoEntity,action:String)=payload(v,action).also {if(namingVersion==2)it.put("videoNamingVersion",2)}
+    override fun begin(video:VideoEntity,revision:Long)=request(namedPayload(video,"beginVideoV1").put("parentRevision",revision).put("resetSession",video.fileId!=null && video.sessionUrl==null)).also {if(it.optBoolean("ok"))VideoNames.validate(it,video,namingVersion)}
+    override fun finish(video:VideoEntity)=request(namedPayload(video,"finishVideoV1").put("parentRevision",video.parentRevision).put("fileId",video.fileId)).also {if(it.optBoolean("ok"))VideoNames.validate(it,video,namingVersion)}
     private fun session(v:VideoEntity):String=requireNotNull(v.sessionUrl).also {require(VideoPolicy.safeSession(it))}
     override fun offset(video:VideoEntity):Long=client.newCall(Request.Builder().url(session(video)).put(ByteArray(0).toRequestBody(video.mimeType.toMediaType())).header("Content-Range","bytes */${video.sizeBytes}").build()).execute().use {
         when(it.code){308->VideoPolicy.rangeOffset(it.header("Range"),video.sizeBytes);200,201->video.sizeBytes;404,410->throw ExpiredVideoSession();else->throw java.io.IOException("Consulta de carga HTTP ${it.code}")}
@@ -82,6 +93,7 @@ object VideoSync {
                 val begin=transport.begin(v,parent)
                 require(begin.optBoolean("ok")){"Servidor rechazó inicio: ${begin.optString("code")}"}
                 require(begin.optString("mediaId")==v.id && begin.optString("sha256")==v.sha256 && begin.optString("parentKey")==v.parentKey && begin.optString("fileId").isNotBlank())
+                VideoNames.accept(context,v,begin)
                 v=v.copy(fileId=begin.getString("fileId"),parentRevision=parent,state="UPLOADING",error=null)
                 if(!begin.optBoolean("complete")) {
                     val url=begin.getString("sessionUrl");require(VideoPolicy.safeSession(url));v=v.copy(sessionUrl=url);dao.saveSync(v)
@@ -96,6 +108,7 @@ object VideoSync {
                 if(dao.get(v.id)?.retired==true)continue
                 val ack=transport.finish(v)
                 require(ack.optBoolean("ok") && ack.optBoolean("complete") && ack.optInt("videoProtocol")==1 && ack.optString("mediaId")==v.id && ack.optString("parentKey")==v.parentKey && ack.optString("sha256")==v.sha256 && ack.optLong("sizeBytes")==v.sizeBytes && ack.optString("fileId")==v.fileId){"Confirmación de video incompleta"}
+                VideoNames.accept(context,v,ack)
                 dao.saveSync(v.copy(state="SYNCED",sessionUrl=null,uploadedBytes=v.sizeBytes,error=null))
             }catch(e:CancellationException){throw e}
             catch(e:ExpiredVideoSession){dao.saveSync(v.copy(state="ERROR",sessionUrl=null,error=e.message));retry=true}

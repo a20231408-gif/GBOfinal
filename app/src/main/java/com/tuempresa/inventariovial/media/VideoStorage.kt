@@ -50,7 +50,9 @@ class VideoStorage(private val context:Context,private val dao:VideoDao=VideoDat
 },private val schedule:(Context)->Unit=VideoSync::enqueue) {
     suspend fun import(key:String,category:String,label:String,uri:Uri):VideoEntity {
         require(VideoPolicy.bridgeOnly(key)) {"Los videos son exclusivos de Puentes / SCAP."}
-        require(category.matches(Regex("[A-Z0-9_]{1,80}")) && label.isNotBlank() && label.length<=120 && '/' !in label && '\\' !in label)
+        // Labels such as "Carretera / tablero" are real SCAP categories.
+        // Only the validated category key is used as identity/path component.
+        require(category.matches(Regex("[A-Z0-9_]{1,80}")) && label.isNotBlank() && label.length<=120 && label.none {it<' '})
         val mime=context.contentResolver.getType(uri) ?: error("No se conoce el MIME del video")
         require(mime in VideoPolicy.mimeTypes){"Formato no admitido: usa MP4, WebM o 3GP"}
         val id=UUID.randomUUID().toString();val directory=File(context.filesDir,"videos").apply {check(isDirectory || mkdirs())}

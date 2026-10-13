@@ -1,0 +1,6 @@
+{
+  "scope": "tracked working tree and untracked text; not whole Git history",
+  "matches": 0,
+  "trackedPrivateFiles": 0,
+  "privateConfigsIgnored": true
+}

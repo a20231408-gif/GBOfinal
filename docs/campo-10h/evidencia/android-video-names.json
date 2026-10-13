@@ -1,0 +1,27 @@
+{
+  "tests": 5,
+  "failures": 0,
+  "errors": 0,
+  "cases": [
+    {
+      "name": "labelsSurviveRecreationAndRejectReassignmentWithoutTouchingOriginalOrIdentity",
+      "passed": true
+    },
+    {
+      "name": "negotiatedV2CannotSilentlyAcceptMissingNameButExplicitHistoricalBindingIsAllowed",
+      "passed": true
+    },
+    {
+      "name": "wrongExtensionUnsafeFolderOrInconsistentNumberCannotConfirm",
+      "passed": true
+    },
+    {
+      "name": "lostFinalAckUsesSameNameOriginalBytesUuidAndFileIdThenConfirms",
+      "passed": true
+    },
+    {
+      "name": "namingCapabilityIsNegotiatedSeparatelyAndOldServerStillUsesVideoOne",
+      "passed": true
+    }
+  ]
+}

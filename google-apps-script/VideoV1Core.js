@@ -4,8 +4,8 @@ var VideoV1 = (() => {
   function reject(code){const e=Error(code);e.code=code;throw e;}
   function validate(p) {
     if(!p || p.videoProtocol!==1 || !/^SCAP\/[A-Za-z0-9_-]{1,80}$/.test(p.parentKey) ||
-      !/^[A-Za-z0-9_-]{1,80}$/.test(p.mediaId) || !/^[A-Z0-9_]{1,80}$/.test(p.category) ||
-      typeof p.categoryLabel!=='string' || !p.categoryLabel.trim() || p.categoryLabel.length>120 || /[\\/\x00-\x1f]/.test(p.categoryLabel) ||
+      !/^[A-Za-z0-9_-]{1,80}$/.test(p.mediaId) || ['__proto__','constructor','prototype'].includes(p.mediaId) || !/^[A-Z0-9_]{1,80}$/.test(p.category) ||
+      typeof p.categoryLabel!=='string' || !p.categoryLabel.trim() || p.categoryLabel.length>120 || /[\x00-\x1f]/.test(p.categoryLabel) ||
       !['video/mp4','video/webm','video/3gpp'].includes(p.mimeType) || !Number.isSafeInteger(p.sizeBytes) || p.sizeBytes<1 || p.sizeBytes>MAX_BYTES ||
       !/^[a-f0-9]{64}$/.test(p.sha256) || !Number.isSafeInteger(p.parentRevision) || p.parentRevision<1)reject('INVALID_VIDEO');
   }
@@ -18,10 +18,14 @@ var VideoV1 = (() => {
     if(old && old.folderId!==parent.receipt.folderId)reject('VIDEO_RELOCATION_REQUIRES_MIGRATION');
     return {parent,old};
   }
-  function receipt(j) {return {ok:true,videoProtocol:1,parentKey:j.parentKey,mediaId:j.mediaId,sha256:j.sha256,sizeBytes:j.sizeBytes,fileId:j.fileId,complete:j.complete===true};}
+  function receipt(j) {return {ok:true,videoProtocol:1,parentKey:j.parentKey,mediaId:j.mediaId,sha256:j.sha256,sizeBytes:j.sizeBytes,fileId:j.fileId,complete:j.complete===true,
+    videoNamingVersion:j.videoNamingVersion || 1,historicalName:j.videoNamingVersion!==2,
+    ...(j.videoNamingVersion===2?{fileName:j.fileName,categoryFolder:j.categoryFolder,categoryCode:j.categoryCode,videoNumber:j.videoNumber,elementNumber:j.elementNumber}: {})};}
   function begin(p,s) {
     const {parent,old}=bound(p,s);
-    const journal=old || {...p,folderId:parent.receipt.folderId,fileId:s.allocate(),complete:false};
+    if(p.videoNamingVersion!=null && ![1,2].includes(p.videoNamingVersion))reject('INVALID_VIDEO_NAMING_VERSION');
+    const naming=!old && p.videoNamingVersion===2?s.reserveName(p,parent):{};
+    const journal=old || {...p,...naming,videoNamingVersion:naming.videoNamingVersion || 1,folderId:parent.receipt.folderId,fileId:s.allocate(),complete:false};
     // Persist the ID before remote creation: a lost start response cannot create a second file.
     if(!old)s.put(journal);
     s.ensure(journal);

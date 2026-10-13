@@ -82,6 +82,8 @@ import java.util.UUID
                     thumbnail?.let {Image(it.asImageBitmap(),"Miniatura de video",Modifier.height(120.dp).fillMaxWidth())}
                     val status=when(v.state){"SYNCED"->"Sincronizado · confirmado por servidor";"BACKEND_REQUIRED"->"Pendiente del backend";"WAITING_PARENT"->"Pendiente de finalizar y sincronizar ficha";"UPLOADING"->"Subiendo ${v.uploadedBytes*100/v.sizeBytes}%";"ERROR"->"Error · original conservado";"RETIRED"->"Retirado · original conservado";else->"Entrega pendiente"}
                     Text("${v.id.take(8)} · ${v.sizeBytes/1024} KiB · $status")
+                    val remoteName=remember(v.id,v.state,v.fileId){VideoNames.display(context,v.id)}
+                    remoteName?.let {Text(it,style=MaterialTheme.typography.bodySmall)}
                     v.error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
                     Row {TextButton(onClick={playing=v}){Text("Reproducir")}
                         if(!v.retired && v.state!="SYNCED")TextButton(onClick={scope.launch{storage.retry(v.id)}}){Text("Reintentar")}
