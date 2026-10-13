@@ -1,0 +1,23 @@
+{
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "certificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+  "signatureVerified": true,
+  "debuggable": true,
+  "GBO_PHOTO_NAMES_V2_ENABLED": true,
+  "GBO_VIDEO_REMOTE_ENABLED": false,
+  "ACCESS_CONTROL_ENABLED": false,
+  "DRIVE_WEB_APP_URLPresent": true,
+  "DRIVE_API_TOKENPresent": true,
+  "SERVER_BASE_URLPresent": true,
+  "bytes": 40305994,
+  "sha256": "c11a404dbcef2e4ab89cf6440c9ced74975a061f0988b1d30982f4e46f0b1f22",
+  "ordinaryBuild": true,
+  "specialPhotoOverride": false,
+  "releaseBuilt": false,
+  "installed": false,
+  "priorDebugSignatureCompatible": true,
+  "connectedTabletAvailable": false,
+  "configurationEvidence": "compiled BuildConfig.class; no credential values exported"
+}

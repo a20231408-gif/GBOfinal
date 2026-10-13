@@ -1,0 +1,60 @@
+{
+  "tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "cases": [
+    {
+      "suite": "com.tuempresa.inventariovial.PhotoNamesIntegration10ETest",
+      "case": "historicalReservationKeepsExistingV1Name",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.PhotoNamesIntegration10ETest",
+      "case": "ordinaryDebugUsesLocalV2AndDiagnosticsReportNegotiatedProtocol",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.PhotoNamesIntegration10ETest",
+      "case": "cachedV1DeliveryUsesOriginalBytesAndNamesWithoutV2Reservation",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.PhotoNamesIntegration10ETest",
+      "case": "v2ReservationRetryAndCompleteAckKeepUuidNamesAndBinding",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.PhotoNamesIntegration10ETest",
+      "case": "managerAndRoomRecreationPreserveTabletIdentityAndPendingRecords",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.ReadablePhotoNames10Test",
+      "case": "wrongIdentityCategoryLengthDuplicateOrRevisionNeverOverwritesAReservation",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.ReadablePhotoNames10Test",
+      "case": "serverReservationPersistsStableNameWithoutClaimingDeliveryAck",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.ReadablePhotoNames10Test",
+      "case": "readableCapabilityCoexistsWithLegacyV1",
+      "passed": true
+    },
+    {
+      "suite": "com.tuempresa.inventariovial.ReadablePhotoNames10Test",
+      "case": "namingV2CapabilityGateMakesNoPostToAnOldBackend",
+      "passed": true
+    }
+  ],
+  "build": "SUCCESS",
+  "ordinaryDebug": true,
+  "command": "gradlew.bat :app:assembleDebug :app:testDebugUnitTest --tests *PhotoNamesIntegration10ETest --tests *ReadablePhotoNames10Test -Pkotlin.compiler.execution.strategy=in-process --no-daemon --max-workers=1 -Dorg.gradle.jvmargs=-Xmx1024m -Dfile.encoding=UTF-8 --console=plain",
+  "specialPhotoOverride": false,
+  "validationBuild": false,
+  "sixApprovedPhysicalChecksRepeated": false,
+  "realPostExecuted": false,
+  "installedOnTablet": false
+}

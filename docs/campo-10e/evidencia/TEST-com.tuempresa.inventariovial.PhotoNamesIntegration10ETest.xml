@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.PhotoNamesIntegration10ETest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-13T08:31:49.544Z" hostname="JULIAN" time="22.804">
+  <properties/>
+  <testcase name="historicalReservationKeepsExistingV1Name" classname="com.tuempresa.inventariovial.PhotoNamesIntegration10ETest" time="4.625"/>
+  <testcase name="ordinaryDebugUsesLocalV2AndDiagnosticsReportNegotiatedProtocol" classname="com.tuempresa.inventariovial.PhotoNamesIntegration10ETest" time="0.662"/>
+  <testcase name="cachedV1DeliveryUsesOriginalBytesAndNamesWithoutV2Reservation" classname="com.tuempresa.inventariovial.PhotoNamesIntegration10ETest" time="12.046"/>
+  <testcase name="v2ReservationRetryAndCompleteAckKeepUuidNamesAndBinding" classname="com.tuempresa.inventariovial.PhotoNamesIntegration10ETest" time="4.46"/>
+  <testcase name="managerAndRoomRecreationPreserveTabletIdentityAndPendingRecords" classname="com.tuempresa.inventariovial.PhotoNamesIntegration10ETest" time="0.748"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

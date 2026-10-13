@@ -67,6 +67,8 @@ object SyncIntentPresentation {
     val retrying=work.any {it.state==WorkInfo.State.ENQUEUED && it.runAttemptCount>0}
     val currentProgress=progress["$kind/$id"]?.takeIf {it.revision==intent?.revision}
     var message by remember {mutableStateOf<String?>(null)}
+    var diagnostic by remember {mutableStateOf<String?>(null)}
+    var checkingCapabilities by remember {mutableStateOf(false)}
     var tick by remember {mutableIntStateOf(0)}
     LaunchedEffect(Unit){while(true){kotlinx.coroutines.delay(3000);tick++}}
     val connected=remember(tick){val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -83,6 +85,20 @@ object SyncIntentPresentation {
             }
         }
         if(!compact) {
+            Text("Fotografías V2 en compilación: ${if(com.tuempresa.inventariovial.BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED) "habilitado" else "deshabilitado"}")
+            TextButton(enabled=!checkingCapabilities && DriveUploadPolicy.configurationError()==null,onClick={
+                checkingCapabilities=true
+                scope.launch {
+                    try {
+                        diagnostic=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            AutomaticDriveHttp().photoNamingDiagnostic().text()
+                        }
+                    } catch(e:kotlinx.coroutines.CancellationException) {throw e}
+                    catch(_:Exception) {diagnostic="Capacidad del servidor no comprobada. Revisa la conexión y vuelve a consultar."}
+                    finally {checkingCapabilities=false}
+                }
+            }){Text(if(checkingCapabilities) "Consultando capacidad…" else "Consultar capacidad fotográfica")}
+            diagnostic?.let {Text(it,style=MaterialTheme.typography.bodySmall)}
             intent?.let {
                 Text("Origen: ${if(it.origin=="AUTOMATIC") "Automática" else "Manual desde la app"}")
                 Text("Revisión local: ${it.revision} · confirmada: ${it.syncedRevision}")

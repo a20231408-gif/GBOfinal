@@ -1,0 +1,6 @@
+{
+  "core/PhotoNamingDiagnostic": true,
+  "media/VideoHttp": true,
+  "media/VideoSync": true,
+  "media/VideoWorker": true
+}

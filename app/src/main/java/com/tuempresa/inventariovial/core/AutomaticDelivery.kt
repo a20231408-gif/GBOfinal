@@ -45,6 +45,9 @@ class AutomaticDriveHttp internal constructor(
     override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")==3
     override fun supportsFamilyPaths()=supportsV3() && capabilities.optInt("pathVersion")==4 && capabilities.optBoolean("stableFamilyNumbering") && capabilities.optInt("photoCategoryVersion")==1
     override fun supportsReadablePhotoNames()=supportsFamilyPaths() && capabilities.optInt("readablePhotoNamingVersion")==2
+    fun photoNamingDiagnostic(enabled:Boolean=BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED)=PhotoNamingDiagnostic(
+        enabled, capabilities.optInt("readablePhotoNamingVersion"), supportsFamilyPaths(),
+        capabilities.optInt("photoNamingVersion"), capabilities.optInt("syncProtocol"))
     override fun reservePhotoNames(payload:JSONObject):JSONObject {
         if(!supportsReadablePhotoNames())throw SyncPending("El backend aún no anuncia readablePhotoNamingVersion=2. Cola conservada.")
         val request=JSONObject().put("action","reservePhotoNamesV2").put("photoNamingVersion",2)

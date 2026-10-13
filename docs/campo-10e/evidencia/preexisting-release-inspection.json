@@ -1,0 +1,10 @@
+{
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "certificateSha256": "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315",
+  "signatureVerified": true,
+  "debuggable": false,
+  "preexisting": true,
+  "compatibleWithDebugSignature": false
+}
