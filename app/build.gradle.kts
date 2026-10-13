@@ -109,7 +109,7 @@ android {
     }
     buildTypes {
         getByName("debug") {
-            if(gboPhotoNamesV2Test) buildConfigField("boolean", "GBO_PHOTO_NAMES_V2_ENABLED", "true")
+            if(providers.gradleProperty("gboPhotoNamesV2Test").isPresent) buildConfigField("boolean", "GBO_PHOTO_NAMES_V2_ENABLED", gboPhotoNamesV2Test.toString())
         }
         release {
             if (releaseSigningReady) signingConfig = signingConfigs.getByName("gboHistoricalRelease")
