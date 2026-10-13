@@ -21,6 +21,11 @@ interface PavementDao {
     @Query("SELECT COUNT(*) FROM pavement_damage_photos WHERE localPath=:path") suspend fun photoPathCount(path: String): Int
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun savePhoto(photo: PavementDamagePhotoEntity)
     @Query("SELECT COUNT(*) FROM pavement_damages WHERE sampleId=:sampleId") suspend fun damageCount(sampleId: String): Int
-    @Query("SELECT * FROM pavement_damage_photos WHERE damageId=:damageId") suspend fun photos(damageId: String): List<PavementDamagePhotoEntity>
+    // Keep the legacy row order used by prepared source hashes, including equal timestamps.
+    @Query("SELECT * FROM pavement_damage_photos WHERE damageId=:damageId AND retiredAt IS NULL ORDER BY rowid") suspend fun photos(damageId: String): List<PavementDamagePhotoEntity>
+    @Query("SELECT * FROM pavement_damage_photos WHERE damageId=:damageId AND retiredAt IS NULL ORDER BY createdAt,id") fun observePhotos(damageId: String): Flow<List<PavementDamagePhotoEntity>>
+    @Query("SELECT * FROM pavement_damage_photos WHERE damageId=:damageId ORDER BY createdAt,id") fun observePhotoHistory(damageId: String): Flow<List<PavementDamagePhotoEntity>>
+    @Query("SELECT * FROM pavement_damage_photos WHERE damageId=:damageId ORDER BY createdAt,id") suspend fun photoHistory(damageId: String): List<PavementDamagePhotoEntity>
+    @Query("SELECT p.* FROM pavement_damage_photos p INNER JOIN pavement_damages d ON d.id=p.damageId WHERE d.sampleId=:sampleId AND p.retiredAt IS NULL ORDER BY p.createdAt,p.id") fun observeSamplePhotos(sampleId: String): Flow<List<PavementDamagePhotoEntity>>
     @Query("SELECT * FROM pavement_samples WHERE id=:id") fun observeSample(id: String): Flow<PavementSampleEntity?>
 }

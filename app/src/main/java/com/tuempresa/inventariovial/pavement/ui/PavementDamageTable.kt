@@ -15,13 +15,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tuempresa.inventariovial.pavement.*
 
-@Composable internal fun PavementDamageTable(damages: List<PavementDamageEntity>, selectedId: String?, onSelect: (String)->Unit) {
+@Composable internal fun PavementDamageTable(damages: List<PavementDamageEntity>, selectedId: String?, onSelect: (String)->Unit) =
+    PavementDamageTable(damages,selectedId,onSelect,emptyMap())
+
+@Composable internal fun PavementDamageTable(damages: List<PavementDamageEntity>, selectedId: String?, onSelect: (String)->Unit,
+    photoCounts:Map<String,Int>, onCamera:((String)->Unit)?=null, onViewPhotos:((String)->Unit)?=null) {
     Column(Modifier.fillMaxWidth()) {
         Text("Daños · ${damages.size}",style=MaterialTheme.typography.titleMedium)
         Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant).padding(6.dp)) {
             TableCell("Ítem",0.55f); TableCell("X",0.7f); TableCell("Y",0.7f); TableCell("Falla",2.2f); TableCell("Severidad",1.1f); TableCell("Cantidad",1f)
         }
-        LazyColumn(Modifier.fillMaxWidth().heightIn(max=280.dp).height((damages.size*52).coerceIn(1,280).dp)) {
+        LazyColumn(Modifier.fillMaxWidth().heightIn(max=280.dp).height((damages.size*(if(onViewPhotos!=null)104 else 52)).coerceIn(1,280).dp)) {
             itemsIndexed(damages,key={_,d->d.id}) { index,d ->
                 Row(Modifier.fillMaxWidth().heightIn(min=52.dp).testTag("damage-row-${d.id}")
                     .semantics { selected=d.id==selectedId }.clickable { onSelect(d.id) }
@@ -31,6 +35,10 @@ import com.tuempresa.inventariovial.pavement.*
                     TableCell(d.name,2.2f)
                     Text(PavementSeverity.label(d.severity),Modifier.weight(1.1f).background(androidx.compose.ui.graphics.Color(PavementSeverity.color(d.severity))).padding(3.dp),color=androidx.compose.ui.graphics.Color.Black,style=MaterialTheme.typography.bodySmall)
                     TableCell(PavementDisplay.number(PavementRules.quantity(d)),1f)
+                }
+                if(onViewPhotos!=null) Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                    if(onCamera!=null) TextButton(onClick={onCamera(d.id)},modifier=Modifier.heightIn(min=48.dp).testTag("damage-camera-${d.id}")) {Text("Tomar foto")}
+                    TextButton(onClick={onViewPhotos(d.id)},modifier=Modifier.heightIn(min=48.dp).testTag("damage-photos-${d.id}")) {Text("Ver fotos (${photoCounts[d.id] ?: 0})")}
                 }
                 HorizontalDivider()
             }
@@ -56,6 +64,8 @@ import com.tuempresa.inventariovial.pavement.*
             Text("${sample.tramo.ifBlank { "Borrador" }} · muestra ${sample.muestra}")
             Text("${PavementHistory.dateLabel(sample.fecha)} · ${sample.inspectorNombre}")
             Text("Estado: ${PavementHistory.statusLabel(sample.status)}")
+            if(sample.inspectorUserId==userId && sample.status in setOf("DRAFT","DISCARDED_LOCAL"))
+                com.tuempresa.inventariovial.core.LocalDraftDiscardButton("PAVEMENT",sample.id,sample.status=="DISCARDED_LOCAL")
             com.tuempresa.inventariovial.core.AutomaticSyncPanel("PAVEMENT",sample.id,sample.status=="CLOSED",compact=true)
             TextButton(onClick={onOpen(sample.id)}) {Text(if(PavementHistory.canContinue(sample,userId)) "Continuar" else "Ver")}
             Text("${sample.ruta} · PR ${sample.prInicial} → ${sample.prFinal} · ${sample.surface}")

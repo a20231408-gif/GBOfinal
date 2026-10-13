@@ -97,4 +97,8 @@ data class PavementDamageEntity(
 )
 
 @Entity(tableName = "pavement_damage_photos", foreignKeys = [ForeignKey(entity = PavementDamageEntity::class, parentColumns = ["id"], childColumns = ["damageId"], onDelete = ForeignKey.CASCADE)], indices = [Index("damageId")])
-data class PavementDamagePhotoEntity(@PrimaryKey val id: String, val damageId: String, val localPath: String, val createdAt: Long = System.currentTimeMillis())
+data class PavementDamagePhotoEntity(
+    @PrimaryKey val id: String, val damageId: String, val localPath: String,
+    val createdAt: Long = System.currentTimeMillis(),
+    val retiredAt: Long? = null, val replacedByPhotoId: String? = null
+)

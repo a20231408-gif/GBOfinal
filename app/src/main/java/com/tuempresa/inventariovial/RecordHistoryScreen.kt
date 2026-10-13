@@ -117,7 +117,7 @@ fun RecordHistoryScreen(
                     checked = showAnnulled,
                     onCheckedChange = { showAnnulled = it }
                 )
-                Text("Mostrar también anulados")
+                Text("Mostrar anulados y descartados")
             }
 
 
@@ -140,6 +140,12 @@ fun RecordHistoryScreen(
                     Text("${r.sicCode} · ${r.routeCode} · ${r.roadbedCode}")
                     Text(com.tuempresa.inventariovial.dashboard.DashboardDrafts.progressive(r))
                     OutlinedButton(onClick={detailId=r.id},modifier=Modifier.heightIn(min=48.dp)) {Text("Ver detalle")}
+                    if(r.status in setOf("DRAFT","DISCARDED_LOCAL")) com.tuempresa.inventariovial.core.LocalDraftDiscardButton("SIC",r.id,r.status=="DISCARDED_LOCAL")
+                    if(r.status=="ACTIVE") {
+                        TextButton(enabled=false,onClick={}) {Text("Anular registro")}
+                        Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason,style=MaterialTheme.typography.bodySmall)
+                    }
+                    if(r.status=="DISCARDED_LOCAL")Text("Descartado localmente · originales conservados")
                 }
             }
         }

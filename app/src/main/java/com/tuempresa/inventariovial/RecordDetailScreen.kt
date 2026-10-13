@@ -96,7 +96,7 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
             "DETAIL" -> {
                 item {
                     Text("Fecha de registro: ${r.surveyDate}")
-                    Text(if(r.status=="ANNULLED") "Anulado" else "Drive: ${RecordDetailPresentation.status(sync,r.status=="ACTIVE")}",style=MaterialTheme.typography.titleMedium)
+                    Text(if(r.status=="DISCARDED_LOCAL") "Descartado localmente · originales conservados" else if(r.status=="ANNULLED") "Anulado" else "Drive: ${RecordDetailPresentation.status(sync,r.status=="ACTIVE")}",style=MaterialTheme.typography.titleMedium)
                     if(sync?.revision != sync?.syncedRevision || sync==null) Text("El Excel remoto puede representar una revisión anterior.")
                     Text("Georreferenciación externa: ${runCatching {JSONObject(sync?.receiptJson ?: "{}").optString("externalGeoreferencingStatus").takeIf {it.isNotBlank()}}.getOrNull() ?: "Pendiente de confirmación externa"}")
                     RecordDetailPresentation.summary(s).filter { (label,_) ->
@@ -111,7 +111,8 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
                     sync?.error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
                 }
                 item {
-                    if(r.status!="DRAFT" && SicFieldFormat.fromCode(r.sicCode)==null) TextButton(enabled=com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled, onClick={vm.setRecordStatus(r.id,r.status!="ACTIVE") {message=it}}) {
+                    if(r.status in setOf("DRAFT","DISCARDED_LOCAL")) LocalDraftDiscardButton("SIC",r.id,r.status=="DISCARDED_LOCAL",onChanged={onBack()},onError={message=it})
+                    if(r.status !in setOf("DRAFT","DISCARDED_LOCAL")) TextButton(enabled=com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled, onClick={vm.setRecordStatus(r.id,r.status!="ACTIVE") {message=it}}) {
                         Text(if(r.status=="ACTIVE") "Anular registro" else "Restaurar registro")
                     }
                     if(r.status!="DRAFT") Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason)

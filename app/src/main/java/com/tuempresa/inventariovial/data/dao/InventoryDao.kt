@@ -44,7 +44,7 @@ interface InventoryDao {
     suspend fun fieldPrs(): List<FieldPrEntity>
     @Insert(onConflict = OnConflictStrategy.ABORT) suspend fun insertFieldPr(pr: FieldPrEntity)
 
-    @Query("SELECT * FROM inventory_records WHERE status != 'DRAFT' AND sicCode != 'SCAP'")
+    @Query("SELECT * FROM inventory_records WHERE status NOT IN ('DRAFT','DISCARDED_LOCAL') AND sicCode != 'SCAP'")
     suspend fun recordsForAxis(): List<InventoryRecordEntity>
 
     // Derived data only; a concurrent route/GNSS edit must not receive a stale projection.
@@ -127,7 +127,7 @@ interface InventoryDao {
     }
     @Query("UPDATE inventory_records SET serverSyncStatus = 'PENDING', serverSyncError = NULL, updatedAt = MAX(updatedAt + 1, :now) WHERE id = :id")
     suspend fun markServerPending(id: String, now: Long)
-    @Query("SELECT id FROM inventory_records WHERE status != 'DRAFT' AND serverSyncStatus != 'SYNCED' ORDER BY updatedAt")
+    @Query("SELECT id FROM inventory_records WHERE status NOT IN ('DRAFT','DISCARDED_LOCAL') AND serverSyncStatus != 'SYNCED' ORDER BY updatedAt")
     suspend fun pendingServerIds(): List<String>
     @Query("UPDATE inventory_records SET serverSyncStatus = :status, serverSyncError = :error WHERE id = :id AND updatedAt = :version")
     suspend fun setServerStatus(id: String, version: Long, status: String, error: String?): Int

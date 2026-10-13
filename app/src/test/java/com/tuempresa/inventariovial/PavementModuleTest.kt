@@ -41,7 +41,7 @@ class PavementModuleTest {
     }
 
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
-    @Test fun importedPhotosPersistAndDeleteOnlySelectedManagedCopy()=runBlocking {
+    @Test fun importedPhotosPersistAndRetireWithoutDeletingOriginal()=runBlocking {
         val context=ApplicationProvider.getApplicationContext<Context>()
         val name="pavement-photos-${System.nanoTime()}.db"
         fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).build()
@@ -68,7 +68,7 @@ class PavementModuleTest {
             assertTrue(reopened.photos("d").all { File(it.localPath).exists() })
             reopened.deletePhoto("p2","d",File(context.filesDir,"images"))
             assertEquals(setOf("p1","p3"),reopened.photos("d").map{it.id}.toSet())
-            assertFalse(copies[1].exists());assertTrue(copies[0].exists());assertTrue(copies[2].exists())
+            assertTrue(copies[1].exists());assertTrue(copies[0].exists());assertTrue(copies[2].exists())
             assertEquals("external",reopened.photos("other").single().id)
             reopened.deletePhoto("external","other",File(context.filesDir,"images"));assertTrue(source.exists())
             assertEquals(originalDamage,db.pavementDao().damage("d"))

@@ -113,7 +113,10 @@ object AutomaticDelivery {
             values=s.values.filter {it.ownerId !in setOf("delivery","drive","completion")}.sortedWith(compareBy({it.ownerId},{it.key})),
             photos=s.photos.sortedBy {it.id}.map {it.copy(syncStatus="",driveFolderId=null,driveFileId=null)})}.toString()
         else->{val s=db.pavementDao().sample(i.recordId);val d=db.pavementDao().damages(i.recordId)
-            s.toString()+d.toString()+d.map {db.pavementDao().photos(it.id)}.toString()+db.pavementDao().observeSections().first().filter {it.ruta==s?.ruta && it.tramo==s.tramo && it.surface==s.surface}.toString()}
+            s.toString()+d.toString()+d.map {damage->db.pavementDao().photos(damage.id).map {photo->
+                // Preserve the schema-18 fingerprint of unmodified pending snapshots after adding history columns.
+                "PavementDamagePhotoEntity(id=${photo.id}, damageId=${photo.damageId}, localPath=${photo.localPath}, createdAt=${photo.createdAt})"
+            }}.toString()+db.pavementDao().observeSections().first().filter {it.ruta==s?.ruta && it.tramo==s.tramo && it.surface==s.surface}.toString()}
     }
     suspend fun current(db:InventoryDatabase,i:DriveSyncIntent,p:JSONObject)=
         db.automaticSyncDao().get(i.key)?.let {it.revision==i.revision && it.syncedRevision==p.getLong("baseRevision")}==true && validated(db,i) && sha256(source(db,i).toByteArray())==p.getString("sourceHash")

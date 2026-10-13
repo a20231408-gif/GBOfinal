@@ -26,6 +26,13 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     fun damages(id: String) = dao.observeDamages(id)
     fun observeSample(id: String) = dao.observeSample(id)
     suspend fun photos(id: String) = dao.photos(id)
+    fun observePhotos(id:String) = dao.observePhotos(id)
+    fun photoHistory(id:String) = dao.observePhotoHistory(id)
+    fun samplePhotos(id:String) = dao.observeSamplePhotos(id)
+    private suspend fun photoRevision(sample:PavementSampleEntity) {
+        dao.saveSample(sample.copy(updatedAt=maxOf(System.currentTimeMillis(),sample.updatedAt+1)))
+        // Drafts retain their previous ACK; the existing closeSample queues the next revision.
+    }
     suspend fun saveSic(id: String, format: PavementSicFormat, damageId: String, values: Map<String,String>) = db.withTransaction {
         val user=sessions.requireUser()
         val sample=requireNotNull(dao.sample(id))
@@ -45,7 +52,7 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
         val user = sessions.requireUser()
         val sample = requireNotNull(dao.sample(id))
         require(sample.inspectorUserId == user.id) { "Solo el inspector creador puede editar esta muestra." }
-        require(sample.status != "CLOSED") { "La muestra está cerrada." }
+        require(sample.status == "DRAFT") { "La muestra está cerrada." }
         return sample
     }
     suspend fun saveSample(input: PavementSampleEntity) = db.withTransaction {
@@ -85,32 +92,38 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     suspend fun reopenSample(id:String)=db.withTransaction {
         val user=sessions.requireUser();val s=requireNotNull(dao.sample(id))
         require(s.inspectorUserId==user.id) {"Solo el inspector creador puede editar esta muestra."}
+        require(s.status=="CLOSED") {"Solo se reabren muestras cerradas; recupera un borrador descartado desde su acción específica."}
         dao.saveSample(s.copy(status="DRAFT",updatedAt=maxOf(System.currentTimeMillis(),s.updatedAt+1)))
         com.tuempresa.inventariovial.core.AutomaticSync.draft(db,"PAVEMENT",id)
     }
     suspend fun deleteDamage(damage: PavementDamageEntity) = db.withTransaction {
         val stored=requireNotNull(dao.damage(damage.id)) { "El daño ya no existe." }
-        editable(stored.sampleId); dao.deleteDamage(stored.id)
+        editable(stored.sampleId)
+        require(dao.photoHistory(stored.id).isEmpty()) { "El daño tiene evidencia fotográfica conservada; no se elimina su historial." }
+        dao.deleteDamage(stored.id)
     }
     suspend fun savePhoto(photo: PavementDamagePhotoEntity, sampleId: String) = db.withTransaction {
-        editable(sampleId)
+        val sample=editable(sampleId)
         require(dao.damage(photo.damageId)?.sampleId==sampleId) { "La fotografía debe pertenecer a un daño de esta muestra." }
+        require(photo.retiredAt==null && photo.replacedByPhotoId==null) { "Usa la operación de retiro para cambiar el historial." }
         val old=dao.photo(photo.id)
-        require(old==null || old.damageId==photo.damageId) { "La fotografía pertenece a otro daño." }
-        dao.savePhoto(photo)
+        require(old==null || old==photo) { "No sobrescribas una fotografía existente; usa Reemplazar." }
+        if(old==null) {dao.savePhoto(photo);photoRevision(sample)}
     }
-    suspend fun deletePhoto(photoId: String, damageId: String, imagesDirectory: java.io.File) {
-        val path = db.withTransaction {
-            val photo = requireNotNull(dao.photo(photoId)) { "La fotografía ya no existe." }
-            require(photo.damageId == damageId) { "La fotografía pertenece a otro daño." }
-            editable(requireNotNull(dao.damage(damageId)).sampleId)
-            dao.deletePhoto(photoId)
-            photo.localPath.takeIf { dao.photoPathCount(it) == 0 }
-        }
-        if (path != null) kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-            val file = java.io.File(path).canonicalFile
-            if (file.parentFile == imagesDirectory.canonicalFile && file.name.startsWith("PAVIMENTO_")) file.delete()
-        }
+    suspend fun replacePhoto(oldId:String,newPhoto:PavementDamagePhotoEntity,sampleId:String) = db.withTransaction {
+        val sample=editable(sampleId)
+        val old=requireNotNull(dao.photo(oldId))
+        require(old.retiredAt==null && old.damageId==newPhoto.damageId && dao.damage(old.damageId)?.sampleId==sampleId) { "Fotografía retirada o ajena al daño." }
+        require(old.id!=newPhoto.id && old.localPath!=newPhoto.localPath && dao.photo(newPhoto.id)==null && newPhoto.retiredAt==null && newPhoto.replacedByPhotoId==null) { "El reemplazo necesita UUID y original nuevos." }
+        dao.savePhoto(newPhoto)
+        dao.savePhoto(old.copy(retiredAt=System.currentTimeMillis(),replacedByPhotoId=newPhoto.id))
+        photoRevision(sample)
     }
-
+    /** Kept for existing callers; removal means retirement, never deleting the original file. */
+    suspend fun deletePhoto(photoId: String, damageId: String, imagesDirectory: java.io.File) = db.withTransaction {
+        val photo=requireNotNull(dao.photo(photoId)) { "La fotografía ya no existe." }
+        require(photo.damageId==damageId) { "La fotografía pertenece a otro daño." }
+        val sample=editable(requireNotNull(dao.damage(damageId)).sampleId)
+        if(photo.retiredAt==null) {dao.savePhoto(photo.copy(retiredAt=System.currentTimeMillis()));photoRevision(sample)}
+    }
 }

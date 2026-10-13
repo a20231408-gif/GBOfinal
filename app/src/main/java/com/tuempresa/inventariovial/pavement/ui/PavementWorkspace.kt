@@ -37,6 +37,7 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
     var initialPage by rememberSaveable {mutableStateOf("DETAIL")}
     var id by rememberSaveable(initialSampleId) { mutableStateOf(initialSampleId) }
     var surface by rememberSaveable { mutableStateOf(PavementSurface.ASPHALT) }
+    var showDiscarded by rememberSaveable {mutableStateOf(false)}
     var filter by rememberSaveable { mutableStateOf("") }
     var inspectorFilter by rememberSaveable { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -66,8 +67,9 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
         Choice("Inspector",inspectorFilter,listOf("")+samples.map{it.inspectorUserId}.distinct(),{ id -> if(id.isBlank())"Todos" else samples.firstOrNull{it.inspectorUserId==id}?.inspectorNombre ?: id }){inspectorFilter=it}
         Button(onClick = { scope.launch { runCatching { repo.newSample(surface) }.onSuccess { id = it }.onFailure { error = it.message } } }, modifier = Modifier.heightIn(min = 56.dp)) { Text("Nueva muestra") }
         error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+        Row {Checkbox(showDiscarded,{showDiscarded=it});Text("Mostrar borradores descartados")}
         Text("MUESTRAS", style=MaterialTheme.typography.titleMedium)
-        PavementHistory.visible(samples, surface, filter, inspectorFilter).forEach { s ->
+        PavementHistory.visible(samples, surface, filter, inspectorFilter,showDiscarded).forEach { s ->
             PavementSampleCard(s,session?.id,onOpen={id=it;initialPage="DETAIL"},onAction={record,page->id=record;initialPage=page})
         }
     }
@@ -85,15 +87,15 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
 }
 
 @Composable
-private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepository, userId: String?, initialPage:String="DETAIL",onBack: () -> Unit) {
+internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepository, userId: String?, initialPage:String="DETAIL",onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val surface = PavementSurface.valueOf(sample.surface)
-    val editable = sample.status != "CLOSED" && sample.inspectorUserId == userId
+    val editable = sample.status == "DRAFT" && sample.inspectorUserId == userId
     val damages by remember(sample.id) { repo.damages(sample.id) }.collectAsState(emptyList())
     var header by remember { mutableStateOf(false) }
     var draft by remember { mutableStateOf<PavementDamageEntity?>(null) }
-    var selected by remember { mutableStateOf<String?>(null) }
+    var selected by rememberSaveable(sample.id) { mutableStateOf<String?>(null) }
     var movingId by remember { mutableStateOf<String?>(null) }
     var definition by remember { mutableStateOf(PavementCatalog.forSurface(surface).first()) }
     var showMeasurement by remember { mutableStateOf(false) }
@@ -106,34 +108,53 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
     var photoDamage by rememberSaveable { mutableStateOf<String?>(null) }
     var photoRevision by remember { mutableIntStateOf(0) }
+    var photoReplacement by rememberSaveable { mutableStateOf<String?>(null) }
+    var viewPhotosDamage by rememberSaveable { mutableStateOf<String?>(null) }
+    val samplePhotos by remember(sample.id,repo) {repo.samplePhotos(sample.id)}.collectAsState(emptyList())
     val camera = rememberLauncherForActivityResult(com.tuempresa.inventariovial.core.FieldTakePicture()) { ok ->
-        val path = photoPath; val damageId = photoDamage
-        photoPath=null; photoDamage=null
-        if(!ok && path!=null) scope.launch { withContext(Dispatchers.IO) { File(path).delete() } }
+        val path = photoPath; val damageId = photoDamage; val replacement=photoReplacement
+        photoPath=null; photoDamage=null;photoReplacement=null
+        if(!ok && path!=null) scope.launch {withContext(Dispatchers.IO) {File(path).takeIf {it.length()==0L}?.delete()}}
         if (ok && path != null && damageId != null) scope.launch {
             runCatching {
-                repo.savePhoto(PavementDamagePhotoEntity(UUID.randomUUID().toString(), damageId, path), sample.id)
-            }.onSuccess { photoRevision++; message = "✓ Guardado en tablet" }.onFailure { withContext(Dispatchers.IO) { File(path).delete() }; message = it.message.orEmpty() }
+                val photo=PavementDamagePhotoEntity(UUID.randomUUID().toString(), damageId, path)
+                if(replacement==null)repo.savePhoto(photo,sample.id) else repo.replacePhoto(replacement,photo,sample.id)
+            }.onSuccess { photoRevision++; message = "✓ Guardado en tablet" }.onFailure {message="${it.message.orEmpty()} Original conservado en tablet."}
         }
     }
     var importing by remember { mutableStateOf(false) }
     var pickerDamage by rememberSaveable { mutableStateOf<String?>(null) }
+    var pickerReplacement by rememberSaveable { mutableStateOf<String?>(null) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        val damageId=pickerDamage; pickerDamage=null
+        val damageId=pickerDamage; val replacement=pickerReplacement;pickerDamage=null;pickerReplacement=null
         if(uri!=null && damageId!=null) scope.launch {
             importing=true
-            var file:File?=null
             try {
                 val imported=withContext(Dispatchers.IO) { PavementPhotos.importImage(context,uri) }
-                file=imported
-                repo.savePhoto(PavementDamagePhotoEntity(UUID.randomUUID().toString(),damageId,imported.absolutePath),sample.id)
+                val photo=PavementDamagePhotoEntity(UUID.randomUUID().toString(),damageId,imported.absolutePath)
+                if(replacement==null)repo.savePhoto(photo,sample.id) else repo.replacePhoto(replacement,photo,sample.id)
                 photoRevision++; message="Imagen guardada en el daño."
-            } catch(e:Exception) { withContext(Dispatchers.IO) { file?.delete() }; message=e.message.orEmpty() }
+            } catch(e:Exception) {message="${e.message.orEmpty()} La imagen original se conserva."}
             finally { importing=false }
         }
     }
-    fun launchCamera() { runCatching { val photo = createPhotoFile(context, "PAVIMENTO"); photoPath = photo.file.absolutePath; photoDamage = selected; camera.launch(photo.uri) }.onFailure { message = it.message.orEmpty() } }
-    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> if (granted) launchCamera() else message = "Permite acceso a la cámara para tomar fotos." }
+    fun launchCamera() { runCatching {
+        requireNotNull(photoDamage) { "Selecciona un daño para la fotografía." }
+        val photo=createPhotoFile(context,"PAVIMENTO");photoPath=photo.file.absolutePath;camera.launch(photo.uri)
+    }.onFailure {photoDamage=null;photoReplacement=null;message=it.message.orEmpty()} }
+    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if(granted)launchCamera() else {photoDamage=null;photoReplacement=null;message="Permite acceso a la cámara para tomar fotos."}
+    }
+    fun takePhoto(damageId:String,replacement:String?=null) {
+        if(importing || photoPath!=null)return
+        photoDamage=damageId;photoReplacement=replacement
+        if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)launchCamera()
+        else permission.launch(Manifest.permission.CAMERA)
+    }
+    fun importPhoto(damageId:String,replacement:String?=null) {
+        if(importing || photoPath!=null)return
+        pickerDamage=damageId;pickerReplacement=replacement;picker.launch("image/*")
+    }
     fun newDamage(x: Double? = null, y: Double? = null, x2: Double? = null, y2: Double? = null): PavementDamageEntity {
         val width = if (x != null && x2 != null) abs(x2 - x) else null
         val length = if (y != null && y2 != null) abs(y2 - y) else null
@@ -151,7 +172,7 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                     Text("Fallas en pavimentos",style=MaterialTheme.typography.titleLarge)
                     Text("${surface.label} · ${sample.tramo} · muestra ${sample.muestra}",style=MaterialTheme.typography.bodyMedium)
                 }
-                if(!editable && sample.inspectorUserId==userId) TextButton(onClick={scope.launch {runCatching {repo.reopenSample(sample.id)}.onFailure {message=it.message.orEmpty()}}}) {Text("Reabrir para corregir")}
+                if(sample.status=="CLOSED" && sample.inspectorUserId==userId) TextButton(onClick={scope.launch {runCatching {repo.reopenSample(sample.id)}.onFailure {message=it.message.orEmpty()}}}) {Text("Reabrir para corregir")}
                 if (editable) Button(onClick = { closeConfirm = true },colors=ButtonDefaults.buttonColors(containerColor=MaterialTheme.colorScheme.surface,contentColor=MaterialTheme.colorScheme.primary)) { Text("Revisar y finalizar") }
             }
         }
@@ -205,7 +226,10 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                         if(showMeasurement) Text(remember(definition.code){PavementTechnicalText.measurement(context,definition.code)},style=MaterialTheme.typography.bodySmall)
                         if (definition.geometry == PavementGeometry.GLOBAL || definition.geometry == PavementGeometry.SLABS) Button(onClick = { message=""; draft = newDamage() }) { Text(if (definition.geometry == PavementGeometry.GLOBAL) "Registrar global" else "Aceptar ${slabSet.size} losas") }
                     }
-                    PavementDamageTable(damages, selected) { selected=it; movingId=null }
+                    PavementDamageTable(damages,selected,{selected=it;movingId=null},
+                        photoCounts=samplePhotos.groupingBy {it.damageId}.eachCount(),
+                        onCamera=if(editable) ({damageId->takePhoto(damageId)}) else null,
+                        onViewPhotos={damageId->selected=damageId;viewPhotosDamage=damageId})
                     damages.firstOrNull { it.id==selected }?.let { d ->
                         OutlinedCard(Modifier.fillMaxWidth()) {
                             Column(Modifier.padding(10.dp)) {
@@ -215,12 +239,12 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
                                 if(editable) PavementDamageActions(d,importing,
                                     onModify={ chosen -> message="";draft=chosen;movingId=null },
                                     onMove={ chosen -> movingId=chosen.id;first=null;slabSet=emptySet();message="Arrastra en el esquema para mover ${chosen.code}-#${chosen.correlativo}." },
-                                    onCamera={ if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED) launchCamera() else permission.launch(Manifest.permission.CAMERA) },
+                                    onCamera={takePhoto(d.id)},
                                     onDelete={ chosen -> scope.launch {runCatching{repo.deleteDamage(chosen)}.onFailure{message=it.message.orEmpty()}} },
-                                    onImport={ chosen -> pickerDamage=chosen.id;picker.launch("image/*") })
+                                    onImport={chosen->importPhoto(chosen.id)})
                                 if (selected == d.id) key(d.id) { PhotoGallery(d.id, photoRevision, repo, editable, { photoRevision++ }, { message=it },
-                                    onCamera={if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED) launchCamera() else permission.launch(Manifest.permission.CAMERA)},
-                                    onImport={pickerDamage=d.id;picker.launch("image/*")}) }
+                                    onCamera={takePhoto(d.id)},onImport={importPhoto(d.id)},
+                                    onReplaceCamera={takePhoto(d.id,it.id)},onReplaceImport={importPhoto(d.id,it.id)}) }
                             }
                         }
                     }
@@ -235,8 +259,27 @@ private fun PavementEditor(sample: PavementSampleEntity, repo: PavementRepositor
     if(mediaDialog) androidx.compose.ui.window.Dialog(onDismissRequest={mediaDialog=false},properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {
         Surface(Modifier.fillMaxSize()){Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
             TextButton(onClick={mediaDialog=false}){Text("Cerrar fotografías")}
-            damages.forEach {damage->Text("${damage.correlativo}. ${damage.name}");PhotoGallery(damage.id,photoRevision,repo,false,{},{message=it})}
+            damages.forEach {damage->key(damage.id) {
+                Text("${damage.correlativo}. ${damage.name} · ${samplePhotos.count {it.damageId==damage.id}} fotos")
+                PhotoGallery(damage.id,photoRevision,repo,editable,{photoRevision++},{message=it},
+                    onCamera={takePhoto(damage.id)},onImport={importPhoto(damage.id)},
+                    onReplaceCamera={takePhoto(damage.id,it.id)},onReplaceImport={importPhoto(damage.id,it.id)})
+            }}
+            if(message.isNotBlank())Text(message)
         }}
+    }
+    viewPhotosDamage?.let {damageId->
+        val damage=damages.firstOrNull {it.id==damageId}
+        if(damage!=null) androidx.compose.ui.window.Dialog(onDismissRequest={viewPhotosDamage=null},properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {
+            Surface(Modifier.fillMaxSize()) {Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
+                TextButton(onClick={viewPhotosDamage=null}) {Text("Volver a la muestra")}
+                Text("Muestra ${sample.muestra} · daño ${damage.correlativo} · ${damage.name}")
+                PhotoGallery(damageId,photoRevision,repo,editable,{photoRevision++},{message=it},
+                    onCamera={takePhoto(damageId)},onImport={importPhoto(damageId)},
+                    onReplaceCamera={takePhoto(damageId,it.id)},onReplaceImport={importPhoto(damageId,it.id)})
+                if(message.isNotBlank())Text(message)
+            }}
+        }
     }
     if (header) SampleDialog(sample, message, { header = false }) { updated -> scope.launch { runCatching { repo.saveSample(updated) }.onSuccess { header = false; message = "Cabecera guardada." }.onFailure { message = it.message.orEmpty() } } }
     draft?.let { damage -> DamageDialog(damage, message, { draft = null }) { updated -> scope.launch { runCatching { repo.saveDamage(updated) }.onSuccess { draft = null; slabSet = emptySet(); message = "Daño guardado." }.onFailure { message = it.message.orEmpty() } } } }
@@ -252,18 +295,33 @@ if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title
                 if(com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null) com.tuempresa.inventariovial.core.PavementSyncAdapter.enqueue(context,saved) }.onFailure { message = it.message.orEmpty() }; closeConfirm = false } }) { Text("Cerrar") } }, dismissButton = { TextButton(onClick = { closeConfirm = false }) { Text("Volver") } })
 }
 
-@Composable internal fun PhotoGallery(id: String, revision: Int, repo: PavementRepository, editable: Boolean, onChanged: () -> Unit, onError: (String) -> Unit, onCamera: ()->Unit = {}, onImport: ()->Unit = {}) {
-    val context=LocalContext.current
+@Composable internal fun PhotoGallery(id: String, revision: Int, repo: PavementRepository, editable: Boolean, onChanged: () -> Unit, onError: (String) -> Unit, onCamera: ()->Unit = {}, onImport: ()->Unit = {},
+    onReplaceCamera:((PavementDamagePhotoEntity)->Unit)?=null,onReplaceImport:((PavementDamagePhotoEntity)->Unit)?=null) {
     val scope=rememberCoroutineScope()
-    val photos by produceState<List<PavementDamagePhotoEntity>>(emptyList(),id,revision) { value=repo.photos(id) }
-    var remove by remember(id) { mutableStateOf<PavementDamagePhotoEntity?>(null) }
-    com.tuempresa.inventariovial.core.PhotoCaptureCard("Fotografías del daño",photos.map {File(it.localPath)},
-        onTakePhoto={onCamera()},onSelectFile=onImport,onDelete={f->remove=photos.firstOrNull { File(it.localPath)==f }},editable=editable)
-    remove?.let { photo -> AlertDialog(onDismissRequest={remove=null}, title={Text("Eliminar fotografía")},text={Text("¿Eliminar esta fotografía del daño?")},
+    val photos by remember(id,repo) {repo.observePhotos(id)}.collectAsState(emptyList())
+    val history by remember(id,repo) {repo.photoHistory(id)}.collectAsState(emptyList())
+    var remove by remember(id) {mutableStateOf<PavementDamagePhotoEntity?>(null)}
+    var replace by remember(id) {mutableStateOf<PavementDamagePhotoEntity?>(null)}
+    var showHistory by rememberSaveable(id) {mutableStateOf(false)}
+    val context=LocalContext.current
+    com.tuempresa.inventariovial.core.PhotoCaptureCard("Fotografías del daño · ${photos.size}",photos.map {File(it.localPath)},
+        onTakePhoto={onCamera()},onSelectFile=onImport,onDelete={f->remove=photos.firstOrNull {File(it.localPath)==f}},editable=editable,
+        onReplace=if(onReplaceCamera!=null || onReplaceImport!=null) ({f->replace=photos.firstOrNull {File(it.localPath)==f}}) else null)
+    val retired=history.filter {it.retiredAt!=null}
+    if(retired.isNotEmpty())TextButton(onClick={showHistory=!showHistory}) {Text("Historial conservado (${retired.size})")}
+    if(showHistory && retired.isNotEmpty()) {
+        com.tuempresa.inventariovial.core.PhotoCaptureCard("Fotografías retiradas",retired.map {File(it.localPath)},{},{},{},captureEnabled=false,editable=false)
+        retired.forEach {Text("${it.id} · ${if(it.replacedByPhotoId!=null) "Reemplazada por ${it.replacedByPhotoId}" else "Retirada"}")}
+    }
+    remove?.let {photo->AlertDialog(onDismissRequest={remove=null},title={Text("Retirar fotografía")},text={Text("Se retira del panel activo. El original y su historial se conservan; no se borra de Drive.")},
         confirmButton={TextButton(onClick={remove=null;scope.launch {
-            runCatching { repo.deletePhoto(photo.id,id,File(context.filesDir,"images")) }.onSuccess { onChanged() }.onFailure { onError(it.message.orEmpty()) }
-        }}) { Text("Eliminar") }}, dismissButton={TextButton(onClick={remove=null}) { Text("Cancelar") }}) }
-
+            runCatching {repo.deletePhoto(photo.id,id,File(context.filesDir,"images"))}.onSuccess {onChanged()}.onFailure {onError(it.message.orEmpty())}
+        }}) {Text("Retirar")}},dismissButton={TextButton(onClick={remove=null}) {Text("Cancelar")}})}
+    replace?.let {photo->AlertDialog(onDismissRequest={replace=null},title={Text("Reemplazar fotografía")},text={Text("El original se conserva. El reemplazo se confirma solo al guardar la nueva fotografía en este daño.")},
+        confirmButton={Column {
+            if(onReplaceCamera!=null)TextButton(onClick={replace=null;onReplaceCamera(photo)}) {Text("Tomar reemplazo")}
+            if(onReplaceImport!=null)TextButton(onClick={replace=null;onReplaceImport(photo)}) {Text("Importar reemplazo")}
+        }},dismissButton={TextButton(onClick={replace=null}) {Text("Cancelar")}})}
 }
 
 @Composable private fun PavementPhotoImage(path:String) {

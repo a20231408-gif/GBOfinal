@@ -20,13 +20,7 @@ internal object PavementPhotos {
             val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             BitmapFactory.decodeFile(file.absolutePath, bounds)
             require(bounds.outWidth > 0 && bounds.outHeight > 0) { "Imagen no compatible." }
-            // Existing JPEG bytes and EXIF remain untouched. Other formats need JPEG conversion for protocol 1.
-            val jpeg=file.inputStream().use { it.read()==0xff && it.read()==0xd8 }
-            if(!jpeg) {
-                val bitmap=requireNotNull(com.tuempresa.inventariovial.camera.loadCorrectlyOrientedBitmap(file.absolutePath)) { "Imagen no compatible." }
-                try { file.outputStream().use { require(bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG,95,it)) } }
-                finally { bitmap.recycle() }
-            }
+            // Preserve imported container and EXIF. DeliveryJpeg creates the JPEG transport copy.
             return file
         } catch (e: Exception) { file.delete(); throw e }
     }
