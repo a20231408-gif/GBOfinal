@@ -1,0 +1,14 @@
+{
+  "assembleDebug": "PASSED",
+  "assembleRelease": "PASSED",
+  "validateReleaseConfiguration": "PASSED",
+  "verifyReleaseIdentity": "PASSED",
+  "releaseSignatureVerified": true,
+  "zipAligned": true,
+  "ordinaryBuild": true,
+  "tabletInstallationPerformed": false,
+  "productionBackendDeploymentPerformed": false,
+  "androidTests": 5,
+  "backendTests": 18,
+  "testFailures": 0
+}

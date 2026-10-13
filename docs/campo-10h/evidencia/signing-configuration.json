@@ -1,0 +1,11 @@
+{
+  "validateReleaseConfiguration": "PASSED",
+  "validatedBeforeReleaseBuild": true,
+  "historicalCertificateSha256": "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315",
+  "historicalApplicationId": "com.tuempresa.inventariovial",
+  "historicalArtifactVersionCode": 16,
+  "ownerConfirmedHighestDistributedVersionCode": 16,
+  "nextVersionCode": 17,
+  "nextVersionName": "1.4.3",
+  "tabletUnchanged": true
+}

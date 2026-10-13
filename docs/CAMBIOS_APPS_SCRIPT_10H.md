@@ -2,6 +2,8 @@
 
 No se ha desplegado, activado ninguna propiedad, ni escrito en Drive de producción durante 10H. No se modifica `GBO - Servicio de Usuarios`.
 
+El GET real comprobó V3/V4, fotografías V2 y Video V1, sin anunciar aún nombres de video V2. Su rootFolderId **difiere de la referencia local de Code.gs**. Por eso NO reemplazar completo el Code.gs publicado: incorporar únicamente el campo de capacidades indicado, preservando la raíz publicada. Los tres módulos de video usan el ROOT_FOLDER_ID del proyecto existente, sin introducir otra raíz.
+
 ## Archivos completos entregados
 
 | Fuente del repositorio | Destino en el proyecto existente |

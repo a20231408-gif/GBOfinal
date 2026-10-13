@@ -32,7 +32,8 @@ fun localString(name: String) = serverProperties.getProperty(name, "")
 fun localFlag(name: String) = serverProperties.getProperty(name, "false").toBoolean().toString()
 
 // Public identity is pinned to the certificate verified in both historical field APKs.
-val productionVersionCode = 16
+// Owner confirmed 16 / 1.4.2 as the highest distributed Release (Prompt 10H).
+val productionVersionCode = 17
 val expectedReleaseCertSha256 = "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
 val releaseProperties = Properties().apply {
     val config = rootProject.file("keystore.properties")
@@ -92,7 +93,7 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = productionVersionCode
-        versionName = "1.4.2"
+        versionName = "1.4.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
