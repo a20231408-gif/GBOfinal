@@ -314,9 +314,8 @@ class InventoryViewModel(
     fun setRecordStatus(id: String, active: Boolean, onError: (String) -> Unit) {
         viewModelScope.launch {
             try {
-                val previous=database.inventoryDao().recordById(id) ?: error("Registro inexistente.")
-                database.inventoryDao().setRecordStatus(id, if (active) "ACTIVE" else "ANNULLED", maxOf(System.currentTimeMillis(),previous.updatedAt+1))
-                scheduleServerSync(getApplication())
+                com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.requireAvailable()
+                // No local transition until individual authorization and authoritative ACK exist.
             } catch (error: Exception) { onError(error.message ?: "No se pudo cambiar el estado.") }
         }
     }

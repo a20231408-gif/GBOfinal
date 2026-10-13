@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tuempresa.inventariovial.InventoryLifecycle10Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-13T00:53:47.445Z" hostname="JULIAN" time="11.639">
+  <properties/>
+  <testcase name="directStatusCallIsRejectedBeforeDatabaseMutation" classname="com.tuempresa.inventariovial.InventoryLifecycle10Test" time="11.391"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

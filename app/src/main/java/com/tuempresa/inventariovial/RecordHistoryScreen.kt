@@ -262,10 +262,11 @@ internal fun HistoryRecordCard(
                 record.observations?.let { Text(it) }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedButton(onClick = { editing = true; editError = null }) { Text("Editar") }
-                    OutlinedButton(onClick = {
+                    OutlinedButton(enabled=com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled, onClick = {
                         viewModel.setRecordStatus(record.id, record.status != "ACTIVE", onError)
                     }) { Text(if (record.status == "ACTIVE") "Anular" else "Restaurar") }
                 }
+                Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason)
             } else {
                 OutlinedTextField(value = route, onValueChange = { route = it; routeSource = LocationSource.MANUAL_OVERRIDE; startSource = LocationSource.MANUAL_OVERRIDE; endSource = LocationSource.MANUAL_OVERRIDE }, label = { Text("Ruta") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = roadbed, onValueChange = { roadbed = it; startSource = LocationSource.MANUAL_OVERRIDE; endSource = LocationSource.MANUAL_OVERRIDE }, label = { Text("Calzada") }, modifier = Modifier.fillMaxWidth())

@@ -1,0 +1,14 @@
+# Bloque C: pendiente, función deshabilitada
+
+El servicio actual no acredita un permiso individual para anular/restaurar inventario. ADMIN local o token TABLET_ADMIN_ONLY no equivale a esa autorización remota. Se protegió la llamada ViewModel y se deshabilitaron botones anteriores: no se modifica estado local, no se encola una eliminación falsa y no se toca el Excel. Comandos backend retornan INDIVIDUAL_INVENTORY_AUTH_REQUIRED, capacidad 0. No se modificó el servicio de usuarios ni se borró evidencia. Las pruebas solo demuestran el bloqueo, no una anulación completa.
+
+Integración requerida antes de activar:
+
+- Concesión individual verificable por backend con usuario, dispositivo, alcance INVENTORY_ANNUL/RESTORE, expiración/revocación y permiso por ruta; definir verificador con aprobación del propietario del servicio de usuarios. Nunca usar token Drive como prueba de rol.
+- Confirmación y motivo obligatorio. Intención offline con opId idempotente, UUID permanente, baseRevision, usuario/dispositivo/fecha y autorización válida; mostrar pendiente separada de ACK. Revalidar permiso al procesarla. Una revocación no se resuelve usando credenciales compartidas.
+- Bajo lock, comprobar revisión/permiso y escribir tombstone reversible, journal y backup por ID. Reconstruir Excel desde **todos** los registros remotos de la ruta, no desde exportación local. Quitar exactamente fila afectada y mantener otras filas/operadores, estructura OOXML, columnas y formatos. Si quedan cero filas activas, conservar plantilla/cabeceras; motor actual EMPTY_AGGREGATE requeriría tratamiento explícito.
+- Commit transaccional y ACK después de confirmar metadatos/Excel. Fallo intermedio → rollback verificable sin perder una revisión concurrente. Reintento mismo opId devuelve resultado previo. Una edición pendiente con baseRevision antigua no revoca tombstone; restauración requiere operación explícita autorizada con revisión vigente.
+- Lista local provisional y lista confirmada diferenciadas; densidad visible 1,2 tras excluir segundo de tres. UUID, binding/fileId y número histórico permanecen inmutables; no renombrar carpetas. Orden KMZ/PR usa orden existente. Restaurar reinserta en orden vigente y recalcula solo orden visual/Excel, nunca reutiliza identidad.
+- Actualizar otras tablets mediante consulta incremental de revisiones/tombstones al sincronizar; no prometer tiempo real sin un mecanismo real de notificación. Conservar originals, históricos, auditoría y backups, sin eliminación física.
+
+Pendientes obligatorios antes de anunciar capacidad >0: usuario sin permiso/administrador autorizado/token incorrecto/tablet revocada; segundo de tres y otras dos filas intactas; vacío total; restaurar; offline/reintento; ACK perdido; dos operadores; edición anterior vs tombstone; OOXML contractual; UUID/carpeta inmutables y numeración continua. Necesitan autorizaciones y servidor nuevos, no se marcan aprobados con mocks de un token compartido.

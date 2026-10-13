@@ -111,9 +111,10 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
                     sync?.error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
                 }
                 item {
-                    if(r.status!="DRAFT" && SicFieldFormat.fromCode(r.sicCode)==null) TextButton(onClick={vm.setRecordStatus(r.id,r.status!="ACTIVE") {message=it}}) {
+                    if(r.status!="DRAFT" && SicFieldFormat.fromCode(r.sicCode)==null) TextButton(enabled=com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled, onClick={vm.setRecordStatus(r.id,r.status!="ACTIVE") {message=it}}) {
                         Text(if(r.status=="ACTIVE") "Anular registro" else "Restaurar registro")
                     }
+                    if(r.status!="DRAFT") Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason)
                     message?.let {Text(it,color=MaterialTheme.colorScheme.error)}
                 }
             }
