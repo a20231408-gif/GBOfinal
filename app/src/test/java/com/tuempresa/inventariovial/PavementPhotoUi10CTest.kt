@@ -25,6 +25,11 @@ import org.robolectric.annotation.Config
 @Config(sdk=[34],application=Application::class)
 class PavementPhotoUi10CTest {
     @get:Rule val compose=createComposeRule()
+    @Before fun initializeSyntheticWorkManager() {
+        val context=ApplicationProvider.getApplicationContext<Context>()
+        try {androidx.work.WorkManager.getInstance(context)}
+        catch(_:IllegalStateException){androidx.work.WorkManager.initialize(context,androidx.work.Configuration.Builder().build())}
+    }
     private fun sample()=PavementSampleEntity("s","T","R10",1,"Derecho","UC","00+000","00+040",5.0,40.0,"ASPHALT","2026-10-12","u","Inspector")
     private fun damage(id:String)=PavementDamageEntity(id,"s",if(id=="first")1 else 2,"ASPHALT",7,"Grieta","L","LINEAR",1.0,2.0,2.0,15.0,null,1.0,13.0,null,null,null,"")
     @Test fun eachDamageOffersCameraAndGalleryForItsOwnUuid() {
