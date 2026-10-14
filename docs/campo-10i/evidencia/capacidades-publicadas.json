@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "readablePhotoNamingVersion": 2,
+  "videoProtocol": 1,
+  "videoScope": "SCAP_ONLY",
+  "readableVideoNamingVersion": null,
+  "sicObservationsVersion": null
+}

@@ -1,0 +1,28 @@
+{
+  "applicationId": "com.tuempresa.inventariovial",
+  "versionCode": 17,
+  "versionName": "1.4.3",
+  "bytes": 40911647,
+  "sha256": "0b60affbb85497fad60e2372674c4f038a538efabf99f7fafed0359f1122adf6",
+  "signatureVerified": true,
+  "certificateSha256": "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872",
+  "debuggable": true,
+  "testOnly": false,
+  "ordinaryLocalConfiguration": {
+    "GBO_PHOTO_NAMES_V2_ENABLED": true,
+    "GBO_VIDEO_REMOTE_ENABLED": true,
+    "ACCESS_CONTROL_ENABLED": false
+  },
+  "modules": {
+    "SIC": true,
+    "SCAP": true,
+    "Pavimentos": true,
+    "FotosV2": true,
+    "Videos": true,
+    "VideosOffline": true,
+    "NombresVideosV2": true,
+    "Geometria10I": true
+  },
+  "installedOnTablet": false,
+  "artifactTrackedInGit": false
+}

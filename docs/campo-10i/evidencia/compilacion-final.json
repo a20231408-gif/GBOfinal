@@ -1,0 +1,21 @@
+{
+  "codeCommit": "8ecdd81",
+  "tasks": {
+    "assembleDebug": "PASS",
+    "validateReleaseConfiguration": "PASS: historical certificate and private local configuration",
+    "assembleDebugAndroidTest": "PASS: compilation only"
+  },
+  "log": "app/build/cierre-10i/compilacion-final.log",
+  "ordinaryBuild": true,
+  "functionalTestFlagsRequired": false,
+  "applicationIdChanged": false,
+  "databaseSchemaOrMigrationsChangedFrom10H": false,
+  "newJvmAndroidCasesPassed": 13,
+  "newNodeCasesPassed": 8,
+  "androidInstrumentedCasesNotExecuted": ["PavementDialogs10ITest.rutFields", "PavementDialogs10ITest.slabFields"],
+  "newReleaseGenerated": false,
+  "newReleaseReason": "Android Dialog execution and physical acceptance pending; owner review and backend/contractual validation required before distribution",
+  "previousReleaseAndBackupUnchanged": true,
+  "apkInstalled": false,
+  "appsScriptDeployed": false
+}

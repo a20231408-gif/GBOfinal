@@ -45,4 +45,4 @@ Conservar copia privada de la implementación anterior y los archivos entregados
 
 No retirar el módulo de conciliación después de recibir formatos mixtos: una implementación anterior volvería a rechazar sus firmas de plantilla. Ante un problema, suspender la distribución y mantener la cola local; cualquier reversión de servidor debe evaluarse sobre copias de prueba, conservando la última versión y los metadatos. No borrar JSON técnicos, consolidaciones o evidencias como procedimiento de reversión.
 
-Los nombres legibles de videos 10H son una actualización independiente, documentada en CAMBIOS_APPS_SCRIPT_10H.md. Su capacidad real se consultará y registrará para el cierre 10I; no se presupone que ya fue publicada.
+Los nombres legibles de videos 10H son una actualización independiente, documentada en CAMBIOS_APPS_SCRIPT_10H.md. La consulta GET de lectura en 10I anunció videoProtocol=1 y videoScope=SCAP_ONLY, pero no readableVideoNamingVersion ni sicObservationsVersion. Ambas publicaciones específicas siguen pendientes; las capacidades de fotos V2 y V3/V4 sí se anunciaron. Evidencia sin URL ni token en campo-10i/evidencia/capacidades-publicadas.json.

@@ -16,3 +16,5 @@ Corregido en código no equivale a aceptación física del propietario. No se es
 Dos pruebas nuevas de diálogos no quedaron aprobadas: Robolectric AppNotIdleException y bloqueo del ejecutor en Windows. Se detuvo el intento y se trasladaron a androidTest/PavementDialogs10ITest, para ejecutar en un Android aislado. No se usó la tablet de campo ni se instaló un emulador. La lógica de campos y geometría sí tiene pruebas JVM aprobadas, pero eso no sustituye esta aceptación visual.
 
 Room principal permanece en versión 19 y video en 1. No se cambian fórmulas, UUID, firma ni applicationId. Se conservaron seis archivos de la candidata 10H con SHA-256 en output/respaldo-10H-1.4.3, fuera de Git. La última Release distribuida sigue siendo 16; 17 / 1.4.3 se reutiliza con autorización del propietario.
+
+Compilación final: assembleDebug, validateReleaseConfiguration y assembleDebugAndroidTest aprobados. Debug ordinaria 17 / 1.4.3 disponible; pruebas instrumentadas compiladas sin ejecución. No se generó una nueva Release ni se instaló APK. Ver CHECKLIST_RELEASE_10I.md para aceptación física, publicación manual de backend y validación contractual pendientes.
