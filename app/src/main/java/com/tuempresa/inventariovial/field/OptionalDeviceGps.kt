@@ -14,7 +14,7 @@ import com.tuempresa.inventariovial.location.*
 import com.tuempresa.inventariovial.validation.ContractualLocationInput
 
 /** No permission request: a denied permission never blocks contractual capture. */
-@Composable fun OptionalDeviceGps(fix:GeoLocation?,editable:Boolean=true,onChange:(GeoLocation?)->Unit,onError:(String?)->Unit={}) {
+@Composable fun OptionalDeviceGps(fix:GeoLocation?,editable:Boolean=true,onChange:(GeoLocation?)->Unit,onError:(String?)->Unit={},route:String="",roadbed:String="") {
     val context=LocalContext.current
     val provider=remember(context){TabletLocationProvider(context)}
     var expanded by rememberSaveable {mutableStateOf(false)}
@@ -34,6 +34,7 @@ import com.tuempresa.inventariovial.validation.ContractualLocationInput
         if(error==null) change(if(a.isBlank() && o.isBlank()) null else GeoLocation(a.replace(',', '.').toDouble(),o.replace(',', '.').toDouble(),Float.NaN,source="MANUAL_COORDINATES",isRtkFixed=false))}
     Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
         TextButton(onClick={expanded=!expanded}){Text("GPS del dispositivo (opcional)")}
+        if(fix!=null)com.tuempresa.inventariovial.road.GnssRouteIndicatorText(fix,route,roadbed)
         if(expanded){
             OutlinedTextField(lat,{manual(it,lon)},enabled=editable,label={Text("Latitud")},modifier=Modifier.fillMaxWidth())
             OutlinedTextField(lon,{manual(lat,it)},enabled=editable,label={Text("Longitud")},modifier=Modifier.fillMaxWidth())

@@ -133,7 +133,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             item {
                 core?.let {draft->SicFormCore(SicFormMode.EDIT,"SIC-18",record.assetType,base.classCode,reference,draft){core=it;dirty=true;review=false}}
             }
-            item {OptionalDeviceGps(coordinate,editable=!busy,onChange={gps->
+            item {OptionalDeviceGps(coordinate,editable=!busy,route=core?.route.orEmpty(),roadbed=core?.roadbed.orEmpty(),onChange={gps->
                 extra=extra+mapOf("_gpsExplicit" to "true","_latitude" to gps?.latitude?.toString().orEmpty(),"_longitude" to gps?.longitude?.toString().orEmpty(),
                     "_accuracy" to gps?.horizontalAccuracy?.takeIf{it.isFinite()}?.toString().orEmpty(),"_coordinateSource" to (gps?.source ?: "CONTRACTUAL_PR_ONLY"),"_gpsTimestamp" to gps?.timestamp?.toString().orEmpty())
                 dirty=true;review=false

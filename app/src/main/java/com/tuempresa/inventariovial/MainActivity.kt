@@ -946,7 +946,7 @@ fun SignalizationFormScreen(
             }
         }
         item {
-            com.tuempresa.inventariovial.field.OptionalDeviceGps(location,onChange={fix->
+            com.tuempresa.inventariovial.field.OptionalDeviceGps(location,route=route,roadbed=roadbed,onChange={fix->
                 location=fix;latitude=fix?.latitude;longitude=fix?.longitude;gpsAccuracy=fix?.horizontalAccuracy
                 locationSource=fix?.source ?: "CONTRACTUAL_PR_ONLY"
             },onError={gpsInputError=it})
@@ -2185,7 +2185,7 @@ fun AssetFormScreen(
             }
         }
         item {
-            com.tuempresa.inventariovial.field.OptionalDeviceGps(location,onChange={fix->
+            com.tuempresa.inventariovial.field.OptionalDeviceGps(location,route=route,roadbed=roadbed,onChange={fix->
                 location=fix;latitude=fix?.latitude;longitude=fix?.longitude;gpsAccuracy=fix?.horizontalAccuracy
                 locationSource=fix?.source ?: "CONTRACTUAL_PR_ONLY"
             },onError={gpsInputError=it})

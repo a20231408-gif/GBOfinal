@@ -122,8 +122,7 @@ class LocalVisualOrder(private val context:Context) {
         else {
             val result=LocalVisualOrder.locate(segments,gps.latitude,gps.longitude,gps.horizontalAccuracy.toDouble(),FieldSettings.load(context).matchConfig())
             Text("Operador sobre eje: ${result.meters?.let {"%.1f m".format(it)} ?: "sin posición fiable"} · ${result.warning}")
-            val nearest=RoadMatcher(RoadReferenceData(segments=segments),FieldSettings.load(context).matchConfig()).match(gps.latitude,gps.longitude,gps.horizontalAccuracy.toDouble())
-            nearest?.let {Text("Distancia al eje: %.1f m".format(it.distanceToRoadAxisM))}
         }
     }
+    GnssRouteIndicatorText(fix,route,roadbed)
 }

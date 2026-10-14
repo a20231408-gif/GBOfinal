@@ -42,7 +42,7 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
         Text("Editar ficha técnica",style=MaterialTheme.typography.headlineMedium)
         com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",id,snapshot?.record?.status=="ACTIVE")
         core?.let {draft->snapshot?.record?.let {r->SicFormCore(SicFormMode.EDIT,r.sicCode,r.assetType,(detail as? SicFormDetail.Sic20)?.state?.classCode.orEmpty(),reference,draft){core=it}}}
-        OptionalDeviceGps(coordinate,onChange={coordinate=it;coordinateEdited=true},onError={gpsError=it})
+        OptionalDeviceGps(coordinate,route=core?.route.orEmpty(),roadbed=core?.roadbed.orEmpty(),onChange={coordinate=it;coordinateEdited=true},onError={gpsError=it})
         core?.let {c->
             val length=com.tuempresa.inventariovial.validation.ContractualLength.calculate(
                 com.tuempresa.inventariovial.validation.LengthEndpoint(c.route,c.roadbed,c.startPr,c.startDistance),

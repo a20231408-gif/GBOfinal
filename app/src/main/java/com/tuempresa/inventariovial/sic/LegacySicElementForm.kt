@@ -54,7 +54,7 @@ import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
         item {OptionalDeviceGps(if(state.text("_gpsExplicit")=="true" || state.text("_latitude").isNotBlank()) {
             val a=state.text("_latitude").toDoubleOrNull();val o=state.text("_longitude").toDoubleOrNull()
             if(a!=null && o!=null) GeoLocation(a,o,state.text("_accuracy").toFloatOrNull() ?: Float.NaN,source=state.text("_coordinateSource"),timestamp=state.text("_gpsTimestamp").toLongOrNull() ?: 0) else null
-        } else fix,editable=mutable,onChange={gps->
+        } else fix,editable=mutable,route=route,roadbed=bed,onChange={gps->
             onChange("_latitude",gps?.latitude?.toString().orEmpty());onChange("_longitude",gps?.longitude?.toString().orEmpty())
             onChange("_coordinateSource",gps?.source ?: "CONTRACTUAL_PR_ONLY")
             onChange("_accuracy",gps?.horizontalAccuracy?.takeIf{it.isFinite()}?.toString().orEmpty())
