@@ -1,0 +1,14 @@
+{
+  "pages": 14,
+  "chapters": 30,
+  "embeddedImages": 4,
+  "renderedAllPages": true,
+  "pageImagesReviewed": true,
+  "textOutsidePage": [],
+  "tocUpdatedBy": "Microsoft Word",
+  "renderer": "Microsoft Word PDF export and PDFium page rasterization",
+  "canonicalRendererUnavailable": "LibreOffice is not installed on this Windows computer",
+  "personalOfficeAuthorScrubbed": true,
+  "source": "Markdown and build_manual_10i.py",
+  "visualReview": "All 14 final page PNGs reviewed individually at full resolution: readable diagrams, index, footers, headings and tables; no clipped text or orphan table headers."
+}
