@@ -112,10 +112,9 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
                 }
                 item {
                     if(r.status in setOf("DRAFT","DISCARDED_LOCAL")) LocalDraftDiscardButton("SIC",r.id,r.status=="DISCARDED_LOCAL",onChanged={onBack()},onError={message=it})
-                    if(r.status !in setOf("DRAFT","DISCARDED_LOCAL")) TextButton(enabled=com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled, onClick={vm.setRecordStatus(r.id,r.status!="ACTIVE") {message=it}}) {
+                    if(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled && r.status !in setOf("DRAFT","DISCARDED_LOCAL")) TextButton(onClick={vm.setRecordStatus(r.id,r.status!="ACTIVE") {message=it}}) {
                         Text(if(r.status=="ACTIVE") "Anular registro" else "Restaurar registro")
                     }
-                    if(r.status!="DRAFT") Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason)
                     message?.let {Text(it,color=MaterialTheme.colorScheme.error)}
                 }
             }

@@ -141,7 +141,7 @@ fun RecordHistoryScreen(
                     Text(com.tuempresa.inventariovial.dashboard.DashboardDrafts.progressive(r))
                     OutlinedButton(onClick={detailId=r.id},modifier=Modifier.heightIn(min=48.dp)) {Text("Ver detalle")}
                     if(r.status in setOf("DRAFT","DISCARDED_LOCAL")) com.tuempresa.inventariovial.core.LocalDraftDiscardButton("SIC",r.id,r.status=="DISCARDED_LOCAL")
-                    if(r.status=="ACTIVE") {
+                    if(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled && r.status=="ACTIVE") {
                         TextButton(enabled=false,onClick={}) {Text("Anular registro")}
                         Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason,style=MaterialTheme.typography.bodySmall)
                     }
@@ -268,11 +268,10 @@ internal fun HistoryRecordCard(
                 record.observations?.let { Text(it) }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedButton(onClick = { editing = true; editError = null }) { Text("Editar") }
-                    OutlinedButton(enabled=com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled, onClick = {
+                    if(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.enabled) OutlinedButton(onClick = {
                         viewModel.setRecordStatus(record.id, record.status != "ACTIVE", onError)
                     }) { Text(if (record.status == "ACTIVE") "Anular" else "Restaurar") }
                 }
-                Text(com.tuempresa.inventariovial.core.InventoryLifecyclePolicy.unavailableReason)
             } else {
                 OutlinedTextField(value = route, onValueChange = { route = it; routeSource = LocationSource.MANUAL_OVERRIDE; startSource = LocationSource.MANUAL_OVERRIDE; endSource = LocationSource.MANUAL_OVERRIDE }, label = { Text("Ruta") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = roadbed, onValueChange = { roadbed = it; startSource = LocationSource.MANUAL_OVERRIDE; endSource = LocationSource.MANUAL_OVERRIDE }, label = { Text("Calzada") }, modifier = Modifier.fillMaxWidth())

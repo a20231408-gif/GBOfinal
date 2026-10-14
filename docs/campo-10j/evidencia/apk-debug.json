@@ -1,0 +1,14 @@
+{
+  "filename": "app-debug.apk",
+  "package": "com.tuempresa.inventariovial",
+  "versionCode": 17,
+  "versionName": "1.4.3",
+  "certificateSha256": [
+    "d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872"
+  ],
+  "verified": true,
+  "isTest": false,
+  "debuggable": true,
+  "bytes": 40305994,
+  "apkSha256": "c91e76c2d71a8db831f8947aa238498d2c12fc37f92745a9e5a2526649870c30"
+}
