@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -94,11 +95,9 @@ fun AdminUsersScreen(graph: AuthGraph, onClose: () -> Unit) {
                 val pin = adminPin.toCharArray(); adminPin = ""
                 runTask { try { graph.admin.authenticate(pin); "Administración autorizada durante cinco minutos." } finally { pin.fill('\u0000') } }
             }) { Text("Autorizar cambios online") }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(enabled = !busy, onClick = { editing = null; action = "createUser" }) { Text("Nuevo usuario") }
-                OutlinedButton(enabled = !busy, onClick = { runTask { graph.syncNow(); graph.message.value.orEmpty() } }) { Text("Sincronizar usuarios") }
-                OutlinedButton(enabled = !busy, onClick = { runTask { audit = graph.admin.audit(); "Auditoría local: últimos 200 eventos." } }) { Text("Auditoría") }
-            }
+            UserAdminActions(busy,{editing=null;action="createUser"},
+                {runTask {graph.syncNow();graph.message.value.orEmpty()}},
+                {runTask {audit=graph.admin.audit();"Auditoría local: últimos 200 eventos."}})
             message?.let { Text(it) }
         }
         items(users, key = { it.id }) { user ->
@@ -106,7 +105,7 @@ fun AdminUsersScreen(graph: AuthGraph, onClose: () -> Unit) {
                 Column(Modifier.padding(16.dp)) {
                     Text("${user.displayName} · ${user.username}", style = MaterialTheme.typography.titleMedium)
                     Text("${user.role} · ${if(user.active) "ACTIVO" else "INACTIVO"}")
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(4.dp)) {
                         TextButton(enabled = !busy, onClick = { editing = user; action = "updateUser" }) { Text("Editar nombre") }
                         TextButton(enabled = !busy, onClick = { editing = user; action = "resetUserPin" }) { Text("Cambiar PIN") }
                         TextButton(enabled = !busy, onClick = { editing = user; action = "changeUserRole" }) { Text("Cambiar rol") }
@@ -123,6 +122,15 @@ fun AdminUsersScreen(graph: AuthGraph, onClose: () -> Unit) {
         action = null
         runTask { graph.admin.mutate(selectedAction, fields) }
     } }
+}
+
+/** Existing actions wrap on narrow displays; authorization remains in the repositories. */
+@Composable internal fun UserAdminActions(busy:Boolean,onNew:()->Unit,onSync:()->Unit,onAudit:()->Unit) {
+    FlowRow(Modifier.fillMaxWidth().testTag("user-admin-actions"),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(4.dp)) {
+        OutlinedButton(enabled=!busy,onClick=onNew){Text("Nuevo usuario")}
+        OutlinedButton(enabled=!busy,onClick=onSync){Text("Sincronizar usuarios")}
+        OutlinedButton(enabled=!busy,onClick=onAudit){Text("Auditoría")}
+    }
 }
 
 @Composable

@@ -1,0 +1,17 @@
+{
+  "productionDataUsed": false,
+  "failures": 0,
+  "errors": 0,
+  "cases": [
+    {
+      "passed": true,
+      "name": "operatorCannotCreateAndAdminRequiresOnlineAuthorizationThatExpires"
+    },
+    {
+      "passed": true,
+      "name": "compactActionsRemainInsideTheViewportAndKeepTheirCallbacks"
+    }
+  ],
+  "suite": "UserCreation10ITest",
+  "tests": 2
+}
