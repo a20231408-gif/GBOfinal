@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "name": "photoButtonUsesTheImageContractAndKeepsTheExactDamageUuid",
+      "passed": true
+    },
+    {
+      "name": "localizedSlabDialogDisplaysCoordinatesWithoutChangingContractualUnit",
+      "passed": false
+    },
+    {
+      "name": "ruttingDialogDisplaysMeanDepthAndNoCrackWidth",
+      "passed": false
+    }
+  ]
+}

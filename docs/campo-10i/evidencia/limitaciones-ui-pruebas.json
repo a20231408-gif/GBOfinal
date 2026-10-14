@@ -1,0 +1,6 @@
+{
+  "nativeAndLegacyOversizedDialogHarness": "AppNotIdleException; no production fix inferred from this alone",
+  "shortDefaultViewportAndControlledClockVerification": "PENDING",
+  "fileDatabaseFailure": "Native Windows SQLite path exceeded practical path length; moved synthetic DB to short ignored app/build directory",
+  "tabletModified": false
+}

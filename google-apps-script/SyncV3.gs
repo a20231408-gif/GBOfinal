@@ -70,14 +70,19 @@ function v3Store() {
     const all=(content[1].match(/<row\b[^>]*>[\s\S]*?<\/row>/g)||[]);
     const rows=all.filter(r=>Number(/\br="(\d+)"/.exec(r)[1])>=dataStartRow);
     // Format columns/styles/header geometry must agree; route title text can vary across separate scopes.
-    const signature=hash(map['xl/styles.xml'].getBytes())+':'+hash((/<cols>([\s\S]*?)<\/cols>/.exec(sheet)||[])[1] || '')+
-      ':'+hash(all.find(r=>/\br="13"/.test(r)) || '');
-    return {parts,sheet,rows,signature,dataStartRow};
+    const observations=typeof SicObservationsV1!=='undefined'?SicObservationsV1.inspect(sheet,dataStartRow):null;
+    const signature=hash(map['xl/styles.xml'].getBytes())+':'+hash(observations?observations.columns:(/<cols>([\s\S]*?)<\/cols>/.exec(sheet)||[])[1] || '')+
+      ':'+hash(observations?observations.header:all.find(r=>/\br="13"/.test(r)) || '');
+    return {parts,sheet,rows,signature,dataStartRow,observationColumn:observations?.observationColumn || null};
   }
   function packWorkbook(book,sheet,rowCount) {
     const parts=book.parts.map(b=>{
       if(b.getName()==='xl/worksheets/sheet1.xml')return Utilities.newBlob(sheet,'application/xml',b.getName());
-      if(b.getName()==='xl/workbook.xml')return Utilities.newBlob(b.getDataAsString().replace(/(!\$A\$\d+:\$[A-Z]+\$)\d+/g,(_,start)=>start+((book.dataStartRow || 14)-1+rowCount)),'application/xml',b.getName());
+      if(b.getName()==='xl/workbook.xml') {
+        let xml=b.getDataAsString().replace(/(!\$A\$\d+:\$[A-Z]+\$)\d+/g,(_,start)=>start+((book.dataStartRow || 14)-1+rowCount));
+        if(typeof SicObservationsV1!=='undefined')xml=SicObservationsV1.printExtent(xml,book.observationColumn);
+        return Utilities.newBlob(xml,'application/xml',b.getName());
+      }
       return b.copyBlob();
     });
     return Utilities.zip(parts,'consolidated.xlsx').getBytes();

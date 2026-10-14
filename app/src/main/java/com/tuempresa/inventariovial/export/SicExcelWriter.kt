@@ -12,6 +12,18 @@ import java.util.zip.ZipOutputStream
 
 /** XLSX Open XML sin dependencias de escritorio. Escritura secuencial para uso offline en Android. */
 object SicExcelWriter {
+    // Only primary SIC forms expose the operator's final Observaciones field.
+    // SIC-18A is a supplementary diagnosis, without an independent notes field.
+    internal fun observationColumns(format:SicExportFormat):List<SicColumn> = format.columns.let {base->
+        if(format==SicExportFormat.SIC18A || base.any {it.label.trim().equals("OBSERVACIONES",true)})base
+        else base+SicColumn("OBSERVACIONES",width=45.0)
+    }
+    private fun observationValues(format:SicExportFormat,item:InventoryRecordForExport):List<Any?> {
+        val original=format.values(item);val columns=observationColumns(format)
+        if(columns.size>original.size)return original+item.record.observations
+        val index=columns.indexOfFirst {it.label.trim().equals("OBSERVACIONES",true)}
+        return if(index<0)original else original.toMutableList().apply {this[index]=item.record.observations}
+    }
     const val XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     private const val MAIN = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
     private const val REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -79,7 +91,7 @@ object SicExcelWriter {
                               format: SicExportFormat, heading: ExportHeading) {
         val body=ByteArrayOutputStream()
         writeWorkbookBody(body,records,format,heading)
-        SicWorkbookHeaderWriter.write(output,body.toByteArray(),format.columns.size)
+        SicWorkbookHeaderWriter.write(output,body.toByteArray(),observationColumns(format).size)
     }
 
     private fun writeWorkbookBody(output: OutputStream, records: List<InventoryRecordForExport>,
@@ -124,7 +136,7 @@ object SicExcelWriter {
                 zip.putNextEntry(ZipEntry("xl/worksheets/sheet${i + 1}.xml"))
                 val writer = zip.writer(Charsets.UTF_8)
                 fun emit(s: String) { writer.write(s) }
-                val columns = format.columns
+                val columns = observationColumns(format)
                 val last = col(columns.size)
                 require(sheet.third.size <= 1_048_563) { "La ruta ${sheet.second} supera el límite de filas de Excel." }
                 emit(XML + "<worksheet xmlns=\"$MAIN\"><sheetPr><pageSetUpPr fitToPage=\"1\"/></sheetPr>")
@@ -144,7 +156,7 @@ object SicExcelWriter {
                 emit("</row>")
                 sheet.third.forEachIndexed { index, item ->
                     val row = index + 14
-                    val values = format.values(item)
+                    val values = observationValues(format,item)
                     check(values.size == columns.size) { "Columnas incompatibles en ${format.code}." }
                     val lineCount = values.indices.maxOf { c ->
                         val value = values[c]?.toString().orEmpty()

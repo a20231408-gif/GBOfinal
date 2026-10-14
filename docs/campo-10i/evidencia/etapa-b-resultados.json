@@ -1,0 +1,27 @@
+{
+  "androidSicCases": [
+    {
+      "name": "literalNotesAreLastColumnAndFormulaLikeTextNeverExecutes",
+      "passed": true
+    },
+    {
+      "name": "applicableFormatsOnlyAppendAndNeverShiftTheirPreviousColumns",
+      "passed": true
+    },
+    {
+      "name": "snapshotAfterOfflineEditUsesSameUuidAndLatestLiteralNotes",
+      "passed": true
+    }
+  ],
+  "cameraBindingCase": [
+    {
+      "name": "photoButtonUsesTheImageContractAndKeepsTheExactDamageUuid",
+      "passed": true
+    }
+  ],
+  "backendTests": 8,
+  "backendFailures": 0,
+  "remainingDialogHarnessCases": "PENDING short viewport/clock verification",
+  "photoOfflineCase": "PENDING short Windows path verification",
+  "productionDeployment": false
+}

@@ -56,7 +56,7 @@ class SicExcelWriterTest {
             val sheet = xml(entries.getValue("xl/worksheets/sheet1.xml"))
             val rows = sheet.getElementsByTagName("row")
             val dataRow = (0 until rows.length).map { rows.item(it) as org.w3c.dom.Element }.single { it.getAttribute("r") == "14" }
-            assertEquals(format.code, expectedSizes[index], dataRow.getElementsByTagName("c").length)
+            assertEquals(format.code, expectedSizes[index]+1, dataRow.getElementsByTagName("c").length) // 10I trailing OBSERVACIONES
             val cells = cells(sheet)
             assertEquals("PE-22B", cells.getValue("A14").textContent)
             assertEquals("0005", cells.getValue("C14").textContent)

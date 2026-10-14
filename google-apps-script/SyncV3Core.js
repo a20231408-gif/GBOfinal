@@ -152,7 +152,7 @@ var SyncV3 = (() => {
     const next={key:p.key,kind:p.kind,recordId:p.recordId,identityId:p.identityId || p.recordId,bridgeCode:p.bridgeCode || '',
       revision:p.revision,contentHash:p.contentHash,pathVersion:p.pathVersion,routeCode:p.routeCode,sibCode:p.sibCode,familyPath:p.familyPath,tramo:p.tramo,surface:p.surface,
       family:p.family,orderAxis:p.orderAxis,orderSource:p.orderSource || 'GNSS_MAP_MATCH',
-      georeferencing:p.georeferencing || null,sicRows:p.sicRows.map(({workbook,...row})=>row)};
+      georeferencing:p.georeferencing || null,sicRows:p.sicRows.map(({workbook,observationsTemplateBase64,...row})=>row)};
     const missing=(old?.sicRows || []).filter(r=>!next.sicRows.some(n=>n.format===r.format));
     if(missing.length && (aggregateScope(old)!==aggregateScope(p)))reject('LOCATION_RECONCILIATION_REQUIRED');
     next.sicRows=next.sicRows.concat(missing);
@@ -173,9 +173,26 @@ var SyncV3 = (() => {
         // Contractual PR and geometric axes have different origins; retain both sources.
         const sorted=sources.sort(p.pathVersion===4?compareTechnical:(a,b)=>a.orderAxis-b.orderAxis || a.recordId.localeCompare(b.recordId));
         if(sorted.length) {
-          const books=sorted.map(r=>store.unpackWorkbook(store.decode(r.base64), /^SIC-(14|14A|15|16)$/.test(r.format)?3:14));
+          const books=sorted.map(r=>{
+            let book=store.unpackWorkbook(store.decode(r.base64), /^SIC-(14|14A|15|16)$/.test(r.format)?3:14);
+            if(typeof SicObservationsV1!=='undefined' && r.observationsTemplateBase64)
+              book=SicObservationsV1.inherit(book,store.unpackWorkbook(store.decode(r.observationsTemplateBase64),book.dataStartRow || 14));
+            if(typeof SicObservationsV1!=='undefined' && r.ownerKey===p.key) {
+              const previous=old?.sicRows?.find(x=>x.format===r.format && x.recordId===r.recordId);
+              if(previous) {
+                const previousBytes=previous.observationsTemplateBase64 || previous.base64;
+                const prior=store.unpackWorkbook(store.decode(previousBytes),book.dataStartRow || 14);
+                if(!book.observationColumn && prior.observationColumn) {
+                  next.sicRows.find(x=>x.format===r.format && x.recordId===r.recordId).observationsTemplateBase64=previousBytes;
+                  book=SicObservationsV1.inherit(book,prior);
+                }
+              }
+            }
+            return book;
+          });
           if(books.some(b=>b.signature!==books[0].signature))reject('WORKBOOK_TEMPLATE_CONFLICT');
-          const bytes=store.packWorkbook(books[0],mergeSheet(books[0].sheet,books.map(b=>b.rows[0]),books[0].dataStartRow || 14),sorted.length);
+          const template=typeof SicObservationsV1!=='undefined'?SicObservationsV1.select(books):books[0];
+          const bytes=store.packWorkbook(template,mergeSheet(template.sheet,books.map(b=>b.rows[0]),template.dataStartRow || 14),sorted.length);
           prepared.push({scope,format,bytes,recordIds:sorted.map(r=>r.recordId),sha256:store.hash(bytes)});
         } else prepared.push({scope,format,retire:true});
       }
