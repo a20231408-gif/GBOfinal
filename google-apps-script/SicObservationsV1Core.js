@@ -4,6 +4,22 @@ var SicObservationsV1=(()=>{
   const cells=row=>row.match(/<c\b[^>]*(?:\/>|>[\s\S]*?<\/c>)/g) || [];
   const col=cell=>(/\br="([A-Z]+)\d+"/.exec(cell)||[])[1];
   const number=c=>[...c].reduce((n,x)=>n*26+x.charCodeAt(0)-64,0);
+  const letters=n=>n<=26?String.fromCharCode(64+n):letters(Math.floor((n-1)/26))+String.fromCharCode(65+(n-1)%26);
+  function plain(sheet,c) {
+    if(!c)return sheet;
+    // Keep all contractual cells/styles untouched; only the trailing note uses Normal.
+    sheet=sheet.replace(/<c\b[^>]*(?:\/>|>[\s\S]*?<\/c>)/g,cell=>col(cell)===c?cell.replace(/\s+s="[^"]*"/,''):cell);
+    sheet=sheet.replace(/<col\b[^>]*\/>/g,def=>Number(/\bmin="(\d+)"/.exec(def)?.[1])===number(c) && Number(/\bmax="(\d+)"/.exec(def)?.[1])===number(c)?'':def);
+    return sheet.replace(/<autoFilter\b[^>]*(?:\/>|>[\s\S]*?<\/autoFilter>)/g,filter=> {
+      const m=/\bref="([A-Z]+)(\d+)(?::([A-Z]+)(\d+))?"/.exec(filter);
+      if(!m)return filter;
+      const first=number(m[1]),last=number(m[3] || m[1]),n=number(c);
+      if(first>n || last<n)return filter;
+      if(first===n)return '';
+      return filter.replace(m[0],`ref="${m[1]}${m[2]}:${letters(n-1)}${m[4] || m[2]}"`)
+        .replace(/<filterColumn\b[^>]*(?:\/>|>[\s\S]*?<\/filterColumn>)/g,x=>Number(/\bcolId="(\d+)"/.exec(x)?.[1])>=n-first?'':x);
+    });
+  }
   function inspect(sheet,start=14) {
     const header=(sheet.match(/<row\b[^>]*\br="13"[^>]*>[\s\S]*?<\/row>/)||[])[0] || '';
     const columns=(/<cols>([\s\S]*?)<\/cols>/.exec(sheet)||[])[1] || '';
@@ -36,13 +52,11 @@ var SicObservationsV1=(()=>{
     if(!book.observationColumn)return book;
     const c=book.observationColumn,n=number(c);
     let sheet=book.sheet;
-    if(!(sheet.match(/<col\b[^>]*\/>/g)||[]).some(x=>Number(/\bmin="(\d+)"/.exec(x)?.[1])===n))
-      sheet=sheet.replace('</cols>',`<col min="${n}" max="${n}" width="45" customWidth="1"/></cols>`);
-    sheet=sheet.replace(/(<(?:dimension|autoFilter)\b[^>]*\bref="[A-Z]+\d+:)([A-Z]+)(\d+")/g,
+    sheet=sheet.replace(/(<dimension\b[^>]*\bref="[A-Z]+\d+:)([A-Z]+)(\d+")/g,
       (_,a,b,d)=>a+(number(b)<n?c:b)+d);
-    return {...book,sheet};
+    return {...book,sheet:plain(sheet,c)};
   }
   function printExtent(xml,c) {if(!c)return xml;return xml.replace(/(!\$A\$\d+:\$)([A-Z]+)(\$\d+)/g,(_,a,b,d)=>a+(number(b)<number(c)?c:b)+d);}
-  return {inspect,inherit,select,printExtent};
+  return {inspect,inherit,select,printExtent,plain};
 })();
 if(typeof module!=='undefined')module.exports=SicObservationsV1;

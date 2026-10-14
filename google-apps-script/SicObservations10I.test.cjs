@@ -11,7 +11,7 @@ function book(note,body='UUID_A') {
   return {sheet:xml,rows:xml.match(/<row r="14">[\s\S]*?<\/row>/g),signature:hash(i.header+i.columns),dataStartRow:14,observationColumn:i.observationColumn};
 }
 test('Trailing observations reconcile with the exact previous header and columns only',()=>{
-  const old=book(),now=book('PINTADO OK 57 E2');assert.equal(old.signature,now.signature);assert.equal(now.observationColumn,'C');assert.equal(obs.select([old,now]).sheet,now.sheet);
+  const old=book(),now=book('PINTADO OK 57 E2');assert.equal(old.signature,now.signature);assert.equal(now.observationColumn,'C');assert.equal(obs.select([old,now]).sheet,obs.plain(now.sheet,'C'));
   assert.throws(()=>obs.select([old,{...now,signature:'foreign'}]),/OBSERVATIONS_TEMPLATE_CONFLICT/);
 });
 test('A preexisting last header outside formatted range is reused without duplication',()=>{
@@ -42,7 +42,7 @@ test('Other pavement header layouts are not changed by the SIC observation modul
 });
 test('An existing observation header outside print/table extent is integrated into the final range',()=>{
   const b=book('x');b.sheet=b.sheet.replace('<col min="3" max="3" width="45"/>','').replace('ref="A1:C14"','ref="A1:B14"');
-  const ready=obs.select([b]);assert.match(ready.sheet,/ref="A1:C14"/);assert.match(ready.sheet,/<col min="3" max="3"/);
+  const ready=obs.select([b]);assert.match(ready.sheet,/ref="A1:C14"/);assert.doesNotMatch(ready.sheet,/<col min="3" max="3"/);
   assert.equal(obs.printExtent("SIC!$A$5:$B$14",'C'),"SIC!$A$5:$C$14");
   assert.equal(obs.printExtent("SIC!$A$5:$D$14",'C'),"SIC!$A$5:$D$14");
 });

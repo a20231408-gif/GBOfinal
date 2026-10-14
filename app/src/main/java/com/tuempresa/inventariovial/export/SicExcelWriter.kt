@@ -91,7 +91,7 @@ object SicExcelWriter {
                               format: SicExportFormat, heading: ExportHeading) {
         val body=ByteArrayOutputStream()
         writeWorkbookBody(body,records,format,heading)
-        SicWorkbookHeaderWriter.write(output,body.toByteArray(),observationColumns(format).size)
+        SicWorkbookHeaderWriter.write(output,body.toByteArray(),format.columns.size)
     }
 
     private fun writeWorkbookBody(output: OutputStream, records: List<InventoryRecordForExport>,
@@ -122,7 +122,7 @@ object SicExcelWriter {
                 sheets.forEachIndexed { i, s ->
                     val ref = xml("'${s.first.replace("'", "''")}'")
                     append("<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"$i\">$ref!\$1:\$13</definedName>")
-                    append("<definedName name=\"_xlnm.Print_Area\" localSheetId=\"$i\">$ref!\$A\$5:\$${col(format.columns.size)}\$${13 + s.third.size}</definedName>")
+                    append("<definedName name=\"_xlnm.Print_Area\" localSheetId=\"$i\">$ref!\$A\$5:\$${col(observationColumns(format).size)}\$${13 + s.third.size}</definedName>")
                 }
                 append("</definedNames></workbook>")
             })
@@ -142,7 +142,7 @@ object SicExcelWriter {
                 emit(XML + "<worksheet xmlns=\"$MAIN\"><sheetPr><pageSetUpPr fitToPage=\"1\"/></sheetPr>")
                 emit("<dimension ref=\"A5:$last${13 + sheet.third.size}\"/><sheetViews><sheetView workbookViewId=\"0\" showGridLines=\"0\"><pane xSplit=\"2\" ySplit=\"13\" topLeftCell=\"C14\" activePane=\"bottomRight\" state=\"frozen\"/></sheetView></sheetViews>")
                 emit("<sheetFormatPr defaultRowHeight=\"20\"/><cols>")
-                columns.forEachIndexed { n, c -> emit("<col min=\"${n + 1}\" max=\"${n + 1}\" width=\"${c.width}\" customWidth=\"1\"/>") }
+                columns.forEachIndexed { n, c -> if(!c.label.equals("OBSERVACIONES",true)) emit("<col min=\"${n + 1}\" max=\"${n + 1}\" width=\"${c.width}\" customWidth=\"1\"/>") }
                 emit("</cols><sheetData>")
                 listOf(5 to heading.project, 6 to heading.road, 7 to "INVENTARIO VIAL CALIFICADO DE LA SITUACIÓN ACTUAL",
                     8 to listOf(heading.section, "RUTA: ${sheet.second}").filter { it.isNotBlank() }.joinToString(" · "),
@@ -152,27 +152,28 @@ object SicExcelWriter {
                 emit("<row r=\"12\" ht=\"24\" customHeight=\"1\">${cell("${col(format.startLocationColumn)}12", if(format==SicExportFormat.SIC22) "Ubicación del elemento" else "Ubicación inicio", 2)}")
                 if (format.hasEndLocationColumns) emit(cell("${col(format.startLocationColumn+2)}12", "Ubicación fin", 2))
                 emit("</row><row r=\"13\" ht=\"60\" customHeight=\"1\">")
-                columns.forEachIndexed { n, c -> emit(cell("${col(n + 1)}13", c.label, 2)) }
+                columns.forEachIndexed { n, c -> emit(cell("${col(n + 1)}13", c.label, if(c.label.equals("OBSERVACIONES",true))0 else 2)) }
                 emit("</row>")
                 sheet.third.forEachIndexed { index, item ->
                     val row = index + 14
                     val values = observationValues(format,item)
                     check(values.size == columns.size) { "Columnas incompatibles en ${format.code}." }
-                    val lineCount = values.indices.maxOf { c ->
+                    val lineCount = values.indices.filterNot {columns[it].label.equals("OBSERVACIONES",true)}.maxOf { c ->
                         val value = values[c]?.toString().orEmpty()
                         value.lines().sumOf { ((it.length / (columns[c].width * 0.85)).toInt() + 1) }
                     }
                     val height = (lineCount * 15.0 + 6).coerceIn(22.0, 409.0)
                     emit("<row r=\"$row\" ht=\"$height\" customHeight=\"1\">")
                     values.forEachIndexed { c, value ->
-                        emit(cell("${col(c + 1)}$row", value, when (columns[c].kind) {
+                        emit(cell("${col(c + 1)}$row", value, if(columns[c].label.equals("OBSERVACIONES",true))0 else when (columns[c].kind) {
                             CellKind.TEXT -> 3; CellKind.DECIMAL -> if(format==SicExportFormat.SIC09 && columns[c].label.startsWith("Ancho")) 7 else 4; CellKind.INTEGER -> 5; CellKind.DATE -> 6
                         }))
                     }
                     emit("</row>")
                 }
-                emit("</sheetData><autoFilter ref=\"A13:$last${13 + sheet.third.size}\"/><mergeCells>")
-                for (r in listOf(5, 6, 7, 8, 10)) emit("<mergeCell ref=\"A$r:$last$r\"/>")
+                val contractualLast=col(format.columns.size)
+                emit("</sheetData><autoFilter ref=\"A13:$contractualLast${13 + sheet.third.size}\"/><mergeCells>")
+                for (r in listOf(5, 6, 7, 8, 10)) emit("<mergeCell ref=\"A$r:$contractualLast$r\"/>")
                 emit("<mergeCell ref=\"${col(format.startLocationColumn)}12:${col(format.startLocationColumn+1)}12\"/>")
                 if (format.hasEndLocationColumns) emit("<mergeCell ref=\"${col(format.startLocationColumn+2)}12:${col(format.startLocationColumn+3)}12\"/>")
                 emit("</mergeCells><printOptions horizontalCentered=\"1\"/><pageMargins left=\"0.25\" right=\"0.25\" top=\"0.35\" bottom=\"0.35\" header=\"0.15\" footer=\"0.15\"/>")

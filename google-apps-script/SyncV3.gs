@@ -76,6 +76,7 @@ function v3Store() {
     return {parts,sheet,rows,signature,dataStartRow,observationColumn:observations?.observationColumn || null};
   }
   function packWorkbook(book,sheet,rowCount) {
+    if(typeof SicObservationsV1!=='undefined')sheet=SicObservationsV1.plain(sheet,book.observationColumn);
     const parts=book.parts.map(b=>{
       if(b.getName()==='xl/worksheets/sheet1.xml')return Utilities.newBlob(sheet,'application/xml',b.getName());
       if(b.getName()==='xl/workbook.xml') {
