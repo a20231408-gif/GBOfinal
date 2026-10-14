@@ -1,0 +1,78 @@
+{
+  "backendRelatedCases": 11,
+  "backendFailures": 0,
+  "physicalTabletTests": false,
+  "appsScriptPublished": false,
+  "suites": [
+    {
+      "failures": 0,
+      "tests": 3,
+      "cases": [
+        {
+          "name": "validFreshFixReportsPerpendicularDistanceAndDeviceAccuracyWithoutChangingData",
+          "passed": true
+        },
+        {
+          "name": "distantAndAmbiguousCrossingDoNotPublishAMisleadingDistance",
+          "passed": true
+        },
+        {
+          "name": "manualUnknownInvalidOldFutureAndImpreciseFixesNeverClaimDistance",
+          "passed": true
+        }
+      ],
+      "errors": 0,
+      "suite": "com.tuempresa.inventariovial.GnssIndicators10KTest"
+    },
+    {
+      "failures": 0,
+      "tests": 2,
+      "cases": [
+        {
+          "name": "map",
+          "passed": true
+        },
+        {
+          "name": "pavement",
+          "passed": true
+        }
+      ],
+      "errors": 0,
+      "suite": "com.tuempresa.inventariovial.Navigation10KTest"
+    },
+    {
+      "failures": 0,
+      "tests": 3,
+      "cases": [
+        {
+          "name": "invalidStandaloneReviewRemainsDraftAndDoesNotQueue",
+          "passed": true
+        },
+        {
+          "name": "standaloneFormsPersistCurrentValuesBeforeReviewAndConfirmSameUuid",
+          "passed": true
+        },
+        {
+          "name": "currentCoreReplacesIncompletePersistedHeaderBeforeValidationAndStaleConfirmationIsRejected",
+          "passed": true
+        }
+      ],
+      "errors": 0,
+      "suite": "com.tuempresa.inventariovial.SicFinalize10KTest"
+    },
+    {
+      "failures": 0,
+      "tests": 1,
+      "cases": [
+        {
+          "name": "notesAreNormalTextAndOutsideContractualFilterMergesAndLogos",
+          "passed": true
+        }
+      ],
+      "errors": 0,
+      "suite": "com.tuempresa.inventariovial.SicPlainObservations10KTest"
+    }
+  ],
+  "scope": "Focused new tests plus only observations commit compatibility regressions; synthetic local data, no production writes",
+  "newAndroidJvmCases": 9
+}

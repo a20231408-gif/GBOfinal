@@ -1,0 +1,32 @@
+{
+  "scope": "10K changed text and delivery evidence; real private credential comparison, not full Git history audit",
+  "credentialMatches": [],
+  "codeCommit": "8e3cd5a",
+  "debugBuild": "PASS",
+  "newJvmAndroidCasesPassed": 9,
+  "relatedNodeCasesPassed": 11,
+  "completeBackendFiles": [
+    {
+      "source": "google-apps-script/SicObservationsV1Core.js",
+      "completeFile": "docs/parche-apps-script-10k/SicObservationsV1Core.gs",
+      "sha256": "9446cfc068e42fa9c54082c8e56f4bc864571682a1228cf9a25895fd94077508"
+    },
+    {
+      "source": "google-apps-script/SyncV3.gs",
+      "completeFile": "docs/parche-apps-script-10k/SyncV3.gs",
+      "sha256": "95bd6ae6c83642050bdd30f338a26b209ca600b0e7f3f06e89412b69bd50c1e5"
+    },
+    {
+      "source": "google-apps-script/SyncV3Core.js",
+      "completeFile": "docs/parche-apps-script-10k/SyncV3Core.gs",
+      "sha256": "ac85036dce81f2802926c4b163ac590629485ff725cd9a3003ce923b3c81ae36"
+    }
+  ],
+  "protectedPathsChanged": [],
+  "productionWrites": false,
+  "appsScriptPublished": false,
+  "adbUsed": false,
+  "manualGenerated": false,
+  "releaseGenerated": false,
+  "apkInstalled": false
+}
