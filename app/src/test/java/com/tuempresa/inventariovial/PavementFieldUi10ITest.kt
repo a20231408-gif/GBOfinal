@@ -26,29 +26,8 @@ import java.io.File
 class PavementFieldUi10ITest {
     @get:Rule val compose=createComposeRule()
     private fun damage(code:Int=15)=PavementDamageEntity("test-damage","test-sample",1,if(code==15)"ASPHALT" else "RIGID",code,if(code==15)"Ahuellamiento" else "Parcheo pequeño","M",if(code==15)"AREA" else "SLABS",.5,1.0,1.5,2.0,null,1.0,1.0,1.0,null,null,"",slabs=if(code==15)"" else "1")
-    private fun capture(name:String) {
-        // Screens are real composables with fictitious data, never the owner's tablet.
-        runCatching {val dir=File("../docs/manual-10i/figuras").apply {mkdirs()};val image=compose.onNode(isDialog()).captureToImage().asAndroidBitmap()
-            val colors=mutableSetOf<Int>();for(y in 0 until image.height step 20)for(x in 0 until image.width step 20)colors+=image.getPixel(x,y)
-            check(colors.size>3){"Capture is blank in this renderer"}
-            File(dir,name).outputStream().use {image.compress(Bitmap.CompressFormat.PNG,100,it)}}
-    }
-    @Test fun rutFields() {
-        compose.mainClock.autoAdvance=false
-        compose.setContent {InventarioVialTheme {DamageDialog(damage(),"",{}, {})}}
-        compose.mainClock.advanceTimeBy(1000)
-        compose.onNodeWithText("Ancho de fisura (mm), si aplica").assertDoesNotExist()
-        compose.onNodeWithText("Profundidad media del ahuellamiento (mm)").performScrollTo().assertIsDisplayed()
-        capture("ahuellamiento.png")
-    }
-    @Test fun slabFields() {
-        compose.mainClock.autoAdvance=false
-        compose.setContent {InventarioVialTheme {DamageDialog(damage(30),"",{}, {})}}
-        compose.mainClock.advanceTimeBy(1000)
-        compose.onNodeWithText("Localizar dentro de las losas indicadas").assertExists()
-        compose.onNodeWithText("X1 / centro X (m)").assertExists();compose.onNodeWithText("X2 (m)").assertExists()
-        capture("losa-localizada.png")
-    }
+    // Dialog assertions live in androidTest/PavementDialogs10ITest: this
+    // Windows Robolectric setup cannot stabilize platform Dialog windows.
     @Test fun photoButtonUsesTheImageContractAndKeepsTheExactDamageUuid() {
         val context=ApplicationProvider.getApplicationContext<Context>();FieldCameraSelection.select(context,null)
         assertEquals(MediaStore.ACTION_IMAGE_CAPTURE,FieldTakePicture().createIntent(context,Uri.parse("content://test/10i.jpg")).action)

@@ -1,6 +1,8 @@
 {
   "nativeAndLegacyOversizedDialogHarness": "AppNotIdleException; no production fix inferred from this alone",
-  "shortDefaultViewportAndControlledClockVerification": "PENDING",
-  "fileDatabaseFailure": "Native Windows SQLite path exceeded practical path length; moved synthetic DB to short ignored app/build directory",
+  "shortDefaultViewportAndControlledClockVerification": "Worker stalled and was stopped; no further Robolectric Dialog attempts. Two assertions moved to androidTest/PavementDialogs10ITest; execution pending on isolated Android.",
+  "fileDatabaseFailure": "Native Windows SQLite long temporary path failed. Short synthetic database filename p10i.db and short test method fixed test-only path; offline photo test passed.",
+  "instrumentedDialogCasesExecuted": false,
+  "emulatorAvailable": "SDK executable exists but no configured AVD; none created",
   "tabletModified": false
 }

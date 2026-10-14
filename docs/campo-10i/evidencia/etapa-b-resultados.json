@@ -21,7 +21,7 @@
   ],
   "backendTests": 8,
   "backendFailures": 0,
-  "remainingDialogHarnessCases": "PENDING short viewport/clock verification",
-  "photoOfflineCase": "PENDING short Windows path verification",
+  "remainingDialogHarnessCases": "PENDING execution of two androidTest/PavementDialogs10ITest cases; Robolectric Dialog harness failed/stalled and was stopped",
+  "photoOfflineCase": "PASS: photoOffline in PavementPhotoPersistence10ITest, no network or production data",
   "productionDeployment": false
 }

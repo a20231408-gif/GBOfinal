@@ -1,0 +1,13 @@
+{
+  "productionDataUsed": false,
+  "failures": 0,
+  "errors": 0,
+  "cases": [
+    {
+      "passed": true,
+      "name": "photoOffline"
+    }
+  ],
+  "suite": "PavementPhotoPersistence10ITest",
+  "tests": 1
+}

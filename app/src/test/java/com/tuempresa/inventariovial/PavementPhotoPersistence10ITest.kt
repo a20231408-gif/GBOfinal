@@ -19,11 +19,10 @@ import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class) @Config(sdk=[34],application=Application::class)
 class PavementPhotoPersistence10ITest {
-    @Test fun twoSameTypeDamagesKeepPhotoIdentityThroughReplaceRetireAndOfflineReopen()=runBlocking {
+    @Test fun photoOffline()=runBlocking {
         val context=ApplicationProvider.getApplicationContext<Context>()
-        // Native Windows SQLite cannot use the very long Robolectric method path.
-        val folder=File("build/cierre-10i").apply {mkdirs()}
-        val name=File(folder,"p-${UUID.randomUUID()}.db").absolutePath
+        // Short method/file names keep the native Windows SQLite path valid.
+        val name="p10i.db"
         fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).build()
         var db=open();val user=AuthSessionManager().apply {login(UserCacheEntity("test10i","test10i","Inspector ficticio","OPERATOR",true,"",0,0,0))}
         val original=File(context.cacheDir,"original10i.png").apply {writeBytes(java.util.Base64.getDecoder().decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9ZpdtxsAAAAASUVORK5CYII="))}
