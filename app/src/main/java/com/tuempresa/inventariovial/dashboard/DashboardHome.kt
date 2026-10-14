@@ -76,7 +76,7 @@ import java.time.LocalDate
         }
         else->DashboardScreen(session,sessions,rows,reference.prs,DashboardDeliveryCounts.from(intents),connected,today,
             onSession={showSession=true},onNew={screen="NEW"},onRecords=onRecords,onPavement=onPavement,
-            onDrive={showDrive=true},onTools={screen="TOOLS"},onAllDrafts={screen="DRAFTS"},onContinue=onContinue)
+            onDrive={showDrive=true},onTools={screen="TOOLS"},onAllDrafts={screen="DRAFTS"},onContinue=onContinue,onMap=onMap)
     }
     if(showSession) SessionDialog(vm.field,{showSession=false},session)
     if(showDrive) com.tuempresa.inventariovial.core.DriveSyncCenter(vm) {showDrive=false}

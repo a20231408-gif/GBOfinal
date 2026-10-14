@@ -25,11 +25,12 @@ private val Add=glyph("Nuevo","M19,13H13V19H11V13H5V11H11V5H13V11H19Z")
 private val Records=glyph("Registros","M3,5H5V7H3Z M7,5H21V7H7Z M3,11H5V13H3Z M7,11H21V13H7Z M3,17H5V19H3Z M7,17H21V19H7Z")
 private val Pavement=glyph("Pavimentos","M4,3H9L7,21H2Z M15,3H20L22,21H17Z M11,3H13V7H11Z M11,10H13V14H11Z M11,17H13V21H11Z")
 private val Drive=glyph("Drive","M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14C0,17.31 2.69,20 6,20H19C21.76,20 24,17.76 24,15C24,12.36 21.95,10.22 19.35,10.04Z")
+private val Map=glyph("Mapa","M3,5L9,3L15,5L21,3V19L15,21L9,19L3,21Z M9,5V17 M15,7V19")
 
 @Composable fun DashboardScreen(session:FieldSession?,sessions:List<FieldSession>,drafts:List<InventoryRecordEntity>,
     prs:List<RoadPr>,counts:DashboardDeliveryCounts,connected:Boolean,today:LocalDate,
     onSession:()->Unit,onNew:()->Unit,onRecords:()->Unit,onPavement:()->Unit,onDrive:()->Unit,
-    onTools:()->Unit,onAllDrafts:()->Unit,onContinue:(InventoryRecordEntity)->Unit) {
+    onTools:()->Unit,onAllDrafts:()->Unit,onContinue:(InventoryRecordEntity)->Unit,onMap:()->Unit={}) {
     val daily=DashboardDrafts.order(DashboardDrafts.filter(drafts,sessions,today),sessions,prs)
     LazyColumn(Modifier.fillMaxSize().testTag("dashboard"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
         item {
@@ -57,7 +58,7 @@ private val Drive=glyph("Drive","M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6
             BoxWithConstraints {
                 val columns=if(maxWidth>=420.dp) 2 else 1
                 val actions=listOf(Triple("NUEVO REGISTRO",Add,onNew),Triple("MIS REGISTROS",Records,onRecords),
-                    Triple("PAVIMENTOS",Pavement,onPavement),Triple("ENTREGAS DRIVE",Drive,onDrive))
+                    Triple("PAVIMENTOS",Pavement,onPavement),Triple("ENTREGAS DRIVE",Drive,onDrive),Triple("MAPA",Map,onMap))
                 Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
                     actions.chunked(columns).forEach {row->
                         Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {row.forEach {(label,icon,action)->
