@@ -55,7 +55,9 @@ object EngineeringEdits {
             require(core.errors(ends).isEmpty()){core.errors(ends).joinToString("\n"){it.reason}}
             dao.updateRecord(core.applyTo(r,ends,com.tuempresa.inventariovial.field.SicFormPolicy.sides(r.sicCode,cls).isNotEmpty()))
         }
-        val errors=if(finalize)reviewErrors(s,detail,paths) else emptyList()
+        // Validate the current editor header, never the pre-edit Room snapshot.
+        val currentSnapshot=s.copy(record=requireNotNull(dao.recordById(id)))
+        val errors=if(finalize)reviewErrors(currentSnapshot,detail,paths) else emptyList()
         require(errors.isEmpty()) {errors.joinToString("\n") {it.message}}
         when(detail) {
             is SicFormDetail.Sic17 -> with(detail.state) {dao.updateSic17(requireNotNull(s.sic17).copy(classCode=classCode,typeCode=typeCode,bridgeCode=bridgeCode,inventoriedCode=inventoriedCode,spans=spans.toIntOrNull(),dimension1LengthM=dimension1LengthM.replace(',','.').toDoubleOrNull(),dimension2LowerHeightM=dimension2LowerHeightM.replace(',','.').toDoubleOrNull(),structuralConditionCode=structuralConditionCode,functionalConditionCode=functionalConditionCode,serviceTypeCode=serviceTypeCode,singularityCode=singularityCode,singularityName=singularityName,dimension3UpperHeightM=dimension3UpperHeightM.replace(',','.').toDoubleOrNull()))}

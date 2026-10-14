@@ -168,7 +168,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
         GeneratedElementFiles(files) {notice=it}
     }
     if(independent) FajaCaptureForm(state,!busy,notice,onChange=::change,onDraft={save(false)},onBack=::leave,
-        onSave={review=true},
+        onSave={save(false){review=true}},
         photoContent={com.tuempresa.inventariovial.field.LegacyInventoryPhotos(format.code,paths,categories,editable=!busy,captureLocation=false,captureMetadata=captures,
             onPhotoMetadata={path,metadata->captures=captures+(path to metadata)},
             onChange={p,c->paths=p;categories=c;photosChanged=true;dirty=true;files=emptyList()})},exportContent=exportContent)
@@ -181,7 +181,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
             raw=JSONObject(values(raw)+metadata).toString();dirty=true;review=false;files=emptyList()
         },onPhotos={p,c->paths=p;categories=c;dirty=true;files=emptyList()},onMetadata={path,metadata->captures=captures+(path to metadata)},
         onWidthChange={_,_->},onWidthSelect={},onExpandWidths={},onTrackId={id=it;trackRecordId=it;save(false)},
-        onDraft={if(editable)save(false)},onBack=::leave,onReview={review=true},exportContent=exportContent)
+        onDraft={if(editable)save(false)},onBack=::leave,onReview={save(false){review=true}},exportContent=exportContent)
     if(review) com.tuempresa.inventariovial.field.LegacyRecordReviewDialog(
         format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))},
         paths.map(::File),completion,enabled=!busy,onConfirm={save(true)},onDismiss={review=false})

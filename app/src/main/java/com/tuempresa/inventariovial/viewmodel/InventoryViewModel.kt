@@ -10,6 +10,8 @@ import com.tuempresa.inventariovial.tracking.TrackCaptureService
 import com.tuempresa.inventariovial.supplementary.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -212,6 +214,7 @@ class InventoryViewModel(
     var lastSavedRecord: InventoryRecordEntity? = null
         private set
     private var saving = false
+    private val draftSaveMutex=Mutex()
     private val _driveFeedback=MutableStateFlow<String?>(null)
     val driveFeedback=_driveFeedback.asStateFlow()
 
@@ -371,8 +374,11 @@ class InventoryViewModel(
 
     fun saveDraft(request:InventorySaveRequest,onSaved:(String)->Unit,onError:(String)->Unit) {
         viewModelScope.launch {
+            draftSaveMutex.withLock {
+            if(saving || _pendingSave.value!=null)return@withLock
             try { onSaved(com.tuempresa.inventariovial.core.InventoryDraftStore.save(getApplication(),database,request)) }
             catch(e:Exception) { onError(e.message ?: "No se guardó el borrador") }
+            }
         }
     }
 
@@ -384,7 +390,7 @@ class InventoryViewModel(
     ) {
 
         val request = com.tuempresa.inventariovial.validation.pointCapture(request.copy(segment = field.projectRoutes.segment(request.routeCode, request.segment).orEmpty()))
-        if (saving) return
+        if (saving || !warningsAccepted && _pendingSave.value!=null) return
         saving = true
         viewModelScope.launch {
             try {
