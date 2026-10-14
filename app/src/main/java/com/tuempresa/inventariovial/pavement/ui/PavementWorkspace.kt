@@ -39,6 +39,15 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
     var surface by rememberSaveable { mutableStateOf(PavementSurface.ASPHALT) }
     var showDiscarded by rememberSaveable {mutableStateOf(false)}
     var filter by rememberSaveable { mutableStateOf("") }
+    var filterEdited by rememberSaveable {mutableStateOf(false)}
+    var filterInitialized by rememberSaveable {mutableStateOf(false)}
+    LaunchedEffect(Unit) {
+        if(!filterInitialized) {
+            val route=graph.database.inventoryDao().currentSession()?.road.orEmpty()
+            if(!filterEdited)filter=route
+            filterInitialized=true
+        }
+    }
     var inspectorFilter by rememberSaveable { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
@@ -63,7 +72,7 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
                 FilterChip(selected=surface==item,onClick={surface=item},label={Text(item.label)})
             }
         }
-        Field("Filtrar tramo / ruta", filter) { filter = it }
+        Field("Filtrar tramo / ruta", filter) { filterEdited=true;filter = it }
         Choice("Inspector",inspectorFilter,listOf("")+samples.map{it.inspectorUserId}.distinct(),{ id -> if(id.isBlank())"Todos" else samples.firstOrNull{it.inspectorUserId==id}?.inspectorNombre ?: id }){inspectorFilter=it}
         Button(onClick = { scope.launch { runCatching { repo.newSample(surface) }.onSuccess { id = it }.onFailure { error = it.message } } }, modifier = Modifier.heightIn(min = 56.dp)) { Text("Nueva muestra") }
         error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
