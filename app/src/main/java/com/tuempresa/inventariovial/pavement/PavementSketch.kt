@@ -48,7 +48,7 @@ data class PavementPdfSegment(val index: Int, val count: Int, val start: Double,
     val length get() = end-start
     fun contains(s: PavementSampleEntity, d: PavementDamageEntity): Boolean {
         if (d.geometry == "GLOBAL") return index == 1
-        val bounds = if (d.geometry == "SLABS") {
+        val bounds = if (d.geometry == "SLABS" && !PavementSlabGeometry.localized(d)) {
             val rows = PavementRules.slabIds(d).map { (it-1)/s.slabColumns }
             if (rows.isEmpty()) return false
             rows.min()*s.largoM/s.slabRows to (rows.max()+1)*s.largoM/s.slabRows

@@ -30,8 +30,9 @@ object PavementRules {
             "SLABS" -> require(d.slabs.split(',').all { it.trim().toIntOrNull() != null } && slabIds(d).isNotEmpty() && slabIds(d).all { it in 1..(s.slabRows * s.slabColumns) }) { "Selecciona losas válidas." }
             "GLOBAL" -> require(existing.none { it.id != d.id && it.code == d.code }) { "Este daño global ya fue registrado; modifícalo." }
         }
-        require(d.crackWidthMm == null || (d.crackWidthMm.isFinite() && d.crackWidthMm >= 0)) { "Ancho de fisura inválido." }
-        require(d.depthMm == null || (d.depthMm.isFinite() && d.depthMm > 0)) { "Profundidad inválida." }
+        PavementSlabGeometry.validate(s,d)
+        if(PavementDamageFields.crackWidth(d.code))require(d.crackWidthMm == null || (d.crackWidthMm.isFinite() && d.crackWidthMm >= 0)) { "Ancho de fisura inválido." }
+        if(PavementDamageFields.depth(d.code))require(d.depthMm == null || (d.depthMm.isFinite() && d.depthMm > 0)) { "Profundidad inválida." }
         if (d.geometry == "AREA") require(existing.filter { it.id != d.id && it.code == d.code }.sumOf { quantity(it) } + quantity(d) <= s.anchoM * s.largoM + 1e-7) { "El total de este daño supera el área de muestra." }
         if (d.code == 82) require(existing.filter { it.id != d.id && it.code == 82 }.sumOf { quantity(it) } + quantity(d) <= 2 * s.largoM + 1e-7) { "Drenaje lateral: máximo 2 × largo." }
         if (d.code == 81) require(existing.filter { it.id != d.id && it.code == 81 }.sumOf { quantity(it) } + quantity(d) <= s.largoM + 1e-7) { "Sección transversal: máximo largo de unidad (p.225)." }

@@ -105,10 +105,11 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
     var observation by rememberSaveable { mutableStateOf(d.observation.orEmpty()) }; var slabs by rememberSaveable { mutableStateOf(d.slabs) }
     var severity by rememberSaveable { mutableStateOf(PavementSeverity.canonical(d.severity)) }; var error by rememberSaveable { mutableStateOf("") }
     val definition = PavementCatalog.forSurface(PavementSurface.valueOf(d.surface)).first { it.code == d.code }
+    var localized by rememberSaveable {mutableStateOf(PavementSlabGeometry.localized(d))}
     EditorDialog("${d.code} · ${d.name}", dismiss, {
         runCatching {
-            val geometric = d.geometry in listOf("AREA", "LINEAR", "POTHOLE")
-            val two = d.geometry in listOf("AREA", "LINEAR")
+            val geometric = d.geometry in listOf("AREA", "LINEAR", "POTHOLE") || localized
+            val two = d.geometry in listOf("AREA", "LINEAR") || localized && PavementSlabGeometry.mark(d.code)!=SlabMark.POINT
             val a = if (geometric) number(x1) else null; val b = if (geometric) number(y1) else null
             val c = if (two) number(x2) else null; val e = if (two) number(y2) else null
             val w = if (two) abs(c!!-a!!) else null; val l = if (two) abs(e!!-b!!) else null
@@ -118,17 +119,22 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
                 widthM=w, lengthM=if (d.geometry=="LINEAR") override ?: hypot(w!!,l!!) else l,
                 areaM2=if (d.geometry=="AREA") override ?: w!!*l!! else if(d.geometry=="POTHOLE")holeArea.takeIf { it.isNotBlank() }?.let(::number) else null,
                 quantity=if(d.geometry=="POTHOLE") 1.0 else null,
-                crackWidthMm=crack.takeIf { it.isNotBlank() }?.let { number(it) }, observation=observation, slabs=slabs,
-                depthMm=depth.takeIf { it.isNotBlank() }?.let { number(it) }))
+                crackWidthMm=if(PavementDamageFields.crackWidth(d.code))crack.takeIf { it.isNotBlank() }?.let { number(it) } else d.crackWidthMm, observation=observation, slabs=slabs,
+                depthMm=if(PavementDamageFields.depth(d.code))depth.takeIf { it.isNotBlank() }?.let { number(it) } else d.depthMm))
         }.onFailure { error = it.message ?: "Revisa los campos." }
     }) {
         if(feedback.isNotBlank()) Text(feedback,color=MaterialTheme.colorScheme.error)
         if (definition.severities.isNotEmpty()) Choice("Severidad", severity ?: definition.severities.first(), definition.severities, { PavementSeverity.label(it) }) { severity = it }
-        if(d.geometry in listOf("AREA","LINEAR","POTHOLE")) { Field("X1 / centro X (m)",x1){x1=it}; Field("Y1 / centro Y (m)",y1){y1=it} }
-        if(d.geometry in listOf("AREA","LINEAR")) { Field("X2 (m)",x2){x2=it}; Field("Y2 (m)",y2){y2=it}; Field("Medida manual opcional (${definition.unit}); vacío = geométrica",measure){measure=it} }
+        if(d.geometry=="SLABS") {
+            Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically){Switch(localized,{localized=it});Text("Localizar dentro de las losas indicadas")}
+            Text("Croquis ${PavementSlabGeometry.mark(d.code).name}: coordenadas en metros de la muestra. La cantidad contractual sigue siendo losas, nunca el área del dibujo.")
+        }
+        if(d.geometry in listOf("AREA","LINEAR","POTHOLE") || localized) { Field("X1 / centro X (m)",x1){x1=it}; Field("Y1 / centro Y (m)",y1){y1=it} }
+        if(d.geometry in listOf("AREA","LINEAR") || localized && PavementSlabGeometry.mark(d.code)!=SlabMark.POINT) { Field("X2 (m)",x2){x2=it}; Field("Y2 (m)",y2){y2=it} }
+        if(d.geometry in listOf("AREA","LINEAR")) Field("Medida manual opcional (${definition.unit}); vacío = geométrica",measure){measure=it}
+        if(PavementDamageFields.depth(d.code))Field(PavementDamageFields.depthLabel(d.code),depth){depth=it}
         if(d.geometry=="POTHOLE") {
             Field("Diámetro medido (m)",diameter){diameter=it}
-            Field("Profundidad máxima (mm)",depth){depth=it}
             val measuredDiameter=diameter.replace(',','.').toDoubleOrNull()?:0.0
             if((d.code==13 && measuredDiameter>.75) || (d.code==85 && measuredDiameter>.9)) {
                 Field("Área medida del hueco (m²)",holeArea){holeArea=it}
@@ -139,7 +145,7 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
             else Text("Sin sugerencia: faltan medidas o el límite no está definido de forma inequívoca en el cuadro.",style=MaterialTheme.typography.bodySmall)
         }
         if(d.geometry=="SLABS") Field("Losas afectadas, separadas por coma",slabs){slabs=it}
-        if(d.geometry != "GLOBAL") Field("Ancho de fisura (mm), si aplica",crack){crack=it}
+        if(PavementDamageFields.crackWidth(d.code)) Field("Ancho de fisura (mm), si aplica",crack){crack=it}
         OutlinedTextField(observation,{observation=it},label={Text("OBSERVACIONES")},minLines=3,modifier=Modifier.fillMaxWidth())
         Text("Un daño de frontera se asigna a la muestra de la izquierda o de adelante. En una junta, 21 y 33: selecciona ambas losas afectadas.", style = MaterialTheme.typography.bodySmall)
         if(error.isNotEmpty()) Text(error,color=MaterialTheme.colorScheme.error)

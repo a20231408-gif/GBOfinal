@@ -155,6 +155,9 @@ object PavementPdf {
             table(damages.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") })
             for(d in damages) {
                 if(d.geometry=="SLABS")line("#${d.correlativo} · Losas afectadas: ${d.slabs}")
+                if(PavementSlabGeometry.localized(d))line("#${d.correlativo} · Ubicación ${PavementSlabGeometry.mark(d.code).name}: (${fmt(d.x1)}, ${fmt(d.y1)}) a (${fmt(d.x2)}, ${fmt(d.y2)}) m. Cantidad contractual: losas.")
+                if(d.geometry=="SLABS" && !PavementSlabGeometry.localized(d))line("#${d.correlativo} · Símbolo por losa; sin ubicación parcial registrada.")
+                if(PavementDamageFields.depth(d.code) && d.depthMm!=null)line("#${d.correlativo} · ${PavementDamageFields.depthLabel(d.code)}: ${fmt(d.depthMm)}")
                 if(!d.observation.isNullOrBlank())line("#${d.correlativo}: ${d.observation}")
                 photos[d.id].orEmpty().forEach { photo ->
                     val bitmap=loadCorrectlyOrientedBitmap(photo.localPath)

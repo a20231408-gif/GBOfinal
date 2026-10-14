@@ -1,0 +1,6 @@
+{
+  "initialTestFailure": "Robolectric PdfDocument native handle reports document is closed on first startPage",
+  "productionChangeForThisFailure": false,
+  "replacementVerification": "same PavementPdf.render production page renderer on native bitmap canvases",
+  "physicalAndroidPdfContainerValidation": "PENDING"
+}

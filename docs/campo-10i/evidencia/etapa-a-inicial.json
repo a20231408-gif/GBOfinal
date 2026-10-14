@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "name": "invalidOrUnselectedSlabGeometryCannotBeSaved",
+      "passed": true
+    },
+    {
+      "name": "exportedWorkbookAndPdfUseSavedCoordinatesAndLocalizedRenderer",
+      "passed": false
+    },
+    {
+      "name": "editingLocationPersistsOfflineOnReopenAndLeavesHistoricalRowUntouched",
+      "passed": true
+    },
+    {
+      "name": "crackFieldsMatchEveryRealCatalogEntryAndRuttingPreservesHistoricalUnusedValue",
+      "passed": true
+    },
+    {
+      "name": "partialSlabPreservesContractualQuantityAndDrawsOnlyItsBounds",
+      "passed": true
+    },
+    {
+      "name": "twoPositionsAndTwoDamageTypesRemainIndependentWithoutDoubleCountingSameCodeSlab",
+      "passed": true
+    }
+  ]
+}

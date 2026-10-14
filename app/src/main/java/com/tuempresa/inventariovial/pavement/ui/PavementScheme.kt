@@ -101,7 +101,14 @@ internal object PavementDrawing {
                 } else recipe(x,y,x2,y2,kind)
                 "AREA" -> recipe(min(x,x2),min(y,y2),max(x,x2),max(y,y2),kind)
                 "POTHOLE" -> { val radius=((d.diameterM?:0.0)*scale/2).toFloat();recipe(x-radius,y-radius,x+radius,y+radius,kind) }
-                "SLABS" -> PavementRules.slabIds(d).forEach { n ->
+                "SLABS" -> if(PavementSlabGeometry.localized(d)) {
+                    when(PavementSlabGeometry.mark(d.code)) {
+                        SlabMark.POINT -> recipe(x-4,y-4,x+4,y+4,PavementSketchKind.POINT)
+                        SlabMark.LINE -> c.drawLine(x,y,x2,y2,paint)
+                        SlabMark.AREA -> {c.save();c.clipRect(min(x,x2),min(y,y2),max(x,x2),max(y,y2));recipe(min(x,x2),min(y,y2),max(x,x2),max(y,y2),kind);c.restore()}
+                    }
+                    if(labels)tag("#${d.correlativo}",x+3,y-3,color)
+                } else PavementRules.slabIds(d).forEach { n ->
                     if(rigid && n in 1..rows*cols) {
                         val col=(n-1)%cols;val row=(n-1)/cols
                         recipe(col*dx,transform.canvasY((row+1)*s.largoM/rows),(col+1)*dx,transform.canvasY(row*s.largoM/rows),kind)
