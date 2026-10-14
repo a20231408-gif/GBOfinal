@@ -77,7 +77,16 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
         OutlinedButton(enabled=detail!=null && !saving,onClick={val d=detail ?: return@OutlinedButton;saving=true;scope.launch {
             try {EngineeringEdits.save(db,id,d,paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate,finalize=false,core=core);onBack()}catch(e:Exception){error=e.message}finally{saving=false}
         }}) {Text("Guardar borrador")}
-        LegacyInventoryReviewButton(enabled=detail!=null && !saving && gpsError==null){review=true}
+        LegacyInventoryReviewButton(enabled=detail!=null && !saving && gpsError==null){
+            val d=detail ?: return@LegacyInventoryReviewButton
+            saving=true;scope.launch {
+                try {
+                    EngineeringEdits.save(db,id,d,paths,categories,captures,expectedUpdatedAt=openedRevision,observations=observations,coordinateEdit=coordinateEdited,coordinate=coordinate,finalize=false,core=core)
+                    snapshot=db.inventoryDao().snapshot(id);openedRevision=snapshot?.record?.updatedAt
+                    review=true
+                } catch(e:Exception){error=e.message} finally{saving=false}
+            }
+        }
     }
     if(review) snapshot?.let {original->detail?.let {d->
         val errors=EngineeringEdits.reviewErrors(original,d,paths)+(core?.errors(hasEnds).orEmpty().map {com.tuempresa.inventariovial.validation.ValidationError(it.field,it.reason)})

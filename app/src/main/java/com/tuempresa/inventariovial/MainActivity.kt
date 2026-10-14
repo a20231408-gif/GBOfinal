@@ -1107,7 +1107,8 @@ fun SignalizationFormScreen(
 
             Button(
                 onClick = {
-
+                    inventoryViewModel.saveDraft(currentDraftRequest(), onSaved={ savedId ->
+                        draftId=savedId
                     when {
 
                         gpsInputError != null -> { formError=gpsInputError }
@@ -1263,6 +1264,7 @@ fun SignalizationFormScreen(
                             }
                         }
                     }
+                    }, onError={formError=it})
                 },
 
                 modifier = Modifier
@@ -1272,7 +1274,7 @@ fun SignalizationFormScreen(
 
                 Text(
                     text =
-                        "Revisar y guardar",
+                        "Revisar y finalizar",
                     fontSize = 20.sp,
                     fontWeight =
                         FontWeight.Bold
@@ -2384,7 +2386,11 @@ fun AssetFormScreen(
             }
         }
 
-        item {com.tuempresa.inventariovial.field.LegacyInventoryReviewButton(onReview=saveAsset)}
+        item {com.tuempresa.inventariovial.field.LegacyInventoryReviewButton(onReview={
+            inventoryViewModel.saveDraft(currentDraftRequest(),onSaved={savedId->
+                draftId=savedId;persistCulvertExtra(savedId){saveAsset()}
+            },onError={formError=it})
+        })}
     }
     pendingCulvertCondition?.let {next->androidx.compose.material3.AlertDialog(onDismissRequest={pendingCulvertCondition=null},title={Text("Conservar detalle existente")},
         text={Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")},
