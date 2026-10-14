@@ -1,0 +1,11 @@
+{
+  "scope": "New 10J text, DOCX XML, PDF text and changed source files; real private credential value comparison, not Git history audit",
+  "filesScanned": 18,
+  "credentialMatches": [],
+  "previousManualAndThreeBackupsVerifiedUnchanged": true,
+  "adbCaptureCancelledByOwner": true,
+  "realCapturesObtained": 0,
+  "screenshotsOrFakeInterfacesGenerated": false,
+  "productionWritten": false,
+  "applicationDataDeleted": false
+}

@@ -1,0 +1,20 @@
+{
+  "realCapturesIncluded": [],
+  "pendingCaptures": [
+    "01-inicio.png",
+    "02-sic-formulario.png",
+    "03-sic-observaciones.png",
+    "04-fotografias.png",
+    "05-pavimentos-cabecera.png",
+    "06-rigido-esquema.png",
+    "07-ahuellamiento.png",
+    "08-foto-dano.png",
+    "09-puentes.png",
+    "10-video-scap.png",
+    "11-drive.png",
+    "12-exportaciones.png"
+  ],
+  "uiImagesSynthesized": false,
+  "annotationsAddedWithoutRealImage": false,
+  "previousManualOverwritten": false
+}

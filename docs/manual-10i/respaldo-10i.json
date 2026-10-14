@@ -1,0 +1,17 @@
+[
+  {
+    "backup": "output\\respaldo-manual-10i\\MANUAL_USUARIO_GBO_INVENTARIO_VIAL.docx",
+    "sha256": "e4e98ca903e94c9222fa3cf1fd032a17933c768321b2f2131787fe04298a468f",
+    "original": "docs\\manual-10i\\MANUAL_USUARIO_GBO_INVENTARIO_VIAL.docx"
+  },
+  {
+    "backup": "output\\respaldo-manual-10i\\MANUAL_USUARIO_GBO_INVENTARIO_VIAL.pdf",
+    "sha256": "ba99c677feeae4c260b39c686a3d79192917e64e4e0c6640d144bed30d13ba6f",
+    "original": "docs\\manual-10i\\MANUAL_USUARIO_GBO_INVENTARIO_VIAL.pdf"
+  },
+  {
+    "backup": "output\\respaldo-manual-10i\\MANUAL_USUARIO_GBO_INVENTARIO_VIAL.md",
+    "sha256": "1439fae8d9a8e0c9674475d1cca1ee8031103f2f5bccc29a194fd9a23dca73e9",
+    "original": "docs\\manual-10i\\MANUAL_USUARIO_GBO_INVENTARIO_VIAL.md"
+  }
+]

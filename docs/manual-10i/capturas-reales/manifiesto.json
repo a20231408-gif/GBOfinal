@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "device": "523bc083",
+  "capturedAndReviewed": [],
+  "status": "ADB_CAPTURE_CANCELLED_BY_OWNER; OWNER_WILL_PREPARE_REAL_IMAGES_SEPARATELY",
+  "rules": "Only real GBO screenshots with fictitious records, no credentials or personal data; verify sha256 and privacyReviewed before embedding."
+}
