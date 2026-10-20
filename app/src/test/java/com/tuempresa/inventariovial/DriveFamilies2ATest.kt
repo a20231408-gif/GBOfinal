@@ -97,7 +97,7 @@ class DriveFamilies2ATest {
                 db.automaticSyncDao().put(intent)
                 val payload=AutomaticDelivery.prepare(context,db,intent)
                 assertEquals(4,payload.getInt("pathVersion"));assertFalse(payload.has("sibCode"))
-                val target=File("../docs/drive-familias-2a/examples/$id").apply {mkdirs()}
+                val target=File("build/outputs/cierre-1.4.5/drive-familias/examples/$id").apply {mkdirs()}
                 val remote=JSONObject(payload.toString())
                 for(n in 0 until remote.getJSONArray("files").length()) {
                     val file=remote.getJSONArray("files").getJSONObject(n);val bytes=File(file.getString("localFile")).readBytes()
@@ -117,7 +117,7 @@ class DriveFamilies2ATest {
         assertTrue(rows.any {it.record.sicCode=="SIC-14"});assertTrue(rows.any {it.record.sicCode=="SIC-14A"})
         assertTrue(rows.all {it.record.latitude==null && it.record.longitude==null})
         assertTrue(RoadOrdering.orderAssetsForRoute(rows.map(RouteDelivery::row)).none {it.assetFamily==AssetFamily.OTROS})
-        val target=File("../docs/drive-familias-2a/examples/pavement-a").apply {mkdirs()}
+        val target=File("build/outputs/cierre-1.4.5/drive-familias/examples/pavement-a").apply {mkdirs()}
         File(target,"SIC-14.xlsx").outputStream().use {com.tuempresa.inventariovial.pavement.PavementSic.write(it,updated,listOf(damage),format)}
     }
 

@@ -177,6 +177,13 @@ class UserAuthenticationTest {
         assertFalse(db.auditDao().recent().toString().contains(verifier.pinHash))
     }
     @Test fun fieldSessionOperatorComesFromAuthenticatedUser() = runBlocking {
+        // Real BuildConfig may contain endpoints. Queue work without executing any worker.
+        try { androidx.work.WorkManager.getInstance(context) }
+        catch (_: IllegalStateException) {
+            androidx.work.WorkManager.initialize(context, androidx.work.Configuration.Builder()
+                .setExecutor { /* No remote work in this fixture. */ }
+                .setTaskExecutor { /* No scheduling against real services. */ }.build())
+        }
         android.provider.Settings.Secure.putString(context.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"robolectric-device9")
         seed(); assertNull(login("field"))
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
@@ -193,6 +200,23 @@ class UserAuthenticationTest {
         seed(); assertNull(login()); service.revoked = true
         assertTrue(sync.sync().isFailure); assertTrue(sessions.current.value!!.closing)
         assertEquals(2, db.userDao().countUsers()); auth.logout(); assertTrue(login()!!.contains("revocado"))
+    }
+    @Test fun malformedUsersReportValidationStageWithoutReplacingOfflineCache() = runBlocking {
+        seed(); val before = db.userDao().getAllUsers()
+        service.rows.getJSONObject(0).put("pinHash", "broken"); service.version++
+        val error = sync.sync().exceptionOrNull() as UserServiceException
+        assertEquals(UserServiceStage.USER_DATA, error.stage)
+        assertEquals("INVALID_USER_RESPONSE", error.code)
+        assertEquals(before, db.userDao().getAllUsers())
+        assertNull(login())
+    }
+    @Test fun auditFailureDoesNotMaskTransportFailure() = runBlocking {
+        seed()
+        db.openHelper.writableDatabase.execSQL("CREATE TRIGGER reject_audit BEFORE INSERT ON auth_audit BEGIN SELECT RAISE(ABORT, 'test audit'); END")
+        service.fail = true
+        val error = sync.sync().exceptionOrNull() as UserServiceException
+        assertEquals(UserServiceStage.POST, error.stage)
+        assertEquals(2, db.userDao().countUsers())
     }
     @Test fun changingUserAfterRestartClosesPreviousFieldWithoutRewritingOperator() = runBlocking {
         seed(); assertNull(login("owner"))

@@ -74,6 +74,7 @@ class BridgeSicFlowTest {
             r.setField(id,"inspection","route","PE-22A")
             val point=com.tuempresa.inventariovial.road.RoadReferenceRepository(context).loadFromAssets().segments.single {it.routeCode=="PE-22A"}.points.first()
             r.setLocation(id,com.tuempresa.inventariovial.location.GeoLocation(point.latitude,point.longitude,1.0f))
+            r.saveSicLocation(id,"PE-22A","CD","0010","125.5","0011","20")
             val stored=r.dao.snapshot(id)!!
             ScapHumanDelivery.prepare(context,db,stored)
             assertEquals(stored,r.dao.snapshot(id))
@@ -112,7 +113,7 @@ class BridgeSicFlowTest {
                     assertNull(preview.values[2]);assertEquals("Comentario SIC\nSegunda línea",preview.values.last())
                 }
             }
-            assertEquals(15,db.openHelper.readableDatabase.version)
+            assertEquals(20,db.openHelper.readableDatabase.version)
         } finally {db.close();context.deleteDatabase(name)}
     }
     @Test fun overridesKeepSourceRestoreScapAndNeverInferStructuresOrLanes()=runBlocking {
@@ -179,7 +180,7 @@ class BridgeSicFlowTest {
             val updated=db.scapDao().snapshot("inspection")!!
             assertEquals("HISTÓRICO",updated.sic17b!!.comments);assertEquals("12.5",updated.sic17b!!.maximumCapacity)
             assertEquals("3",ScapToSicMapper.mapToSic17B(updated).fields.single{it.sicField=="wearingSurface"}.value)
-            assertEquals(15,db.openHelper.readableDatabase.version)
+            assertEquals(20,db.openHelper.readableDatabase.version)
         } finally {db.close();context.deleteDatabase(name)}
     }
 

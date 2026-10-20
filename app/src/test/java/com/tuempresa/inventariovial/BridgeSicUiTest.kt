@@ -27,6 +27,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk=[28])
 class BridgeSicUiTest {
+    @org.junit.Before fun initializeWorkers() = initializeIdleUiWorkers()
     @get:Rule val compose=createComposeRule()
     @Test fun supplementsAreDiscoverableEditableAndContractPendingIsDiagnosticOnly() {
         val context=ApplicationProvider.getApplicationContext<Context>()

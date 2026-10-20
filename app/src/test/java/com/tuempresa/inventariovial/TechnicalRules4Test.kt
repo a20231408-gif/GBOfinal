@@ -102,7 +102,7 @@ class TechnicalRules4Test {
     }
     @Test fun wallAutomaticModeUpdatesAfterProgressiveEditButHistoricalAndMeasuredRemain()=runBlocking {
         db().use {d->
-            val r=testRecord("wall",sic="SIC-20",route="R").copy(startPrCode="0010",startDistanceM=100.0,endPrCode="0010",endDistanceM=200.0,surveyDirection="INCREASING",sideCode="D")
+            val r=testRecord("wall",sic="SIC-20",route="R").copy(assetType="WALL",startPrCode="0010",startDistanceM=100.0,endPrCode="0010",endDistanceM=200.0,surveyDirection="INCREASING",sideCode="D")
             val repo=InventoryRepository(d);repo.saveSic20(r,Sic20Entity("wall","14","2",3.0,null,"1","1",100.0),emptyList(),"AUTO")
             val edited=r.copy(endDistanceM=250.0);d.inventoryDao().updateRecord(edited);TechnicalLengthStore.refresh(d,edited,emptyList())
             assertEquals(150.0,d.inventoryDao().snapshot("wall")!!.sic20!!.wallLengthMeters!!,0.0)
@@ -114,7 +114,7 @@ class TechnicalRules4Test {
         }
     }
     @Test fun lengthCompanionContainsMeasuredAndCalculatedValuesWithoutChangingSicColumns(){
-        val r=testRecord("wall",sic="SIC-20",route="R").copy(startPrCode="0010",startDistanceM=100.0,endPrCode="0010",endDistanceM=200.0,surveyDirection="INCREASING")
+        val r=testRecord("wall",sic="SIC-20",route="R").copy(assetType="WALL",startPrCode="0010",startDistanceM=100.0,endPrCode="0010",endDistanceM=200.0,surveyDirection="INCREASING")
         val item=InventoryRecordForExport(r,sic20=Sic20Entity("wall","14","2",3.0,null,"1","1",95.25))
         val m=TechnicalLengthExport.metadata(item,emptyList());assertEquals(100.0,m.getDouble("calculatedM"),0.0);assertEquals(95.25,m.getDouble("applicableM"),0.0)
         val out=ByteArrayOutputStream();TechnicalLengthExport.write(out,item,emptyList())
@@ -137,7 +137,7 @@ class TechnicalRules4Test {
             dao.insertRecord(testRecord("culvert",sic="SIC-18",route="R"))
             dao.insertSic18(Sic18Entity("culvert","06","1",1,"1",1.0,1.0,"3","3"))
             SicFieldRepository(d).save("culvert",withFailures(extra("3")),"engineer",true)
-            InventoryRepository(d).saveSic20(testRecord("wall",sic="SIC-20"),Sic20Entity("wall","14","2",3.0,null,"1","1",87.75),emptyList(),"MEASURED")
+            InventoryRepository(d).saveSic20(testRecord("wall",sic="SIC-20").copy(assetType="WALL"),Sic20Entity("wall","14","2",3.0,null,"1","1",87.75),emptyList(),"MEASURED")
             InventoryRepository(d).saveSic21(testRecord("resalto",sic="SIC-21"),Sic21Entity("resalto","19","4","2","1"),emptyList())
             d.close();d=Room.databaseBuilder(context,InventoryDatabase::class.java,name).build()
             val loaded=SicFieldRepository(d).load("culvert",SicFieldFormat.SIC18A)!!

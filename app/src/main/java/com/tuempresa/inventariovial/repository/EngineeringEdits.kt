@@ -47,6 +47,8 @@ object EngineeringEdits {
     }
     suspend fun save(db:InventoryDatabase,id:String,detail:SicFormDetail,paths:List<String>,categories:Map<String,String>,captures:Map<String,com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),expectedUpdatedAt:Long?=null,observations:String?=null,coordinateEdit:Boolean=false,coordinate:com.tuempresa.inventariovial.location.GeoLocation?=null,finalize:Boolean=true,core:com.tuempresa.inventariovial.field.SicCoreDraft?=null)=db.withTransaction {
         val dao=db.inventoryDao();val s=requireNotNull(dao.snapshot(id));val r=s.record
+        com.tuempresa.inventariovial.model.form.requireSicSnapshot(s)
+        com.tuempresa.inventariovial.model.form.requireSicDetail(r.sicCode,detail)
         require(expectedUpdatedAt==null || r.updatedAt==expectedUpdatedAt) {"La ficha cambió desde que la abriste. Conserva tus cambios y vuelve a abrir la revisión actual."}
         require(r.status in setOf("ACTIVE","DRAFT")) {"Restaura primero el registro anulado."}
         if(core!=null) {

@@ -158,10 +158,10 @@ class PavementParallelCTest {
     }
     @Test fun pdfSegmentsKeepFullScaleAndClipDamageAtSharedBoundaries() {
         val segments=PavementPdfLayout.segments(5.0,50.0)
-        assertEquals(listOf(0.0 to 20.0,20.0 to 40.0,40.0 to 50.0),segments.map{it.start to it.end})
-        val point=damage().copy(geometry="POTHOLE",y1=20.0,y2=null,diameterM=0.0)
+        assertEquals(listOf(0.0 to 22.4375,22.4375 to 44.875,44.875 to 50.0),segments.map{it.start to it.end})
+        val point=damage().copy(geometry="POTHOLE",y1=22.4375,y2=null,diameterM=0.0)
         assertEquals(listOf(2),segments.filter{it.contains(sample(),point)}.map{it.index})
-        val cross=damage().copy(y1=19.0,y2=21.0)
+        val cross=damage().copy(y1=21.4375,y2=23.4375)
         assertEquals(listOf(1,2),segments.filter{it.contains(sample(),cross)}.map{it.index})
     }
     @Test fun workbookHidesIterationsButCalculatorAndSnapshotRetainThem() {
@@ -217,7 +217,7 @@ class PavementParallelCTest {
         val dense=(1..70).map { i -> damage("damage-$i").copy(correlativo=i,y1=10.0,y2=15.0) }
         val pages=mutableListOf<Bitmap>()
         val r=PavementResult(emptyList(),emptyList(),null,null,listOf("Curvas pendientes; datos sintéticos de prueba"))
-        PavementPdf.render(PavementExportSample(s,dense,r),emptyMap(),{Bitmap.createBitmap(595,842,Bitmap.Config.ARGB_8888).also { pages+=it }.let { Canvas(it).apply{drawColor(Color.WHITE)} }},{})
+        PavementPdf.render(PavementExportSample(s,dense,r),emptyMap(),{Bitmap.createBitmap(PavementPdfLayout.PAGE_WIDTH,PavementPdfLayout.PAGE_HEIGHT,Bitmap.Config.ARGB_8888).also { pages+=it }.let { Canvas(it).apply{drawColor(Color.WHITE)} }},{})
         assertTrue("Dense table must continue on additional pages",pages.size>=5)
         pages.forEachIndexed { i,b -> File(output,"dense-${i+1}.png").outputStream().use{b.compress(Bitmap.CompressFormat.PNG,100,it)};b.recycle() }
         for(surface in PavementSurface.entries) {

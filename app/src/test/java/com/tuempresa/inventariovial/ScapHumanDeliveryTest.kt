@@ -40,8 +40,8 @@ class ScapHumanDeliveryTest {
     @Test fun capture10Then30Then20KmUsesP1P3P2AndHumanPathsWithoutChangingIdentities() {
         val rows = listOf(row(1, 10000.0), row(2, 30000.0), row(3, 20000.0))
         val plan = ScapHumanDelivery.plan(rows)
-        assertEquals(listOf("P-1", "P-3", "P-2"), rows.map { plan.getValue(it.snapshot.inspection.id).shortCode })
-        assertEquals(listOf("PE-3N/SIB-08/PUENTE 1", "PE-3N/SIB-08/PUENTE 3", "PE-3N/SIB-08/PUENTE 2"),
+        assertEquals(listOf("P-road-1", "P-road-2", "P-road-3"), rows.map { plan.getValue(it.snapshot.inspection.id).shortCode })
+        assertEquals(listOf("PE-3N/PUENTES/PUENTE UUID_road-1", "PE-3N/PUENTES/PUENTE UUID_road-2", "PE-3N/PUENTES/PUENTE UUID_road-3"),
             rows.map { plan.getValue(it.snapshot.inspection.id).path })
         rows.forEachIndexed { i, row ->
             assertEquals("CONTRACT-${i+1}", row.snapshot.inspection.bridgeCode)
@@ -65,12 +65,13 @@ class ScapHumanDeliveryTest {
                 repo.setField(id,"inspection","bridgeCode","CONTRACT-$measure")
                 val p=points.minBy {kotlin.math.abs(it.chainageM-measure)}
                 repo.setLocation(id,com.tuempresa.inventariovial.location.GeoLocation(p.latitude,p.longitude,1.0f))
+                repo.saveSicLocation(id,"PE-22A","CD","0010","125.5","0011","20")
                 repo.dao.snapshot(id)!!
             }
             val parents=snapshots.map {db.inventoryDao().recordById(it.inspection.roadRecordId)!!}
             val layouts=snapshots.map {ScapHumanDelivery.prepare(context,db,it)}
-            assertEquals(listOf("P-1","P-3","P-2"),layouts.map {it.shortCode})
-            assertEquals(listOf("PUENTE 1","PUENTE 3","PUENTE 2"),layouts.map {it.elementFolder})
+            assertEquals(snapshots.map {"P-${it.inspection.roadRecordId.take(8)}"},layouts.map {it.shortCode})
+            assertEquals(snapshots.map {"PUENTE UUID_${it.inspection.roadRecordId}"},layouts.map {it.elementFolder})
             snapshots.forEachIndexed {i,s->
                 assertEquals(parents[i],db.inventoryDao().recordById(s.inspection.roadRecordId))
                 assertEquals(s,repo.dao.snapshot(s.inspection.id))

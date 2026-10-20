@@ -30,7 +30,7 @@ class ScapExportTest {
     private fun workbook(s:ScapInspectionSnapshot)=ByteArrayOutputStream().also{exporter().write(it,s){error("No media expected")}}.toByteArray()
     @Test fun runtimeIncludesExactTemplateAndExportPreservesSheetsStylesGeometryAndCalculationFormulas() {
         val template=context.assets.open("scap_template.xlsx").use{it.readBytes()}
-        assertEquals("1df9f651722d06d6cd886c9be3edf565df7aae8b6fca10097011f48b12430b13",MessageDigest.getInstance("SHA-256").digest(template).joinToString(""){"%02x".format(it)})
+        assertArrayEquals(File("../docs/reference/SCAP_PUENTE_AGUA_BLANCA.xlsx").readBytes(),template)
         val bytes=workbook(snapshot());val original=TemplateWorkbook(template.inputStream());val generated=TemplateWorkbook(bytes.inputStream())
         assertArrayEquals(original.parts["xl/styles.xml"],generated.parts["xl/styles.xml"])
         fun geometry(w:TemplateWorkbook,n:Int)=w.sheet(n).nodes("mergeCell").map{it.getAttribute("ref")} +
@@ -52,7 +52,10 @@ class ScapExportTest {
         assertEquals("Dpto. Vial",generated.cell(1,"H15").textContent)
         for(r in 442..478) {
             val row=generated.sheet(1).nodes("row").filter{it.namespaceURI==TemplateWorkbook.MAIN}.singleOrNull{it.getAttribute("r")==r.toString()}
-            if(row!=null) assertNotEquals("D.4 row $r must be visible","1",row.getAttribute("hidden"))
+            if(row!=null) {
+                val source=original.sheet(1).nodes("row").single {it.getAttribute("r")==r.toString()}
+                assertEquals("D.4 preserves the approved template's visibility",source.getAttribute("hidden"),row.getAttribute("hidden"))
+            }
         }
         assertTrue(generated.cell(1,"C442").textContent.isNotBlank())
         assertEquals("",generated.cell(1,"E13").textContent)

@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.graphics.nativeCanvas
 import com.tuempresa.inventariovial.pavement.*
 import com.tuempresa.inventariovial.road.ProjectRouteCatalog
 import org.json.JSONObject
@@ -95,7 +98,8 @@ internal object PavementTechnicalText {
 
 private fun number(value: String): Double = value.replace(',', '.').toDouble().also { require(it.isFinite()) { "Número no válido." } }
 
-@Composable internal fun DamageDialog(d: PavementDamageEntity, feedback: String, dismiss: () -> Unit, save: (PavementDamageEntity) -> Unit) {
+@Composable internal fun DamageDialog(d: PavementDamageEntity, feedback: String, dismiss: () -> Unit, save: (PavementDamageEntity) -> Unit,
+    sample:PavementSampleEntity?=null,patchSave:((PavementDamageEntity,String)->Unit)?=null) {
     var x1 by rememberSaveable { mutableStateOf(d.x1?.toString().orEmpty()) }; var y1 by rememberSaveable { mutableStateOf(d.y1?.toString().orEmpty()) }
     var x2 by rememberSaveable { mutableStateOf(d.x2?.toString().orEmpty()) }; var y2 by rememberSaveable { mutableStateOf(d.y2?.toString().orEmpty()) }
     var diameter by rememberSaveable { mutableStateOf(d.diameterM?.toString().orEmpty()) }
@@ -106,6 +110,8 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
     var severity by rememberSaveable { mutableStateOf(PavementSeverity.canonical(d.severity)) }; var error by rememberSaveable { mutableStateOf("") }
     val definition = PavementCatalog.forSurface(PavementSurface.valueOf(d.surface)).first { it.code == d.code }
     var localized by rememberSaveable {mutableStateOf(PavementSlabGeometry.localized(d))}
+    var patchMode by rememberSaveable(d.id) {mutableStateOf(if(d.correlativo==0)PavementPatchVisuals.ANCHORED else sample?.let {PavementPatchVisuals.mode(it,d.id)} ?: PavementPatchVisuals.INTERIOR)}
+    var boundaryChoice by rememberSaveable(d.id) {mutableStateOf(if(d.code in setOf(25,27))sample?.let{PavementBoundaryGeometry.choice(it,d)}.orEmpty()else "")}
     EditorDialog("${d.code} · ${d.name}", dismiss, {
         runCatching {
             val geometric = d.geometry in listOf("AREA", "LINEAR", "POTHOLE") || localized
@@ -114,13 +120,18 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
             val c = if (two) number(x2) else null; val e = if (two) number(y2) else null
             val w = if (two) abs(c!!-a!!) else null; val l = if (two) abs(e!!-b!!) else null
             val override = measure.takeIf { it.isNotBlank() }?.let { number(it) }
-            save(d.copy(severity = severity, x1=a, y1=b, x2=c, y2=e,
+            val updated=d.copy(severity = severity, x1=a, y1=b, x2=c, y2=e,
                 diameterM = if (d.geometry == "POTHOLE") number(diameter) else null,
                 widthM=w, lengthM=if (d.geometry=="LINEAR") override ?: hypot(w!!,l!!) else l,
                 areaM2=if (d.geometry=="AREA") override ?: w!!*l!! else if(d.geometry=="POTHOLE")holeArea.takeIf { it.isNotBlank() }?.let(::number) else null,
                 quantity=if(d.geometry=="POTHOLE") 1.0 else null,
                 crackWidthMm=if(PavementDamageFields.crackWidth(d.code))crack.takeIf { it.isNotBlank() }?.let { number(it) } else d.crackWidthMm, observation=observation, slabs=slabs,
-                depthMm=if(PavementDamageFields.depth(d.code))depth.takeIf { it.isNotBlank() }?.let { number(it) } else d.depthMm))
+                depthMm=if(PavementDamageFields.depth(d.code))depth.takeIf { it.isNotBlank() }?.let { number(it) } else d.depthMm)
+            if(d.code in setOf(25,27) && localized) {
+                val s=requireNotNull(sample){"Abre el daño desde su muestra para confirmar la junta o berma."}
+                val selected=PavementBoundaryGeometry.resolve(s,updated,boundaryChoice.takeIf{it.isNotBlank()}).joint.key
+                requireNotNull(patchSave){"Abre el daño desde su muestra para guardar la confirmación."}(updated,selected)
+            } else if(d.code in listOf(29,30) && patchSave!=null)patchSave(updated,patchMode)else save(updated)
         }.onFailure { error = it.message ?: "Revisa los campos." }
     }) {
         if(feedback.isNotBlank()) Text(feedback,color=MaterialTheme.colorScheme.error)
@@ -131,6 +142,82 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
         }
         if(d.geometry in listOf("AREA","LINEAR","POTHOLE") || localized) { Field("X1 / centro X (m)",x1){x1=it}; Field("Y1 / centro Y (m)",y1){y1=it} }
         if(d.geometry in listOf("AREA","LINEAR") || localized && PavementSlabGeometry.mark(d.code)!=SlabMark.POINT) { Field("X2 (m)",x2){x2=it}; Field("Y2 (m)",y2){y2=it} }
+        if(sample!=null && d.code in setOf(25,27) && sample.slabRows>0 && sample.slabColumns>0) {
+            Text(if(d.code==25)"Vista previa · junta compartida"else "Vista previa · borde físico de berma",style=MaterialTheme.typography.titleSmall)
+            Text("Carril ${sample.carril}; PR ${sample.prInicial} → ${sample.prFinal}. X es ancho e Y es longitud; el giro del PDF no cambia el borde físico.")
+            if(d.code==27)Text("Confirma en campo qué borde lateral es la berma. No se deduce del carril ni se permite una junta interior.")
+            Text("La línea fina muestra el tramo proyectado; la marca roja corta indica el desnivel. Se conservan los puntos originales y la cantidad por losas.")
+            val preview=runCatching{d.copy(x1=if(localized)number(x1)else null,y1=if(localized)number(y1)else null,
+                x2=if(localized)number(x2)else null,y2=if(localized)number(y2)else null,slabs=slabs)}.getOrNull()
+            val options=preview?.let{runCatching{PavementBoundaryGeometry.options(sample,it)}.getOrDefault(emptyList())}.orEmpty()
+            for(option in options)Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
+                RadioButton(boundaryChoice==option.key,{boundaryChoice=option.key})
+                TextButton(onClick={boundaryChoice=option.key}){Text(option.label)}
+            }
+            val projection=runCatching {
+                val p=requireNotNull(preview){"Completa dos puntos numéricos para previsualizar."}
+                val result=PavementBoundaryGeometry.resolve(sample,p,boundaryChoice.takeIf{it.isNotBlank()})
+                sample.copy(sicDataJson=PavementBoundaryGeometry.update(sample,p,result.joint.key))
+            }
+            if(projection.isFailure)Text(projection.exceptionOrNull()?.message ?: "Revisa la junta o berma.",color=MaterialTheme.colorScheme.error)
+            else Text("Proyección válida; puedes corregir los puntos o cancelar antes de guardar.")
+            Canvas(Modifier.fillMaxWidth().height(240.dp).testTag("boundary-segment-preview")) {
+                val scale=min((size.width-16)/sample.anchoM,(size.height-16)/sample.largoM).toFloat()
+                val c=drawContext.canvas.nativeCanvas;c.save();c.translate(8f,8f)
+                PavementDrawing.draw(c,projection.getOrDefault(sample),if(projection.isSuccess && preview!=null)listOf(preview)else emptyList(),scale,labels=false,slabLabels=true);c.restore()
+            }
+        }
+        if(sample!=null && d.code==24 && sample.slabRows>0 && sample.slabColumns>0) {
+            Text("Vista previa D24 · abanico desde dos bordes adyacentes",style=MaterialTheme.typography.titleSmall)
+            Text("Corrige los puntos y la losa aquí si la esquina no corresponde. Solo se proyecta el dibujo; no se cambian las medidas guardadas ni el PCI.")
+            val preview=runCatching {d.copy(x1=if(localized)number(x1)else null,y1=if(localized)number(y1)else null,
+                x2=if(localized)number(x2)else null,y2=if(localized)number(y2)else null,slabs=slabs)}.getOrNull()
+            val projection=preview?.let{PavementDurabilityGeometry.project(sample,it)}
+            if(projection==null || preview==null)Text("Completa coordenadas numéricas para ver la esquina.")
+            else {
+                projection.warning?.let{Text(it,color=MaterialTheme.colorScheme.error)}
+                if(projection.warning==null)Text("Abanico referencial ajustado a la esquina cercana. Las coordenadas originales se conservan.")
+                Canvas(Modifier.fillMaxWidth().height(220.dp).testTag("d24-corner-preview")) {
+                    val n=PavementRules.slabIds(preview).filter{it in 1..sample.slabRows*sample.slabColumns}.minOrNull() ?: 1
+                    val w=sample.anchoM/sample.slabColumns;val h=sample.largoM/sample.slabRows
+                    val scale=min((size.width-16)/w,(size.height-16)/h).toFloat()
+                    val c=drawContext.canvas.nativeCanvas;c.save()
+                    c.clipRect(8f,8f,(8+w*scale).toFloat(),(8+h*scale).toFloat())
+                    c.translate(8f-((n-1)%sample.slabColumns*w*scale).toFloat(),8f-((sample.largoM-((n-1)/sample.slabColumns+1)*h)*scale).toFloat())
+                    PavementDrawing.draw(c,sample,listOf(preview),scale,labels=false,slabLabels=false);c.restore()
+                }
+            }
+        }
+        if(sample!=null && patchSave!=null && d.code in listOf(29,30)) {
+            Text("Representación del parche",style=MaterialTheme.typography.titleSmall)
+            for((mode,label) in listOf(PavementPatchVisuals.ANCHORED to "Adosado al borde más cercano",PavementPatchVisuals.INTERIOR to "Interior: conservar ubicación")) {
+                Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
+                    RadioButton(patchMode==mode,{patchMode=mode});TextButton(onClick={patchMode=mode}){Text(label)}
+                }
+            }
+            val preview=runCatching {
+                d.copy(x1=if(localized)number(x1)else null,y1=if(localized)number(y1)else null,
+                    x2=if(localized)number(x2)else null,y2=if(localized)number(y2)else null,slabs=slabs)
+                    .also {PavementSlabGeometry.validate(sample,it)}
+            }.getOrNull()
+            Text("Vista previa antes de aceptar. El adosado desplaza solo el dibujo; se conservan coordenadas, severidad y cantidad PCI.")
+            if(preview==null)Text("Completa coordenadas y losas válidas para ver la proyección.")
+            else {
+                val projection=runCatching{sample.copy(sicDataJson=PavementPatchVisuals.update(sample,preview,patchMode))}
+                val ps=projection.getOrNull()
+                if(ps==null)Text(projection.exceptionOrNull()?.message ?: "Revisa la proyección del parche.",color=MaterialTheme.colorScheme.error)
+                if(!localized)Text("Sin puntos: símbolo referencial, sin inferir un borde observado.")
+                if(ps!=null)Canvas(Modifier.fillMaxWidth().height(220.dp).testTag("patch-projection-preview")) {
+                    val n=PavementRules.slabIds(preview).minOrNull() ?: 1
+                    val w=sample.anchoM/sample.slabColumns;val h=sample.largoM/sample.slabRows
+                    val scale=min((size.width-16)/w,(size.height-16)/h).toFloat()
+                    val c=drawContext.canvas.nativeCanvas;c.save()
+                    c.clipRect(8f,8f,(8+w*scale).toFloat(),(8+h*scale).toFloat())
+                    c.translate(8f-((n-1)%sample.slabColumns*w*scale).toFloat(),8f-((sample.largoM-((n-1)/sample.slabColumns+1)*h)*scale).toFloat())
+                    PavementDrawing.draw(c,ps,listOf(preview),scale,labels=false,slabLabels=false);c.restore()
+                }
+            }
+        }
         if(d.geometry in listOf("AREA","LINEAR")) Field("Medida manual opcional (${definition.unit}); vacío = geométrica",measure){measure=it}
         if(PavementDamageFields.depth(d.code))Field(PavementDamageFields.depthLabel(d.code),depth){depth=it}
         if(d.geometry=="POTHOLE") {
@@ -153,12 +240,19 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
 }
 
 @Composable private fun EditorDialog(title: String, dismiss: () -> Unit, save: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
-    Dialog(onDismissRequest=dismiss) {
-        Surface(shape=MaterialTheme.shapes.large) {
-            Column(Modifier.padding(16.dp).heightIn(max=650.dp)) {
+    Dialog(onDismissRequest=dismiss,properties=DialogProperties(usePlatformDefaultWidth=false,decorFitsSystemWindows=false)) {
+        PavementEditorBody(title,dismiss,save,content)
+    }
+}
+
+/** One bounded viewport and one scroller. IME changes its available height, never its wrap-content anchor. */
+@Composable internal fun PavementEditorBody(title:String,dismiss:()->Unit,save:()->Unit,content:@Composable ColumnScope.()->Unit) {
+    Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.displayCutout)).imePadding().padding(16.dp),contentAlignment=androidx.compose.ui.Alignment.TopCenter) {
+        Surface(Modifier.widthIn(max=840.dp).fillMaxWidth().heightIn(max=650.dp).fillMaxHeight(),shape=MaterialTheme.shapes.large) {
+            Column(Modifier.padding(16.dp)) {
                 Text(title,style=MaterialTheme.typography.titleLarge)
-                Column(Modifier.weight(1f,false).verticalScroll(rememberScrollState()),content=content)
-                Row { TextButton(onClick=dismiss){Text("Cancelar")}; Button(onClick=save){Text("Aceptar") } }
+                Column(Modifier.weight(1f).testTag("pavement-editor-scroll").verticalScroll(rememberScrollState()),content=content)
+                Row {TextButton(onClick=dismiss){Text("Cancelar")};Button(onClick=save){Text("Aceptar")}}
             }
         }
     }

@@ -17,6 +17,7 @@ class ServerSyncWorker(context: Context,parameters: WorkerParameters) : Coroutin
         val api=HttpsServerApi(BuildConfig.SERVER_BASE_URL)
         var retry=false
         for(id in dao.pendingServerIds()) {
+            if(com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(InventoryDatabase.getInstance(applicationContext),"SIC/$id"))continue
             val snapshot=dao.snapshot(id) ?: continue
             val version=snapshot.record.updatedAt
             if(dao.setServerStatus(id,version,ServerSyncStatus.SYNCING.name,null)==0) { retry=true;continue }

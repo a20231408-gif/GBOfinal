@@ -52,6 +52,7 @@ fun CoreFieldTools(vm: InventoryViewModel) {
             OutlinedButton(onClick={showKmz=true}) {Text("Importar ruta KMZ")}
         }
     }
+    com.tuempresa.inventariovial.localfiles.LocalCopiesSettings()
     if(showSync) DriveSyncCenter(vm) {showSync=false}
     if(showFiles) AlertDialog(onDismissRequest={showFiles=false},title={Text("Archivos generados")},
         text={Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
@@ -61,7 +62,7 @@ fun CoreFieldTools(vm: InventoryViewModel) {
               Text(element?.let {"${com.tuempresa.inventariovial.sic.InventoryElements.title(it.sicCode)} · ${it.routeCode} · PR ${it.startPrCode}+${it.startDistanceM}"} ?: id,style=MaterialTheme.typography.titleMedium)
               group.forEach { file ->
                 Text("${file.assetFamily} · ${File(file.localPath).name}")
-                Text(if(file.syncStatus=="SYNCED") "☁ Sincronizado" else "✓ Guardado en tablet · ☁ Pendiente")
+                Text(if(file.syncStatus=="SYNCED") "Confirmación Drive registrada" else "Archivo privado dentro de GBO; no acredita copia en Descargas")
                 Row {
                     TextButton(onClick={ runCatching {context.startActivity(GeneratedFileIndex.open(context,file))}.onFailure {error="No hay aplicación para abrir este archivo."} }) {Text("Abrir")}
                     TextButton(onClick={ runCatching {context.startActivity(GeneratedFileIndex.share(context,file))}.onFailure {error="No se pudo compartir el archivo."} }) {Text("Compartir")}

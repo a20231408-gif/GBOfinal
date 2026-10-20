@@ -23,7 +23,7 @@ class PavementReportTest {
         val folder=File("build/reports/pavement").apply{mkdirs()}
         val pages=mutableListOf<Bitmap>()
         PavementPdf.render(PavementExportSample(s,listOf(d),r),emptyMap(),{
-            val bitmap=Bitmap.createBitmap(595,842,Bitmap.Config.ARGB_8888);pages.add(bitmap)
+            val bitmap=Bitmap.createBitmap(PavementPdfLayout.PAGE_WIDTH,PavementPdfLayout.PAGE_HEIGHT,Bitmap.Config.ARGB_8888);pages.add(bitmap)
             Canvas(bitmap).apply{drawColor(Color.WHITE)}
         },{})
         assertTrue("Long samples must be segmented at a readable scale",pages.size>=3)

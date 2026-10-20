@@ -77,7 +77,7 @@ class FieldController(private val context: Context,private val database: Invento
                     val now=System.currentTimeMillis()
                     if (dao.currentSession() != null) database.auditDao().insert(AuditLogEntity(userId = user.id, username = user.username, action = "FIELD_SESSION_ENDED"))
                     dao.closeSessions(now)
-                    dao.insertSession(FieldSession(UUID.randomUUID().toString(),project.trim(),operator.trim(),
+                    dao.insertSession(FieldSession(UUID.randomUUID().toString(),project,operator.trim(),
                         DeviceAccessManager(context).fingerprint(),road.trim().uppercase().ifEmpty { null },projectRoute?.segmentCode,
                         roadbed.trim().uppercase().ifEmpty { null },direction,now))
                     database.auditDao().insert(AuditLogEntity(userId = user.id, username = user.username, action = "FIELD_SESSION_STARTED"))
@@ -99,7 +99,7 @@ class FieldController(private val context: Context,private val database: Invento
             database.withTransaction {
                 authSessions.requireUser()
                 check(dao.currentSession()?.sessionId==id) {"La sesión cambió; vuelve a abrir su configuración."}
-                check(dao.configureSession(id,project.trim(),road.trim().uppercase().ifBlank {null},route?.segmentCode,
+                check(dao.configureSession(id,project,road.trim().uppercase().ifBlank {null},route?.segmentCode,
                     bed.trim().uppercase().ifBlank {null},direction)==1)
                 database.auditDao().insert(AuditLogEntity(userId=user.id,username=user.username,action="FIELD_SESSION_CONFIGURED"))
             }

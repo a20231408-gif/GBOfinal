@@ -18,6 +18,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class) @Config(sdk=[28])
 class PavementParallelCUiTest {
+    @org.junit.Before fun initializeWorkers() = initializeIdleUiWorkers()
     @get:Rule val compose=createComposeRule()
     private fun sample()=PavementSampleEntity("s","T","R",1,"Derecho","UC","00+000","00+040",5.0,40.0,"ASPHALT","2026-10-06","u","Inspector")
     @Test fun lanesAndRoadbedsAreDropdownsWithExistingCodes() {

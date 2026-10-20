@@ -20,6 +20,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class) @Config(sdk=[28])
 class TabletUxUiTest {
+ @org.junit.Before fun initializeWorkers() = initializeIdleUiWorkers()
  @get:Rule val compose=createComposeRule()
  @Test fun tableHasOneRowPerDamageAndSelectionKeepsRealId() {
   val damages=(1..5).map{n->PavementDamageEntity("uuid-$n","s",n,"ASPHALT",7,"Grieta de borde","B","LINEAR",2.35,7.1,2.0,10.0,null,null,3.0,null,null,null,"")}
@@ -34,13 +35,13 @@ class TabletUxUiTest {
  @Test fun historicCardContinuesExactIdAndClosedCardUsesView() {
   val old=PavementSampleEntity("historic","R","Tramo 1",1,"D","","0","50",4.0,50.0,"ASPHALT","2026-10-06","u","Inspector")
   var opened:String?=null
-  compose.setContent{MaterialTheme{Column{
+  compose.setContent{MaterialTheme{Column(Modifier.verticalScroll(rememberScrollState())){
    com.tuempresa.inventariovial.pavement.ui.PavementSampleCard(old,"u"){opened=it}
    com.tuempresa.inventariovial.pavement.ui.PavementSampleCard(old.copy(id="closed",status="CLOSED"),"u"){opened=it}
   }}}
   compose.onAllNodesWithText("06/10/2026 · Inspector").assertCountEquals(2)
   compose.onNodeWithText("Continuar").performClick();compose.runOnIdle{assertEquals("historic",opened)}
-  compose.onNodeWithText("Ver").performClick();compose.runOnIdle{assertEquals("closed",opened)}
+  compose.onNodeWithText("Ver").performScrollTo().performClick();compose.runOnIdle{assertEquals("closed",opened)}
  }
  @Test fun verticalFormUsesElementLocationAndDoesNotRenderEndBlock() {
   val app=androidx.test.core.app.ApplicationProvider.getApplicationContext<android.app.Application>()

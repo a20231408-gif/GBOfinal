@@ -83,7 +83,7 @@ class SyncedRecordEdits2BTest {
         val i=d.automaticSyncDao().get("SIC/$id")!!;val p=JSONObject(AutomaticDelivery.prepare(context,d,i).toString())
         val files=p.getJSONArray("files")
         for(n in 0 until files.length()) {val f=files.getJSONObject(n);f.put("base64",android.util.Base64.encodeToString(File(f.getString("localFile")).readBytes(),android.util.Base64.NO_WRAP));f.remove("localFile")}
-        val out=File("../docs/edicion-sincronizados-2b/examples/$name.json");out.parentFile!!.mkdirs();out.writeText(p.toString(2))
+        val out=File("build/outputs/cierre-1.4.5/edicion-sincronizados/examples/$name.json");out.parentFile!!.mkdirs();out.writeText(p.toString(2))
     }
     @Test fun conditionAndProgressiveEditsKeepIdentityConfirmedBaseAndGenerateActualPayloads()=runBlocking(Dispatchers.IO) {db().use {d->
         val id="edit-culvert-a";val b=Backend();save(d,id);fixture(d,id,"initial-a");drain(d,b)

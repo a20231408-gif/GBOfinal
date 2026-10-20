@@ -32,7 +32,7 @@ object SyncIntentPresentation {
         if(!configured || intent.state=="UNCONFIGURED")return "Sin configurar"
         if(!connected)return if(intent.syncedRevision>0) "Actualización pendiente · sin conexión" else "Pendiente de conexión"
         if(running)return "Subiendo"
-        if(retrying)return "Reintentando · esperando ejecución de Android"
+        if(retrying || intent.state=="ERROR" && intent.error?.contains("(BUSY)")==true)return "Esperando para reintentar"
         if(intent.state=="ERROR")return "Error"
         if(intent.state=="UPLOADING")return "Pendiente de confirmación · esperando ejecución de Android"
         if(intent.state=="UPDATE_PENDING")return "Actualización pendiente"
@@ -53,52 +53,65 @@ object SyncIntentPresentation {
     val intents by remember(db){db.automaticSyncDao().observe()}.collectAsState(emptyList())
     val work=observedDriveWork()
     Text("Drive · SIC, SCAP y pavimentos")
-    Text("Pendientes: ${intents.count {it.state !in setOf("SYNCED","DRAFT")}} · Subiendo: ${intents.count {SyncProgressPresentation.running(it,work)}} · Confirmadas: ${intents.count {SyncIntentPresentation.confirmed(it)}}")
-    Text("El cierre programa el envío. Android puede diferirlo; la cola queda guardada.",style=MaterialTheme.typography.bodySmall)
+    Text("Fichas pendientes: ${intents.count {it.state!="DRAFT" && !SyncIntentPresentation.confirmed(it)}} · Subiendo: ${intents.count {SyncProgressPresentation.running(it,work)}} · Confirmadas: ${intents.count {SyncIntentPresentation.confirmed(it)}}")
+    Text("Con destino Drive, el cierre programa el envío. Solo dispositivo conserva la copia local y no crea una entrega Drive.",style=MaterialTheme.typography.bodySmall)
+    SyncQueueOverview()
+}
+
+@Composable fun SyncQueueOverview(technical:Boolean=false) {
+    val context=LocalContext.current;val db=remember(context){InventoryDatabase.getInstance(context)}
+    val intents by db.automaticSyncDao().observe().collectAsState(emptyList())
+    var snapshot by remember{mutableStateOf<JSONObject?>(null)}
+    LaunchedEffect(intents) {snapshot=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){
+        runCatching{com.tuempresa.inventariovial.diagnostics.SyncQueueDiagnostics.snapshot(db)}.getOrNull()
+    }}
+    snapshot?.let {s->
+        val rows=s.getJSONArray("localRecords")
+        val local=(0 until rows.length()).map{rows.getJSONObject(it)}.groupBy{it.getString("family")}
+        for((family,counts) in local)Text("$family · guardados: ${counts.sumOf{it.getInt("records")}} · sin finalizar: ${counts.filter{it.getString("localStatus") in setOf("DRAFT","OPEN")}.sumOf{it.getInt("records")}}",style=MaterialTheme.typography.bodySmall)
+        Text("Archivos preparados conocidos: ${s.getInt("preparedFilesCurrentRevision")} · archivos confirmados: ${s.getInt("confirmedFilesCurrentRevision")}",style=MaterialTheme.typography.bodySmall)
+        Text("Archivos conocidos esperando ACK de su ficha: ${s.getInt("knownFilesAwaitingRecordAck")}. Pueden incluir archivos ya transferidos.",style=MaterialTheme.typography.bodySmall)
+        if(s.getInt("pendingRecordsWithUnknownFileCount")>0)Text("${s.getInt("pendingRecordsWithUnknownFileCount")} fichas aún sin preparación: su cantidad de archivos todavía no está calculada.",style=MaterialTheme.typography.bodySmall)
+        if(s.getInt("validatedWithoutOutbox")>0)Text("${s.getInt("validatedWithoutOutbox")} fichas cerradas sin entrega programada. Revisa y pulsa Sincronizar ahora.",color=MaterialTheme.colorScheme.error)
+        if(technical) {
+            val families=s.getJSONArray("outboxByFamily")
+            for(n in 0 until families.length()) {val row=families.getJSONObject(n);val counts=row.getJSONObject("states")
+                Text(row.getString("family")+" · "+com.tuempresa.inventariovial.diagnostics.SyncQueueDiagnostics.states.joinToString(" · "){state->"$state: ${counts.optInt(state)}"},style=MaterialTheme.typography.bodySmall)
+            }
+            Text("UPLOADING guardado puede ser una ejecución interrumpida; solo el trabajador activo acredita que sigue subiendo.",style=MaterialTheme.typography.bodySmall)
+        }
+    }
 }
 
 @Composable fun AutomaticSyncPanel(kind:String,id:String,validated:Boolean,compact:Boolean=false) {
     val context=LocalContext.current;val db=remember(context){InventoryDatabase.getInstance(context)}
     val intents by remember(db){db.automaticSyncDao().observe()}.collectAsState(emptyList())
     val intent=intents.find {it.key=="$kind/$id"};val scope=rememberCoroutineScope()
+    val choices by db.localFilesDao().choices().collectAsState(emptyList())
+    val onlyDevice=choices.any {it.key=="$kind/$id"&&it.destination=="DEVICE"}
     val work=observedDriveWork()
     val progress by remember(context){SyncProgressStore.get(context).flow}.collectAsState()
     val active=SyncProgressPresentation.running(intent,work)
     val retrying=work.any {it.state==WorkInfo.State.ENQUEUED && it.runAttemptCount>0}
     val currentProgress=progress["$kind/$id"]?.takeIf {it.revision==intent?.revision}
     var message by remember {mutableStateOf<String?>(null)}
-    var diagnostic by remember {mutableStateOf<String?>(null)}
-    var checkingCapabilities by remember {mutableStateOf(false)}
     var tick by remember {mutableIntStateOf(0)}
     LaunchedEffect(Unit){while(true){kotlinx.coroutines.delay(3000);tick++}}
     val connected=remember(tick){val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         manager.getNetworkCapabilities(manager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)==true}
     Column {
-        Text("Drive: ${SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null,active,retrying)}")
+        Text(if(onlyDevice) "Drive: no programado · Solo dispositivo" else "Drive: ${SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null,active,retrying)}")
         currentProgress?.let {p->
             if(active)Text(SyncProgressPresentation.phase(p))
-            if(SyncIntentPresentation.confirmed(intent))Text("Sincronización completada")
+            if(SyncIntentPresentation.confirmed(intent))Text("Entrega confirmada")
             Text(SyncProgressPresentation.files(p))
             if(!SyncIntentPresentation.confirmed(intent)) {
                 Text(SyncProgressPresentation.elapsed(p,System.currentTimeMillis()))
                 Text("Tiempo restante no disponible")
             }
         }
+        if(!compact) com.tuempresa.inventariovial.localfiles.LocalRecordFiles(kind,id,validated)
         if(!compact) {
-            Text("Fotografías V2 en compilación: ${if(com.tuempresa.inventariovial.BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED) "habilitado" else "deshabilitado"}")
-            TextButton(enabled=!checkingCapabilities && DriveUploadPolicy.configurationError()==null,onClick={
-                checkingCapabilities=true
-                scope.launch {
-                    try {
-                        diagnostic=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                            AutomaticDriveHttp().photoNamingDiagnostic().text()
-                        }
-                    } catch(e:kotlinx.coroutines.CancellationException) {throw e}
-                    catch(_:Exception) {diagnostic="Capacidad del servidor no comprobada. Revisa la conexión y vuelve a consultar."}
-                    finally {checkingCapabilities=false}
-                }
-            }){Text(if(checkingCapabilities) "Consultando capacidad…" else "Consultar capacidad fotográfica")}
-            diagnostic?.let {Text(it,style=MaterialTheme.typography.bodySmall)}
             intent?.let {
                 Text("Origen: ${if(it.origin=="AUTOMATIC") "Automática" else "Manual desde la app"}")
                 Text("Revisión local: ${it.revision} · confirmada: ${it.syncedRevision}")
@@ -114,7 +127,7 @@ object SyncIntentPresentation {
                 receipt?.optJSONArray("retainedSicFormats")?.let {prior->for(n in 0 until prior.length())Text("SIC conserva revisión anterior: ${prior.getString(n)}")}
                 it.error?.let {error->Text(error,color=MaterialTheme.colorScheme.error)}
             }
-            if(validated && intent?.state!="CONFLICT")TextButton(onClick={scope.launch {
+            if(!onlyDevice && validated && intent?.state!="CONFLICT")TextButton(onClick={scope.launch {
                 runCatching {AutomaticSync.manual(context,kind,id)}.onSuccess {message="Trabajo programado. Android lo ejecutará cuando haya conexión y recursos."}.onFailure {message=it.message}
             }}){Text("Reintentar ahora")}
             message?.let {Text(it)}

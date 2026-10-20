@@ -222,6 +222,14 @@ internal class TemplateWorkbook(input: InputStream) {
             }
         }
     }
+    /** Serializes a local derivative without changing untouched workbook parts. */
+    fun writeCopy(output:OutputStream) {
+        ZipOutputStream(output).use {zip->parts.forEach {(path,bytes)->
+            zip.putNextEntry(ZipEntry(path));val doc=documents[path]
+            if(doc==null)zip.write(bytes)else TransformerFactory.newInstance().newTransformer().transform(DOMSource(doc),StreamResult(zip))
+            zip.closeEntry()
+        }}
+    }
     companion object {
         const val MAIN="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
         fun column(ref:String)=ref.takeWhile(Char::isLetter).fold(0){n,c->n*26+(c-'A'+1)}

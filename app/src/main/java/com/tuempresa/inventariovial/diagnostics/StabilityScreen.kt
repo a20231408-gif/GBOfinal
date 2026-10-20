@@ -32,8 +32,10 @@ import java.util.Locale
         Text("Memoria de la app: ${memory.getLong("heapUsedBytes")/1048576} MB de ${memory.getLong("heapMaxBytes")/1048576} MB")
         Text("Memoria disponible del sistema: ${memory.getLong("systemAvailableBytes")/1048576} MB")
         Text("El registro de Android puede no estar disponible. Este diagnóstico no contiene fotos, credenciales, textos de fichas ni coordenadas.")
+        com.tuempresa.inventariovial.core.PhotoCompatibilityDiagnostic()
+        com.tuempresa.inventariovial.core.SyncQueueOverview(technical=true)
         Button(onClick={scope.launch {try {
-            val file=withContext(Dispatchers.IO){StabilityDiagnostics.export(context)}
+            val file=withContext(Dispatchers.IO){StabilityDiagnostics.exportWithSync(context)}
             val uri=FileProvider.getUriForFile(context,context.packageName+".fileprovider",file)
             context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("application/json").putExtra(Intent.EXTRA_STREAM,uri)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION),"Exportar diagnóstico"))

@@ -27,6 +27,8 @@ import java.util.*
 internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:ScapController,onCompleteMissing:(com.tuempresa.inventariovial.scap.domain.ScapPendingField)->Unit={}) {
     val context=LocalContext.current
     val scope=rememberCoroutineScope()
+    val localChoices by remember(context){com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).localFilesDao().choices()}.collectAsState(emptyList())
+    val onlyDevice=localChoices.any{it.key=="SCAP/${s.inspection.id}"&&it.destination=="DEVICE"}
     val exporter=remember(s.values()["bridgeType"]){ScapDelivery.exporter(context,s)}
     val review=remember(s){exporter.review(s)}
     val catalog=remember {com.tuempresa.inventariovial.scap.catalog.ScapCatalog.load(context)}
@@ -34,6 +36,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
     val completeness=remember(s){com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(s,catalog.forSnapshot(s))}
     val contractualErrors=if(com.tuempresa.inventariovial.scap.domain.ScapBridgeType.from(s)!=null) completion.errors else emptyList()
     val exportErrors=(review.errors+contractualErrors+completeness.pending.filter{it.severity==com.tuempresa.inventariovial.scap.domain.ScapIssueSeverity.BLOCKING}.map{it.label}).distinct()
+    val locationIssues=remember(s){ScapDriveLocation.issues(context,s)}
     val sic=remember(s){ScapSicExporter.previews(s)}
     var busy by remember{mutableStateOf(false)}
     var layout by remember(s.inspection.id,s.inspection.updatedAt){mutableStateOf<ScapHumanLayout?>(null)}
@@ -53,6 +56,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                         File(path).inputStream().use{it.copyTo(out)}
                     }
                 }
+                com.tuempresa.inventariovial.localfiles.LocalCopies.rememberSaf(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),File(path),"SCAP",SicExcelWriter.XLSX_MIME,uri)
                 message="Excel guardado. Ábrelo en Excel para recalcular sus fórmulas y revisar los campos pendientes."
                 preparedRevision?.let{revision->controller.submit{it.markExcelGenerated(s.inspection.id,revision)}}
                 preparedRevision=null
@@ -83,6 +87,18 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
             finally{busy=false}
         }
     }
+    fun provisional(format:String){scope.launch {
+        busy=true
+        try {
+            val saved=controller.savedSnapshot(s.inspection.id)
+            val file=withContext(Dispatchers.IO){
+                val dir=File(context.filesDir,"scap_exports").apply{mkdirs()}
+                File(dir,"${format}_PROVISIONAL_${saved.inspection.id}_R${saved.inspection.updatedAt}.xlsx").also{f->f.outputStream().use{com.tuempresa.inventariovial.export.ProvisionalSicExcel.write(it,saved,format)}}
+            }
+            com.tuempresa.inventariovial.localfiles.LocalCopies.document(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),file,"SCAP",SicExcelWriter.XLSX_MIME)
+            message="Excel provisional con hoja PENDIENTES: copia pendiente en Descargas. No se incorpora al consolidado contractual."
+        }catch(e:CancellationException){throw e}catch(e:Exception){message="No se pudo preparar el respaldo provisional. La ficha y originales se conservan: "+com.tuempresa.inventariovial.localfiles.LocalCopyDrain.publicError(e)}finally{busy=false}
+    }}
     HorizontalDivider()
     Text("REVISIÓN",style=MaterialTheme.typography.titleLarge)
     Text("Datos completos: ${completeness.complete.size}")
@@ -95,27 +111,35 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         com.tuempresa.inventariovial.core.CompletionResult(emptyList()))
     Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
         OutlinedButton(enabled=ready && !busy,onClick={scope.launch {
-            controller.submit {it.saveDraft(s.inspection.id);message="Guardado localmente. Pendientes: ${completeness.pending.size}"}
+            controller.submit {it.saveDraft(s.inspection.id);message="Ficha guardada dentro de GBO. Pendientes: ${completeness.pending.size}"}
         }}) {Text("Guardar borrador")}
         TextButton(onClick={completeness.pending.firstOrNull()?.let(onCompleteMissing)}) {Text("Completar faltantes")}
     }
     Text("Exportación Excel",style=MaterialTheme.typography.titleMedium)
-    Text("La ficha y su Excel se guardan localmente aunque Drive no esté disponible.")
+    Text("La ficha se guarda dentro de GBO. Guarda en Descargas o usa Exportar SCAP para elegir otra ubicación, sin depender de Drive.")
     if(!ready) Text("Espera a que termine el guardado local y resuelve cualquier error antes de exportar.")
     exportErrors.forEach{Text(it,color=MaterialTheme.colorScheme.error)}
     review.warnings.forEach{Text("• $it",style=MaterialTheme.typography.bodySmall)}
     Button(enabled=ready && !busy && prepared==null && exportErrors.isEmpty(),onClick={if(completeness.pending.isNotEmpty())warningAction="EXPORT" else export("SCAP")}){Text("Exportar SCAP")}
+    if(locationIssues.isNotEmpty()){
+        Text(ScapDriveLocation.MESSAGE,color=MaterialTheme.colorScheme.error)
+        locationIssues.forEach{Text("• $it")}
+        TextButton(onClick={controller.navigate(com.tuempresa.inventariovial.scap.domain.ScapFieldRoute("SIC",fieldKey="startPrCode"))}){Text("Ir a ubicación")}
+        TextButton(enabled=ready,onClick={scope.launch{
+            message=runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.requestCurrent(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),"SCAP",s.inspection.id);"Actualizando archivos locales… sin esperar PR ni Drive"}.getOrElse{it.message}
+        }}){Text("Guardar copia local")}
+    }
     val configurationError=DriveUploadPolicy.configurationError()
     com.tuempresa.inventariovial.core.AutomaticSyncPanel("SCAP",s.inspection.id,s.inspection.status=="COMPLETE")
     Text(if(s.values("completion")["excelRevision"]==s.inspection.updatedAt.toString())"✓ Excel generado para esta revisión" else "Excel: pendiente para esta revisión")
     s.values("drive")["message"]?.takeIf{it.isNotBlank()}?.let{Text(it)}
     Text("Se enviarán la ficha Excel, las fotografías originales limpias y los croquis. Cada versión queda identificada por puente e inspección.",style=MaterialTheme.typography.bodySmall)
     Text("Estado de la ficha: ${s.values("completion")["status"] ?: if(completeness.pending.isEmpty())"COMPLETE" else "INCOMPLETE"}. Los pendientes no impiden el respaldo confirmado.")
-    OutlinedButton(enabled=ready && !busy && exportErrors.isEmpty(),onClick={scope.launch {
+    OutlinedButton(enabled=ready && !busy && exportErrors.isEmpty() && locationIssues.isEmpty(),onClick={scope.launch {
         busy=true
         try {layout=ScapHumanDelivery.prepare(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),controller.savedSnapshot(s.inspection.id))}
         catch(e:CancellationException){throw e}
-        catch(e:Exception){layout=null;message="Pendiente de validación/ordenamiento. Completa la ubicación antes de entregar."}
+        catch(e:Exception){layout=null;message="No se preparó la entrega: "+com.tuempresa.inventariovial.localfiles.LocalCopyDrain.publicError(e)+". Puedes guardar el paquete provisional sin inventar ubicación."}
         finally{busy=false}
     }}){Text("Preparar entrega SCAP")}
     layout?.let {delivery->
@@ -131,7 +155,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         finally{busy=false}
     }}
     OutlinedButton(enabled=ready && !busy && configurationError==null && exportErrors.isEmpty() &&
-        s.inspection.status=="COMPLETE",onClick={
+        s.inspection.status=="COMPLETE" && !onlyDevice && locationIssues.isEmpty(),onClick={
         warningAction="UPLOAD"
     }){Text(if(s.inspection.syncStatus=="ERROR") "Reintentar subida SCAP" else "Subir SCAP a Drive")}
     warningAction?.let{action->AlertDialog(onDismissRequest={warningAction=null},title={Text(if(action=="UPLOAD")"Confirmar subida SCAP" else "Exportar ficha incompleta")},
@@ -146,14 +170,19 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         Card(Modifier.fillMaxWidth().padding(vertical=4.dp)) {
             Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
                 Text(p.format,style=MaterialTheme.typography.titleMedium)
-                if(p.missingRequired.isNotEmpty()) Text("Exportación bloqueada. Faltan: ${p.missingRequired.joinToString()}.",color=MaterialTheme.colorScheme.error)
+                if(p.missingRequired.isNotEmpty()) Text("Exportación contractual pendiente. Faltan: ${p.missingRequired.joinToString()}. El respaldo provisional sigue disponible.",color=MaterialTheme.colorScheme.error)
                 if(p.missingOptional.isNotEmpty()) Text("Se exportan vacíos: ${p.missingOptional.joinToString()}.")
                 if(sicDiagnostic) p.pending.forEach{Text("• $it",style=MaterialTheme.typography.bodySmall)}
                 Text("El Excel local incluye todos los puentes cerrados válidos, con una hoja por ruta. Completa los datos de captura en DATOS PARA SIC. Los pendientes contractuales se identifican en el diagnóstico técnico.",style=MaterialTheme.typography.bodySmall)
-                OutlinedButton(enabled=ready && !busy && prepared==null && p.missingRequired.isEmpty(),onClick={export(p.format)}){Text("Guardar ${p.format}")}
+                OutlinedButton(enabled=ready && !busy && prepared==null && p.missingRequired.isEmpty(),onClick={export(p.format)}){Text("Guardar ${p.format} contractual")}
+                OutlinedButton(enabled=ready && !busy,onClick={provisional(p.format)}){Text("Exportar ${p.format} provisional para gabinete")}
+                Text("XLSX provisional con valores conocidos y hoja PENDIENTES. El paquete ZIP y los originales siguen disponibles por separado.",style=MaterialTheme.typography.bodySmall)
             }
         }
     }
+    TextButton(onClick={onCompleteMissing(com.tuempresa.inventariovial.scap.domain.ScapPendingField("E","Revisar croquis y principal","inspection","ELEVATION"))}){Text("Revisar croquis y anexos")}
+    TextButton(onClick={onCompleteMissing(com.tuempresa.inventariovial.scap.domain.ScapPendingField("A","Revisar progresiva","inspection","progressive"))}){Text("Revisar ubicación para Drive")}
+    com.tuempresa.inventariovial.localfiles.LocalFilesList(kind="SCAP")
     TextButton(onClick={sicDiagnostic=!sicDiagnostic}) {Text("Diagnóstico técnico SIC")}
-    message?.let{Text(it)}
+    message?.takeIf{ready || !it.startsWith("Ficha guardada") }?.let{Text(it)}
 }

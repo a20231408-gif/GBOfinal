@@ -154,7 +154,7 @@ class PhotoCategories5Test {
                 if(f.getString("key").startsWith("photo/")) assertEquals(DriveInventorySchema.category(f.getString("photoCategory")),f.getString("path").substringBefore('/'))
                 f.put("base64",android.util.Base64.encodeToString(bytes,android.util.Base64.NO_WRAP));f.remove("localFile")
             }
-            val out=File("../docs/fotografias-5/examples/$id.json");out.parentFile!!.mkdirs();out.writeText(payload.toString(2))
+            val out=File("build/outputs/cierre-1.4.5/fotografias/examples/$id.json");out.parentFile!!.mkdirs();out.writeText(payload.toString(2))
         }
     }}
     @Test fun incompleteDraftCannotDeliverPhotos()=runBlocking {db().use {d->
@@ -175,11 +175,22 @@ class PhotoCategories5Test {
     }}
     @Test fun additiveMigration17To18ValidatesRoomAndKeepsOriginalPhotos()=runBlocking(Dispatchers.IO) {
         val name="photo5-migration-${System.nanoTime()}"
-        fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_17_18).build()
+        fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(*allInventoryMigrations()).build()
         val room=open();record(room,"historical");val old=add(room,"historical",listOf("GENERAL")).single();room.close()
-        // Reconstruct exactly schema 17: the only schema delta is the new empty history table.
-        android.database.sqlite.SQLiteDatabase.openDatabase(context.getDatabasePath(name).path,null,0).use {sql->sql.execSQL("DROP TABLE photo_history");sql.version=17}
-        open().use {d->assertEquals(18,d.openHelper.writableDatabase.version);assertEquals(old,d.inventoryDao().snapshot("historical")!!.photos.single());assertTrue(d.inventoryDao().photoHistory("historical").isEmpty())}
+        // Reconstruct the actual historical schema, including the pre-19 pavement photo table.
+        // Merely changing user_version on today's database causes duplicate-column migrations.
+        val schema17=JSONObject(File("schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/17.json").readText())
+            .getJSONObject("database").getJSONArray("entities")
+        val pavementPhotos=(0 until schema17.length()).map {schema17.getJSONObject(it)}.single {it.getString("tableName")=="pavement_damage_photos"}
+        android.database.sqlite.SQLiteDatabase.openDatabase(context.getDatabasePath(name).path,null,0).use {sql->
+            sql.execSQL("DROP TABLE photo_history")
+            sql.execSQL("DROP TABLE pavement_damage_photos") // Empty in this fictitious SIC-only fixture.
+            sql.execSQL(pavementPhotos.getString("createSql").replace("\u0024{TABLE_NAME}","pavement_damage_photos"))
+            val indices=pavementPhotos.getJSONArray("indices")
+            for(i in 0 until indices.length())sql.execSQL(indices.getJSONObject(i).getString("createSql").replace("\u0024{TABLE_NAME}","pavement_damage_photos"))
+            sql.version=17
+        }
+        open().use {d->assertEquals(20,d.openHelper.writableDatabase.version);assertEquals(old,d.inventoryDao().snapshot("historical")!!.photos.single());assertTrue(d.inventoryDao().photoHistory("historical").isEmpty())}
         open().use {d->assertEquals(old,d.inventoryDao().snapshot("historical")!!.photos.single())}
     }
 }

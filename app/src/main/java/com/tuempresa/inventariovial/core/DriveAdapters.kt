@@ -60,7 +60,10 @@ class PavementSyncWorker(context:Context,params:WorkerParameters):CoroutineWorke
 
 object UnifiedSyncAdapter {
     suspend fun enqueue(context:Context,retryOnly:Boolean):Int=withContext(Dispatchers.IO) {
-        val db=InventoryDatabase.getInstance(context);var count=0
+        enqueue(InventoryDatabase.getInstance(context),retryOnly){kind,id,warnings->AutomaticSync.manual(context,kind,id,warnings)}
+    }
+    internal suspend fun enqueue(db:InventoryDatabase,retryOnly:Boolean,request:suspend(String,String,Boolean)->Unit):Int {
+        var count=0
         val previous=db.automaticSyncDao().all().associateBy {it.key}
         val candidates=buildList {
             db.inventoryDao().activeSnapshots().filter {it.record.sicCode!="SCAP"}.forEach {add("SIC" to it.record.id)}
@@ -68,10 +71,13 @@ object UnifiedSyncAdapter {
             db.pavementDao().observeSamples().first().filter {it.status=="CLOSED"}.forEach {add("PAVEMENT" to it.id)}
         }
         for((kind,id) in candidates) {
+            if(com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,"$kind/$id"))continue
             val old=previous["$kind/$id"]
-            if(old?.state=="SYNCED" || retryOnly && old?.state!="ERROR")continue
-            AutomaticSync.manual(context,kind,id,old?.warningsConfirmed ?: false);count++
+            // One record requiring human reconciliation must not abort scheduling the others.
+            if(old?.state in setOf("SYNCED","CONFLICT","BLOCKED","PENDING_VALIDATION") || retryOnly && old?.state!="ERROR")continue
+            try {request(kind,id,old?.warningsConfirmed ?: false);count++}
+            catch(_:IllegalArgumentException) { /* A concurrently reopened/unvalidated record stays local. */ }
         }
-        count
+        return count
     }
 }

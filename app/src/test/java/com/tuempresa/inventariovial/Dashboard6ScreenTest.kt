@@ -37,7 +37,7 @@ class Dashboard6ScreenTest {
             val view=compose.activity.window.decorView
             val image=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888)
             view.draw(Canvas(image))
-            val file=File("../docs/dashboard-6/screenshots/$name.png");file.parentFile!!.mkdirs()
+            val file=File("build/outputs/ruta-clara-etapa-b/renderizados-locales/$name.png");file.parentFile!!.mkdirs()
             file.outputStream().use {image.compress(Bitmap.CompressFormat.PNG,100,it)}
             image.recycle()
         }
@@ -79,8 +79,8 @@ class Dashboard6ScreenTest {
         compose.onNodeWithText("INICIAR SESIÓN").assertIsDisplayed()
         compose.onNodeWithText("0 borradores del día").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Sincronizados: 2").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("Pendientes: 3 · Actualizaciones pendientes: 1").assertIsDisplayed()
-        compose.onNodeWithText("Errores: 1").assertIsDisplayed()
+        compose.onNodeWithText("Pendientes: 3 · Actualizaciones pendientes: 1").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Errores: 1").performScrollTo().assertIsDisplayed()
     }
     @Test @Config(qualifiers="w800dp-h1280dp-mdpi")
     fun fiftyDraftsScrollInsideBoundedListAndResumeExactData() {
@@ -92,7 +92,7 @@ class Dashboard6ScreenTest {
         compose.onNodeWithTag("daily-drafts").performScrollToIndex(49)
         compose.onNodeWithTag("continue-draft-50").performClick()
         compose.runOnIdle {Assert.assertEquals("draft-50",resumed);Assert.assertEquals("Observación conservada",rows.last().observations)}
-        compose.onNodeWithTag("all-drafts").assertIsDisplayed().performClick()
+        compose.onNodeWithTag("all-drafts").performScrollTo().assertIsDisplayed().performClick()
         compose.runOnIdle {Assert.assertEquals("all",resumed)}
     }
     @Test @Config(qualifiers="w800dp-h1280dp-mdpi")

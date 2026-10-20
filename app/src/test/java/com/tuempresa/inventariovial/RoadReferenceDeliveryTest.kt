@@ -83,12 +83,12 @@ class RoadReferenceDeliveryTest {
         val kml = KmlExporter.render(rows.map(::testSnapshot), reference = testAxis(), inspectors = mapOf("session" to "Inspector de prueba"))
         val document = xml(kml)
         val names = document.getElementsByTagName("name").let { list -> (0 until list.length).map { list.item(it).textContent } }
-        assertTrue(names.containsAll(listOf("EJE axis", "INICIO R", "FIN R", "P-1", "ALC-1", "CUN-1")))
+        assertTrue(names.containsAll(listOf("EJE axis", "INICIO R", "FIN R", "P-p", "ALC-a", "CUN-c")))
         assertFalse(names.any { it.contains("SIC-") })
         assertEquals(7, document.getElementsByTagName("Placemark").length)
         val placemarks = document.getElementsByTagName("Placemark")
         val culvert = (0 until placemarks.length).map { placemarks.item(it) as Element }
-            .single { it.getElementsByTagName("name").item(0).textContent == "ALC-1" }
+            .single { it.getElementsByTagName("name").item(0).textContent == "ALC-a" }
         val values = culvert.getElementsByTagName("Data").let { list -> (0 until list.length).map { list.item(it) as Element }.associate {
             it.getAttribute("name") to it.textContent } }
         assertEquals("a", values["UUID"])
@@ -96,7 +96,7 @@ class RoadReferenceDeliveryTest {
         assertEquals("300.0", values["manualDistanceM"])
         assertEquals("1234.5", values["axisMeasureM"])
         assertEquals("3.2", values["distanceToRoadAxisM"])
-        assertEquals("SIB-02", values["SIB"])
+        assertTrue(values["SIB"].isNullOrEmpty())
         assertEquals("Inspector de prueba", values["inspector"])
         assertTrue(values.keys.containsAll(listOf("shortCode", "assetFamily", "SIC", "routeCode", "roadbedCode", "latitude", "longitude",
             "projectedLatitude", "projectedLongitude", "gpsAccuracyM", "surveyDate")))
@@ -105,7 +105,7 @@ class RoadReferenceDeliveryTest {
         assertEquals("ff228b22", AssetFamily.PUENTE.kmlColor)
         assertEquals("ff0088ff", AssetFamily.CUNETA.kmlColor)
         assertEquals("ffcc3399", AssetFamily.BADEN.kmlColor)
-        assertEquals(6, AssetPresentationCatalog.legend.map { it.kmlColor }.distinct().size)
+        assertEquals(8, AssetPresentationCatalog.legend.map { it.kmlColor }.distinct().size)
         AssetFamily.entries.forEach { assertTrue(kml.contains("<color>${it.kmlColor}</color>")) }
     }
 
@@ -125,8 +125,8 @@ class RoadReferenceDeliveryTest {
             snapshot("P", 11000.0, 5, "SIC-17"), snapshot("CUN", 16000.0, 6, "SIC-19"))
         val culverts = RoadOrdering.orderAssetsForRoute(snapshots.map { com.tuempresa.inventariovial.data.entity.InventoryRecordWithPhotos(it.record, emptyList()) })
             .filter { it.assetFamily == AssetFamily.ALCANTARILLA }
-        assertEquals(listOf("DEMO-A", "DEMO-B", "DEMO-D", "DEMO-C"), culverts.map { it.recordId })
-        assertEquals(listOf("ALC-1", "ALC-2", "ALC-3", "ALC-4"), culverts.map { it.shortCode })
+        assertEquals(listOf("DEMO-A", "DEMO-B", "DEMO-C", "DEMO-D"), culverts.map { it.recordId })
+        assertEquals(listOf("ALC-DEMO-A", "ALC-DEMO-B", "ALC-DEMO-C", "ALC-DEMO-D"), culverts.map { it.shortCode })
         val output = File("build/outputs/road-reference").apply { mkdirs() }
         val kml = KmlExporter.render(snapshots, reference = data, legendHref = "legend.png", iconHref = "marker.png")
         File(output, "DEMO-PE-22A.kmz").outputStream().use { KmlExporter.writeKmz(it, kml, KmlMapImages.resources()) }
@@ -158,7 +158,7 @@ class RoadReferenceDeliveryTest {
         val folders = document.getElementsByTagName("Folder")
         val legend = (0 until folders.length).map { folders.item(it) as Element }
             .single { it.getElementsByTagName("name").item(0).textContent == "LEYENDA" }
-        assertEquals(7, legend.getElementsByTagName("Folder").length)
+        assertEquals(KmlPresentation.legend.size, legend.getElementsByTagName("Folder").length)
         for (entry in KmlPresentation.legend) {
             assertTrue(legend.textContent.contains(entry.text))
             assertTrue(document.getElementsByTagName("description").item(0).textContent.contains(entry.text))

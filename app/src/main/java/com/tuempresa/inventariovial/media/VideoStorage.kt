@@ -28,7 +28,7 @@ abstract class VideoDatabase:RoomDatabase() {
     abstract fun videos():VideoDao
     companion object {
         @Volatile private var instance:VideoDatabase?=null
-        fun get(context:Context)=instance ?: synchronized(this) {instance ?: Room.databaseBuilder(context.applicationContext,VideoDatabase::class.java,"field_video_9.db").build().also {instance=it}}
+        fun get(context:Context)=instance ?: synchronized(this) {instance ?: Room.databaseBuilder(context.applicationContext,VideoDatabase::class.java,"field_video_9.db").addCallback(object:RoomDatabase.Callback(){override fun onOpen(db:androidx.sqlite.db.SupportSQLiteDatabase){com.tuempresa.inventariovial.localfiles.VideoDocumentOutbox.install(db)}}).build().also {instance=it}}
     }
 }
 object VideoPolicy {
@@ -66,10 +66,12 @@ class VideoStorage(private val context:Context,private val dao:VideoDao=VideoDat
             inspect(file)
             val video=VideoEntity(id,key,category,label,file.path,mime,file.length(),VideoPolicy.hash(file),System.currentTimeMillis())
             dao.put(video)
+            runCatching{com.tuempresa.inventariovial.localfiles.VideoDocumentOutbox.transfer(context)}
+            com.tuempresa.inventariovial.localfiles.LocalCopies.wake(context)
             runCatching {schedule(context)}.onFailure {android.util.Log.w("VideoStorage","Original y cola conservados; programación pendiente")}
             return video
         }catch(e:Exception){file.delete();throw e}
     }
-    suspend fun retire(id:String) {dao.get(id)?.let {dao.put(it.copy(retired=true,state="RETIRED",sessionUrl=null,error=null))}}
+    suspend fun retire(id:String) {dao.get(id)?.let {dao.put(it.copy(retired=true,state="RETIRED",sessionUrl=null,error=null));com.tuempresa.inventariovial.localfiles.LocalCopies.wake(context)}}
     suspend fun retry(id:String) {dao.get(id)?.takeIf {!it.retired && VideoPolicy.bridgeOnly(it.parentKey)}?.let {dao.saveSync(it.copy(state="QUEUED",error=null));VideoSync.enqueue(context)}}
 }

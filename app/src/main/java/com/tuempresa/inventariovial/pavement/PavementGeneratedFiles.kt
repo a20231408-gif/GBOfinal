@@ -51,7 +51,8 @@ object PavementGeneratedFiles {
             registered=true
             context.contentResolver.openOutputStream(uri)?.use { out -> file.inputStream().use { it.copyTo(out) } } ?: error("No se pudo abrir el destino")
             val record=register(context,s,category,mimeType,file,uri.toString())
-            if(s.status=="CLOSED") {
+            kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {com.tuempresa.inventariovial.localfiles.LocalCopies.rememberSaf(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),file,"PAVEMENT",mimeType,uri)}
+            if(s.status=="CLOSED" && !kotlinx.coroutines.runBlocking {com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),"PAVEMENT/${s.id}")}) {
                 com.tuempresa.inventariovial.core.DriveReceiptStore.sample(context,s,"PENDING")
                 if(com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null) com.tuempresa.inventariovial.core.PavementSyncAdapter.enqueue(context,s)
             }

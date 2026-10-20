@@ -305,12 +305,22 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         dao.updatePhoto(old.copy(localPath="",originalPath="",stampedPath=null,syncStatus="PENDING"));dao.touch(id,System.currentTimeMillis())
     }
     suspend fun updatePhotoCapture(id:String,path:String,capture:com.tuempresa.inventariovial.camera.PhotoCaptureMetadata)=db.withTransaction {
-        val s=editable(id)
+        val s=dao.snapshot(id) ?: return@withTransaction
+        // An optional GNSS callback can arrive after closure. Never reopen/rewrite the reviewed
+        // revision or turn a successfully saved photo into a failed queued edit.
+        if(s.inspection.status=="COMPLETE")return@withTransaction
         s.photos.firstOrNull {it.localPath==path}?.let { photo ->
             val updated=capture.applyTo(photo)
             updated.stampedPath?.let {com.tuempresa.inventariovial.camera.PhotoExif.write(java.io.File(it),java.io.File(path),updated)}
             dao.updatePhoto(updated);dao.touch(id,System.currentTimeMillis())
         }
+    }
+    suspend fun selectPrincipalSketch(id:String,type:String,sketchId:String?)=db.withTransaction {
+        val s=editable(id);require(type in SKETCH_TYPES)
+        require(sketchId==null || s.sketches.any{it.id==sketchId&&it.type==type}) {"El croquis no pertenece a este tipo e inspección."}
+        // An explicit blank selection keeps all annexes and leaves the frame pending.
+        dao.putValue(ScapFieldValueEntity(id,"media",ScapSketchSelection.key(type),sketchId.orEmpty(),"USER_SELECTED"))
+        dao.touch(id,System.currentTimeMillis())
     }
     suspend fun addSketch(id:String,type:String,path:String)=db.withTransaction {
         editable(id);require(type in SKETCH_TYPES);dao.insertSketch(ScapSketchEntity(uuid(),id,type,path));dao.touch(id,System.currentTimeMillis())
@@ -348,6 +358,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         val completion=ScapCompletion.assess(s,catalog.forSnapshot(s))
         dao.putValue(ScapFieldValueEntity(id,"completion","status",if(completion.pending.isEmpty())"COMPLETE" else "INCOMPLETE","REVIEW"))
         require(completion.pending.isEmpty() || warningsConfirmed) {"Confirma el cierre con datos pendientes."}
+        dao.putValue(ScapFieldValueEntity(id,"completion","uploadedWithWarnings",warningsConfirmed.toString(),"USER_CONFIRMED"))
         val revision=maxOf(System.currentTimeMillis(),s.inspection.updatedAt+1)
         dao.updateInspection(s.inspection.copy(status="COMPLETE",syncStatus="PENDING",updatedAt=revision))
         com.tuempresa.inventariovial.core.AutomaticSync.request(db,"SCAP",id,revision,warningsConfirmed)

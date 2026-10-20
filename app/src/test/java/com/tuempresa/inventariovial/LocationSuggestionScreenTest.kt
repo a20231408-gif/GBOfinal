@@ -17,6 +17,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
 class LocationSuggestionScreenTest {
+    @org.junit.Before fun initializeWorkers() = initializeIdleUiWorkers()
     @get:Rule val compose = createComposeRule()
     @Test fun oneButtonConfirmsWholeBlockAndEditKeepsProposalForAudit() {
         var route by mutableStateOf("")

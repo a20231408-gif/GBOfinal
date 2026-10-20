@@ -35,7 +35,7 @@ class PhotoDrawing9Test {
         try {
             view.draw(android.graphics.Canvas(frame))
             if(name!=null) {
-                val file=File("../docs/campo-9/capturas/$name.png")
+                val file=File("build/outputs/cierre-1.4.5/campo/capturas/$name.png")
                 file.parentFile!!.mkdirs()
                 file.outputStream().use { frame.compress(Bitmap.CompressFormat.PNG,100,it) }
             }

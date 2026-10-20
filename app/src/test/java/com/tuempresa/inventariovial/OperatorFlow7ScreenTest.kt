@@ -54,7 +54,7 @@ class OperatorFlow7ScreenTest {
     private fun click(text:String) {compose.onAllNodes(hasScrollToIndexAction()).onFirst().performScrollToNode(hasText(text));compose.onNodeWithText(text).performClick()}
     private fun shot(name:String) {compose.runOnIdle {
         val view=compose.activity.window.decorView;val b=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888);view.draw(Canvas(b))
-        val f=File("../docs/flujo-operador-7/screenshots/$name.png");f.parentFile!!.mkdirs();f.outputStream().use {b.compress(Bitmap.CompressFormat.PNG,100,it)};b.recycle()
+        val f=File("build/outputs/cierre-1.4.5/flujo-operador/screenshots/$name.png");f.parentFile!!.mkdirs();f.outputStream().use {b.compress(Bitmap.CompressFormat.PNG,100,it)};b.recycle()
     }}
     @Test fun detailNavigatesSheetGalleryExcelAndBackUsingSameUuid() {
         seed();var exited=false

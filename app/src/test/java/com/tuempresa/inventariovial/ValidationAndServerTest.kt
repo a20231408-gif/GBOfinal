@@ -18,7 +18,8 @@ class ValidationAndServerTest {
         val request=request()
         assertTrue(CaptureValidation.errors(request).isEmpty())
         val codes=CaptureValidation.warnings(request,testAxis(),100000,listOf(PhotoDimensions(400,300))).map {it.code}.toSet()
-        assertTrue(codes.containsAll(setOf("GPS_ACCURACY","GPS_STALE","MISSING_END_GPS","MISSING_PHOTO","SMALL_PHOTO","DISTANCE_PAST_NEXT_PR","FAR_FROM_AXIS")))
+        assertTrue(codes.toString(),codes.containsAll(setOf("MISSING_PHOTO","SMALL_PHOTO","DISTANCE_PAST_NEXT_PR","FAR_FROM_AXIS")))
+        assertFalse(codes.contains("MISSING_END_GPS")) // GNSS is optional in the contractual capture flow.
         assertTrue(CaptureValidation.errors(request.copy(startDistanceM="NaN")).isNotEmpty())
         assertTrue(CaptureValidation.errors(request.copy(endDistanceM=null)).isNotEmpty())
     }

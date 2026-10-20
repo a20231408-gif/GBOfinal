@@ -80,6 +80,27 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
         val next = (dao.damages(sample.id).maxOfOrNull { it.correlativo } ?: 0) + 1
         dao.saveDamage(damage.copy(severity = PavementSeverity.canonical(damage.severity), correlativo = old?.correlativo ?: next, inspectorUserId = old?.inspectorUserId ?: user.id,
             inspectorName = old?.inspectorName ?: user.displayName))
+        photoRevision(sample)
+    }
+    /** One confirmation: existing validations run inside the same local transaction. */
+    suspend fun saveDamageWithPatchMode(damage:PavementDamageEntity,mode:String) = db.withTransaction {
+        saveDamage(damage)
+        val sample=requireNotNull(dao.sample(damage.sampleId))
+        // Same revision/transaction as the measured damage, one automatic documentary request.
+        dao.saveSample(sample.copy(sicDataJson=PavementPatchVisuals.update(sample,damage,mode)))
+    }
+    /** One confirmation: existing validations run inside the same local transaction. */
+    suspend fun saveDamageWithBoundary(damage:PavementDamageEntity,choice:String) = db.withTransaction {
+        val sample=editable(damage.sampleId)
+        val json=PavementBoundaryGeometry.update(sample,damage,choice)
+        dao.saveSample(sample.copy(sicDataJson=json))
+        saveDamage(damage) // Same UUID, one damage, one revision; any failure rolls the choice back too.
+    }
+    /** One confirmation: existing validations run inside the same local transaction. */
+    suspend fun saveDamageWithJointMarks(damage:PavementDamageEntity,marks:Set<PavementJointAnnotations.Mark>) = db.withTransaction {
+        require(damage.code==26 && damage.geometry=="GLOBAL") { "La selección corresponde al daño global 26." }
+        saveDamage(damage)
+        saveJointMarks(damage.sampleId,damage.id,marks)
     }
     suspend fun closeSample(id: String, calculator: PavementCalculator? = null) = db.withTransaction {
         val sample = editable(id)
@@ -88,6 +109,19 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
         val revision=maxOf(System.currentTimeMillis(),sample.updatedAt+1)
         dao.saveSample(sample.copy(status="CLOSED",updatedAt=revision,calculationSnapshot=snapshot))
         com.tuempresa.inventariovial.core.AutomaticSync.request(db,"PAVEMENT",id,revision)
+    }
+    /** Visual references only. The single GLOBAL damage and its measured quantity are unchanged. */
+    suspend fun saveJointMarks(sampleId:String,damageId:String,marks:Set<PavementJointAnnotations.Mark>) = db.withTransaction {
+        val sample=editable(sampleId)
+        val damage=requireNotNull(dao.damage(damageId)) { "Registra primero el daño global 26." }
+        require(!PavementJointAnnotations.needsReview(sample,damageId) || marks.isEmpty()) { "La malla cambió: revisa y limpia las marcas antes de volver a marcar." }
+        dao.saveSample(sample.copy(sicDataJson=PavementJointAnnotations.update(sample,damage,marks),updatedAt=maxOf(System.currentTimeMillis(),sample.updatedAt+1)))
+    }
+    suspend fun toggleJointMark(sampleId:String,damageId:String,mark:PavementJointAnnotations.Mark) = db.withTransaction {
+        val sample=editable(sampleId)
+        require(!PavementJointAnnotations.needsReview(sample,damageId)) { "La malla cambió; revisa y limpia las marcas primero." }
+        val old=PavementJointAnnotations.marks(sample,damageId)
+        saveJointMarks(sampleId,damageId,if(mark in old)old-mark else old+mark)
     }
     suspend fun reopenSample(id:String)=db.withTransaction {
         val user=sessions.requireUser();val s=requireNotNull(dao.sample(id))
@@ -98,9 +132,10 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     }
     suspend fun deleteDamage(damage: PavementDamageEntity) = db.withTransaction {
         val stored=requireNotNull(dao.damage(damage.id)) { "El daño ya no existe." }
-        editable(stored.sampleId)
+        val sample=editable(stored.sampleId)
         require(dao.photoHistory(stored.id).isEmpty()) { "El daño tiene evidencia fotográfica conservada; no se elimina su historial." }
         dao.deleteDamage(stored.id)
+        photoRevision(sample)
     }
     suspend fun savePhoto(photo: PavementDamagePhotoEntity, sampleId: String) = db.withTransaction {
         val sample=editable(sampleId)

@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "pdf": "gradle-final-1.4.10-corto-SIMULADO.pdf",
+      "pages": 5,
+      "landscape": true
+    },
+    {
+      "pdf": "gradle-final-1.4.10-largo-SIMULADO.pdf",
+      "pages": 8,
+      "landscape": true
+    },
+    {
+      "pdf": "gradle-final-1.4.10-multiseccion-SIMULADO.pdf",
+      "pages": 14,
+      "landscape": true
+    }
+  ],
+  "renderedPages": 27,
+  "nativeDevice": false,
+  "visualReviewAllPages": true,
+  "visualReviewNotes": "27 p\u00e1ginas renderizadas/revisadas; se conserva maquetaci\u00f3n existente y sus continuaciones. No prueba f\u00edsica."
+}

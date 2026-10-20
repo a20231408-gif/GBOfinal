@@ -1,16 +1,23 @@
 package com.tuempresa.inventariovial.dashboard
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.*
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.tuempresa.inventariovial.R
 import com.tuempresa.inventariovial.data.entity.*
 import com.tuempresa.inventariovial.road.RoadPr
 import java.time.*
@@ -32,41 +39,21 @@ private val Map=glyph("Mapa","M3,5L9,3L15,5L21,3V19L15,21L9,19L3,21Z M9,5V17 M15
     onSession:()->Unit,onNew:()->Unit,onRecords:()->Unit,onPavement:()->Unit,onDrive:()->Unit,
     onTools:()->Unit,onAllDrafts:()->Unit,onContinue:(InventoryRecordEntity)->Unit,onMap:()->Unit={}) {
     val daily=DashboardDrafts.order(DashboardDrafts.filter(drafts,sessions,today),sessions,prs)
-    LazyColumn(Modifier.fillMaxSize().testTag("dashboard"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+    LazyColumn(Modifier.fillMaxSize().background(RutaClaraBackground).testTag("dashboard"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
         item {
-            Text("GBO Inventario Vial",style=MaterialTheme.typography.headlineMedium)
-            Text(session?.let {"${it.project} · ${it.operator}"} ?: "Sin sesión de campo activa",style=MaterialTheme.typography.bodyMedium)
-            Text(if(connected) "Con conexión · ${counts.pending+counts.updates} entregas pendientes" else "Sin Internet · trabajo guardado en tablet",
-                style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        item {
-            Card(colors=CardDefaults.cardColors(containerColor=Color(0xFFEAF4EE),contentColor=Color(0xFF19382A))) {
-                Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
-                    Text("SESIÓN DE CAMPO",style=MaterialTheme.typography.titleMedium,color=SessionGreen)
-                    session?.let {
-                        Text("${it.road ?: "Ruta por elemento"} · ${it.roadbed ?: "Calzada por elemento"}")
-                        Text("${Instant.ofEpochMilli(it.startTime).atZone(ZoneId.systemDefault()).toLocalDate()} · ${if(it.direction=="DECREASING") "Sentido decreciente ↓" else "Sentido creciente ↑"}")
-                    } ?: Text("Define el contexto de tu jornada.")
-                    Button(onClick=onSession,colors=ButtonDefaults.buttonColors(containerColor=SessionGreen,contentColor=Color.White),
-                        modifier=Modifier.fillMaxWidth().heightIn(min=56.dp).testTag("session-action")) {
-                        Text(if(session==null) "INICIAR SESIÓN" else "CONFIGURAR SESIÓN")
-                    }
-                }
-            }
+            RutaClaraDashboardHeader(session?.let {"${it.project} · ${it.operator}"} ?: "Sin sesión de campo activa",
+                if(connected) "Con conexión · ${counts.pending+counts.updates+counts.errors} entregas pendientes" else "Sin Internet · trabajo guardado en tablet")
         }
         item {
             BoxWithConstraints {
-                val columns=if(maxWidth>=420.dp) 2 else 1
-                val actions=listOf(Triple("NUEVO REGISTRO",Add,onNew),Triple("MIS REGISTROS",Records,onRecords),
-                    Triple("PAVIMENTOS",Pavement,onPavement),Triple("ENTREGAS DRIVE",Drive,onDrive),Triple("MAPA",Map,onMap))
-                Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                    actions.chunked(columns).forEach {row->
-                        Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {row.forEach {(label,icon,action)->
-                            OutlinedButton(onClick=action,modifier=Modifier.weight(1f).heightIn(min=64.dp).testTag(label)) {
-                                Icon(icon,null,Modifier.size(24.dp),tint=ToolBlue);Spacer(Modifier.width(10.dp));Text(label)
-                            }
-                        }}
+                if(maxWidth>=960.dp && LocalDensity.current.fontScale<1.6f) {
+                    Row(horizontalArrangement=Arrangement.spacedBy(16.dp)) {
+                        DashboardSessionCard(session,onSession,Modifier.weight(0.8f))
+                        DashboardActions(onNew,onRecords,onPavement,onDrive,onMap,Modifier.weight(1.2f))
                     }
+                } else Column(verticalArrangement=Arrangement.spacedBy(16.dp)) {
+                    DashboardSessionCard(session,onSession)
+                    DashboardActions(onNew,onRecords,onPavement,onDrive,onMap)
                 }
             }
         }
@@ -74,23 +61,68 @@ private val Map=glyph("Mapa","M3,5L9,3L15,5L21,3V19L15,21L9,19L3,21Z M9,5V17 M15
             DraftSection(daily,sessions,onContinue,onAllDrafts)
         }
         item {
-            Card {
-                Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
-                    Text("Entregas Drive",style=MaterialTheme.typography.titleMedium)
+            Card(colors=CardDefaults.cardColors(containerColor=Color.White),shape=RoundedCornerShape(20.dp)) {
+                Column(Modifier.fillMaxWidth().padding(20.dp).testTag("drive-status-summary"),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                    Text("Entregas Drive",style=MaterialTheme.typography.titleMedium,color=RutaClaraBlue)
+                    HorizontalDivider(color=Color(0xFFE0E6EE))
                     Text("Sincronizados: ${counts.synced}",color=SessionGreen)
                     Text("Pendientes: ${counts.pending} · Actualizaciones pendientes: ${counts.updates}",color=PendingAmber)
                     Text("Errores: ${counts.errors}",color=if(counts.errors>0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Son entregas programadas, no archivos. Los borradores sin finalizar se muestran por separado.",style=MaterialTheme.typography.bodySmall)
                 }
             }
         }
-        item {OutlinedButton(onClick=onTools,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp).testTag("tools")) {Text("HERRAMIENTAS Y AJUSTES",color=ToolBlue)}}
+        item {OutlinedButton(onClick=onTools,modifier=Modifier.fillMaxWidth().heightIn(min=56.dp).testTag("tools"),
+            colors=ButtonDefaults.outlinedButtonColors(containerColor=Color.White,contentColor=RutaClaraBlue)) {Text("HERRAMIENTAS Y AJUSTES")}}
+    }
+}
+
+@Composable
+private fun DashboardSessionCard(session:FieldSession?,onSession:()->Unit,modifier:Modifier=Modifier) {
+    Card(modifier.fillMaxWidth(),colors=CardDefaults.cardColors(containerColor=Color.White),shape=RoundedCornerShape(20.dp)) {
+        Box(Modifier.fillMaxWidth()) {
+            Image(painterResource(R.drawable.gbo_dashboard_banner),null,Modifier.matchParentSize(),contentScale=ContentScale.Crop)
+            Text("SESIÓN DE CAMPO",Modifier.padding(20.dp),style=MaterialTheme.typography.titleMedium,color=RutaClaraBlue)
+        }
+        Column(Modifier.fillMaxWidth().padding(20.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
+            session?.let {
+                Text("${it.road ?: "Ruta por elemento"} · ${it.roadbed ?: "Calzada por elemento"}",style=MaterialTheme.typography.titleMedium)
+                Text("${Instant.ofEpochMilli(it.startTime).atZone(ZoneId.systemDefault()).toLocalDate()} · ${if(it.direction=="DECREASING") "Sentido decreciente ↓" else "Sentido creciente ↑"}")
+            } ?: Text("Define el contexto de tu jornada.")
+            Button(onClick=onSession,colors=ButtonDefaults.buttonColors(containerColor=SessionGreen,contentColor=Color.White),
+                modifier=Modifier.fillMaxWidth().heightIn(min=56.dp).testTag("session-action")) {
+                Text(if(session==null) "INICIAR SESIÓN" else "CONFIGURAR SESIÓN")
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardActions(onNew:()->Unit,onRecords:()->Unit,onPavement:()->Unit,onDrive:()->Unit,onMap:()->Unit,modifier:Modifier=Modifier) {
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val columns=if(maxWidth>=420.dp && LocalDensity.current.fontScale<1.6f) 2 else 1
+        val actions=listOf(Triple("NUEVO REGISTRO",Add,onNew),Triple("MIS REGISTROS",Records,onRecords),
+            Triple("PAVIMENTOS",Pavement,onPavement),Triple("ENTREGAS DRIVE",Drive,onDrive),Triple("MAPA",Map,onMap))
+        Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
+            actions.chunked(columns).forEach {row->
+                Row(horizontalArrangement=Arrangement.spacedBy(12.dp)) {row.forEach {(label,icon,action)->
+                    val primary=label=="NUEVO REGISTRO"
+                    OutlinedButton(onClick=action,modifier=Modifier.weight(1f).heightIn(min=72.dp).testTag(label),
+                        shape=RoundedCornerShape(16.dp),contentPadding=PaddingValues(horizontal=16.dp,vertical=18.dp),
+                        colors=ButtonDefaults.outlinedButtonColors(containerColor=if(primary) RutaClaraBlue else Color.White,
+                            contentColor=if(primary) Color.White else RutaClaraBlue)) {
+                        Icon(icon,null,Modifier.size(24.dp));Spacer(Modifier.width(10.dp));Text(label,Modifier.weight(1f))
+                    }
+                }}
+            }
+        }
     }
 }
 
 @Composable fun DraftSection(drafts:List<InventoryRecordEntity>,sessions:List<FieldSession>,onContinue:(InventoryRecordEntity)->Unit,onAll:()->Unit) {
-    Card(colors=CardDefaults.cardColors(containerColor=MaterialTheme.colorScheme.surfaceContainerLow)) {
-        Column(Modifier.fillMaxWidth().padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-            Text("BORRADORES POR COMPLETAR",style=MaterialTheme.typography.titleMedium,color=MaterialTheme.colorScheme.error)
+    Card(colors=CardDefaults.cardColors(containerColor=Color.White),shape=RoundedCornerShape(20.dp)) {
+        Column(Modifier.fillMaxWidth().padding(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+            Text("BORRADORES POR COMPLETAR",style=MaterialTheme.typography.titleMedium,color=PendingAmber)
             Text("${drafts.size} borradores del día",style=MaterialTheme.typography.bodyMedium)
             if(drafts.isEmpty()) Text("No hay borradores para hoy.") else LazyColumn(
                 Modifier.fillMaxWidth().heightIn(max=360.dp).testTag("daily-drafts"),verticalArrangement=Arrangement.spacedBy(4.dp)) {
@@ -108,7 +140,7 @@ private val Map=glyph("Mapa","M3,5L9,3L15,5L21,3V19L15,21L9,19L3,21Z M9,5V17 M15
         Text(DashboardDrafts.context(record,sessions),style=MaterialTheme.typography.bodySmall)
         Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
             Text("Editado ${Instant.ofEpochMilli(record.updatedAt).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm"))}",
-                modifier=Modifier.padding(top=14.dp),style=MaterialTheme.typography.bodySmall)
+                modifier=Modifier.weight(1f).padding(top=14.dp),style=MaterialTheme.typography.bodySmall)
             TextButton(onClick={onContinue(record)},modifier=Modifier.heightIn(min=48.dp).testTag("continue-${record.id}")) {Text("CONTINUAR")}
         }
         HorizontalDivider()
@@ -123,8 +155,8 @@ private val Map=glyph("Mapa","M3,5L9,3L15,5L21,3V19L15,21L9,19L3,21Z M9,5V17 M15
     val invalid=date.isNotBlank() && day==null
     val rows=DashboardDrafts.order(DashboardDrafts.filter(drafts,sessions,day,route,bed,type),sessions,prs)
     BackHandler(onBack=onBack)
-    LazyColumn(Modifier.fillMaxSize().testTag("all-drafts-screen"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-        item {TextButton(onClick=onBack) {Text("VOLVER")};Text("Todos los borradores",style=MaterialTheme.typography.headlineSmall)}
+    LazyColumn(Modifier.fillMaxSize().background(Color.White).testTag("all-drafts-screen"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+        item {TextButton(onClick=onBack) {Text("VOLVER")};RutaClaraSectionHeader("Todos los borradores",R.drawable.gbo_dashboard_banner)}
         item {OutlinedTextField(date,{date=it},label={Text("Fecha de sesión (AAAA-MM-DD) — vacío: todas")},isError=invalid,
             supportingText={if(invalid)Text("Fecha inválida; usa AAAA-MM-DD.")},modifier=Modifier.fillMaxWidth().testTag("filter-date"))}
         item {OutlinedTextField(route,{route=it},label={Text("Ruta — vacío: todas")},modifier=Modifier.fillMaxWidth().testTag("filter-route"))}

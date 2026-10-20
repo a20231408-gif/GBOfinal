@@ -111,7 +111,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
             if(!finalize) {
                 CulvertEditDraft.save(context,id,owner,CulvertEditingDraft(base,extra,paths,categories,captures,baseRevision=openedRevision,observations=observations,core=core))
                 editingDraft=true
-                notice="✓ Borrador guardado en tablet"
+                notice="Borrador guardado dentro de GBO"
             } else {
                 require(completion.canFinalize) {"Completa los pendientes antes de finalizar"}
                 db.withTransaction {
@@ -172,7 +172,7 @@ val culvertAdditionalKeys=setOf("functionCode","failureLocationCode","failureTyp
     if(review) LegacyRecordReviewDialog(
         listOf("Ubicación" to "${r?.routeCode} · PR ${r?.startPrCode}+${r?.startDistanceM}","Clase / tipo / vanos" to "${base.classCode} / ${base.typeCode} / ${base.spans}","Condición estructural / funcional" to "${base.structuralConditionCode} / ${base.functionalConditionCode}","SIC-18A" to if(required)"Requerido" else "No requerido")+
             SicFieldFormat.SIC18A.fields.filter {it.key in culvertAdditionalKeys}.map {it.label to extraState.text(it.key)},paths.map(::File),completion,
-        enabled=!busy,onConfirm={save(true)},onDismiss={review=false})
+        enabled=!busy,onConfirm={save(true)},onDismiss={review=false},recordId=id)
     conditionChange?.let {next->AlertDialog(onDismissRequest={conditionChange=null},title={Text("Conservar detalle existente")},
         text={Text("La condición buena conserva la función y las fallas anteriores como antecedente; no se eliminarán datos.")},
         confirmButton={TextButton(onClick={base=next;conditionChange=null;dirty=true;review=false;files=emptyList()}) {Text("Conservar como antecedente")}},

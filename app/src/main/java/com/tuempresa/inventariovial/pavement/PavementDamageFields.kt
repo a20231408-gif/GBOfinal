@@ -12,7 +12,7 @@ enum class SlabMark { POINT, LINE, AREA }
 
 /** Reuses the nullable coordinates already in Room. SLABS remains the contractual quantity. */
 object PavementSlabGeometry {
-    fun mark(code:Int)=when(code){21,25,27,28,37,39->SlabMark.LINE;32,33->SlabMark.POINT;else->SlabMark.AREA}
+    fun mark(code:Int)=when(code){21,24,25,27,28,37,39->SlabMark.LINE;32,33->SlabMark.POINT;else->SlabMark.AREA}
     fun localized(d:PavementDamageEntity)=d.geometry=="SLABS" && listOf(d.x1,d.y1,d.x2,d.y2).any {it!=null}
     fun slabAt(s:PavementSampleEntity,x:Double,y:Double):Int {
         require(s.slabRows>0 && s.slabColumns>0)
@@ -29,6 +29,8 @@ object PavementSlabGeometry {
         else {
             point(d.x2,d.y2)
             require(d.x1!=d.x2 || d.y1!=d.y2){"Marca dos puntos diferentes."}
+            if(d.code in setOf(25,27)) {PavementBoundaryGeometry.resolve(s,d);return}
+            if(d.code==22) {PavementCornerGeometry.resolve(s,d);return}
             if(mark(d.code)==SlabMark.AREA)require(d.x1!=d.x2 && d.y1!=d.y2){"La zona parcial debe tener ancho y largo."}
         }
         // Every slab intersected by the bounding zone must have been selected.

@@ -21,6 +21,7 @@ import java.util.zip.ZipInputStream
 
 interface AutomaticDriveTransport {
     fun progress(observer:(DeliveryProgress)->Unit) {}
+    fun performance(observer:(String,Long,Long,String)->Unit) {}
     fun supportsV3():Boolean
     fun supportsTechnicalDeliveryWithoutGps():Boolean = false
 
@@ -35,12 +36,18 @@ class AutomaticDriveHttp internal constructor(
     private val apiToken:String=DriveConfig.API_TOKEN
 ):AutomaticDriveTransport {
     private var observer:(DeliveryProgress)->Unit = {}
+    private var performanceObserver:(String,Long,Long,String)->Unit={_,_,_,_->}
+    override fun performance(observer:(String,Long,Long,String)->Unit) {performanceObserver=observer}
+    private fun metric(phase:String,start:Long,bytes:Long=0,outcome:String="OK") {
+        runCatching{performanceObserver(phase,com.tuempresa.inventariovial.diagnostics.SyncPerformance.now()-start,bytes,outcome)}
+    }
     override fun progress(observer:(DeliveryProgress)->Unit) {this.observer=observer}
     private val capabilities:JSONObject by lazy {
-        client.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
+        val start=com.tuempresa.inventariovial.diagnostics.SyncPerformance.now();var outcome="HTTP_ERROR"
+        try {client.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
             if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
-            JSONObject(it.body?.string() ?: "{}")
-        }
+            JSONObject(it.body?.string() ?: "{}").also{outcome="OK"}
+        }} catch(e:java.io.IOException) {throw SyncCommunicationFailure(e)} finally {metric("CAPABILITIES",start,outcome=outcome)}
     }
     override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")==3
     override fun supportsFamilyPaths()=supportsV3() && capabilities.optInt("pathVersion")==4 && capabilities.optBoolean("stableFamilyNumbering") && capabilities.optInt("photoCategoryVersion")==1
@@ -57,15 +64,28 @@ class AutomaticDriveHttp internal constructor(
     }
     override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
     private fun send(payload:JSONObject,onWritten:()->Unit = {}):JSONObject {
+        val operation=when(payload.optString("action")) {
+            "reservePhotoNamesV2"->"RESERVE"
+            "stageRecordV3"->if(payload.optJSONObject("file")?.optString("key")?.startsWith("photo/")==true)"PHOTO" else "FILE"
+            else->"COMMIT"
+        }
+        val start=com.tuempresa.inventariovial.diagnostics.SyncPerformance.now()
+        var writtenAt:Long?=null;var outcome="HTTP_ERROR"
         val body=JSONObject(payload.toString()).put("token",apiToken).toString().toRequestBody("application/json; charset=utf-8".toMediaType())
         val tracked=object:RequestBody() {
             override fun contentType()=body.contentType()
             override fun contentLength()=body.contentLength()
-            override fun writeTo(sink:okio.BufferedSink) {body.writeTo(sink);onWritten()}
+            override fun writeTo(sink:okio.BufferedSink) {
+                body.writeTo(sink);writtenAt=com.tuempresa.inventariovial.diagnostics.SyncPerformance.now()
+                metric(operation+"_SEND",start,body.contentLength(),"SENT");onWritten()
+            }
         }
-        return client.newCall(Request.Builder().url(endpoint).post(tracked).build()).execute().use {
+        return try {client.newCall(Request.Builder().url(endpoint).post(tracked).build()).execute().use {
         if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
-        JSONObject(it.body?.string() ?: "{}")
+        JSONObject(it.body?.string() ?: "{}").also {ack->outcome=when {ack.optBoolean("ok")->"OK";ack.optString("code")=="BUSY"->"BUSY";else->"REJECTED"}}
+        }} catch(e:java.io.IOException) {throw SyncCommunicationFailure(e)} finally {
+            metric(operation+"_WAIT_ACK",writtenAt ?: start,outcome=outcome)
+            metric(operation+"_HTTP",start,body.contentLength(),outcome)
         }
     }
     override fun post(payload:JSONObject):JSONObject {
@@ -79,17 +99,20 @@ class AutomaticDriveHttp internal constructor(
         val saved=runCatching {journal?.takeIf {it.isFile}?.readText()?.let(::JSONObject)}.getOrNull() ?: JSONObject()
         var done=0
         for(n in 0 until files.length()) {
+            val fileStart=com.tuempresa.inventariovial.diagnostics.SyncPerformance.now()
             val file=files.getJSONObject(n);val local=File(file.getString("localFile"));val bytes=local.readBytes()
             require(sha256(bytes)==file.getString("sha256")) {"La copia preparada cambió."}
             if(file.getString("mimeType")=="image/jpeg")require(JpegEnvelope.valid(bytes)) {"La copia preparada no es un JPEG completo. Original conservado."}
             val cached=saved.optJSONObject(file.getString("key"))
             if(cached?.optString("sha256")==file.getString("sha256") && cached.optString("stageFileId").isNotBlank()) {
+                metric("STAGE_REUSED",fileStart,bytes.size.toLong())
                 file.remove("localFile");file.put("stageFileId",cached.getString("stageFileId"));done++
                 observer(DeliveryProgress(if(file.getString("key").startsWith("photo/"))"PHOTOS" else "DOCUMENTS",done,files.length()))
                 continue
             }
             observer(DeliveryProgress(if(file.getString("key").startsWith("photo/"))"PHOTOS" else "DOCUMENTS",done,files.length()))
             val staged=JSONObject(file.toString()).apply {remove("localFile");put("base64",Base64.encodeToString(bytes,Base64.NO_WRAP))}
+            metric(if(file.getString("key").startsWith("photo/"))"PHOTO_PREPARE" else "FILE_PREPARE",fileStart,bytes.size.toLong())
             val ack=send(JSONObject().put("action","stageRecordV3").put("syncProtocol",3).put("key",commit.getString("key"))
                 .put("revision",commit.getLong("revision")).put("file",staged))
             if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))
@@ -109,6 +132,42 @@ class AutomaticDriveHttp internal constructor(
 }
 
 object AutomaticDelivery {
+    /** Reservation needs identity/location/photo labels, never rendered PDF/XLSX or photo bytes. */
+    suspend fun namingPreview(c:Context,db:InventoryDatabase,i:DriveSyncIntent):JSONObject {
+        if(i.kind=="SCAP")return prepare(c,db,i,readable=false,persist=false) // Keep the approved bridge review/layout contract.
+        require(validated(db,i)) {"Confirma el cierre antes de reservar fotografías."}
+        val files=JSONArray()
+        val p=JSONObject().put("syncProtocol",3).put("pathVersion",4).put("kind",i.kind).put("key",i.key)
+            .put("recordId",i.recordId).put("revision",i.revision).put("baseRevision",i.syncedRevision).put("files",files)
+        fun photo(id:String,category:String,path:String) {files.put(JSONObject().put("key","photo/$id").put("photoCategory",category).put("path",path))}
+        when(i.kind) {
+            "SIC"->{
+                val s=requireNotNull(db.inventoryDao().snapshot(i.recordId));val r=s.record
+                technicalOrder(c,r) // Preserve the existing contractual-location gate before a reservation.
+                val asset=RoadOrdering.orderAssetsForRoute(listOf(RouteDelivery.row(s))).single()
+                if(asset.assetFamily==AssetFamily.OTROS)throw SyncPending("Pendiente de clasificación de familia.")
+                p.put("routeCode",asset.routeCode).put("familyPath",DriveInventorySchema.familyPath(asset.assetFamily))
+                    .put("family",DriveInventorySchema.elementLabel(asset.assetFamily))
+                for(f in s.photos.filter{it.scapInspectionId==null}.sortedBy{it.photoIndex}) {
+                    val name=StablePhotoNames.name(c,f,BuildConfig.GBO_PHOTO_NUMBERS_ENABLED)
+                    photo(f.id,f.photoCategory ?: "GENERAL",DriveInventorySchema.category(f.photoCategory)+"/"+name)
+                }
+            }
+            "PAVEMENT"->{
+                val s=requireNotNull(db.pavementDao().sample(i.recordId))
+                p.put("routeCode",s.ruta).put("tramo",s.tramo).put("family","MUESTRA")
+                    .put("surface",when(s.surface){"ASPHALT"->"ASFALTICO";"RIGID"->"RIGIDO";else->"NO_PAVIMENTADO"})
+                var n=0
+                val photos=db.pavementDao().damages(s.id).associate{it.id to db.pavementDao().photos(it.id)}
+                for(entry in photos.entries.sortedBy{it.key})for(f in entry.value.sortedBy{it.createdAt}) {
+                    n++;photo(f.id,"GENERAL","PANEL_FOTOGRAFICO/"+"%03d_F%02d.jpg".format(n,n))
+                }
+            }
+            else->error("Familia no compatible")
+        }
+        return p
+    }
+
     /** Contractual PR ordering is not a GNSS fix and never populates coordinates. */
     suspend fun technicalOrder(c:Context,r:com.tuempresa.inventariovial.data.entity.InventoryRecordEntity):Pair<Double,String> {
         val reference=RoadReferenceRepository(c).loadFromAssets()

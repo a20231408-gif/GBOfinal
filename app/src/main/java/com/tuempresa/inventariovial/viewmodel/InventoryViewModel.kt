@@ -394,6 +394,23 @@ class InventoryViewModel(
         saving = true
         viewModelScope.launch {
             try {
+                com.tuempresa.inventariovial.model.form.requireSicDetail(request.sicCode,request.detail)
+                (request.detail as? SicFormDetail.Sic20)?.let { detail ->
+                    com.tuempresa.inventariovial.model.form.Sic20Identity.requireDetail(request.assetType,detail.state.classCode)
+                    request.recordId?.let { id ->
+                        val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(getApplication(),id)
+                        raw?.let {com.tuempresa.inventariovial.model.form.requireSicRawDetail(request.sicCode,it.getJSONObject("detail").getString("type"))}
+                        com.tuempresa.inventariovial.model.form.Sic20Identity.resolve(request.assetType,detail.state.classCode,
+                            raw?.getJSONObject("detail")?.getJSONObject("fields")?.optString("classCode"),
+                            database.inventoryDao().snapshot(id)?.sic20?.classCode)
+                    }
+                }
+                request.recordId?.let { id ->
+                    val old=database.inventoryDao().recordById(id)
+                    require(old==null || com.tuempresa.inventariovial.model.form.sameInventoryIdentity(old,request.sicCode,request.assetType)) {
+                        "El UUID pertenece a otro tipo de ficha. Vuelve a abrir el borrador desde Inicio."
+                    }
+                }
                 if (request.detail is SicFormDetail.Sic23) {
                     require(request.sicCode == "SIC-23") { "Formato SIC incompatible." }
                     request.detail.state.validationError()?.let { throw IllegalArgumentException(it) }
@@ -1170,7 +1187,7 @@ class InventoryViewModel(
                 // Local save has committed; scheduling can be retried from Home.
                 com.tuempresa.inventariovial.core.InventoryDraftStore.completed(getApplication(),recordId)
                 com.tuempresa.inventariovial.field.SurveyPreferences(getApplication()).remember(request)
-                _driveFeedback.value="Guardado localmente. Envío automático programado; las condiciones de ubicación/ordenamiento se comprobarán antes de la entrega."
+                _driveFeedback.value=if(com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(InventoryDatabase.getInstance(getApplication()),"SIC/$recordId")) "Ficha guardada dentro de GBO. Solo dispositivo; copia local pendiente." else "Ficha guardada dentro de GBO. Pendiente de subir a Drive. " + if(com.tuempresa.inventariovial.localfiles.LocalCopySettings.enabled(getApplication())) "Copia local pendiente." else "Copia local automática desactivada."
                 runCatching { scheduleServerSync(getApplication()) }
                 lastSavedRecord=record
                 onSuccess()

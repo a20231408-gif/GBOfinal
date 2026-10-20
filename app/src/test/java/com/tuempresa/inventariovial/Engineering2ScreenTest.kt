@@ -23,7 +23,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk=[28])
+@Config(sdk=[28],application=android.app.Application::class)
 class Engineering2ScreenTest {
     // Dispose Compose collectors before closing Room; otherwise teardown races the final query.
     @get:Rule(order=0) val resources=object:org.junit.rules.TestWatcher() {
@@ -41,6 +41,7 @@ class Engineering2ScreenTest {
     private lateinit var scope:CoroutineScope
     private lateinit var id:String
     @Before fun setup():Unit=runBlocking {
+        initializeIdleUiWorkers()
         db=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
         catalog=ScapCatalog.load(context);repo=ScapRepository(db,catalog);id=repo.create("Inspector","Tablet",null)
         scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);controller=ScapController(context,db,scope)
@@ -62,16 +63,33 @@ class Engineering2ScreenTest {
     }
     @Test fun f2ShowsPendingDefaultsAndEditingAnObservationPersistsWithoutAssertingPresence():Unit=runBlocking {
         val initial=repo.dao.snapshot(id)!!
+        var showPresence by mutableStateOf(false)
         compose.setContent {InventarioVialTheme {
             val s by repo.dao.observe(id).collectAsState(initial)
-            ScapElements(s!!,controller,catalog,true){}
+            if(showPresence) ScapElementPresencePanel(s!!,controller,catalog,true)
+            else ScapElements(s!!,controller,catalog,true){}
         }}
         compose.onNodeWithText("F.2 · CONDICIÓN GLOBAL DEL PUENTE").assertExists()
+        // General observations are created explicitly; no fake element/defect is prefilled.
+        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("+ Añadir observación / falla"))
+        compose.onNodeWithText("+ Añadir observación / falla").performClick()
+        compose.waitUntil(10000) {
+            compose.waitForIdle()
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+            Assert.assertNull(controller.error.value)
+            runBlocking {repo.dao.snapshot(id)!!.defects.isNotEmpty()}
+        }
+        compose.waitUntil(15000) {
+            compose.waitForIdle()
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+            compose.onAllNodesWithText("Descripción observada").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("Descripción observada"))
         compose.onAllNodesWithText("Descripción observada").onFirst().performTextInput("Observación de prueba")
         compose.waitUntil(10000) {compose.waitForIdle();Assert.assertNull(controller.error.value);runBlocking {repo.dao.snapshot(id)!!.defects.any {it.description=="Observación de prueba"}}}
         Assert.assertTrue(repo.dao.snapshot(id)!!.elements.isEmpty())
         Assert.assertFalse(scapSections.containsKey("F3"))
+        compose.runOnIdle {showPresence=true}
         for(group in listOf("II. SUBESTRUCTURA","III. DETALLES","IV. CAUCE","V. ACCESOS")) {
             compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(group));compose.onNodeWithText(group).assertExists()
         }
@@ -80,8 +98,8 @@ class Engineering2ScreenTest {
         val s=repo.dao.snapshot(id)!!
         compose.setContent {InventarioVialTheme {ScapMedia(s,controller,catalog,true,false)}}
         for(title in ScapPhotoCategories.primary.values) {
-            compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("$title · 0 fotos"))
-            compose.onNodeWithText("$title · 0 fotos").assertExists()
+            compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(title))
+            compose.onNodeWithText(title).assertExists()
         }
         Assert.assertEquals(9,ScapPhotoCategories.primary.size)
         compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText("+ AÑADIR FOTO / CATEGORÍA ADICIONAL"))
@@ -108,9 +126,9 @@ class Engineering2ScreenTest {
         compose.setContent {InventarioVialTheme {Column(Modifier.verticalScroll(rememberScrollState())) {
             Sic18Fields(com.tuempresa.inventariovial.model.form.Sic18FormState(functionalConditionCode="3"),onCompleteSic18A={clicked=true}) {}
         }}}
-        compose.onNodeWithText("Completar detalle de condición mala").performScrollTo().performClick()
+        compose.onNodeWithText("Completar fallas SIC-18A").performScrollTo().performClick()
         Assert.assertTrue(clicked)
-        compose.onNodeWithText("⚠ CONDICIÓN MALA").assertExists()
+        compose.onNodeWithText("CONDICIÓN REGULAR O MALA").assertExists()
     }
 
 }

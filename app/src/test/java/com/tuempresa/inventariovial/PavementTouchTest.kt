@@ -19,13 +19,19 @@ import kotlin.math.min
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk=[28])
-class   PavementTouchTest {
+class PavementTouchTest {
+    @org.junit.Before fun initializeWorkers() = initializeIdleUiWorkers()
     @get:Rule val compose=createComposeRule()
     @Test fun homeDisplaysNewModuleAndOpensItWhenTapped() {
         var opened=false
-        compose.setContent { androidx.compose.material3.MaterialTheme { HomeScreen(0,0,{},onPavement={opened=true}) } }
-        compose.onNodeWithText("Fallas en pavimentos").performScrollTo().assertIsDisplayed().performClick()
-        compose.runOnIdle { assertTrue(opened) }
+        val app=androidx.test.core.app.ApplicationProvider.getApplicationContext<android.app.Application>()
+        val model=com.tuempresa.inventariovial.viewmodel.InventoryViewModel(app)
+        val store=androidx.lifecycle.ViewModelStore().apply {put("home",model)}
+        try {
+            compose.setContent { androidx.compose.material3.MaterialTheme { HomeScreen(0,0,{},inventoryViewModel=model,onPavement={opened=true}) } }
+            compose.onNodeWithTag("PAVIMENTOS").performScrollTo().assertIsDisplayed().performClick()
+            compose.runOnIdle { assertTrue(opened) }
+        } finally {store.clear()}
     }
     @Test fun movingGestureUpdatesGeometryWithoutCreatingDamage() {
         val s=PavementSampleEntity("s","A","A",1,"D","","0","10",10.0,10.0,"ASPHALT","2026-09-28","u","Inspector")
@@ -55,9 +61,9 @@ class   PavementTouchTest {
             compose.waitUntil(10000) { compose.onAllNodesWithText("Foto 3").fetchSemanticsNodes().isNotEmpty() }
             compose.onAllNodesWithText("Eliminar").assertCountEquals(3)
             compose.onAllNodesWithText("Eliminar")[1].performScrollTo().performClick()
-            compose.onNodeWithText("¿Eliminar esta fotografía del daño?").assertIsDisplayed()
+            compose.onNodeWithText("Retirar fotografía").assertIsDisplayed()
             compose.onNodeWithText("Cancelar").performClick()
-            compose.onNodeWithText("¿Eliminar esta fotografía del daño?").assertDoesNotExist()
+            compose.onNodeWithText("Retirar fotografía").assertDoesNotExist()
             kotlinx.coroutines.runBlocking { assertEquals(3,repo.photos("d").size) }
         } finally { db.close() }
     }

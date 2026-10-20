@@ -85,8 +85,12 @@ interface InventoryDao {
         val existing=recordById(record.id)
         if(existing==null) insertRecord(record)
         else {
+            snapshot(record.id)?.let {com.tuempresa.inventariovial.model.form.requireSicSnapshot(it)}
+            require(com.tuempresa.inventariovial.model.form.sameInventoryIdentity(existing,record.sicCode,record.assetType)) {
+                "El UUID pertenece a otro tipo de ficha. Conserva el borrador y vuelve a abrirlo desde Inicio."
+            }
             check(existing.status=="DRAFT") { "El registro ya fue guardado." }
-            updateRecord(record.copy(createdAt=existing.createdAt))
+            updateRecord(record.copy(createdAt=existing.createdAt,updatedAt=maxOf(record.updatedAt,existing.updatedAt+1)))
         }
     }
     @Transaction @Query("SELECT * FROM inventory_records WHERE id = :id")

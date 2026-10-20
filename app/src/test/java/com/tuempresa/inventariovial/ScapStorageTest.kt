@@ -73,7 +73,7 @@ class ScapStorageTest {
             val e=r.dao.snapshot(id)!!.elements.single().element
             for(value in listOf("", "99")) {
                 r.setField(id,e.id,"percent1",value)
-                r.complete(id)
+                r.complete(id,warningsConfirmed=true)
                 assertEquals("INCOMPLETE",r.dao.snapshot(id)!!.values("completion")["status"])
                 r.reopen(id)
             }
@@ -85,10 +85,10 @@ class ScapStorageTest {
             r.setField(id,e.id,"percent1","100")
             r.selectElement(id,"110",true)
             assertTrue(ScapValidation.review(r.dao.snapshot(id)!!,r.catalog).pending.any{it.contains("110")})
-            r.complete(id);assertEquals("INCOMPLETE",r.dao.snapshot(id)!!.values("completion")["status"]);r.reopen(id)
+            r.complete(id,warningsConfirmed=true);assertEquals("INCOMPLETE",r.dao.snapshot(id)!!.values("completion")["status"]);r.reopen(id)
             r.selectElement(id,"110",false)
             assertTrue(ScapValidation.review(r.dao.snapshot(id)!!,r.catalog).errors.isEmpty())
-            r.complete(id);assertEquals("COMPLETE",r.dao.inspection(id)!!.status)
+            r.complete(id,warningsConfirmed=true);assertEquals("COMPLETE",r.dao.inspection(id)!!.status)
             assertTrue(runCatching{r.setField(id,"inspection","bridgeName","Closed edit")}.isFailure)
             r.reopen(id);r.setField(id,"inspection","bridgeName","Corrected")
             assertEquals("Corrected",r.dao.snapshot(id)!!.inspection.bridgeName)
@@ -108,7 +108,7 @@ class ScapStorageTest {
             r.setField(id,span.id,"type","Modular")
             r.selectElement(id,"104",false);r.selectElement(id,"104",true)
             assertEquals(100.0,r.dao.snapshot(id)!!.elements.single().condition!!.percent1!!,0.0)
-            r.complete(id)
+            r.complete(id,warningsConfirmed=true)
         } finally {db.close()}
     }
     @Test fun localScapClosureDoesNotEnqueueUnknownDriveOrServerRoutesAndMapperIsPartial() = runBlocking {
@@ -121,7 +121,7 @@ class ScapStorageTest {
             r.setField(id,"inspection","designLoad","HL-93")
             r.setField(id,"inspection","utmEasting","300000")
             r.addPhoto(id,"/images/new.jpg","GENERAL",null)
-            r.complete(id)
+            r.complete(id,warningsConfirmed=true)
             val s=r.dao.snapshot(id)!!;val record=db.inventoryDao().recordById(s.inspection.roadRecordId)!!
             assertEquals("COMPLETE",s.inspection.status);assertEquals("DRAFT",record.status)
             assertTrue(db.inventoryDao().pendingPhotos().isEmpty());assertTrue(db.inventoryDao().pendingServerIds().isEmpty())
@@ -154,7 +154,7 @@ class ScapStorageTest {
             assertTrue(runCatching{r.saveDefect(b,ScapDefectEntity("foreign",b,"104","d","",photo.id,false,true,0))}.isFailure)
             r.saveDefect(a,ScapDefectEntity("ai",a,"104","Fisura visible","",photo.id,true,false,0))
             assertTrue(runCatching{r.complete(a)}.isFailure)
-            r.setDefectField(a,"ai","validatedByUser","true");r.complete(a)
+            r.setDefectField(a,"ai","validatedByUser","true");r.complete(a,warningsConfirmed=true)
             db.openHelper.writableDatabase.execSQL("DELETE FROM inventory_records WHERE id=?",arrayOf(snapshot.inspection.roadRecordId))
             assertNull(r.dao.snapshot(a));assertNotNull(r.dao.snapshot(b))
             db.openHelper.readableDatabase.query("SELECT COUNT(*) FROM scap_conditions WHERE scapElementId=?",arrayOf(e.id)).use{it.moveToFirst();assertEquals(0,it.getInt(0))}

@@ -33,7 +33,7 @@ import java.io.*
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class AutomaticSyncRegressionTest {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
-    private val root=File("../docs/automatic-sync-v16/examples").apply {mkdirs()}
+    private val root=File("build/outputs/cierre-1.4.5/automatic-sync/examples").apply {mkdirs()}
     private fun db()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
     private fun record(id:String="bridge-A",revision:Long=1,status:String="ACTIVE")=InventoryRecordEntity(
         id,"SIC-17","BRIDGE","PE-22A","CD","0005",100.0,"0005",125.5,"D",-12.0,-77.0,100.0,3.0,
@@ -62,7 +62,8 @@ class AutomaticSyncRegressionTest {
         assertEquals("Bloqueado",SyncIntentPresentation.label(i.copy(state="BLOCKED"),true,true,true))
         assertEquals("Pendiente de validación/ordenamiento",SyncIntentPresentation.label(i.copy(state="PENDING_VALIDATION"),true,true,true))
         assertEquals("Sincronizado",SyncIntentPresentation.label(i.copy(state="SYNCED",syncedRevision=1,lastSyncedAt=10,receiptJson="{\"ok\":true,\"key\":\"SIC/A\",\"revision\":1}"),true,true,true))
-        assertEquals("Subiendo",SyncIntentPresentation.label(i.copy(state="UPLOADING"),true,true,true))
+        // A persisted UPLOADING state alone is not proof that a worker is currently sending.
+        assertEquals("Pendiente de confirmación · esperando ejecución de Android",SyncIntentPresentation.label(i.copy(state="UPLOADING"),true,true,true))
     }
     @Test fun pngBecomesRealJpegWithoutChangingOriginal() {
         val original=File(context.cacheDir,"import.png");val b=Bitmap.createBitmap(48,32,Bitmap.Config.ARGB_8888)
@@ -165,7 +166,7 @@ class AutomaticSyncRegressionTest {
             fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(*migrations).addMigrations(*allInventoryMigrations()).allowMainThreadQueries().build()
             try {
                 val room=open()
-                try {val db=room.openHelper.writableDatabase;assertEquals(18,db.version)
+                try {val db=room.openHelper.writableDatabase;assertEquals(20,db.version)
                     for((table,columns) in expected)db.query("SELECT * FROM `$table`").use{c->
                         assertTrue("Lost table $version/$table",c.moveToFirst())
                         for((column,value) in columns)assertEquals("Lost value $version/$table.$column",
@@ -173,8 +174,8 @@ class AutomaticSyncRegressionTest {
                         assertFalse("Unexpected duplicate $version/$table",c.moveToNext())
                     }
                 }finally{room.close()}
-                val reopened=open();try{assertEquals(18,reopened.openHelper.readableDatabase.version)}finally{reopened.close()}
-                evidence.put(JSONObject().put("fromVersion",version).put("toVersion",16).put("tables",expected.size)
+                val reopened=open();try{assertEquals(20,reopened.openHelper.readableDatabase.version)}finally{reopened.close()}
+                evidence.put(JSONObject().put("fromVersion",version).put("toVersion",19).put("tables",expected.size)
                     .put("columnsVerified",expected.values.sumOf{it.size}).put("result","PASS_LOCAL_SQLITE"))
             }finally{context.deleteDatabase(name)}
         }

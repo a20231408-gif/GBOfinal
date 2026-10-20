@@ -121,7 +121,8 @@ class PrSuggestionTest {
         val prs = prSuggestionReference().prs.map { if (it.prCode == "0010") it.copy(prCode = "0042") else it }
         val record = testRecord().copy(surveyDirection = "INCREASING", startPrCode = "0042", startDistanceM = 2650.0)
         assertEquals(12650.0, ChainageCalculator(prs).calculate(record).chainageM!!, 0.0)
-        assertTrue(ContractualPrInput.valid("0042", "2650", prs, "R", "CD"))
+        // Historical chainage remains calculable; new contractual text is limited to three integer digits.
+        assertFalse(ContractualPrInput.valid("0042", "2650", prs, "R", "CD"))
         assertFalse(ContractualPrInput.valid("0042", "2650", emptyList(), "R", "CD"))
         assertFalse(ContractualPrInput.valid("0042", "2650", prs, "R", "UC"))
     }

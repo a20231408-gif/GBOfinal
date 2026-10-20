@@ -131,6 +131,10 @@ fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,edit
                 item {ScapFieldTarget("inspection",cat){ScapElementCard(label) {captureButtons(cat)}}}
                 items(s.sketches.filter {it.type==cat},key={it.id}) {item->ScapElementCard(label) {
                     ScapImage(item.localUri)
+                    val principal=com.tuempresa.inventariovial.scap.domain.ScapSketchSelection.principal(s,cat)?.id==item.id
+                    Text(if(principal) "Principal en Excel · también se conserva como anexo" else "Anexo · original conservado")
+                    TextButton(enabled=editable,onClick={c.submit{it.selectPrincipalSketch(s.inspection.id,cat,if(principal)null else item.id)}}){Text(if(principal) "Dejar principal pendiente" else "Usar como croquis principal")}
+
                     TextButton(enabled=editable,onClick={removing=item.id}) {Text("Retirar croquis")}
                 }}
             }

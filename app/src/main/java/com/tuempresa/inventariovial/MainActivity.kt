@@ -1,5 +1,7 @@
 package com.tuempresa.inventariovial
 
+import com.tuempresa.inventariovial.data.database.InventoryDatabase
+
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 
@@ -182,6 +184,11 @@ private fun rememberAuthGraph(): AuthGraph = AuthGraph.get(LocalContext.current)
 @Composable
 internal fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: AuthGraph) {
     SaveWarningsDialog(inventoryViewModel)
+    val resumeScope=rememberCoroutineScope()
+    val draftContext=LocalContext.current
+    var draftNavigationError by remember {mutableStateOf<String?>(null)}
+    draftNavigationError?.let { message -> AlertDialog(onDismissRequest={draftNavigationError=null},
+        title={Text("Borrador conservado")},text={Text(message)},confirmButton={TextButton(onClick={draftNavigationError=null}){Text("Aceptar")}}) }
     var detailId by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedDraft by rememberSaveable { mutableStateOf<InventoryRecordEntity?>(null) }
     var newSicCode by rememberSaveable {mutableStateOf<String?>(null)}
@@ -252,15 +259,22 @@ internal fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: A
                             if(com.tuempresa.inventariovial.sic.SicFieldFormat.fromCode(draft.sicCode)!=null) {
                                 newSicId=draft.id;newSicCode=draft.sicCode
                             } else {
-                            selectedDraft = draft
-                            selectedAsset = when(draft.sicCode) {
-                                "SIC-18" -> RoadAssetType.CULVERT
-                                "SIC-19" -> RoadAssetType.DITCH
-                                "SIC-23" -> RoadAssetType.RIGHT_OF_WAY
-                                "SIC-21" -> RoadAssetType.SIGNALIZATION
-                                else -> when(draft.assetType) { "WALL", "MURO" -> RoadAssetType.WALL; "TUNNEL", "TUNEL" -> RoadAssetType.TUNNEL; else -> RoadAssetType.FORD }
+                            resumeScope.launch {
+                                try {
+                                    val snapshot=inventoryViewModel.field.dao.snapshot(draft.id)
+                                    snapshot?.let {com.tuempresa.inventariovial.model.form.requireSicSnapshot(it)}
+                                    val rawDraft=com.tuempresa.inventariovial.core.InventoryDraftStore.read(draftContext,draft.id)
+                                    rawDraft?.let {raw->
+                                        com.tuempresa.inventariovial.model.form.requireSicRawDetail(draft.sicCode,raw.getJSONObject("detail").getString("type"))
+                                    }
+                                    val destination=draftDestination(draft,snapshot?.sic21?.classCode ?: snapshot?.sic20?.classCode,
+                                        if(draft.sicCode=="SIC-20")rawDraft?.getJSONObject("detail")?.getJSONObject("fields")?.optString("classCode") else null)
+                                    selectedDraft=draft
+                                    selectedSignalization=destination.signal
+                                    selectedAsset=destination.asset
+                                } catch(cancel:kotlinx.coroutines.CancellationException) {throw cancel}
+                                catch(_:Exception) {draftNavigationError="No se reconoce el tipo o subtipo de este borrador (${draft.sicCode}). La ficha y sus fotografías se conservan. Solicita revisión."}
                             }
-                            if(draft.sicCode=="SIC-21") selectedSignalization = runCatching { SignalizationType.valueOf(draft.assetType) }.getOrDefault(SignalizationType.HORIZONTAL_MARKS)
                             }
                         },
                         onExport = { showExport = true },
@@ -1437,6 +1451,20 @@ fun AssetFormScreen(
     draftRecord: InventoryRecordEntity? = null
 ) {
 
+    if(assetType in setOf(RoadAssetType.FORD,RoadAssetType.TUNNEL,RoadAssetType.WALL)) {
+        androidx.compose.runtime.key(assetType,draftRecord?.id) {AssetFormContent(assetType,inventoryViewModel,onBack,onSave,draftRecord)}
+    } else AssetFormContent(assetType,inventoryViewModel,onBack,onSave,draftRecord)
+}
+
+@Composable
+private fun AssetFormContent(
+    assetType: RoadAssetType,
+    inventoryViewModel: InventoryViewModel,
+    onBack: () -> Unit,
+    onSave: () -> Unit,
+    draftRecord: InventoryRecordEntity? = null
+) {
+
     var culvertExtraRaw by rememberSaveable {mutableStateOf("{}")}
     var culvertExpanded by rememberSaveable {mutableStateOf(false)}
     var pendingCulvertCondition by rememberSaveable {mutableStateOf<Sic18FormState?>(null)}
@@ -1477,6 +1505,7 @@ fun AssetFormScreen(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
+    var destinationDialog by remember {mutableStateOf(false)}
     var location by rememberSaveable { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
         GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
     }) }
@@ -1806,6 +1835,10 @@ fun AssetFormScreen(
     val saveAsset = fun() {
 
                     when {
+                        assetType.sicCode=="SIC-20" && com.tuempresa.inventariovial.model.form.Sic20Identity.classOf(assetType.name)!=sic20State.classCode -> {
+                            formError="Conflicto de subtipo SIC-20. La ficha y sus fotografías se conservan; vuelve a abrir el borrador desde Inicio."
+                        }
+
 
                         assetType==RoadAssetType.CULVERT && culvertExtra()["functionCode"].isNullOrBlank() -> {
                             formError="Selecciona la función de la alcantarilla antes de guardar la ficha completa."
@@ -2097,7 +2130,7 @@ fun AssetFormScreen(
     }
 
     fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(
-        sicCode=assetType.sicCode,assetType=when(assetType) { RoadAssetType.BRIDGE->"PUENTE";RoadAssetType.CULVERT->"ALCANTARILLA";RoadAssetType.DITCH->"DRENAJE";RoadAssetType.RIGHT_OF_WAY->sic23State.assetName;else->assetType.name },routeCode=route,roadbedCode=roadbed,
+        sicCode=assetType.sicCode,assetType=when(assetType) { RoadAssetType.BRIDGE->"PUENTE";RoadAssetType.CULVERT->"ALCANTARILLA";RoadAssetType.DITCH->"DRENAJE";RoadAssetType.RIGHT_OF_WAY->sic23State.assetName;RoadAssetType.WALL,RoadAssetType.FORD,RoadAssetType.TUNNEL->com.tuempresa.inventariovial.model.form.Sic20Identity.contractualAsset(requireNotNull(com.tuempresa.inventariovial.model.form.Sic20Identity.classOf(assetType.name)));else->assetType.name },routeCode=route,roadbedCode=roadbed,
         startPrCode=startPr,startDistanceM=startDistance,endPrCode=endPr,endDistanceM=endDistance,
         sideCode=codeFromOption(side),latitude=latitude ?: Double.NaN,longitude=longitude ?: Double.NaN,
         gpsAccuracyM=gpsAccuracy,surveyDate=registrationDate,observations=observations,
@@ -2386,12 +2419,16 @@ fun AssetFormScreen(
             }
         }
 
+        item {val localChoices by remember(context){InventoryDatabase.getInstance(context).localFilesDao().choices()}.collectAsState(emptyList())
+            val onlyDevice=localChoices.any{it.key=="SIC/$draftId"&&it.destination=="DEVICE"}
+            OutlinedButton(onClick={inventoryViewModel.saveDraft(currentDraftRequest(),onSaved={savedId->draftId=savedId;destinationDialog=true},onError={formError=it})}) {Text(if(onlyDevice)"Destino: Solo dispositivo · consultar/cambiar"else"Destino: Drive predeterminado · consultar/cambiar")}}
         item {com.tuempresa.inventariovial.field.LegacyInventoryReviewButton(onReview={
             inventoryViewModel.saveDraft(currentDraftRequest(),onSaved={savedId->
                 draftId=savedId;persistCulvertExtra(savedId){saveAsset()}
             },onError={formError=it})
         })}
     }
+    if(destinationDialog) androidx.compose.material3.AlertDialog(onDismissRequest={destinationDialog=false},title={Text("Destino de la ficha")},text={Column {draftId?.let{com.tuempresa.inventariovial.localfiles.RecordDeliveryChoice("SIC",it,false)}}},confirmButton={TextButton(onClick={destinationDialog=false}){Text("Volver al formulario")}})
     pendingCulvertCondition?.let {next->androidx.compose.material3.AlertDialog(onDismissRequest={pendingCulvertCondition=null},title={Text("Conservar detalle existente")},
         text={Text("Esta alcantarilla ya contiene un detalle de condición mala. La condición actual ya no requiere SIC-18A.")},
         confirmButton={TextButton(onClick={sic18State=next;pendingCulvertCondition=null}) {Text("Conservar como antecedente")}},

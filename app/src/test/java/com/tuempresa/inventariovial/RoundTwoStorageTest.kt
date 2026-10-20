@@ -46,7 +46,7 @@ class RoundTwoStorageTest {
         }
         val migrated = Room.databaseBuilder(context, InventoryDatabase::class.java, name).addMigrations(InventoryDatabase.MIGRATION_10_11).addMigrations(*allInventoryMigrations()).build()
         try {
-            assertEquals(11, migrated.openHelper.readableDatabase.version)
+            assertEquals(20, migrated.openHelper.readableDatabase.version)
             before.forEach { (table, expected) ->
                 migrated.openHelper.readableDatabase.query(expected.first).use { cursor ->
                     assertTrue(table, cursor.moveToFirst())

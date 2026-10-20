@@ -63,7 +63,7 @@ object PavementPdf {
         var index=0
         try {
             render(data,photos,{
-                doc.startPage(PdfDocument.PageInfo.Builder(595,842,++index).create()).also{current=it}.canvas
+                doc.startPage(PdfDocument.PageInfo.Builder(PavementPdfLayout.PAGE_WIDTH,PavementPdfLayout.PAGE_HEIGHT,++index).create()).also{current=it}.canvas
             },{ current?.let{doc.finishPage(it)};current=null })
             doc.writeTo(output)
         } finally { current?.let{doc.finishPage(it)};doc.close() }
@@ -75,10 +75,10 @@ object PavementPdf {
             var page:Canvas?=null;var y=45f;var pageNumber=0
             val paint=Paint(Paint.ANTI_ALIAS_FLAG).apply{textSize=10f;color=Color.BLACK}
             fun next(){if(page!=null)finishPage();page=startPage();pageNumber++;y=45f;page!!.drawText("GBO · Inspección de pavimentos · ${s.tramo.take(45)} · pág. $pageNumber",30f,25f,paint)}
-            fun room(height:Float){if(page==null || y+height>810)next()}
+            fun room(height:Float){if(page==null || y+height>565)next()}
             fun line(text:String){
                 var rest=text
-                do { val count=paint.breakText(rest,true,535f,null).coerceAtLeast(1).coerceAtMost(rest.length);room(15f);page!!.drawText(rest.take(count),30f,y,paint);y+=15;rest=rest.drop(count) } while(rest.isNotEmpty())
+                do { val count=paint.breakText(rest,true,782f,null).coerceAtLeast(1).coerceAtMost(rest.length);room(15f);page!!.drawText(rest.take(count),30f,y,paint);y+=15;rest=rest.drop(count) } while(rest.isNotEmpty())
             }
             line("${PavementSurface.valueOf(s.surface).label} · muestra ${s.muestra} · ${s.fecha} · ${if(s.status=="CLOSED")"Cerrada" else "Borrador"}")
             line("Inspector: ${s.inspectorNombre}; carril: ${s.carril}; ruta: ${s.ruta}")
@@ -89,71 +89,131 @@ object PavementPdf {
                 while(rest.isNotEmpty()) { val count=paint.breakText(rest,true,width,null).coerceAtLeast(1).coerceAtMost(rest.length);result+=rest.take(count);rest=rest.drop(count) }
                 return result
             }
-            fun table(rows: List<List<String>>) {
-                val widths=listOf(28f,36f,36f,160f,75f,55f,45f)
+            fun table(rows: List<List<String>>, references:List<PavementDamageEntity> = emptyList(), caption:String?=null) {
+                val widths=listOf(32f,58f,58f,310f,90f,92f,102f)
                 val heads=listOf("Ítem","X (m)","Y (m)","Daño","Severidad","Cantidad","Unidad")
-                fun row(cells: List<String>, header: Boolean) {
+                fun row(cells: List<String>, header: Boolean, damage:PavementDamageEntity?=null) {
                     val lines=cells.mapIndexed { i,text -> wrap(text,widths[i]-8) }
                     val height=lines.maxOf { it.size }*13f+8f
-                    if(y+height>810) { next();row(heads,true) }
+                    if(y+height>565) { next();caption?.let{line(it)};row(heads,true) }
                     room(height)
                     var x=30f
                     cells.indices.forEach { i ->
                         paint.style=Paint.Style.FILL;paint.color=if(header)Color.rgb(225,235,244) else Color.WHITE
                         page!!.drawRect(x,y,x+widths[i],y+height,paint)
+                        if(i==0 && !header && s.surface=="RIGID" && damage!=null) {
+                            paint.color=PavementSeverity.color(damage.severity)
+                            page!!.drawRect(x+1,y+2,x+4,y+height-2,paint)
+                        }
                         paint.style=Paint.Style.STROKE;paint.color=Color.LTGRAY;paint.strokeWidth=.6f
                         page!!.drawRect(x,y,x+widths[i],y+height,paint)
                         paint.style=Paint.Style.FILL;paint.color=Color.BLACK
-                        lines[i].forEachIndexed { j,text -> page!!.drawText(text,x+4,y+14+j*13,paint) };x+=widths[i]
+                        lines[i].forEachIndexed { j,text -> page!!.drawText(text,x+if(i==0 && s.surface=="RIGID" && damage!=null)6 else 4,y+14+j*13,paint) };x+=widths[i]
                     }
                     y+=height
                 }
-                room(30f);row(heads,true);rows.forEach { row(it,false) };y+=8
+                val firstHeight=rows.firstOrNull()?.mapIndexed{i,text->wrap(text,widths[i]-8).size}?.maxOrNull()?.let{it*13f+8f} ?: 0f
+                room(if(s.surface=="RIGID" && rows.isNotEmpty())21f+firstHeight+(if(caption==null)0f else 15f)else 30f)
+                caption?.let{line(it)};row(heads,true);rows.forEachIndexed {i,cells->row(cells,false,references.getOrNull(i))};y+=8
             }
-            if(s.anchoM>0 && s.largoM>0){
-                val segments=PavementPdfLayout.segments(s.anchoM,s.largoM)
+            if(s.anchoM>0 && s.largoM>0 && s.surface=="RIGID" && s.slabRows>0 && s.slabColumns>0) {
+                val plans=PavementRigidPdfScheme.plans(s,damages)
+                plans.forEachIndexed {i,p->
+                    if(i>0) {
+                        next()
+                        line("${PavementSurface.valueOf(s.surface).label} · muestra ${s.muestra} · ${s.fecha} · ${if(s.status=="CLOSED")"Cerrada"else"Borrador"}")
+                        line("Inspector: ${s.inspectorNombre}; carril: ${s.carril}; ruta: ${s.ruta}")
+                        line("Progresiva ${PavementChainage.display(s.prInicial)} → ${PavementChainage.display(s.prFinal)}; ${s.anchoM} × ${s.largoM} m; área ${s.anchoM*s.largoM} m²")
+                    }
+                    val v=p.region
+                    val pr=PavementPdfLayout.chainages(s,PavementPdfSegment(v.index,v.count,v.y0,v.y1))
+                    line("Vista ${v.index}/${v.count} · Y ${fmt(v.y0)}–${fmt(v.y1)} m · X ${fmt(v.x0)}–${fmt(v.x1)} m"+
+                        (if(p.count>1)" · Panel ${p.index}/${p.count}"else"")+ (pr?.let{" · PR $it"} ?: " · PR de muestra, sin inferir proyección"))
+                    if(y>115f) {
+                        next();line("Rígido · muestra ${s.muestra} · vista ${v.index}/${v.count} · panel ${p.index}/${p.count}")
+                        line("Y ${fmt(v.y0)}–${fmt(v.y1)} m · X ${fmt(v.x0)}–${fmt(v.x1)} m · "+(pr?.let{"PR $it"} ?: "PR de muestra: ${s.prInicial} → ${s.prFinal}"))
+                    }
+                    // Page starts are deliberate: a large plot never inherits the remaining table space.
+                    y=PavementRigidPdfScheme.draw(page!!,s,p,56f,y)
+                    line("#ítem código/sev · L baja, M media, H alta, - no aplica · Llamados por zona · Y → X ↓ absolutos · Losas sin renumerar.")
+                    if(p.damages.isNotEmpty())table(p.damages.map {d->listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first{it.code==d.code}.unit ?: "Global")},p.damages,"Tabla de vista ${v.index}/${v.count} · panel ${p.index}/${p.count} · solo estos ítems, en orden de los distintivos superiores e inferiores")
+                }
+            } else if(s.anchoM>0 && s.largoM>0){
+                val segments=PavementPdfLayout.segments(s.anchoM,s.largoM,slabLength=if(s.surface=="RIGID" && s.slabRows>0)s.largoM/s.slabRows else null)
+                val scale=PavementPdfLayout.scale(s.anchoM).toFloat()
                 for(segment in segments) {
                     val present=damages.filter { segment.contains(s,it) }
-                    val scale=minOf(20.0,420/s.anchoM).toFloat()
-                    val height=(segment.length*scale).toFloat()
-                    room(height+65)
-                    line("Esquema ${segment.index}/${segment.count}: ${fmt(segment.start)}–${fmt(segment.end)} m · X: 0–${fmt(s.anchoM)} m")
-                    val c=page!!;val top=y+8;val left=72f;val width=(s.anchoM*scale).toFloat()
-                    c.save();c.clipRect(left,top,left+width,top+height);c.translate(left,top-((s.largoM-segment.end)*scale).toFloat())
-                    PavementDrawing.draw(c,s,present,scale,labels=false);c.restore()
+                    val height=(s.anchoM*scale).toFloat()
+                    val width=(segment.length*scale).toFloat()
+                    val local=present.filter {it.geometry!="GLOBAL"}.sortedBy {it.y1 ?: 0.0}
+                    // Very dense legends wrap with normal text pagination, never outside the sheet.
+                    val labelColumns=(width/42).toInt().coerceAtLeast(1)
+                    val compactLabels=local.size<=labelColumns*3
+                    val labelHeight=if(compactLabels)kotlin.math.ceil(local.size.toDouble()/labelColumns).toFloat()*14 else 0f
+                    room(height+90+labelHeight)
+                    line("Esquema ${segment.index}/${segment.count}: Y ${fmt(segment.start)}–${fmt(segment.end)} m → · X 0–${fmt(s.anchoM)} m ↓")
+                    line(PavementPdfLayout.chainages(s,segment)?.let {"PR de sección: $it"} ?: "PR de referencia: ${PavementChainage.display(s.prInicial)} → ${PavementChainage.display(s.prFinal)} (muestra completa; sin inferir PR por sección)")
+                    val c=page!!;val top=y+10;val left=64f
+                    c.save();c.clipRect(left,top,left+width,top+height)
+                    c.translate(left+((s.largoM-segment.start)*scale).toFloat(),top);c.rotate(90f)
+                    PavementDrawing.draw(c,s,present,scale,labels=false,slabLabels=false);c.restore()
                     paint.color=Color.BLACK;paint.style=Paint.Style.STROKE;c.drawRect(left,top,left+width,top+height,paint);paint.style=Paint.Style.FILL
-                    val step=PavementRuler.labelStep(segment.length,height,24f)
-                    for(tick in PavementRuler.ticks(s.largoM).filter { it>=segment.start && it<=segment.end && (it%step==0.0 || it==segment.start || it==segment.end) }) {
-                        val yy=top+((segment.end-tick)*scale).toFloat();c.drawLine(left-5,yy,left,yy,paint);c.drawText(fmt(tick),32f,yy+3,paint)
+                    val step=PavementRuler.labelStep(segment.length,width,36f)
+                    val ticks=(PavementRuler.ticks(s.largoM).filter {it>segment.start && it<segment.end && it%step==0.0}+listOf(segment.start,segment.end)).distinct().sorted()
+                    paint.textSize=9f
+                    for(tick in ticks) {
+                        val xx=left+((tick-segment.start)*scale).toFloat()
+                        if(tick!=segment.start && tick!=segment.end && minOf(xx-left,left+width-xx)<28)continue
+                        c.drawLine(xx,top+height,xx,top+height+4,paint);c.drawText(fmt(tick),xx-5,top+height+15,paint)
                     }
-                    // Number labels are packed in a separate margin with leaders; no overlapping text on geometry.
-                    val local=present.filter{it.geometry!="GLOBAL"}.sortedByDescending { it.y1 ?: PavementRules.slabIds(it).minOrNull()?.let { n -> (n-1)/s.slabColumns*s.largoM/s.slabRows } ?: 0.0 }
-                    val labelsPerColumn=(height/13).toInt().coerceAtLeast(1)
-                    val columns=kotlin.math.ceil(local.size.toDouble()/labelsPerColumn).toInt().coerceAtLeast(1)
-                    val columnWidth=(565-left-width-10)/columns
-                    val dense=local.size>labelsPerColumn
-                    var lastLabelY=top-1
-                    local.forEachIndexed { i,d ->
-                        val metricY=d.y1 ?: PavementRules.slabIds(d).minOrNull()?.let { n -> ((n-1)/s.slabColumns+.5)*s.largoM/s.slabRows } ?: 0.0
-                        val anchorY=(top+((segment.end-metricY)*scale).toFloat()).coerceIn(top,top+height)
-                        val metricX=d.x1 ?: s.anchoM/2
-                        paint.color=PavementSeverity.color(d.severity)
-                        val labelY=if(dense)top+12+(i%labelsPerColumn)*13 else maxOf(anchorY+3,lastLabelY+13).coerceAtMost(top+height-(local.size-i-1)*13)
-                        lastLabelY=labelY
-                        val labelX=left+width+10+(i/labelsPerColumn)*columnWidth
-                        if(!dense)c.drawLine(left+(metricX*scale).toFloat(),anchorY,labelX-2,labelY-3,paint)
-                        c.drawRect(labelX-1,labelY-10,labelX+paint.measureText("#${d.correlativo}")+2,labelY+2,paint)
-                        paint.color=if(PavementSeverity.canonical(d.severity)=="H")Color.WHITE else Color.BLACK
-                        c.drawText("#${d.correlativo}",labelX,labelY,paint)
+                    c.drawText("X=0",30f,top+4,paint);c.drawText("${fmt(s.anchoM)} m",25f,top+height,paint)
+                    // Slab numbers stay upright after rotating geometry. IDs remain global to the sample.
+                    if(s.surface=="RIGID" && s.slabRows>0 && s.slabColumns>0) {
+                        val slabH=s.largoM/s.slabRows;val slabW=s.anchoM/s.slabColumns
+                        for(row in 0 until s.slabRows)for(col in 0 until s.slabColumns) {
+                            val yy=(row+.85)*slabH
+                            if(yy>=segment.start && yy<segment.end) {
+                                val pos=PavementPdfLayout.point((col+.85)*slabW,yy,segment,scale.toDouble())
+                                val text="L${row*s.slabColumns+col+1}";val tx=left+pos.x.toFloat()-7;val ty=top+pos.y.toFloat()+3
+                                paint.color=Color.WHITE;c.drawRect(tx-1,ty-9,tx+paint.measureText(text)+1,ty+2,paint)
+                                paint.color=Color.BLACK;c.drawText(text,tx,ty,paint)
+                            }
+                        }
                     }
-                    paint.color=Color.BLACK;y=top+height+18
-                    line(if(dense)"Ítems en leyenda; posiciones X/Y en tabla. Figuras recortadas al segmento."else"Y en metros; origen inferior izquierdo. Figuras recortadas al segmento.")
-                    table(present.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") })
+                    if(compactLabels) local.forEachIndexed {i,d ->
+                        val n=PavementRules.slabIds(d).minOrNull() ?: 1
+                        val ax=d.x1 ?: ((n-1)%s.slabColumns.coerceAtLeast(1)+.5)*s.anchoM/s.slabColumns.coerceAtLeast(1)
+                        val ay=d.y1 ?: ((n-1)/s.slabColumns.coerceAtLeast(1)+.5)*s.largoM/s.slabRows.coerceAtLeast(1)
+                        val anchor=PavementPdfLayout.point(ax,ay,segment,scale.toDouble())
+                        val labelX=left+(i%labelColumns)*width/labelColumns+2
+                        val labelY=top+height+30+(i/labelColumns)*14
+                        paint.color=Color.GRAY;paint.strokeWidth=.5f
+                        c.drawLine(left+anchor.x.toFloat().coerceIn(0f,width),top+anchor.y.toFloat().coerceIn(0f,height),labelX+8,labelY-8,paint)
+                        paint.color=Color.WHITE;c.drawRect(labelX-1,labelY-9,labelX+paint.measureText("#${d.correlativo}")+2,labelY+2,paint)
+                        paint.color=Color.BLACK;c.drawText("#${d.correlativo}",labelX,labelY,paint)
+                    }
+                    paint.textSize=10f;y=top+height+30+labelHeight
+                    line("Origen de sección: X=0, Y=${fmt(segment.start)} m. Misma escala en todas las secciones; Y aumenta hacia la derecha.")
+                    // Indexed labels below the plot: never rotate text or overwrite neighbouring IDs.
+                    // Coordinates in the table keep dense and cross-boundary figures unambiguous.
+                    if(local.isNotEmpty())line("Daños del esquema: "+local.joinToString(" · ") {"#${it.correlativo}"})
+                    if(segment.count>1)line("Un daño que continúa en otra sección conserva su número y no se vuelve a contabilizar.")
+                    if(present.isEmpty())line("Sin daños registrados en esta sección.")
+                    else table(present.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") })
                 }
             }
             line("Registro completo · cantidades medidas por daño (no sumar las repeticiones de un daño que cruza segmentos).")
-            table(damages.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") })
+            table(damages.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") },damages)
             for(d in damages) {
+                if(d.code==26) {
+                    line("Daño 26 — Daño del sello de junta · ${PavementSeverity.label(d.severity)}")
+                    line(PavementJointAnnotations.legend)
+                    line(if(PavementJointAnnotations.needsReview(s,d.id))"Malla distinta: marcas conservadas pendientes de revisión; no se representan." else if(PavementJointAnnotations.marks(s,d.id).isEmpty())"Daño GLOBAL sin juntas marcadas." else "Referencias visuales: ${PavementJointAnnotations.marks(s,d.id).size} marcas (segmentos/nodos).")
+                }
+                if(d.code==22 && PavementSlabGeometry.localized(d)) {
+                    val corner=runCatching {PavementCornerGeometry.resolve(s,d)}.getOrNull()
+                    line(if(corner==null)"#${d.correlativo} · Rotura histórica: ubicación ambigua, revisar extremos antes de corregir." else "#${d.correlativo} · Extremos del croquis ajustados: (${fmt(corner.a.x)}, ${fmt(corner.a.y)}) a (${fmt(corner.b.x)}, ${fmt(corner.b.y)}) m; toques medidos conservados.")
+                }
                 if(d.geometry=="SLABS")line("#${d.correlativo} · Losas afectadas: ${d.slabs}")
                 if(PavementSlabGeometry.localized(d))line("#${d.correlativo} · Ubicación ${PavementSlabGeometry.mark(d.code).name}: (${fmt(d.x1)}, ${fmt(d.y1)}) a (${fmt(d.x2)}, ${fmt(d.y2)}) m. Cantidad contractual: losas.")
                 if(d.geometry=="SLABS" && !PavementSlabGeometry.localized(d))line("#${d.correlativo} · Símbolo por losa; sin ubicación parcial registrada.")
@@ -169,11 +229,14 @@ object PavementPdf {
                     }
                 }
             }
-            line("Totales por daño y severidad: cantidad | densidad (%) | VD")
-            r.totals.forEach{line("${it.code} ${it.severity?:"N/A"}: ${fmt(it.quantity)} | ${if(it.density==null)"Global" else fmt(it.density)} | ${if(it.vd==null)"Pendiente" else fmt(it.vd)}")}
-            line("PCI/URCI: ${r.index?:"No calculable"}; ${r.rating.orEmpty()}")
-            r.pending.forEach{line(it)}
-            PavementRules.warnings(s,damages).forEach{line("Advertencia: $it")}
+            val closing=buildList {
+                add("Totales por daño y severidad: cantidad | densidad (%) | VD")
+                r.totals.forEach{add("${it.code} ${it.severity?:"N/A"}: ${fmt(it.quantity)} | ${if(it.density==null)"Global" else fmt(it.density)} | ${if(it.vd==null)"Pendiente" else fmt(it.vd)}")}
+                add("PCI/URCI: ${r.index?:"No calculable"}; ${r.rating.orEmpty()}")
+                addAll(r.pending);addAll(PavementRules.warnings(s,damages).map{"Advertencia: $it"})
+            }
+            if(s.surface=="RIGID")room(minOf(520f,closing.sumOf{wrap(it,782f).size}*15f))
+            closing.forEach{line(it)}
             if(page!=null)finishPage()
     }
 }

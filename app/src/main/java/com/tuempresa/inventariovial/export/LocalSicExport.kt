@@ -109,9 +109,10 @@ class LocalSicExport(private val context: Context, private val database: Invento
                     val stream = context.contentResolver.openOutputStream(uri, "wt")
                         ?: throw IllegalStateException("No se pudo abrir el destino seleccionado.")
                     stream.use { out -> prepared.file.inputStream().use { it.copyTo(out) } }
+                    com.tuempresa.inventariovial.localfiles.LocalCopies.rememberSaf(context,database,prepared.file,"SIC",if(prepared.isZip)"application/zip"else SicExcelWriter.XLSX_MIME,uri)
                 }
                 mutableState.value = LocalExportState(prepared = prepared,
-                    message = "Guardado: ${prepared.file.name} (${prepared.recordCount} registros, ${prepared.workbookCount} Excel).")
+                    message = "Archivo exportado y verificado en la ubicación elegida: ${prepared.file.name} (${prepared.recordCount} registros, ${prepared.workbookCount} Excel).")
             } catch (error: CancellationException) { throw error }
             catch (error: Exception) {
                 mutableState.value = LocalExportState(prepared = prepared,

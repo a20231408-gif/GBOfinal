@@ -125,6 +125,7 @@ object ScapValidation {
         }
         if(s.photos.isEmpty()) pending+="Panel fotográfico sin imágenes."
         for(type in listOf("ELEVATION","PLAN","CROSS_SECTION")) if(s.sketches.none {it.type==type}) pending+="Croquis pendiente: $type."
+        pending+=ScapSketchSelection.warnings(s)
         return ScapReview(errors.distinct(),pending.distinct(),selected.size,unevaluated)
     }
 }

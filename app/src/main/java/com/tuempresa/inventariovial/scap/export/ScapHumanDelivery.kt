@@ -65,6 +65,8 @@ object ScapHumanDelivery {
     }
 
     suspend fun prepare(context: Context, db: InventoryDatabase, snapshot: ScapInspectionSnapshot): ScapHumanLayout = withContext(Dispatchers.IO) {
+        val locationIssues=ScapDriveLocation.issues(context,snapshot)
+        require(locationIssues.isEmpty()){ScapDriveLocation.MESSAGE+" "+locationIssues.joinToString(" · ")}
         val route = ProjectRouteCatalog.load(context).requireRoute(snapshot.values()["route"].orEmpty()).routeCode
         val positioner = RoadAxisPositioner(RoadReferenceRepository(context).loadFromAssets(),
             com.tuempresa.inventariovial.field.FieldSettings.load(context).matchConfig())

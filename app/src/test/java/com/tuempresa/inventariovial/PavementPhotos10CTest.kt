@@ -110,7 +110,7 @@ class PavementPhotos10CTest {
             old.execSQL("INSERT INTO pavement_damages (id,sampleId,correlativo,surface,code,name,geometry,createdAt) VALUES ('d','s',1,'ASPHALT',7,'Grieta','LINEAR',1)")
             old.execSQL("INSERT INTO pavement_damage_photos VALUES ('historic','d','/original/unchanged.jpg',1)");old.version=18
         }
-        val d=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_18_19).build()
+        val d=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_18_19,InventoryDatabase.MIGRATION_19_20).build()
         try {assertEquals("CLOSED",d.pavementDao().sample("s")!!.status);val p=d.pavementDao().photos("d").single();assertEquals("historic",p.id);assertEquals("/original/unchanged.jpg",p.localPath);assertNull(p.retiredAt)}
         finally {d.close();context.deleteDatabase(name)}
     }

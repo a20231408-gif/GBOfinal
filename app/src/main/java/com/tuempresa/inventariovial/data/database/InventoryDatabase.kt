@@ -30,6 +30,7 @@ import com.tuempresa.inventariovial.pavement.PavementSectionEntity
 
 @Database(
     entities = [
+        com.tuempresa.inventariovial.localfiles.DeviceDeliveryChoice::class, com.tuempresa.inventariovial.localfiles.LocalExportJob::class, com.tuempresa.inventariovial.localfiles.LocalSharedFile::class,
         com.tuempresa.inventariovial.core.DriveSyncIntent::class, UserCacheEntity::class, UserSyncStateEntity::class, LocalLoginStateEntity::class, AuditLogEntity::class,
         InventoryRecordEntity::class,
         SicExtensionEntity::class, PhotoEntity::class, PhotoHistoryEntity::class, FieldPrEntity::class, DeliveryBatchEntity::class,
@@ -49,13 +50,14 @@ import com.tuempresa.inventariovial.pavement.PavementSectionEntity
         PavementSampleEntity::class, PavementDamageEntity::class, PavementDamagePhotoEntity::class, PavementSectionEntity::class
     ],
 
-    version = 19,
+    version = 20,
 
     exportSchema = true
 )
 abstract class InventoryDatabase :
     RoomDatabase() {
 
+    abstract fun localFilesDao(): com.tuempresa.inventariovial.localfiles.LocalFilesDao
     var syncContext: Context? = null
     abstract fun automaticSyncDao(): com.tuempresa.inventariovial.core.AutomaticSyncDao
     abstract fun userDao(): UserDao
@@ -69,6 +71,16 @@ abstract class InventoryDatabase :
 
 
     companion object {
+        val MIGRATION_19_20 = object : Migration(19,20) {
+            override fun migrate(db:SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS device_delivery_choices (`key` TEXT NOT NULL PRIMARY KEY, destination TEXT NOT NULL, selectedBy TEXT NOT NULL, selectedAt INTEGER NOT NULL)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS local_export_jobs (id TEXT NOT NULL PRIMARY KEY, recordKey TEXT NOT NULL, kind TEXT NOT NULL, recordId TEXT NOT NULL, revision INTEGER NOT NULL, scope TEXT NOT NULL, state TEXT NOT NULL, message TEXT, manifestJson TEXT, automatic INTEGER NOT NULL, createdAt INTEGER NOT NULL, completed INTEGER NOT NULL, total INTEGER NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_local_export_jobs_recordKey ON local_export_jobs(recordKey)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS local_shared_files (id TEXT NOT NULL PRIMARY KEY, jobId TEXT NOT NULL, recordKey TEXT NOT NULL, relativePath TEXT NOT NULL, name TEXT NOT NULL, mimeType TEXT NOT NULL, size INTEGER NOT NULL, sha256 TEXT NOT NULL, source TEXT NOT NULL, uri TEXT, state TEXT NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_local_shared_files_jobId ON local_shared_files(jobId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_local_shared_files_recordKey ON local_shared_files(recordKey)")
+            }
+        }
         val MIGRATION_18_19 = object : Migration(18,19) {
             override fun migrate(db:SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE pavement_damage_photos ADD COLUMN retiredAt INTEGER")
@@ -219,9 +231,14 @@ abstract class InventoryDatabase :
                             InventoryDatabase::class.java,
                             "inventario_vial.db"
                         )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17, MIGRATION_17_18, MIGRATION_18_19)
-                            .build()
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15, MIGRATION_15_16, MIGRATION_16_17, MIGRATION_17_18, MIGRATION_18_19, MIGRATION_19_20)
+                            .addCallback(object:RoomDatabase.Callback(){
+                                override fun onOpen(db:SupportSQLiteDatabase){
+                                    com.tuempresa.inventariovial.localfiles.AutomaticLocalDocuments.install(db,com.tuempresa.inventariovial.localfiles.LocalCopySettings.enabled(context.applicationContext))
+                                }
+                            }).build()
 
+                    com.tuempresa.inventariovial.localfiles.AutomaticLocalDocuments.observe(context.applicationContext,instance)
                     instance.syncContext = context.applicationContext
                     INSTANCE = instance
 

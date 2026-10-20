@@ -25,6 +25,8 @@ internal fun sicMapping(s:ScapInspectionSnapshot,format:String)=when(format) {
 @Composable internal fun ScapBridgeSicPanel(s:ScapInspectionSnapshot,c:ScapController,editable:Boolean) {
     var open by rememberSaveable(s.inspection.id) { mutableStateOf<String?>(null) }
     val overrides by c.overrides.collectAsState()
+    val destination by c.destination.collectAsState()
+    LaunchedEffect(destination){if(destination?.second?.section=="SIC")open="SIC-17"}
     Column(verticalArrangement=Arrangement.spacedBy(10.dp)) {
         Text("DATOS PARA SIC",style=MaterialTheme.typography.titleLarge,color=MaterialTheme.colorScheme.primary)
         Text("No forman parte de la ficha SCAP")

@@ -58,7 +58,7 @@ class Sic0809ScreenTest {
     private fun capture(name:String) {
         lateinit var bitmap:Bitmap
         compose.runOnIdle {val view=compose.activity.window.decorView;bitmap=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888);view.draw(android.graphics.Canvas(bitmap))}
-        val root=File(System.getProperty("user.dir"));val directory=File(if(File(root,"app").exists())root else root.parentFile,"docs/sic08-sic09-fix-2026-10-11/screenshots").apply {mkdirs()}
+        val directory=File("build/outputs/cierre-1.4.5/sic08-sic09/screenshots").apply {mkdirs()}
         File(directory,"$name.png").outputStream().use {assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,it))}
     }
     private fun saveAndReopen(format:SicFieldFormat) {

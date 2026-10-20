@@ -99,7 +99,7 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
                 if(review?.pending?.isNotEmpty()==true) OutlinedButton(onClick=onBack) {Text("Completar faltantes")}
                 Text("Fotos: ${selectedPhotos.size}")
                 InventoryPhotoReview(selectedPhotos)
-                Text("Los registros y borradores ya están guardados localmente.")
+                Text("Las fichas y borradores están guardados dentro de GBO; exporta para disponer de documentos fuera de la app.")
             }
         }
         Button(enabled = !locked && count > 0 && review?.pending?.isEmpty()==true, onClick = {
@@ -120,8 +120,9 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
 
                     syncScope.launch {
                         pickerMessage=runCatching {
-                            selectedItems.forEach {com.tuempresa.inventariovial.core.AutomaticSync.manual(syncContext,"SIC",it.record.id)}
-                            "Registros programados. Drive consolida con las otras tablets sin reemplazar sus filas."
+                            val d=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(syncContext);var scheduled=0;var only=0
+                            for(item in selectedItems)if(com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(d,"SIC/${item.record.id}"))only++else{com.tuempresa.inventariovial.core.AutomaticSync.manual(syncContext,"SIC",item.record.id);scheduled++}
+                            "$scheduled registros programados. $only conservados como Solo dispositivo; requieren autorización del administrador."
                         }.getOrElse {it.message}
                     }
                 },
@@ -132,6 +133,10 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
 
             }
 
+            Button(enabled=!locked,onClick={syncScope.launch {pickerMessage=runCatching {
+                com.tuempresa.inventariovial.localfiles.LocalCopies.document(syncContext,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(syncContext),prepared.file,"SIC",if(prepared.isZip)"application/zip"else SicExcelWriter.XLSX_MIME,route ?: "TODAS_LAS_RUTAS")
+                "Copia local pendiente. Se confirmará después de escribir y verificar en Descargas."
+            }.getOrElse{it.message}}}){Text("Guardar en Descargas")}
             Button(enabled = !locked, onClick = {
                 try {
                     picking = true
@@ -140,9 +145,10 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
                     picking = false
                     pickerMessage = "No se pudo abrir el selector de archivos: ${error.message}"
                 }
-            }, modifier = Modifier.fillMaxWidth()) { Text("Guardar en el dispositivo") }
+            }, modifier = Modifier.fillMaxWidth()) { Text("Guardar como…") }
             Text("En el selector de Android elige Descargas u otra carpeta local.")
         }
+        com.tuempresa.inventariovial.localfiles.LocalFilesList(kind="SIC")
         pickerMessage?.let { Text(it) }
     }
 }

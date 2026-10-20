@@ -178,7 +178,7 @@ class EngineeringUxTest {
             dao.insertPhoto(original)
             val d=EngineeringEdits.form(dao.snapshot(r.id)!!)
             EngineeringEdits.save(database,r.id,d,listOf("/old.jpg"),mapOf("/old.jpg" to "CULVERT_INLET"))
-            val p=dao.snapshot(r.id)!!.photos.single();assertEquals(original.copy(photoCategory="CULVERT_INLET"),p)
+            val p=dao.snapshot(r.id)!!.photos.single();assertEquals(original.copy(photoCategory="CULVERT_INLET",syncStatus="PENDING"),p)
         } finally {database.close()}
     }
     @Test fun photoDescriptionsReorderingAndRemovalKeepDefectsConsistent()=runBlocking {

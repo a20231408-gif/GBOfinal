@@ -65,14 +65,26 @@ object InventoryDraftStore {
         val user=AuthGraph.get(context).sessions.requireUser()
         val id=r.recordId ?: UUID.randomUUID().toString()
         val old=db.inventoryDao().recordById(id)
+        db.inventoryDao().snapshot(id)?.let {com.tuempresa.inventariovial.model.form.requireSicSnapshot(it)}
         require(old==null || old.status=="DRAFT") { "La ficha ya está finalizada" }
+        require(old==null || com.tuempresa.inventariovial.model.form.sameInventoryIdentity(old,r.sicCode,r.assetType)) {
+            "El UUID pertenece a otro tipo de ficha. Conserva el borrador y vuelve a abrirlo desde Inicio."
+        }
+        com.tuempresa.inventariovial.model.form.requireSicDetail(r.sicCode,r.detail)
+        (r.detail as? SicFormDetail.Sic20)?.let {Sic20Identity.requireDetail(r.assetType,it.state.classCode)}
         val input=com.tuempresa.inventariovial.validation.ContractualLocationInput
         require(input.acceptPr(r.startPrCode) || old?.startPrCode==r.startPrCode){"PR: máximo cuatro dígitos"}
         require(r.endPrCode.isNullOrBlank() || input.acceptPr(r.endPrCode) || old?.endPrCode==r.endPrCode){"PR final: máximo cuatro dígitos"}
         fun offset(text:String?,historic:Double?) = text.isNullOrBlank() || input.acceptDistance(text) || (historic!=null && text.replace(',', '.').toDoubleOrNull()==historic)
         require(offset(r.startDistanceM,old?.startDistanceM) && offset(r.endDistanceM,old?.endDistanceM)){"Distancia: máximo tres cifras enteras"}
         val target=file(context,id)
-        if(target.exists()) require(JSONObject(target.readText()).getString("owner")==user.id) { "Borrador de otro usuario" }
+        if(target.exists()) {
+            val previous=JSONObject(target.readText())
+            require(previous.getString("owner")==user.id) { "Borrador de otro usuario" }
+            com.tuempresa.inventariovial.model.form.requireSicRawDetail(r.sicCode,previous.getJSONObject("detail").getString("type"))
+            if(r.sicCode=="SIC-20")Sic20Identity.resolve(r.assetType,previous.getJSONObject("detail").getJSONObject("fields").optString("classCode"),
+                (r.detail as SicFormDetail.Sic20).state.classCode)
+        }
         val detail=when(val d=r.detail) {
             is SicFormDetail.Sic17->d.state;is SicFormDetail.Sic18->d.state;is SicFormDetail.Sic19->d.state
             is SicFormDetail.Sic20->d.state;is SicFormDetail.Sic21->d.state;is SicFormDetail.Sic22->d.state;is SicFormDetail.Sic23->d.state

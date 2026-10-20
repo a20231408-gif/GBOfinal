@@ -65,7 +65,7 @@ fun AssetOrderScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             OutlinedButton(onClick = onBack) { Text("Volver") }
-            Text("Orden de elementos", style = MaterialTheme.typography.headlineMedium)
+            com.tuempresa.inventariovial.dashboard.RutaClaraMapHeader()
             if (routeCodes.isEmpty()) {
                 Text("No hay rutas del proyecto configuradas.", color = MaterialTheme.colorScheme.error)
             } else {

@@ -51,10 +51,11 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
     var inspectorFilter by rememberSaveable { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    BackHandler { if (id != null) id = null else onBack() }
+    LaunchedEffect(id){id?.let{recordId->if(com.tuempresa.inventariovial.localfiles.LocalCopySettings.enabled(context))kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.requestCurrent(context,graph.database,"PAVEMENT",recordId,automatic=true)}}}}
+    BackHandler { if(initialSampleId!=null)onBack()else if (id != null) id = null else onBack() }
     if (id != null) {
         val sample by remember(id) { repo.observeSample(id!!) }.collectAsState(null)
-        sample?.let { s -> key(s.id) { PavementEditor(s, repo, session?.id, initialPage=initialPage,onBack = { id = null }) } }
+        sample?.let { s -> key(s.id) { PavementEditor(s, repo, session?.id, initialPage=initialPage,onBack = { if(initialSampleId!=null)onBack()else id = null }) } }
     } else Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Surface(color=MaterialTheme.colorScheme.primary,contentColor=MaterialTheme.colorScheme.onPrimary,shape=androidx.compose.foundation.shape.RoundedCornerShape(20.dp)) {
             Row(Modifier.fillMaxWidth().padding(20.dp),verticalAlignment=androidx.compose.ui.Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(16.dp)) {
@@ -165,6 +166,18 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
         pickerDamage=damageId;pickerReplacement=replacement;picker.launch("image/*")
     }
     var localSlab by rememberSaveable(sample.id) {mutableStateOf(true)}
+    var markingJoints by rememberSaveable(sample.id) {mutableStateOf(false)}
+    var clearJoints by remember {mutableStateOf(false)}
+    var jointDraft by remember(sample.id) {mutableStateOf<Set<PavementJointAnnotations.Mark>?>(null)}
+    var jointUndo by remember(sample.id) {mutableStateOf<List<Set<PavementJointAnnotations.Mark>>>(emptyList())}
+    val jointPreviewId=remember(sample.id) {UUID.randomUUID().toString()}
+    LaunchedEffect(definition.code) {
+        if(definition.code==26) {
+            val global=damages.singleOrNull {it.code==26 && it.geometry=="GLOBAL"}
+            jointDraft=global?.let {PavementJointAnnotations.marks(sample,it.id)} ?: emptySet()
+            jointUndo=emptyList();markingJoints=true
+        }
+    }
     fun newDamage(x: Double? = null, y: Double? = null, x2: Double? = null, y2: Double? = null): PavementDamageEntity {
         val width = if (x != null && x2 != null) abs(x2 - x) else null
         val length = if (y != null && y2 != null) abs(y2 - y) else null
@@ -173,6 +186,47 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
             if (definition.geometry == PavementGeometry.LINEAR && width != null && length != null) hypot(width,length) else length,
             if (definition.geometry == PavementGeometry.AREA && width != null && length != null) width*length else null,
             if (definition.geometry == PavementGeometry.POTHOLE) 1.0 else null, null, "", slabs = if(definition.geometry==PavementGeometry.SLABS && x!=null && y!=null) PavementSlabGeometry.slabAt(sample,x,y).toString() else slabSet.sorted().joinToString(","))
+    }
+    fun sketchTap(x:Double,y:Double,tolerance:Double) {
+        message="Y = ${String.format(java.util.Locale.US,"%.1f",y)} m"
+        if(sample.anchoM<=0 || sample.largoM<=0) {message="Guarda la cabecera antes de dibujar.";return}
+        if(markingJoints && definition.code==26) {
+            val mark=PavementJointAnnotations.hit(sample,x,y,tolerance)
+            if(mark==null)message="Selecciona una junta interior o un cruce."
+            else {
+                val previous=jointDraft ?: emptySet()
+                jointUndo=(jointUndo+listOf(previous)).takeLast(100)
+                jointDraft=if(mark in previous)previous-mark else previous+mark
+                message="Vista previa: confirma para guardar; vuelve a tocar para corregir."
+            }
+            return
+        }
+        when(definition.geometry) {
+            PavementGeometry.GLOBAL->message="Usa Registrar global; para el daño 26 puedes activar Marcar juntas en el croquis."
+            PavementGeometry.SLABS->{
+                if((localSlab || definition.code in setOf(22,25,27)) && sample.slabRows>0 && sample.slabColumns>0) {
+                    if(PavementSlabGeometry.mark(definition.code)==SlabMark.POINT)draft=newDamage(x,y)
+                    else {
+                        val start=first
+                        if(start==null)first=x to y
+                        else {
+                            val attempt=runCatching {
+                                if(definition.code==22)PavementCornerGeometry.resolve(sample,SketchPoint(start.first,start.second),SketchPoint(x,y),boundaryTolerance=tolerance)
+                                else if(definition.code !in setOf(25,27))require(PavementSlabGeometry.slabAt(sample,start.first,start.second)==PavementSlabGeometry.slabAt(sample,x,y)) {"Marca el inicio y final dentro de la misma losa."}
+                                newDamage(start.first,start.second,x,y)
+                            }
+                            attempt.onSuccess {draft=it}.onFailure {message=it.message ?: "Revisa los dos puntos de la esquina."}
+                            first=null
+                        }
+                    }
+                } else if(sample.slabRows>0 && sample.slabColumns>0) {
+                    val n=PavementSlabGeometry.slabAt(sample,x,y)
+                    slabSet=if(n in slabSet)slabSet-n else slabSet+n
+                } else message="Define filas y columnas de losas en la cabecera."
+            }
+            PavementGeometry.POTHOLE->draft=newDamage(x,y)
+            else->{val start=first;if(start==null)first=x to y else {draft=newDamage(start.first,start.second,x,y);first=null}}
+        }
     }
     Column(Modifier.fillMaxSize().padding(12.dp)) {
         Surface(color=MaterialTheme.colorScheme.primary,contentColor=MaterialTheme.colorScheme.onPrimary,shape=androidx.compose.foundation.shape.RoundedCornerShape(16.dp)) {
@@ -193,39 +247,19 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                 Column {
                     Text("Origen inferior izquierdo · x/ancho → · y/largo ↑ · metros")
                     if(movingId!=null) TextButton(onClick={movingId=null}) { Text("Terminar movimiento") }
-                    PavementScheme(sample, damages, slabSet, first, editable,
+                    val global=damages.singleOrNull {it.code==26 && it.geometry=="GLOBAL"}
+                    val preview=if(definition.code==26 && jointDraft!=null)global ?: newDamage().copy(id=jointPreviewId) else null
+                    val sketchSample=if(preview!=null)sample.copy(sicDataJson=PavementJointAnnotations.update(sample,preview,jointDraft!!))else sample
+                    val sketchDamages=if(preview!=null && global==null)damages+preview else damages
+                    PavementScheme(sketchSample, sketchDamages, slabSet, first, editable,
                         moving=damages.firstOrNull{it.id==movingId}, highlightedDamageId=selected,
+                        onMetricTap={x,y,tolerance->sketchTap(x,y,tolerance)},
                         onMove={ moved -> scope.launch {
                             runCatching{repo.saveDamage(moved)}.onSuccess{message="Daño movido y guardado."}.onFailure{message=it.message.orEmpty()}
                         } }) { x, y ->
-                        message="Y = ${String.format(java.util.Locale.US,"%.1f",y)} m"
-                        if (sample.anchoM <= 0 || sample.largoM <= 0) { message = "Guarda la cabecera antes de dibujar." }
-                        else when (definition.geometry) {
-                            PavementGeometry.GLOBAL -> message = "Usa Registrar global; no requiere dibujo."
-                            PavementGeometry.SLABS -> {
-                                if(localSlab && sample.slabRows>0 && sample.slabColumns>0) {
-                                    if(PavementSlabGeometry.mark(definition.code)==SlabMark.POINT)draft=newDamage(x,y)
-                                    else {
-                                        val start=first
-                                        if(start==null)first=x to y
-                                        else {
-                                            if(PavementSlabGeometry.slabAt(sample,start.first,start.second)!=PavementSlabGeometry.slabAt(sample,x,y))message="Marca el inicio y final dentro de la misma losa. Para juntas compartidas edita las losas indicadas en el registro."
-                                            else draft=newDamage(start.first,start.second,x,y)
-                                            first=null
-                                        }
-                                    }
-                                } else if (sample.slabRows > 0 && sample.slabColumns > 0) {
-                                    val col = (x / sample.anchoM * sample.slabColumns).toInt().coerceIn(0,sample.slabColumns-1)
-                                    val row = (y / sample.largoM * sample.slabRows).toInt().coerceIn(0,sample.slabRows-1)
-                                    val n = row*sample.slabColumns+col+1
-                                    slabSet = if (n in slabSet) slabSet-n else slabSet+n
-                                } else message = "Define filas y columnas de losas en la cabecera."
-                            }
-                            PavementGeometry.POTHOLE -> { draft = newDamage(x,y) }
-                            else -> { val start = first; if (start == null) first = x to y else { draft = newDamage(start.first,start.second,x,y); first = null } }
-                        }
+                        sketchTap(x,y,.01)
                     }
-                    Text(if(movingId!=null) "Arrastra en el esquema para mover el daño seleccionado. Al soltar se guarda." else if (first == null) "Línea/área: toca inicio y final. Hueco: toca centro. Losas: toca las afectadas." else "Toca el punto final.")
+                    Text(if(movingId!=null) "Arrastra en el esquema para mover el daño seleccionado. Al soltar se guarda." else if(markingJoints && definition.code==26) "Selecciona la junta afectada" else if (first == null) "Línea/área: toca inicio y final. Hueco: toca centro. Losas: toca las afectadas." else "Toca el punto final.")
                     if (first != null || slabSet.isNotEmpty()) TextButton(onClick = { first = null; slabSet = emptySet() }) { Text("Limpiar selección") }
                 }
             }
@@ -238,7 +272,7 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                     if(sample.surface=="RIGID") Text("${sample.slabRows} filas × ${sample.slabColumns} columnas = ${PavementHeader.totalSlabs(sample)} losas · longitud: ${sample.slabRows} × ${PavementHeader.slabLength(sample)} = ${sample.largoM} m")
                     PavementRules.warnings(sample, damages).forEach { Text(it, color = MaterialTheme.colorScheme.error) }
                     if (editable) {
-                        Choice("Daño", definition, PavementCatalog.forSurface(surface), { "${it.code} · ${it.name}" }) { definition = it; severity = it.severities.firstOrNull(); first = null; slabSet = emptySet(); movingId=null }
+                        Choice("Daño", definition, PavementCatalog.forSurface(surface), { "${it.code} · ${it.name}" }) { definition = it; severity = if(it.code==26)damages.singleOrNull {d->d.code==26}?.severity ?: it.severities.firstOrNull() else it.severities.firstOrNull(); jointDraft=null;jointUndo=emptyList(); first = null; slabSet = emptySet(); movingId=null;markingJoints=false;if(it.code in setOf(22,25,27))localSlab=true }
                         if (definition.severities.isNotEmpty()) Choice("Severidad", severity ?: definition.severities.first(), definition.severities, { PavementSeverity.label(it) }) { severity = it }
                         else Text("Severidad: no aplica según catálogo.")
                         val help = remember(definition.code, severity) { PavementTechnicalText.severity(context, definition.code, severity) }
@@ -246,10 +280,23 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                         TextButton(onClick={showMeasurement=!showMeasurement}){Text(if(showMeasurement)"Ocultar reglas de medición" else "Ver reglas de medición del manual")}
                         if(showMeasurement) Text(remember(definition.code){PavementTechnicalText.measurement(context,definition.code)},style=MaterialTheme.typography.bodySmall)
                         if(definition.geometry==PavementGeometry.SLABS) {
-                            Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {Switch(localSlab,{localSlab=it;first=null;slabSet=emptySet()});Text("Localizar daño dentro de una losa")}
-                            Text(if(localSlab) "${PavementSlabGeometry.mark(definition.code).name}: punto = un toque; línea o zona parcial = dos puntos. Cantidad medida en losas." else "Símbolo por losa sin extensión parcial. Selecciona las losas y acepta.")
+                            Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {Switch(localSlab || definition.code==22,{localSlab=it;first=null;slabSet=emptySet()},enabled=definition.code!=22);Text("Localizar daño dentro de una losa")}
+                            Text(if(definition.code==22)"Rotura de esquina: toca dos puntos cerca de bordes adyacentes de la misma losa. Los extremos del croquis se ajustan a esos bordes; se conservan tus medidas." else if(localSlab) "${PavementSlabGeometry.mark(definition.code).name}: punto = un toque; línea o zona parcial = dos puntos. Cantidad medida en losas." else "Símbolo por losa sin extensión parcial. Selecciona las losas y acepta.")
                         }
-                        if (definition.geometry == PavementGeometry.GLOBAL || definition.geometry == PavementGeometry.SLABS && !localSlab) Button(onClick = { message=""; draft = newDamage() }) { Text(if (definition.geometry == PavementGeometry.GLOBAL) "Registrar global" else "Aceptar ${slabSet.size} losas") }
+                        if(definition.code==26) {
+                            val global=damages.singleOrNull {it.code==26 && it.geometry=="GLOBAL"}
+                            Text("Selecciona la junta afectada")
+                            Text("Evaluación global: las marcas son referencias visuales, no cantidades PCI adicionales.")
+                            Text("Juntas/cruces seleccionados: ${(jointDraft ?: global?.let {PavementJointAnnotations.marks(sample,it.id)} ?: emptySet()).size}")
+                            if(global!=null && PavementJointAnnotations.needsReview(sample,global.id))Text("La malla cambió: marcas conservadas pendientes de revisión.",color=MaterialTheme.colorScheme.error)
+                            if(markingJoints) {
+                                TextButton(enabled=jointUndo.isNotEmpty(),onClick={jointDraft=jointUndo.last();jointUndo=jointUndo.dropLast(1)}) {Text("Deshacer última marca")}
+                                TextButton(onClick={jointDraft=null;jointUndo=emptyList();markingJoints=false;message="Selección cancelada; juntas guardadas conservadas."}) {Text("Cancelar selección")}
+                                Button(enabled=global==null || !PavementJointAnnotations.needsReview(sample,global.id),onClick={message="";draft=global?.copy(severity=severity) ?: newDamage().copy(id=jointPreviewId)}) {Text("Confirmar juntas y severidad")}
+                            } else OutlinedButton(onClick={jointDraft=global?.let {PavementJointAnnotations.marks(sample,it.id)} ?: emptySet();jointUndo=emptyList();markingJoints=true;movingId=null;first=null}) {Text("Editar juntas")}
+                            if(global!=null && !markingJoints)TextButton(onClick={clearJoints=true}) {Text("Limpiar todas las marcas de juntas")}
+                        }
+                        if (definition.geometry == PavementGeometry.GLOBAL && definition.code!=26 || definition.geometry == PavementGeometry.SLABS && !localSlab && definition.code!=22) Button(onClick = { message=""; draft = if(definition.code==26)damages.singleOrNull {it.code==26}?.copy(severity=severity) ?: newDamage() else newDamage() }) { Text(if (definition.geometry == PavementGeometry.GLOBAL) "Registrar global" else "Aceptar ${slabSet.size} losas") }
                     }
                     PavementDamageTable(damages,selected,{selected=it;movingId=null},
                         photoCounts=samplePhotos.groupingBy {it.damageId}.eachCount(),
@@ -307,8 +354,19 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
         }
     }
     if (header) SampleDialog(sample, message, { header = false }) { updated -> scope.launch { runCatching { repo.saveSample(updated) }.onSuccess { header = false; message = "Cabecera guardada." }.onFailure { message = it.message.orEmpty() } } }
-    draft?.let { damage -> DamageDialog(damage, message, { draft = null }) { updated -> scope.launch { runCatching { repo.saveDamage(updated) }.onSuccess { draft = null; slabSet = emptySet(); message = "Daño guardado." }.onFailure { message = it.message.orEmpty() } } } }
+    if(clearJoints)AlertDialog(onDismissRequest={clearJoints=false},title={Text("¿Limpiar las marcas de juntas?")},text={Text("Se conservarán el daño GLOBAL, severidad, observaciones y fotografías.")},confirmButton={TextButton(onClick={
+        clearJoints=false
+        damages.singleOrNull{it.code==26}?.let {d->scope.launch {runCatching {repo.saveJointMarks(sample.id,d.id,emptySet())}.onFailure {message=it.message.orEmpty()}}}
+    }){Text("Limpiar marcas")}},dismissButton={TextButton(onClick={clearJoints=false}){Text("Cancelar")}})
+    fun saveEditedDamage(updated:PavementDamageEntity,patchMode:String?=null) { scope.launch { runCatching {
+        val marks=if(updated.code==26)jointDraft else null
+        if(patchMode!=null && updated.code in setOf(25,27))repo.saveDamageWithBoundary(updated,patchMode)
+        else if(patchMode!=null)repo.saveDamageWithPatchMode(updated,patchMode)
+        else if(marks!=null)repo.saveDamageWithJointMarks(updated,marks)else repo.saveDamage(updated)
+    }.onSuccess { if(updated.code==26){jointDraft=null;jointUndo=emptyList();markingJoints=false};draft = null; slabSet = emptySet(); message = "Daño guardado." }.onFailure { message = it.message.orEmpty() } } }
+    draft?.let {damage->DamageDialog(damage,message,{draft=null},save={saveEditedDamage(it)},sample=sample,patchSave={d,m->saveEditedDamage(d,m)})}
 if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title = { Text("Cerrar muestra") }, text = { Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+    com.tuempresa.inventariovial.localfiles.RecordDeliveryChoice("PAVEMENT",sample.id,false)
     Text("${sample.ruta} · ${sample.tramo} · muestra ${sample.muestra} · ${surface.label}")
     Text("PR ${sample.prInicial} → ${sample.prFinal} · ${sample.anchoM} × ${sample.largoM} m")
     Text("Daños (${damages.size})")
@@ -317,7 +375,7 @@ if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title
     Text("Los registros se conservan. El índice permanece pendiente si faltan curvas. La entrega solo se crea al confirmar el cierre.")
 } }, confirmButton = { TextButton(enabled=sample.anchoM>0 && sample.largoM>0 && sample.tramo.isNotBlank(),onClick = { scope.launch { runCatching { repo.closeSample(sample.id, PavementCalculator(context))
                 val saved=repo.observeSample(sample.id).first()!!
-                if(com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null) com.tuempresa.inventariovial.core.PavementSyncAdapter.enqueue(context,saved) }.onFailure { message = it.message.orEmpty() }; closeConfirm = false } }) { Text("Cerrar") } }, dismissButton = { TextButton(onClick = { closeConfirm = false }) { Text("Volver") } })
+                if(com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null && !com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),"PAVEMENT/${sample.id}")) com.tuempresa.inventariovial.core.PavementSyncAdapter.enqueue(context,saved) }.onFailure { message = it.message.orEmpty() }; closeConfirm = false } }) { Text("Cerrar") } }, dismissButton = { TextButton(onClick = { closeConfirm = false }) { Text("Volver") } })
 }
 
 @Composable internal fun PhotoGallery(id: String, revision: Int, repo: PavementRepository, editable: Boolean, onChanged: () -> Unit, onError: (String) -> Unit, onCamera: ()->Unit = {}, onImport: ()->Unit = {},

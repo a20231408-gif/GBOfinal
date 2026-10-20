@@ -27,23 +27,20 @@ import kotlinx.coroutines.flow.first
 
 /** Native Compose captures of production screens, not hand-drawn mockups. */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk=[34],qualifiers="w800dp-h1200dp-mdpi")
+@Config(sdk=[34],qualifiers="w800dp-h1200dp-mdpi",application=Application::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class SicUiParityTest {
     @get:Rule val compose=createAndroidComposeRule<androidx.activity.ComponentActivity>()
     private val app get()=ApplicationProvider.getApplicationContext<Application>()
     @Before fun isolateNativeTestDatabase() = runBlocking {
-        try {androidx.work.WorkManager.getInstance(app)} catch(_:IllegalStateException) {
-            androidx.work.WorkManager.initialize(app,androidx.work.Configuration.Builder().build())
-        }
+        initializeIdleUiWorkers()
         com.tuempresa.inventariovial.auth.AuthGraph.get(app).sessions.logout()
         withContext(Dispatchers.IO) {com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(app).clearAllTables()}
         app.getSharedPreferences("survey_context",android.content.Context.MODE_PRIVATE).edit().clear().commit()
         Unit
     }
     private fun output():File {
-        val wd=File(requireNotNull(System.getProperty("user.dir")))
-        return File(if(File(wd,"app").isDirectory)wd else wd.parentFile,"docs/sic-ui-parity-evidence/screenshots").also {it.mkdirs()}
+        return File("build/outputs/cierre-1.4.5/sic-ui-parity/screenshots").also {it.mkdirs()}
     }
     private fun scroll(text:String) {compose.onNodeWithTag("legacy-inventory-form").performScrollToNode(hasText(text))}
     private fun waitForLoadedForm() {
@@ -60,7 +57,8 @@ class SicUiParityTest {
         compose.onNodeWithText("← Volver").assertIsDisplayed()
         compose.onNodeWithText(title).assertIsDisplayed()
         scroll("Sentido de las progresivas")
-        for(text in listOf("Ruta","Calzada","Sentido de las progresivas","Creciente","Decreciente","Iniciar otro recorrido"))compose.onNodeWithText(text).assertExists()
+        for(text in listOf("Ruta","Calzada","Sentido de las progresivas","Creciente","Decreciente"))compose.onNodeWithText(text).assertExists()
+        compose.onNodeWithText("Iniciar otro recorrido").assertDoesNotExist()
         compose.onAllNodes(hasSetTextAction() and hasText("Ruta")).assertCountEquals(0)
         compose.onAllNodes(hasSetTextAction() and hasText("Calzada")).assertCountEquals(0)
         compose.onNodeWithText("Identificación").assertDoesNotExist()
@@ -103,7 +101,7 @@ class SicUiParityTest {
         compose.onNodeWithText(SicFieldFormat.SIC08.title).assertExists()
         screenshot("B_Faja_SIC08_independiente")
         scroll("OBSERVACIONES");compose.onNodeWithText("OBSERVACIONES").assertExists()
-        scroll("Guardar registro");compose.onNodeWithText("Guardar registro").performClick()
+        scroll("Revisar y finalizar");compose.onNodeWithText("Revisar y finalizar").performClick()
         compose.onNodeWithText("Ancho útil (m)").assertDoesNotExist()
         compose.onNodeWithText("Iniciar otro recorrido").assertDoesNotExist()
     }
@@ -168,8 +166,8 @@ class SicUiParityTest {
         waitForLoadedForm()
         compose.onNodeWithTag("legacy-inventory-form").assertExists()
         compose.onNodeWithText("Registrar Alcantarilla").assertExists()
-        scroll("Completar detalle de condición mala");compose.onNodeWithText("Completar detalle de condición mala").performClick()
-        scroll("Detalle de condición mala")
+        scroll("Completar fallas SIC-18A");compose.onNodeWithText("Completar fallas SIC-18A").performClick()
+        scroll("Fallas · condición regular o mala")
         compose.onNodeWithText("Falla estructural").assertExists()
         compose.onNodeWithText("Falla funcional").assertExists()
         compose.onAllNodes(hasSetTextAction() and hasText("Ruta")).assertCountEquals(0)

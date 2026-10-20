@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit
 
 object ScapDriveSync {
     internal fun reviewForUpload(snapshot:ScapInspectionSnapshot,catalog:com.tuempresa.inventariovial.scap.catalog.ScapCatalog,warningsConfirmed:Boolean):com.tuempresa.inventariovial.scap.domain.ScapCompleteness {
+        val errors=com.tuempresa.inventariovial.scap.domain.ScapValidation.review(snapshot,catalog).errors
+        require(errors.isEmpty()){errors.joinToString("\n")}
         val completion=com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(snapshot,catalog)
         require(completion.pending.none{it.severity==com.tuempresa.inventariovial.scap.domain.ScapIssueSeverity.BLOCKING}) {"Corrige los valores inválidos antes de subir."}
         require(completion.pending.isEmpty() || warningsConfirmed) {"Confirma la subida con datos pendientes."}

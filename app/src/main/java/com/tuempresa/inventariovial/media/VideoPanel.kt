@@ -85,6 +85,7 @@ import java.util.UUID
                     val remoteName=remember(v.id,v.state,v.fileId){VideoNames.display(context,v.id)}
                     remoteName?.let {Text(it,style=MaterialTheme.typography.bodySmall)}
                     v.error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
+                    TextButton(onClick={scope.launch {message=runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.document(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),File(v.localPath),"SCAP",v.mimeType);"Video: copia local pendiente. La sesión de subida se conserva."}.getOrElse{it.message}}}){Text("Guardar video en Descargas")}
                     Row {TextButton(onClick={playing=v}){Text("Reproducir")}
                         if(!v.retired && v.state!="SYNCED")TextButton(onClick={scope.launch{storage.retry(v.id)}}){Text("Reintentar")}
                         if(editable&&!v.retired){TextButton(onClick={replace=v;category=c.key;picker.launch(arrayOf("video/mp4","video/webm","video/3gpp"))}){Text("Reemplazar")};TextButton(onClick={retiring=v}){Text("Retirar")}}

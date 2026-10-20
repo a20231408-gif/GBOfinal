@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -44,6 +45,7 @@ object FieldCameraCatalog {
 
 @Composable
 fun PhotoPreview(file: File, onClose: () -> Unit) {
+    val context=LocalContext.current;val localScope=rememberCoroutineScope();var copyMessage by remember {mutableStateOf<String?>(null)}
     val bitmap by produceState<Bitmap?>(null, file.path) {
         value = withContext(Dispatchers.IO) {
             if (file.isFile) com.tuempresa.inventariovial.camera.loadCorrectlyOrientedBitmap(file.path,1600) else null
@@ -54,6 +56,11 @@ fun PhotoPreview(file: File, onClose: () -> Unit) {
             Column(Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (bitmap != null) Image(bitmap!!.asImageBitmap(), "Fotografía ampliada", Modifier.fillMaxWidth().weight(1f), contentScale = ContentScale.Fit)
                 else Text("No se pudo abrir la fotografía")
+                Row {
+                    TextButton(onClick={localScope.launch {copyMessage=runCatching {com.tuempresa.inventariovial.localfiles.LocalCopies.photo(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),file);"Fotografía: copia pendiente en Descargas."}.getOrElse{it.message}}}){Text("Guardar copia")}
+                    TextButton(onClick={copyMessage=runCatching {val uri=androidx.core.content.FileProvider.getUriForFile(context,"${context.packageName}.fileprovider",file);context.startActivity(com.tuempresa.inventariovial.localfiles.SharedFileActions.share(uri,com.tuempresa.inventariovial.localfiles.LocalCopies.photoMime(file)));null}.getOrElse{"No se pudo compartir la fotografía."}}){Text("Compartir foto")}
+                }
+                copyMessage?.let {Text(it)}
                 TextButton(onClick=onClose) { Text("Cerrar") }
             }
         }

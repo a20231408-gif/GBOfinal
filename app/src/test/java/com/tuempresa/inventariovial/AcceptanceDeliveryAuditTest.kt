@@ -2,6 +2,7 @@ package com.tuempresa.inventariovial
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -33,7 +34,7 @@ import java.io.File
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class AcceptanceDeliveryAuditTest {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
-    private val root=File("../docs/acceptance-audit-v15-2026-10-10/scenarios").apply{mkdirs()}
+    private val root=File("build/outputs/cierre-1.4.5/acceptance-audit/scenarios").apply{mkdirs()}
     private fun folder(name:String)=File(root,name).apply{mkdirs()}
     private fun cleanPhoto(dir:File,name:String):File=File(dir,name).apply {
         val bitmap=Bitmap.createBitmap(480,320,Bitmap.Config.ARGB_8888).apply{eraseColor(Color.rgb(48,125,89))}
@@ -81,7 +82,7 @@ class AcceptanceDeliveryAuditTest {
             fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(*migrations).addMigrations(*allInventoryMigrations()).allowMainThreadQueries().build()
             try {
                 val room=open()
-                try {val db=room.openHelper.writableDatabase;assertEquals(18,db.version)
+                try {val db=room.openHelper.writableDatabase;assertEquals(20,db.version)
                     for((table,columns) in expected)db.query("SELECT * FROM `$table`").use{c->
                         assertTrue("Lost table $version/$table",c.moveToFirst())
                         for((column,value) in columns)assertEquals("Lost value $version/$table.$column",
@@ -89,8 +90,8 @@ class AcceptanceDeliveryAuditTest {
                         assertFalse("Unexpected duplicate $version/$table",c.moveToNext())
                     }
                 }finally{room.close()}
-                val reopened=open();try{assertEquals(18,reopened.openHelper.readableDatabase.version)}finally{reopened.close()}
-                evidence.put(JSONObject().put("fromVersion",version).put("toVersion",15).put("tables",expected.size)
+                val reopened=open();try{assertEquals(20,reopened.openHelper.readableDatabase.version)}finally{reopened.close()}
+                evidence.put(JSONObject().put("fromVersion",version).put("toVersion",19).put("tables",expected.size)
                     .put("columnsVerified",expected.values.sumOf{it.size}).put("result","PASS_LOCAL_SQLITE"))
             }finally{context.deleteDatabase(name)}
         }
@@ -132,7 +133,10 @@ class AcceptanceDeliveryAuditTest {
                     "endPrCode" to "0006","endDistanceM" to "20.0","surveyDate" to "10/10/2026","typeCode" to "1","directionCode" to "C","sideCode" to "D",
                     "classCode" to "15","usefulWidthM" to "3.5","totalWidthM" to "4.5","levelCode" to "2","description" to "AUDITORIA SINTETICA"))
                 repo.save("audit-${f.code}",state,"AUDITORIA",true)
-                assertEquals(state,repo.load("audit-${f.code}",f))
+                val restored=requireNotNull(repo.load("audit-${f.code}",f))
+                assertEquals(state.format,restored.format)
+                assertEquals(state.sourceRecordId,restored.sourceRecordId)
+                state.values.forEach { (key,value) -> assertEquals("${f.code}/$key",value,restored.text(key)) }
             }
             val rows=db.inventoryDao().recordsForExport(null,"PE-22A")
             val inventory=JSONArray()
@@ -153,7 +157,7 @@ class AcceptanceDeliveryAuditTest {
             File(destination,"manifest.local.json").writeText(manifest.toString(2))
             val entries=manifest.getJSONArray("files")
             for(i in 0 until entries.length()) {val e=entries.getJSONObject(i);File(File(prepared.batch.manifestPath).parentFile,e.getString("localFile")).copyTo(File(destination,e.getString("localFile")),true)}
-            // Demonstrate whether the current ACK validator accepts a receipt for the wrong path.
+            // A receipt for the wrong path must never confirm delivery.
             db.inventoryDao().deliveryStatus(prepared.batch.id,"QUEUED",null)
             val transport=object:DeliveryTransport {
                 override fun supportsDelivery()=true
@@ -164,8 +168,9 @@ class AcceptanceDeliveryAuditTest {
             DeliverySync.sync(db,prepared.batch.id,transport)
             val observed=db.inventoryDao().delivery(prepared.batch.id)!!.status
             File(root,"wrong-path-ack.json").writeText(JSONObject().put("syntheticContractProbe",true).put("observedStatus",observed)
-                .put("acceptance","FAIL").put("reason","Receipt has wrong logicalPath/pathVersion; server is synthetic, no real upload").toString(2))
-            assertEquals("Current implementation behavior, not acceptance approval","SYNCED",observed)
+                .put("acceptance",if(observed=="BLOCKED")"PASS_LOCAL_REJECTED_WRONG_PATH" else "FAIL")
+                .put("reason","Receipt has wrong logicalPath/pathVersion; server is synthetic, no real upload").toString(2))
+            assertEquals("A wrong-path ACK cannot confirm delivery","BLOCKED",observed)
             val other=fixtures.first().record.copy(id="audit-route2",routeCode="PE-3N")
             db.inventoryDao().insertRecord(other)
             db.inventoryDao().insertSic17(fixtures.first().sic17!!.copy(recordId=other.id))
@@ -218,8 +223,7 @@ class AcceptanceDeliveryAuditTest {
             val pvPhoto=PavementDamagePhotoEntity("photo-$id",damage.id,original.absolutePath,1791580800000)
             db.pavementDao().savePhoto(pvPhoto)
             val photos=mapOf(damage.id to listOf(pvPhoto))
-            val native=PavementDriveUploader::class.java.getDeclaredMethod("nativeJson",PavementSampleEntity::class.java,List::class.java,PavementResult::class.java,Map::class.java).apply{isAccessible=true}
-                .invoke(PavementDriveUploader,sample,listOf(damage),result,photos) as JSONObject
+            val native=PavementDriveUploader.nativeJson(sample,listOf(damage),result,photos)
             File(dir,"M_001.json").writeText(native.toString(2))
             val pdfError=runCatching{File(dir,"HC_001.pdf").outputStream().use{PavementPdf.write(it,data,photos)}}.exceptionOrNull()?.javaClass?.simpleName
             File(dir,"calculation.json").writeText(PavementResultJson.encode(result))
@@ -236,13 +240,14 @@ class AcceptanceDeliveryAuditTest {
         }}finally{db.close()}
     }
 
-    @Test fun importedPngBytesRemainPngUnderJpegDeliveryName()=runBlocking {
+    @Test fun importedPngIsDeliveredAsRealJpegWithoutChangingOriginal()=runBlocking {
         val db=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
         try {
             val dir=folder("photo-png-contract-probe")
             val imported=File(dir,"imported-as-jpg.jpg")
             val bitmap=Bitmap.createBitmap(80,60,Bitmap.Config.ARGB_8888).apply{eraseColor(Color.BLUE)}
             imported.outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)};bitmap.recycle()
+            val originalBytes=imported.readBytes()
             val record=testRecord("audit-png",sic="SIC-18").copy(assetType="CULVERT")
             db.inventoryDao().insertRecord(record)
             db.inventoryDao().insertSic18(Sic18Entity(record.id,"06","1",1,"1",1.0,null,"1","1"))
@@ -252,10 +257,15 @@ class AcceptanceDeliveryAuditTest {
             val entry=(0 until entries.length()).map{entries.getJSONObject(it)}.single{it.getJSONObject("payload").getString("kind")=="photo"}
             val payload=entry.getJSONObject("payload");val source=File(File(prepared.batch.manifestPath).parentFile,entry.getString("localFile"))
             val delivered=File(dir,payload.getString("fileName"));source.copyTo(delivered,true)
-            assertArrayEquals(imported.readBytes(),delivered.readBytes())
-            assertEquals(0x89,delivered.readBytes().first().toInt() and 255)
-            File(dir,"contract-probe.json").writeText(JSONObject().put("status","FAIL").put("mimeType",payload.getString("mimeType"))
-                .put("fileName",payload.getString("fileName")).put("decodedBytes","PNG").put("realUpload","NO PROBADO").toString(2))
+            assertArrayEquals(originalBytes,imported.readBytes())
+            assertEquals(0xff,delivered.readBytes().first().toInt() and 255)
+            val decoded=BitmapFactory.Options().apply {inJustDecodeBounds=true}
+            BitmapFactory.decodeFile(delivered.path,decoded)
+            assertEquals("image/jpeg",decoded.outMimeType)
+            assertEquals(80,decoded.outWidth);assertEquals(60,decoded.outHeight)
+            assertEquals("image/jpeg",payload.getString("mimeType"))
+            File(dir,"contract-probe.json").writeText(JSONObject().put("status","PASS_LOCAL_JPEG").put("mimeType",payload.getString("mimeType"))
+                .put("fileName",payload.getString("fileName")).put("decodedBytes","JPEG").put("realUpload","NO PROBADO").toString(2))
         }finally{db.close()}
     }
 }

@@ -108,7 +108,7 @@ class Sic0809CaptureTest {
     }
     @Test fun officialWorkbooksKeepExactColumnsAndObservationsUseCompanionWithNullMetadata()=runBlocking {
         val db=database();try {
-            val root=File(System.getProperty("user.dir"));val out=File(if(File(root,"app").exists())root else root.parentFile,"docs/sic08-sic09-fix-2026-10-11/exports").apply {mkdirs()}
+            val out=File("build/outputs/cierre-1.4.5/sic08-sic09/exports").apply {mkdirs()}
             val comparison=JSONObject()
             for(f in listOf(SicFieldFormat.SIC08,SicFieldFormat.SIC09)) {
                 val repo=SicFieldRepository(db);repo.save(f.code,fajaState(f),"engineer",true)
@@ -118,7 +118,18 @@ class Sic0809CaptureTest {
                 val after=ByteArrayOutputStream().also {SicExcelWriter.write(it,db.inventoryDao().recordsForExport(f.code,null),format,ExportHeading())}.toByteArray()
                 // ZIP timestamp may differ; compare every actual workbook part.
                 fun parts(bytes:ByteArray)=java.util.zip.ZipInputStream(bytes.inputStream()).use {zip->buildMap<String,String> {while(true) {val e=zip.nextEntry ?: break;put(e.name,zip.readBytes().toString(Charsets.UTF_8))}}}
-                assertEquals(parts(before),parts(after));assertEquals(10,format.columns.size)
+                assertEquals(10,format.columns.size) // Contractual columns are unchanged.
+                val beforeParts=parts(before);val afterParts=parts(after)
+                assertEquals(beforeParts.keys,afterParts.keys)
+                beforeParts.filterKeys {it!="xl/worksheets/sheet1.xml"}.forEach {(path,xml)->assertEquals(path,xml,afterParts[path])}
+                val oldBook=com.tuempresa.inventariovial.scap.export.TemplateWorkbook(before.inputStream())
+                val newBook=com.tuempresa.inventariovial.scap.export.TemplateWorkbook(after.inputStream())
+                val notesCell=('A'+format.columns.size).toString()+"14" // Both verified contracts have ten columns.
+                assertEquals("Línea 1\nLínea 2 <&>",newBook.cell(1,notesCell).textContent)
+                // Only this element's notes may change; compare the entire remaining sheet.
+                oldBook.cell(1,notesCell).let {it.parentNode.removeChild(it)}
+                newBook.cell(1,notesCell).let {it.parentNode.removeChild(it)}
+                assertTrue(oldBook.sheet(1).isEqualNode(newBook.sheet(1)))
                 File(out,"${f.code}_antes.xlsx").writeBytes(before);File(out,"${f.code}_despues.xlsx").writeBytes(after)
                 val generated=ElementExports.prepare(context,db,f.code,ExportHeading())
                 assertEquals(setOf(f.code,"OBSERVACIONES"),generated.map {it.fileType}.toSet())
@@ -126,7 +137,7 @@ class Sic0809CaptureTest {
                 val html=generated.single {it.fileType=="OBSERVACIONES"}
                 assertTrue(File(html.localPath).readText().contains("Línea 1\nLínea 2 &lt;&amp;&gt;"))
                 File(html.localPath).copyTo(File(out,"${f.code}_observaciones.html"),overwrite=true)
-                comparison.put(f.code,JSONObject().put("columnas",format.columns.map {it.label}).put("partesXlsxIdenticas",true).put("observaciones","HTML complementario y metadata JSON"))
+                comparison.put(f.code,JSONObject().put("columnasContractuales",format.columns.map {it.label}).put("restoXlsxIdentico",true).put("observaciones","Columna adicional de texto; HTML y metadata conservados"))
                 val snapshot=db.inventoryDao().snapshot(f.code)!!
                 val folder=DrivePathPlanner.plan(listOf(RouteDelivery.row(snapshot)),com.tuempresa.inventariovial.road.ChainageCalculator()).folders.single()
                 val metadata=DeliveryMetadata.element(folder,emptyList())
@@ -154,6 +165,7 @@ class Sic0809CaptureTest {
         val schema=JSONObject(File("schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/16.json").readText()).getJSONObject("database")
         val old=android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(context.getDatabasePath(name).also {it.parentFile!!.mkdirs()},null)
         val before=mutableMapOf<String,List<String>>()
+        val historicalColumns=mutableMapOf<String,List<String>>()
         try {
             val entities=schema.getJSONArray("entities")
             for(i in 0 until entities.length()) {
@@ -207,17 +219,23 @@ class Sic0809CaptureTest {
             }
             for(i in 0 until entities.length()) {
                 val table=entities.getJSONObject(i).getString("tableName")
-                before[table]=old.rawQuery("SELECT * FROM `$table` ORDER BY 1",null).use {c->buildList {while(c.moveToNext())add((0 until c.columnCount).joinToString("|") {c.getString(it).orEmpty()})}}
+                before[table]=old.rawQuery("SELECT * FROM `$table` ORDER BY 1",null).use {c->
+                    historicalColumns[table]=c.columnNames.toList()
+                    buildList {while(c.moveToNext())add((0 until c.columnCount).joinToString("|") {c.getString(it).orEmpty()})}
+                }
             }
             old.version=16
         } finally {old.close()}
-        val upgraded=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_16_17,InventoryDatabase.MIGRATION_17_18).build()
+        val upgraded=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(*allInventoryMigrations()).build()
         try {
             val connection=upgraded.openHelper.writableDatabase // Full Room schema validation.
-            before.forEach {(table,expected)->connection.query("SELECT * FROM `$table` ORDER BY 1").use {c->
+            before.forEach {(table,expected)->connection.query("SELECT ${historicalColumns.getValue(table).joinToString {"`$it`"}} FROM `$table` ORDER BY 1").use {c->
                 val actual=buildList {while(c.moveToNext())add((0 until c.columnCount).joinToString("|") {c.getString(it).orEmpty()})}
                 assertEquals(table,expected,actual)
             }}
+            connection.query("SELECT retiredAt,replacedByPhotoId FROM pavement_damage_photos").use {c->
+                while(c.moveToNext()) {assertTrue(c.isNull(0));assertTrue(c.isNull(1))}
+            }
             connection.query("PRAGMA foreign_key_check").use {assertEquals(0,it.count)}
             SicFieldRepository(upgraded).save("new",fajaState(SicFieldFormat.SIC08),"engineer",true)
             assertNull(upgraded.inventoryDao().recordById("new")!!.latitude)

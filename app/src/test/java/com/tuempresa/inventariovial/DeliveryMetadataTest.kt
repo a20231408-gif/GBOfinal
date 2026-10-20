@@ -18,11 +18,11 @@ class DeliveryMetadataTest {
         val c = item("C", 20000.0, 3, listOf(photo("p4", "C", 1)))
         val d = item("D", 17000.0, 4, listOf(photo("p5", "D", 1)))
         val plan = DrivePathPlanner.plan(listOf(c, b, d, a))
-        assertEquals(listOf("A", "B", "D", "C"), plan.folders.map { it.asset.recordId })
-        assertEquals(listOf("ALC-1", "ALC-2", "ALC-3", "ALC-4"), plan.folders.map { it.asset.shortCode })
-        assertEquals(listOf("PE-22A/SIB-02/ALCANTARILLA 1/001_F01.jpg", "PE-22A/SIB-02/ALCANTARILLA 1/002_F02.jpg",
-            "PE-22A/SIB-02/ALCANTARILLA 2/003_F01.jpg"), plan.folders.take(2).flatMap { it.photos }.map { it.plannedPath })
-        assertEquals(listOf(1, 2, 3, 4, 5), plan.folders.flatMap { it.photos }.map { it.deliveryPhotoSequence })
+        assertEquals(listOf("A", "B", "C", "D"), plan.folders.map { it.asset.recordId })
+        assertEquals(listOf("ALC-A", "ALC-B", "ALC-C", "ALC-D"), plan.folders.map { it.asset.shortCode })
+        assertEquals(listOf("PE-22A/ALCANTARILLAS/ALCANTARILLA UUID_A/GENERAL/001_F01.jpg", "PE-22A/ALCANTARILLAS/ALCANTARILLA UUID_A/GENERAL/002_F02.jpg",
+            "PE-22A/ALCANTARILLAS/ALCANTARILLA UUID_B/GENERAL/003_F01.jpg"), plan.folders.take(2).flatMap { it.photos }.map { it.plannedPath })
+        assertEquals(listOf(1, 2, 3, 5, 4), plan.folders.flatMap { it.photos }.map { it.deliveryPhotoSequence })
         assertEquals("C", c.photos.single().recordId); assertEquals(1, c.photos.single().photoIndex)
         assertEquals(3L, c.record.createdAt)
     }

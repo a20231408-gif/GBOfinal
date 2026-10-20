@@ -10,13 +10,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
+import com.tuempresa.inventariovial.diagnostics.SyncPerformance
 
 object AutomaticSync {
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
     /** Called in the same Room transaction as validation. No HTTP/config dependency. */
     suspend fun request(db:InventoryDatabase,kind:String,id:String,revision:Long,warnings:Boolean=false,origin:String="AUTOMATIC") {
         val key="$kind/$id";val dao=db.automaticSyncDao();val old=dao.get(key)
-        if(old!=null && old.revision==revision && old.state in setOf("SYNCED","QUEUED","UPLOADING"))return
+        com.tuempresa.inventariovial.localfiles.LocalCopies.onClosed(db,kind,id,revision,origin)
+        if(old==null && com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,key))return
+        if(old!=null && old.revision==revision && old.state!="DRAFT")return
         val next=maxOf(revision,(old?.revision ?: 0)+1)
         dao.put(DriveSyncIntent(key,kind,id,next,old?.syncedRevision ?: 0,
             if((old?.syncedRevision ?: 0)>0) "UPDATE_PENDING" else "QUEUED",origin,warnings,
@@ -43,6 +46,16 @@ object AutomaticSync {
         count
     }
     /** Persistent drain also repairs an interruption between the Room commit and WorkManager enqueue. */
+    suspend fun recoverBusyBlocked(db:InventoryDatabase):Int=db.withTransaction {
+        var count=0
+        for(old in db.automaticSyncDao().all()) {
+            if(old.state!="BLOCKED" || old.error?.contains("(BUSY)")!=true || old.syncedRevision>=old.revision || !AutomaticDelivery.validated(db,old))continue
+            db.automaticSyncDao().put(old.copy(state="ERROR",error="Servidor ocupado (BUSY). Esperando para reintentar; la evidencia local se conserva."))
+            count++
+        }
+        count
+    }
+
     suspend fun recoverJpegBlocked(context:Context,db:InventoryDatabase):Int=db.withTransaction {
         var count=0
         for(old in db.automaticSyncDao().all()) {
@@ -62,6 +75,7 @@ object AutomaticSync {
         val c=context.applicationContext
         scope.launch {
             recoverGpsBlocked(InventoryDatabase.getInstance(c))
+            recoverBusyBlocked(InventoryDatabase.getInstance(c))
             recoverJpegBlocked(c,InventoryDatabase.getInstance(c))
             // Periodic work is a recovery mechanism; the immediate work handles ordinary closure.
             val periodic=PeriodicWorkRequestBuilder<AutomaticSyncWorker>(15,TimeUnit.MINUTES)
@@ -73,8 +87,9 @@ object AutomaticSync {
     fun enqueue(context:Context) {
         val job=OneTimeWorkRequestBuilder<AutomaticSyncWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .setInitialDelay(kotlin.random.Random.nextLong(1000,5001),TimeUnit.MILLISECONDS)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL,30,TimeUnit.SECONDS).build()
-        WorkManager.getInstance(context).enqueueUniqueWork("automatic-drive-drain",ExistingWorkPolicy.APPEND_OR_REPLACE,job)
+        WorkManager.getInstance(context).enqueueUniqueWork("automatic-drive-drain",ExistingWorkPolicy.KEEP,job)
     }
     suspend fun retry(context:Context,key:String) {
         val db=InventoryDatabase.getInstance(context)
@@ -82,6 +97,7 @@ object AutomaticSync {
             val old=db.automaticSyncDao().get(key) ?: return@withTransaction
             require(old.state!="CONFLICT") {"Conflicto de revisiones: conserva la edición local y concilia con el responsable antes de reenviar."}
             require(old.state!="DRAFT") {"Valida primero la ficha."}
+            if(old.state in setOf("SYNCED","QUEUED","UPDATE_PENDING","UPLOADING"))return@withTransaction
             if(old.state=="BLOCKED" && old.error?.contains("(NOT_JPEG)")==true) {
                 recoverJpegBlocked(context,db)
             } else db.automaticSyncDao().put(old.copy(state="QUEUED",error=null,attempts=0,origin="MANUAL_APP"))
@@ -90,6 +106,7 @@ object AutomaticSync {
     }
     suspend fun manual(context:Context,kind:String,id:String,warnings:Boolean=false) {
         val db=InventoryDatabase.getInstance(context)
+        require(!com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,"$kind/$id")) {"Solo dispositivo: el administrador debe autorizar primero el envío a Drive."}
         val existing=db.automaticSyncDao().get("$kind/$id")
         val revision=when(kind) {
             "SIC"->requireNotNull(db.inventoryDao().recordById(id)).let {require(it.status=="ACTIVE") {"Valida primero la ficha."};it.updatedAt}
@@ -106,7 +123,11 @@ class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWork
     override suspend fun doWork():Result=withContext(Dispatchers.IO) {
         val retry=AutomaticSyncDrain.run(applicationContext,InventoryDatabase.getInstance(applicationContext),attempt=runAttemptCount,
             onProgress={key,revision,_->setProgressAsync(workDataOf("activeKey" to key,"activeRevision" to revision)).get()})
-        if(retry)Result.retry() else Result.success()
+        if(retry) {
+            // WorkManager supplies exponential backoff; jitter prevents tablets retrying in lockstep.
+            delay(kotlin.random.Random.nextLong(1000,5001))
+            Result.retry()
+        } else Result.success()
     }
 }
 
@@ -124,21 +145,32 @@ object AutomaticSyncDrain {
         configurationError:String?=DriveUploadPolicy.configurationError(),attempt:Int=0,
         onProgress:(String,Long,DeliveryProgress)->Unit):Boolean {
         AutomaticSync.recoverGpsBlocked(db)
+        AutomaticSync.recoverBusyBlocked(db)
         AutomaticSync.recoverJpegBlocked(context,db)
         val dao=db.automaticSyncDao()
         var retry=false
+        val drainStart=SyncPerformance.now()
+        // One transport/capability negotiation per drain; progress and metrics are rebound per record.
+        val sharedTransport by lazy(transportFactory)
         val pending=dao.all().filter {it.state in setOf("QUEUED","UPDATE_PENDING","UPLOADING","ERROR","UNCONFIGURED","PENDING_VALIDATION") && AutomaticDelivery.validated(db,it)}
         val ordered=pending.map {it to AutomaticDelivery.order(context,db,it)}.sortedWith(compareBy({it.second.first},{it.second.second},{it.first.key})).map {it.first}
         for(queued in ordered) {
+            val deliveryStart=SyncPerformance.now();var deliveryOutcome="UNCONFIRMED"
             var intent=dao.get(queued.key) ?: continue
             if(intent.state=="CONFLICT" || !AutomaticDelivery.validated(db,intent))continue
             if(configurationError!=null) {dao.state(intent.key,intent.revision,"UNCONFIGURED",configurationError);continue}
             var last=DeliveryProgress("PREPARING")
             fun progress(p:DeliveryProgress) {last=p;SyncProgressStore.get(context).record(intent.key,intent.revision,p);onProgress(intent.key,intent.revision,p)}
+            suspend fun <T> measured(phase:String,block:suspend ()->T):T {
+                val start=SyncPerformance.now();var outcome="OK"
+                try{return block()}catch(e:Exception){outcome=if(e is SyncRejection && e.code=="BUSY")"BUSY" else "UNCONFIRMED";throw e}
+                finally{SyncPerformance.record(context,intent.kind,phase,SyncPerformance.now()-start,outcome=outcome)}
+            }
             try {
                 progress(last)
-                val transport=transportFactory()
+                val transport=sharedTransport
                 transport.progress(::progress)
+                transport.performance {phase,elapsed,bytes,outcome->SyncPerformance.record(context,intent.kind,phase,elapsed,bytes,outcome)}
                 if(!transport.supportsV3()) {dao.state(intent.key,intent.revision,"UNCONFIGURED","El servicio requiere syncProtocol 3. Se comprobará automáticamente de nuevo; la copia anterior se conserva.");continue}
                 if(!transport.supportsFamilyPaths()) {
                     dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend requiere pathVersion 4, stableFamilyNumbering=true y photoCategoryVersion=1. No se envió contenido; la cola se conserva.")
@@ -161,12 +193,13 @@ object AutomaticSyncDrain {
                 val cached=java.io.File(context.filesDir,"automatic_drive/${com.tuempresa.inventariovial.delivery.sha256(intent.key.toByteArray())}/${intent.revision}/prepared-path4.json")
                 if(com.tuempresa.inventariovial.BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED && intent.preparedJson==null && !cached.isFile) {
                     if(!transport.supportsReadablePhotoNames())throw SyncPending("Nombres representativos pendientes de activar readablePhotoNamingVersion=2 en Apps Script.")
-                    val preview=AutomaticDelivery.prepare(context,db,intent,readable=false,persist=false)
-                    val reservation=transport.reservePhotoNames(preview)
-                    if(!reservation.optBoolean("ok"))throw SyncRejection(reservation.optString("code"),reservation.optBoolean("retryable"))
+                    val preview=measured("PREPARE"){AutomaticDelivery.namingPreview(context,db,intent)}
+                    val reservation=measured("RESERVE"){
+                        transport.reservePhotoNames(preview).also {ack->if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))}
+                    }
                     ReadablePhotoNames.remember(context,preview,reservation)
                 }
-                val prepared=AutomaticDelivery.prepare(context,db,intent)
+                val prepared=measured("PREPARE"){AutomaticDelivery.prepare(context,db,intent)}
                 dao.prepared(intent.key,intent.revision,prepared.toString())
                 if(prepared.optInt("technicalDeliveryVersion")==1 && !transport.supportsTechnicalDeliveryWithoutGps()) {
                     dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend de Drive debe anunciar technicalDeliveryWithoutGps=true. Ficha y fotos conservadas; se comprobará automáticamente de nuevo.")
@@ -179,7 +212,11 @@ object AutomaticSyncDrain {
                 }
                 val ack=transport.post(prepared)
                 if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"),ack.optLong("remoteRevision").takeIf {it>0})
-                if(!AutomaticDelivery.validAck(prepared,ack,intent.receiptJson?.let(::JSONObject)))throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
+                val ackStart=SyncPerformance.now()
+                if(!AutomaticDelivery.validAck(prepared,ack,intent.receiptJson?.let(::JSONObject))) {
+                    SyncPerformance.record(context,intent.kind,"ACK",SyncPerformance.now()-ackStart,outcome="UNCONFIRMED")
+                    throw java.io.IOException("La confirmación no acredita todos los archivos, carpeta y revisión.")
+                }
                 db.withTransaction {
                     val matches=AutomaticDelivery.current(db,intent,prepared)
                     DriveInventorySchema.remember(context,prepared,ack)
@@ -204,37 +241,52 @@ object AutomaticSyncDrain {
                         dao.state(intent.key,intent.revision,"PENDING_VALIDATION","La entrega anterior está confirmada; guarda y valida los cambios locales para enviar otra revisión.")
                     }
                 }
+                SyncPerformance.record(context,intent.kind,"ACK",SyncPerformance.now()-ackStart)
+                deliveryOutcome="OK"
                 progress(DeliveryProgress("COMPLETE",prepared.getJSONArray("files").length(),prepared.getJSONArray("files").length()))
             com.tuempresa.inventariovial.media.VideoSync.enqueue(context)
             }catch(e:CancellationException){
+                deliveryOutcome="CANCELLED"
                 withContext(NonCancellable) {dao.state(intent.key,intent.revision,"ERROR","Envío interrumpido por Android; confirmación pendiente. Se reintentará el mismo snapshot.")}
                 throw e
             }
             catch(e:SyncPending){dao.state(intent.key,intent.revision,"PENDING_VALIDATION",e.message)}
             catch(e:SyncRejection){
+                deliveryOutcome=if(e.code=="BUSY")"BUSY" else "REJECTED"
                 val pending=e.code=="ORDERING_REQUIRED"
                 val conflict=e.code in setOf("REVISION_CONFLICT","STALE_REVISION","BASE_REVISION_CONFLICT")
-                val state=if(conflict) "CONFLICT" else if(pending)"PENDING_VALIDATION" else if(e.retryable)"ERROR" else "BLOCKED"
-                val message=if(conflict) "Conflicto de revisiones (${e.code}; base ${intent.syncedRevision}; remota ${e.remoteRevision ?: "no informada"}). Edición local conservada; no se sobrescribió el servidor. Requiere conciliación antes de reenviar." else if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva."
+                val transient=e.retryable || e.code=="BUSY"
+                val state=if(conflict) "CONFLICT" else if(pending)"PENDING_VALIDATION" else if(transient)"ERROR" else "BLOCKED"
+                val message=if(conflict) "Conflicto de revisiones (${e.code}; base ${intent.syncedRevision}; remota ${e.remoteRevision ?: "no informada"}). Edición local conservada; no se sobrescribió el servidor. Requiere conciliación antes de reenviar." else if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else if(e.code=="BUSY")"Servidor ocupado (BUSY). Esperando para reintentar; la ficha y sus fotografías se conservan." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva."
                 if(conflict)db.withTransaction {
                     val latest=dao.get(intent.key)
                     if(latest!=null && latest.syncedRevision==intent.syncedRevision)dao.state(latest.key,latest.revision,state,message)
                 }else dao.state(intent.key,intent.revision,state,message)
-                retry=retry || e.retryable && attempt<4
+                retry=retry || transient && attempt<4
+                // BUSY is global: do not make every queued record wait for the same occupied lock.
+                if(e.code=="BUSY")break
+            }catch(_:SyncCommunicationFailure) {
+                deliveryOutcome="RETRY"
+                dao.state(intent.key,intent.revision,"ERROR","Conexión interrumpida. Esperando para reintentar; archivos y confirmaciones anteriores conservados.")
+                retry=retry || attempt<4
+                break
             }catch(_:IllegalArgumentException){
                 dao.state(intent.key,intent.revision,"BLOCKED","La ficha o los archivos requieren corrección antes de enviar. Revisa la validación del formato.")
             }catch(_:Exception){
                 dao.state(intent.key,intent.revision,"ERROR","No se confirmó la entrega. Archivos locales conservados; reintenta la comunicación.")
                 retry=retry || attempt<4
             } finally {
+                SyncPerformance.record(context,intent.kind,"DELIVERY",SyncPerformance.now()-deliveryStart,outcome=deliveryOutcome)
                 // A stopped WorkManager worker may reject progress; preserve its cancellation.
                 runCatching {onProgress("",0,last)}
             }
         }
         // An edit validated during this drain must not wait for the 15-minute recovery job.
-        if(dao.all().any {it.state in setOf("QUEUED","UPDATE_PENDING") && AutomaticDelivery.validated(db,it)})retry=true
+        if(dao.all().any {i->i.state in setOf("QUEUED","UPDATE_PENDING") && AutomaticDelivery.validated(db,i) && ordered.none {it.key==i.key && it.revision==i.revision}})retry=true
+        SyncPerformance.record(context,"ALL","DRAIN",SyncPerformance.now()-drainStart,outcome=if(retry)"RETRY" else "OK")
         return retry
     }
 }
 class SyncPending(message:String):Exception(message)
 class SyncRejection(val code:String,val retryable:Boolean,val remoteRevision:Long?=null):Exception(code)
+class SyncCommunicationFailure(cause:java.io.IOException):java.io.IOException("No se confirmó la comunicación con el servidor.",cause)

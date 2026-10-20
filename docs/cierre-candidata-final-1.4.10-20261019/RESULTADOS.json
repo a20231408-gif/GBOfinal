@@ -1,0 +1,583 @@
+{
+  "path": "D:\\Downloads\\GBO_PRUEBAS_8B\\output\\GBO_RUTA_CLARA_CANDIDATA_FINAL_1.4.10_24_20261019\\GBO_Ruta_Clara_1.4.10_24_FINAL_CANDIDATA.apk",
+  "package": "com.tuempresa.inventariovial",
+  "versionName": "1.4.10",
+  "versionCode": 24,
+  "minSdk": "26",
+  "targetSdk": "37",
+  "certificateSha256": [
+    "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+  ],
+  "signatureSchemes": {
+    "v3": true,
+    "v1": false,
+    "v3.1": false,
+    "v2": true,
+    "v4": false
+  },
+  "verified": true,
+  "zipAligned": true,
+  "pageAligned16KiB": true,
+  "isSplit": false,
+  "isTest": false,
+  "debuggable": false,
+  "bytes": 26388753,
+  "apkSha256": "b1e57c250153703548a44f45ff32de1713547deef5786bf18421d81a66c8fae0",
+  "status": "CANDIDATA_PARA_VALIDACION_FISICA",
+  "fieldApproved": false,
+  "signatureMatchesLocal149": true,
+  "installedSignatureChecked": false,
+  "privateConfigurationUnchanged": true,
+  "effectiveConfigurationFieldsUnchanged": 15,
+  "oldApksPreserved": 10,
+  "schemaVersion": 20,
+  "schemaIdentityMatchesLocal149": true,
+  "nativePdfDocumentPresent": true,
+  "syntheticPdfAdapterInApk": false,
+  "gboValidationBuild": false,
+  "installed": false,
+  "distributed": false,
+  "googleUploads": false,
+  "serversModified": false,
+  "commitOrPush": false,
+  "sourceChangesThisStage": [
+    "app\\src\\main\\java\\com\\tuempresa\\inventariovial\\pavement\\PavementRigidPdfScheme.kt",
+    "app\\src\\main\\java\\com\\tuempresa\\inventariovial\\pavement\\ui\\PavementScheme.kt",
+    "app\\src\\test\\java\\com\\tuempresa\\inventariovial\\HotfixBusy146Test.kt",
+    "app\\src\\test\\java\\com\\tuempresa\\inventariovial\\SyncRecovery10DTest.kt"
+  ],
+  "build": {
+    "mode": "release",
+    "exitCode": 0,
+    "seconds": 1013.44,
+    "validationBuild": false,
+    "configurationCache": false,
+    "offline": true
+  },
+  "sourceFilesAddedThisStage": [
+    "app/src/test/java/com/tuempresa/inventariovial/PavementShoulderVisibility24Test.kt",
+    "app/src/test/java/com/tuempresa/inventariovial/ReleasePhotoV2Fixture.kt"
+  ],
+  "initialHarnessFailuresResolved": 4,
+  "firstTestFilterCorrected": true,
+  "sic20ReleaseMappingPreservesDraftFields": true,
+  "sic20DeclaredFieldNamesMatchLocal149": true,
+  "sic20DeclaredFieldCount": 9,
+  "tests": {
+    "uniquePassed": 83,
+    "failedFinal": 0,
+    "skipped": 0,
+    "physicalAndroidExecuted": false,
+    "googleExecuted": false,
+    "stages": [
+      {
+        "stage": "test",
+        "cases": 27
+      },
+      {
+        "stage": "final",
+        "cases": 56
+      }
+    ],
+    "cases": [
+      {
+        "class": "com.tuempresa.inventariovial.PavementJointFlow20261019Test",
+        "name": "oneConfirmationValidatesAndPersistsGlobalAndMarksAtomicallyWithSameUuid",
+        "seconds": 25.394,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementJointPreviewUiTest",
+        "name": "selecting26StartsPreviewDirectlyAndUndoCancelNeverCreateARecord",
+        "seconds": 21.223,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementLegacyPdfFocusedTest",
+        "name": "existingDenseReportAndSurfaceRecipes",
+        "seconds": 33.147,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementLegacyPdfFocusedTest",
+        "name": "existingSharedBoundaryAssignment",
+        "seconds": 0.468,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementLegacyPdfFocusedTest",
+        "name": "existingMeasuredSlabExcelAndPdf",
+        "seconds": 1.068,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementLegacyPdfFocusedTest",
+        "name": "existingAsphaltReportAndExcel",
+        "seconds": 0.771,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "diskCloseReopenKeepsRawCornerGlobalMarksUuidAndOutboxRevision",
+        "seconds": 3.464,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "allCornersBothTouchOrdersSquareAndRectangular",
+        "seconds": 0.23,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "annotationVersionGridReviewAndSicSupplementPreservation",
+        "seconds": 0.188,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "mandatoryTenMetreExampleAndInvalidEdges",
+        "seconds": 0.181,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "jointHitsSegmentsAndNodesWithNoInventedLongSections",
+        "seconds": 0.103,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "sharedDrawingAndPdfWithAndWithoutMarksAndMultipleSegments",
+        "seconds": 0.974,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "pciAndExcelUnchangedWhileNativeJsonCarriesOpaqueVisualMetadata",
+        "seconds": 0.28,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "historicalCornerWithoutCoordinatesNeverInventsACrack",
+        "seconds": 0.309,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementRigid147Test",
+        "name": "severalSlabsBoundaryAmbiguityAndViewportRoundTrip",
+        "seconds": 0.127,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "crossSectionDamageKeepsSameIdentityAndJointSelectionKeepsGlobalMeasurement",
+        "seconds": 0.655,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "quarterTurnKeepsOriginAxesAndCoordinatesWithoutInversion",
+        "seconds": 0.132,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "dCracksFormOpenBranchedFanConnectedToBothAdjacentEdges",
+        "seconds": 0.174,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "patchesKeepRecordedInteriorAndEdgeExtentAndDifferentAspectRatios",
+        "seconds": 0.099,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "codeMappingAndCatalogRemainDistinct",
+        "seconds": 0.155,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "sectionChainageSupportsBothDirectionsAndDoesNotInventAnInconsistentProjection",
+        "seconds": 0.107,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "historicalNoCoordinatesStaysUnlocalizedAndRetainsIds",
+        "seconds": 0.115,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "skinnyHistoricalPatchCannotGenerateUnboundedHatching",
+        "seconds": 0.145,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "smallPatchActualAreaStaysSmallWithoutChangingQuantityOrSeverity",
+        "seconds": 0.272,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "interiorDDoesNotJumpToAnUnobservedJoint",
+        "seconds": 0.244,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualCorrectionsTest",
+        "name": "horizontalSegmentsFollowLongitudinalRowsAndNeverRestartSlabNumbers",
+        "seconds": 0.129,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementVisualExamplesTest",
+        "name": "actualSharedRendererShortLongAndMultiSectionExamples",
+        "seconds": 2.767,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.AutomaticDocuments149Test",
+        "name": "pendingRequestSurvivesReopenWithoutAProcessObserver",
+        "seconds": 0.504,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.AutomaticDocuments149Test",
+        "name": "interruptedLocalPublicationResumesWithoutDuplicatingMediaWhenDriveIsBusy",
+        "seconds": 25.247,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.AutomaticDocuments149Test",
+        "name": "videoChangeOutboxIsDurableIdempotentAndDoesNotAlterParentOrDrive",
+        "seconds": 6.492,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.AutomaticDocuments149Test",
+        "name": "nearbyEditsCoalesceWithoutDroppingPublishedRevisions",
+        "seconds": 0.162,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.HotfixBusy146Test",
+        "name": "busyOnAnUpdatePreservesPreviouslyVerifiedAck",
+        "seconds": 3.326,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.HotfixBusy146Test",
+        "name": "independentDeviceDatabasesKeepBothUuidsAfterServerWait",
+        "seconds": 6.969,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.HotfixBusy146Test",
+        "name": "boundedImmediateRetriesPreserveOutboxForPeriodicRecovery",
+        "seconds": 2.306,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.HotfixBusy146Test",
+        "name": "busyThenEditReplaysExactPredecessorAndConfirmsOnlyCurrentRevision",
+        "seconds": 3.159,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.HotfixPerformance146Test",
+        "name": "counts",
+        "seconds": 6.104,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "squarePatchTieIsDeterministicAndExplicitInteriorDoesNotMove",
+        "seconds": 0.121,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "d24AmbiguousInteriorZeroAxisMultipleSlabsAndHistoricalDataNeverInventACorner",
+        "seconds": 0.063,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "newRuleAndInteriorSelectionSurviveRealRoomCloseAndReopenWithSameUuid",
+        "seconds": 0.249,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "bothPatchCodesAnchorToParallelEdgesEvenWhenThePerpendicularEdgeIsCloser",
+        "seconds": 0.059,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "originalAxisGeometryMatchesActualCanvasAndRotatedPdfRendererByColorPixels",
+        "seconds": 5.624,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "oversizedAnchorIsReportedAndTransactionRollsBackWithoutChangingMeasurements",
+        "seconds": 0.188,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "historicalAnchorAndInteriorKeepTheirPreviousLocationAndMetadataOnReopen",
+        "seconds": 0.079,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "pdfLayoutAndCalloutRegressionsStayApprovedWithoutChangingTheirSource",
+        "seconds": 0.256,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementAxisAnchoringTest",
+        "name": "d24FourReflectionsPreserveMeasuredExtentsAndPointOrder",
+        "seconds": 0.085,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundary20261019Test",
+        "name": "stepAllFourSharedSidesArePerpendicularCenteredAndPointOrderIndependent",
+        "seconds": 0.092,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundary20261019Test",
+        "name": "canvasAndPdfUseSameRedSymbolForHorizontalAndVerticalJointsAndShoulders",
+        "seconds": 0.883,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundary20261019Test",
+        "name": "confirmationDoesNotChangePciExcelFieldsOrNativeDamageContractAndSegmentKeepsIdentity",
+        "seconds": 0.117,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundary20261019Test",
+        "name": "atomicChoicePersistsWithSameUuidPhotosQuantityAndOtherVisualMetadata",
+        "seconds": 0.231,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundary20261019Test",
+        "name": "intersectionRequiresChoiceAndOuterEdgeWithoutNeighborIsRejected",
+        "seconds": 0.072,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundary20261019Test",
+        "name": "shoulderNeedsExplicitExteriorChoiceForEitherLaneAndEitherChainageDirection",
+        "seconds": 0.072,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundaryUi20261019Test",
+        "name": "jointIntersectionShowsBothChoicesAndRequiresConfirmation",
+        "seconds": 13.438,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementBoundaryUi20261019Test",
+        "name": "shoulderCannotSaveUntilOperatorConfirmsTheActualExteriorAndCancelDoesNotSave",
+        "seconds": 1.089,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementDurabilityFanTest",
+        "name": "fanHasIrregularInclinedPathsConnectedBranchesAndDenserCornerSpacing",
+        "seconds": 0.105,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementDurabilityFanTest",
+        "name": "drawingDoesNotMutateCoordinatesPciExcelNativeJsonOrOtherAnnotations",
+        "seconds": 0.088,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementDurabilityFanTest",
+        "name": "explicitSlabAtSharedBoundaryDoesNotLeakOrSilentlyChooseAnotherSlab",
+        "seconds": 0.083,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementDurabilityFanTest",
+        "name": "rectangularSlabsHaveExactIndependentScalingAndFourReflections",
+        "seconds": 0.107,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementDurabilityFanTest",
+        "name": "allCornersAndProportionsMatchActualCanvasAndQuarterTurnPdfPixels",
+        "seconds": 4.072,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementDurabilityFanTest",
+        "name": "longSampleUsesSharedFanForSegmentClippingWithoutRenumbering",
+        "seconds": 0.111,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementFinalIntegrityTest",
+        "name": "patchModeDoesNotChangePciExcelOrMeasuredDamageAndKeepsOtherAnnotations",
+        "seconds": 6.012,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.PavementShoulderVisibility24Test",
+        "name": "bothExteriorTicksStayRedAboveFramesAndPdfLeadersAtUnchangedCoordinates",
+        "seconds": 0.357,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20FormRecoveryUiTest",
+        "name": "switchingMultipleWallAndFordDraftsDoesNotReuseTheOtherFormState",
+        "seconds": 10.209,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20FormRecoveryUiTest",
+        "name": "wallDraftKeepsCorrectFormUnsavedObservationAndUuidAfterActivityRecreation",
+        "seconds": 3.961,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Recovery20261019Test",
+        "name": "conflictBetweenRoomAndRawClassBlocksBeforeWritingAndKeepsAllEvidence",
+        "seconds": 12.729,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Recovery20261019Test",
+        "name": "wallAndFordDraftsCloseReopenEditFinalizeAndExportWithoutChangingUuidOrPhoto",
+        "seconds": 1.154,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Recovery20261019Test",
+        "name": "realViewModelFinalizationUsesNormalValidationWarningsAndPersistedPhotoForBothSubtypes",
+        "seconds": 3.872,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Recovery20261019Test",
+        "name": "snapshotWithWrongPersistedDetailIsRejectedWithoutConvertingIt",
+        "seconds": 0.16,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Recovery20261019Test",
+        "name": "aliasesAreEquivalentButDifferentSubtypesAndOtherSicRemainBlocked",
+        "seconds": 0.057,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "allOtherEditableSicFamiliesKeepOneRecordAndPhoto",
+        "seconds": 0.652,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "anotherSicCannotReuseTheSameUuid",
+        "seconds": 0.124,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "sic22DraftFinalizationKeepsPrimaryKeyGuard",
+        "seconds": 0.173,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "verticalDraftNeverReopensAsFord",
+        "seconds": 0.153,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "corruptRawFormCannotOverwriteEvidence",
+        "seconds": 0.181,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "historicalAndMeasuredWallLengthKeepTheirBehavior",
+        "seconds": 0.196,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "historicalTunnelSideIsNotMigratedSilently",
+        "seconds": 0.191,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "existingPhotosKeepUuidIndexAndAck",
+        "seconds": 0.167,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20Regression20261019Test",
+        "name": "wallAndTunnelLifecycleKeepTheirExport",
+        "seconds": 1.009,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.Sic20ScapRegression20261019Test",
+        "name": "independentScapDraftKeepsUuidMediaAndObservationsAfterOfflineReopen",
+        "seconds": 0.39,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "name": "lostFinalHttpAckReplaysCommitAndNeverRestagesVerifiedFiles",
+        "seconds": 25.598,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "name": "validAckConfirmsButIncompleteAckConservesSnapshot",
+        "seconds": 6.385,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "name": "editDuringDeliveryKeepsUuidAndUsesLateAckAsBaseOnly",
+        "seconds": 8.527,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "name": "inactiveUploadingNeverLooksActiveAndProgressUsesOnlyRealFileCounts",
+        "seconds": 0.159,
+        "status": "PASS"
+      },
+      {
+        "class": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "name": "cancelledWorkerClearsActiveStateAndRetainsExactPreparation",
+        "seconds": 4.476,
+        "status": "PASS"
+      }
+    ]
+  }
+}

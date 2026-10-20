@@ -1,0 +1,97 @@
+--- app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRigidPdfScheme.kt (respaldo)
++++ app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRigidPdfScheme.kt (candidata final)
+@@ -70,6 +70,10 @@
+                 paint.textSize=11f;text(label(ref.damage),x+9,badgeY+15);x+=w+4
+             }
+         }
++        // The outer frame and callout leaders must not hide the shoulder tick.
++        c.save();c.clipRect(left,top,left+width,bottom)
++        c.translate(left+((s.largoM-r.y0)*r.scale).toFloat(),top-(r.x0*r.scale).toFloat());c.rotate(90f)
++        PavementDrawing.drawShoulderMarkers(c,s,p.damages,scale);c.restore()
+         return bottom+65
+     }
+     private fun fmt(n:Double)=String.format(java.util.Locale.US,"%.2f",n).trimEnd('0').trimEnd('.')
+--- app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementScheme.kt (respaldo)
++++ app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementScheme.kt (candidata final)
+@@ -21,6 +21,17 @@
+ import kotlin.math.*
+ 
+ internal object PavementDrawing {
++    /** Repaint only the confirmed shoulder tick after frames/leaders, at its original coordinates. */
++    fun drawShoulderMarkers(c: NativeCanvas, s: PavementSampleEntity, damages: List<PavementDamageEntity>, scale: Float, highlightedDamageId: String? = null) {
++        if(s.surface!="RIGID")return
++        val transform=PavementScale(s.largoM,scale)
++        val paint=Paint(Paint.ANTI_ALIAS_FLAG).apply { color=Color.RED;style=Paint.Style.STROKE }
++        for(d in damages.filter{it.code==27 && it.geometry=="SLABS"}) {
++            val p=runCatching{PavementBoundaryGeometry.resolve(s,d)}.getOrNull() ?: continue
++            paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
++            c.drawLine((p.markerA.x*scale).toFloat(),transform.canvasY(p.markerA.y),(p.markerB.x*scale).toFloat(),transform.canvasY(p.markerB.y),paint)
++        }
++    }
+     fun draw(c: NativeCanvas, s: PavementSampleEntity, damages: List<PavementDamageEntity>, scale: Float, selected: Set<Int> = emptySet(), grid: Double = 1.0, highlightedDamageId: String? = null, labels: Boolean = true, slabLabels: Boolean = true) {
+         val w = s.anchoM.toFloat()*scale; val h = s.largoM.toFloat()*scale
+         val transform = PavementScale(s.largoM, scale)
+@@ -100,8 +111,10 @@
+                 if(projection!=null) {
+                     paint.color=Color.RED;paint.strokeWidth=1f
+                     c.drawLine((projection.a.x*scale).toFloat(),transform.canvasY(projection.a.y),(projection.b.x*scale).toFloat(),transform.canvasY(projection.b.y),paint)
+-                    paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
+-                    c.drawLine((projection.markerA.x*scale).toFloat(),transform.canvasY(projection.markerA.y),(projection.markerB.x*scale).toFloat(),transform.canvasY(projection.markerB.y),paint)
++                    if(d.code==25) {
++                        paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
++                        c.drawLine((projection.markerA.x*scale).toFloat(),transform.canvasY(projection.markerA.y),(projection.markerB.x*scale).toFloat(),transform.canvasY(projection.markerB.y),paint)
++                    }
+                 }
+                 if(labels)tag("#${d.correlativo}${if(projection==null) " revisar junta/borde" else ""}",x+3,y-3,color)
+                 continue
+@@ -164,6 +177,7 @@
+             if(labels && d.geometry !in listOf("GLOBAL","SLABS")) tag("#${d.correlativo}",x+3,y-3,color)
+         }
+         paint.color=Color.BLACK;paint.strokeWidth=2f;paint.style=Paint.Style.STROKE;c.drawRect(0f,0f,w,h,paint)
++        drawShoulderMarkers(c,s,damages,scale,highlightedDamageId)
+         // Draw selection last so it remains visible above damage symbols and the sample border.
+         paint.strokeWidth=6f
+         for(n in selected) slab(n,"✓$n",Color.RED)
+--- app/src/test/java/com/tuempresa/inventariovial/HotfixBusy146Test.kt (respaldo)
++++ app/src/test/java/com/tuempresa/inventariovial/HotfixBusy146Test.kt (candidata final)
+@@ -39,6 +39,9 @@
+         override fun supportsV3()=true
+         override fun supportsFamilyPaths()=true
+         override fun supportsTechnicalDeliveryWithoutGps()=true
++        override fun supportsReadablePhotoNames()=true
++        // These cases force BUSY on commit, after a successful V2 reservation.
++        override fun reservePhotoNames(payload:JSONObject)=ReleasePhotoV2Fixture.reservation(payload,"folder-${payload.getString("key")}",if(payload.getString("key").endsWith("B"))2 else 1)
+         override fun post(payload:JSONObject):JSONObject {
+             posts++
+             if(busy)return JSONObject().put("ok",false).put("code","BUSY") // Reproduce a missing retryable flag too.
+--- app/src/test/java/com/tuempresa/inventariovial/SyncRecovery10DTest.kt (respaldo)
++++ app/src/test/java/com/tuempresa/inventariovial/SyncRecovery10DTest.kt (candidata final)
+@@ -33,6 +33,10 @@
+         val file=File(context.cacheDir,"$id.jpg");val bitmap=Bitmap.createBitmap(32,24,Bitmap.Config.ARGB_8888)
+         file.outputStream().use {assertTrue(bitmap.compress(Bitmap.CompressFormat.JPEG,95,it))};bitmap.recycle()
+         d.inventoryDao().insertPhoto(PhotoEntity("photo-$id",id,1,file.path,true,null,null,null,"PENDING",1,photoCategory="GENERAL"))
++        if(BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED) {
++            val preview=AutomaticDelivery.namingPreview(context,d,d.automaticSyncDao().all().single())
++            ReadablePhotoNames.remember(context,preview,ReleasePhotoV2Fixture.reservation(preview,"stable-folder"))
++        }
+     }
+     private fun receipt(p:JSONObject):JSONObject {
+         val prefix="${p.getString("routeCode")}/${p.getString("familyPath")}/${p.getString("family")} 1"
+@@ -52,6 +56,8 @@
+         override fun supportsV3()=true
+         override fun supportsFamilyPaths()=true
+         override fun supportsTechnicalDeliveryWithoutGps()=true
++        override fun supportsReadablePhotoNames()=true
++        override fun reservePhotoNames(payload:JSONObject)=ReleasePhotoV2Fixture.reservation(payload,"stable-folder")
+         override fun post(payload:JSONObject)=post(payload)
+     }
+     @Test fun lostFinalHttpAckReplaysCommitAndNeverRestagesVerifiedFiles()=runBlocking(Dispatchers.IO) {database().use {d->
+@@ -61,7 +67,7 @@
+         val phases=mutableListOf<DeliveryProgress>()
+         val client=OkHttpClient.Builder().addInterceptor {chain->
+             val request=chain.request()
+-            val response=if(request.method=="GET")JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4).put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("photoNamingVersion",1).put("technicalDeliveryWithoutGps",true)
++            val response=if(request.method=="GET")JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4).put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("photoNamingVersion",1).put("readablePhotoNamingVersion",2).put("technicalDeliveryWithoutGps",true)
+             else {
+                 val buffer=Buffer();request.body!!.writeTo(buffer);val p=JSONObject(buffer.readUtf8())
+                 if(p.getString("action")=="stageRecordV3") {

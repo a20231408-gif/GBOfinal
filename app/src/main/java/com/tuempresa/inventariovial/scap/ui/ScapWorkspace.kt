@@ -52,6 +52,7 @@ fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,onBack:
     val context=LocalContext.current
     val roadRecords by vm.field.dao.observeAllRecords().collectAsState(emptyList())
     val numbers=remember(roadRecords){com.tuempresa.inventariovial.field.ElementNumbers(context).assign(roadRecords)}
+    LaunchedEffect(selected){selected?.let{id->if(com.tuempresa.inventariovial.localfiles.LocalCopySettings.enabled(context))kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.requestCurrent(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),"SCAP",id,automatic=true)}}}}
     val goBack:()->Unit={if(initialInspectionId!=null) {c.select(null);onBack()} else if(selected!=null)c.select(null) else onBack()}
     BackHandler(onBack=goBack)
     Column(Modifier.fillMaxSize()) {
@@ -139,8 +140,8 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             item {OutlinedButton(onClick={photoElement=null;section="F2"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FOTOGRAFÍAS (${s.photos.size})")}}
             item {OutlinedButton(onClick={section="REVIEW"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER EXCEL SIC / SCAP")}}
         }
-        if(savedDraft) Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween) {
-            Text("Guardado localmente. Pendientes: ${completeness.pending.size}",Modifier.weight(1f).padding(top=12.dp))
+        if(savedDraft && pending==0 && error==null) Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween) {
+            Text("Ficha guardada dentro de GBO. Pendientes: ${completeness.pending.size}",Modifier.weight(1f).padding(top=12.dp))
             TextButton(onClick={showPending=true}){Text("Ver pendientes")}
         }
         LazyRow(contentPadding=PaddingValues(horizontal=12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
@@ -184,6 +185,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
     }
     if(confirm) AlertDialog(onDismissRequest={confirm=false},title={Text("Confirmar cierre SCAP")},
         text={Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState())) {
+            com.tuempresa.inventariovial.localfiles.RecordDeliveryChoice("SCAP",s.inspection.id,false)
             Text("${s.inspection.bridgeName} · ${s.inspection.bridgeCode}")
             Text("${s.spans.size} tramos · ${review.present} elementos · ${review.unevaluated} sin evaluar")
             Text("${s.defects.size} defectos · ${s.photos.size} fotografías · ${s.sketches.size} croquis")
@@ -191,7 +193,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             Text("Datos pendientes: ${review.pending.size}")
             review.pending.forEach{Text("• $it")}
             completeness.pending.forEach {field->TextButton(onClick={c.navigate(field.route);confirm=false}) {Text("${field.section} · ${field.field}")}}
-        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar y programar envío" else "Confirmar cierre y envío con pendientes")}},
+        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar con el destino elegido" else "Confirmar cierre con pendientes")}},
         dismissButton={TextButton(onClick={confirm=false}){Text("Volver a la ficha")}})
     if(showPending) AlertDialog(onDismissRequest={showPending=false},title={Text("SCAP · Pendientes ${completeness.pending.size}")},
         text={Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState())) {

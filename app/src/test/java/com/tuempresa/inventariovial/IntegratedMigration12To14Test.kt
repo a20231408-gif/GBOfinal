@@ -59,7 +59,7 @@ class IntegratedMigration12To14Test {
             val room=open()
             try {
                 val db=room.openHelper.writableDatabase
-                assertEquals(18,db.version)
+                assertEquals(20,db.version)
                 for((table,columns) in expected) db.query("SELECT * FROM `$table`").use { c ->
                     assertTrue("Lost table $table",c.moveToFirst())
                     for((col,value) in columns) assertEquals("$table.$col",if(table=="pavement_damages" && col=="severity") "H" else value,c.getString(c.getColumnIndexOrThrow(col)))
@@ -73,7 +73,7 @@ class IntegratedMigration12To14Test {
                 }
             } finally { room.close() }
             val reopened=open()
-            try { assertEquals(18,reopened.openHelper.readableDatabase.version) } finally { reopened.close() }
+            try { assertEquals(20,reopened.openHelper.readableDatabase.version) } finally { reopened.close() }
         } finally { context.deleteDatabase(name) }
     }
 }

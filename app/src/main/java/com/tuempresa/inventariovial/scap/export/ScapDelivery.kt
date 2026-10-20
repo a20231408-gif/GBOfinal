@@ -22,7 +22,7 @@ import java.util.zip.ZipOutputStream
 /** One export path for local delivery and Drive. Never changes capture files. */
 object ScapDelivery {
     // v4 = protocol 1/2 + JPEG photographs + deterministic human layout cache.
-    const val SCAP_BUNDLE_VERSION = 7
+    const val SCAP_BUNDLE_VERSION = 8
 
     fun exporter(context: Context) = ScapExcelExporter({context.assets.open("scap_template.xlsx")},
         context.assets.open("scap_field_map.json").bufferedReader().use {it.readText()})
@@ -107,7 +107,7 @@ object ScapDelivery {
                     p.copy(localPath = marked.absolutePath, stampedPath = marked.absolutePath)
                 })
                 s.sketches.sortedBy {it.id}.forEach { sketch ->
-                    val png = readImage(context, sketch.localUri, photo = false)
+                    val png = try {readImage(context, sketch.localUri, photo = false)}catch(e:Exception){throw IllegalStateException("Croquis ${sketch.type} (${sketch.id}): ausente o ilegible. Revisa E · Croquis; original conservado.",e)}
                     preparedSketchesById[sketch.id] = png
                     preparedSketchesByPath[sketch.localUri] = png
                     sketchBytes += png.size
@@ -130,6 +130,7 @@ object ScapDelivery {
                     .put("scapInspectionId", s.inspection.id).put("revision", s.inspection.updatedAt)
                     .put("roadRecordId",s.inspection.roadRecordId).put("bridgeCode", s.inspection.bridgeCode).put("bridgeName", s.inspection.bridgeName)
                     .put("routeCode", s.values()["route"].orEmpty()).put("files", files)
+                    .put("fieldCapture",ScapFieldBackup.capture(s)).put("pending",JSONArray(com.tuempresa.inventariovial.scap.domain.ScapValidation.review(s,com.tuempresa.inventariovial.scap.catalog.ScapCatalog.load(context).forSnapshot(s)).pending))
                     .put("completionStatus",s.values("completion")["status"] ?: "INCOMPLETE")
                     .put("uploadedWithWarnings",s.values("completion")["uploadedWithWarnings"]=="true")
                 layout?.let {manifest.put("delivery", it.json()).put("pathVersion",2).put("logicalPath",com.tuempresa.inventariovial.core.DrivePaths.bridge(context,s))}

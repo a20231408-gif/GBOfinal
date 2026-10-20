@@ -24,6 +24,7 @@ import java.io.File
 @RunWith(RobolectricTestRunner::class) @Config(sdk=[34],application=Application::class)
 @GraphicsMode(GraphicsMode.Mode.LEGACY)
 class PavementFieldUi10ITest {
+    @org.junit.Before fun initializeWorkers() = initializeIdleUiWorkers()
     @get:Rule val compose=createComposeRule()
     private fun damage(code:Int=15)=PavementDamageEntity("test-damage","test-sample",1,if(code==15)"ASPHALT" else "RIGID",code,if(code==15)"Ahuellamiento" else "Parcheo pequeño","M",if(code==15)"AREA" else "SLABS",.5,1.0,1.5,2.0,null,1.0,1.0,1.0,null,null,"",slabs=if(code==15)"" else "1")
     // Dialog assertions live in androidTest/PavementDialogs10ITest: this

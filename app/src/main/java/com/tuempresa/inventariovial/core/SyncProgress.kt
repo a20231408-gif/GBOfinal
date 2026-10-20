@@ -38,13 +38,13 @@ object SyncProgressPresentation {
     }
     fun phase(p:SyncProgress)=when(p.phase) {
         "PREPARING"->"Preparando archivos"
-        "PHOTOS"->"Enviando fotografías"
+        "PHOTOS"->"Subiendo fotografías"
         "DOCUMENTS"->"Enviando ficha y Excel"
         "CONFIRMING"->"Confirmando en Drive"
-        "COMPLETE"->"Sincronización completada"
+        "COMPLETE"->"Entrega confirmada"
         else->"Pendiente de confirmación"
     }
-    fun files(p:SyncProgress):String = "Archivos procesados: ${p.processed} / ${p.total} · pendientes: ${maxOf(0,p.total-p.processed)}"+
+    fun files(p:SyncProgress):String = if(p.total==0 && p.phase=="PREPARING")"Cantidad de archivos aún no calculada; preparación local, sin ACK de entrega"else "Archivos procesados: ${p.processed} / ${p.total} · pendientes: ${maxOf(0,p.total-p.processed)}"+
         if(p.total>0) " · ${p.processed*100/p.total}% de archivos transferidos" else ""
     fun elapsed(p:SyncProgress,now:Long):String {
         val seconds=maxOf(0,(now-p.startedAt)/1000)

@@ -81,16 +81,34 @@ object StabilityDiagnostics {
         val last=if(os!=null && (local==null||os.optLong("timestamp")>=local.optLong("timestamp")))os else local
         return base(context,"REPORT").put("lastExit",last ?: JSONObject().put("reason","Causa no disponible."))
             .put("events",JSONArray(prefs.getString("events","[]")))
+            .put("syncPerformance",SyncPerformance.report(context))
+            .put("scapLocalSave",ScapSaveDiagnostics.report(context))
     }
     fun export(context:Context):File {
         val dir=File(context.cacheDir,"diagnostics").apply{mkdirs()}
         return File(dir,"gbo_diagnostics_${SimpleDateFormat("yyyyMMdd",Locale.US).format(Date())}.json").apply {writeText(report(context).toString(2))}
+    }
+    suspend fun exportWithSync(context:Context):File {
+        val json=report(context).put("syncQueue",SyncQueueDiagnostics.snapshot(com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context)))
+        val work=JSONObject()
+        for(name in listOf("automatic-drive-drain","automatic-drive-recovery")) {
+            val summary=runCatching {
+                val rows=androidx.work.WorkManager.getInstance(context).getWorkInfosForUniqueWork(name).get(2,java.util.concurrent.TimeUnit.SECONDS)
+                JSONObject().put("available",true).put("states",JSONObject(rows.groupingBy{it.state.name}.eachCount()))
+                    .put("maxAttempt",rows.maxOfOrNull{it.runAttemptCount} ?: 0)
+            }.getOrElse {JSONObject().put("available",false)}
+            work.put(name,summary)
+        }
+        json.put("syncWork",work)
+        val dir=File(context.cacheDir,"diagnostics").apply{mkdirs()}
+        return File(dir,"gbo_diagnostics_${SimpleDateFormat("yyyyMMdd",Locale.US).format(Date())}.json").apply {writeText(json.toString(2))}
     }
 }
 
 class GboApplication:Application() {
     override fun onCreate(){super.onCreate();StabilityDiagnostics.install(this)
         com.tuempresa.inventariovial.core.AutomaticSync.wake(this)
+        com.tuempresa.inventariovial.localfiles.LocalCopies.wake(this)
         com.tuempresa.inventariovial.media.VideoSync.enqueue(this)
         registerActivityLifecycleCallbacks(object:ActivityLifecycleCallbacks {
             override fun onActivityResumed(activity:Activity){if(activity is com.tuempresa.inventariovial.core.FieldCameraActivity)StabilityDiagnostics.screen("CAMERA")}

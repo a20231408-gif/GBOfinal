@@ -51,8 +51,8 @@ internal class ScapCanonicalExporter(private val template:()->InputStream,fieldM
         if(s.spans.sortedBy{it.spanIndex}.drop(1).any {span->deckKeys.any{key->s.values(span.id)[key]?.takeIf(String::isNotBlank)?.let{it!=principal[key]}==true}})
             errors+="C.3 admite un tablero: los datos distintos de un segundo tablero requieren una continuación aprobada del formato."
         if(s.photos.size>32) errors+="F.2 admite 32 fotografías."
-        if(s.sketches.groupBy {it.type}.any {it.value.size>1}) errors+="E admite un croquis de cada tipo."
-        return ScapExportReview(errors,listOf("Se conserva la plantilla canónica ${layout.type}. Excel recalculará las fórmulas al abrir.",
+        
+        return ScapExportReview(errors,com.tuempresa.inventariovial.scap.domain.ScapSketchSelection.warnings(s)+listOf("Se conserva la plantilla canónica ${layout.type}. Excel recalculará las fórmulas al abrir.",
             "La fuente contiene referencias #REF! preexistentes; requieren revisión del responsable del formato."))
     }
     fun write(output:OutputStream,s:ScapInspectionSnapshot,media:(String)->ByteArray) {

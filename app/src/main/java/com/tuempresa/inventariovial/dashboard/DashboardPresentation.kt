@@ -64,10 +64,11 @@ data class DashboardDeliveryCounts(val synced:Int,val pending:Int,val errors:Int
     companion object {
         fun from(intents:List<DriveSyncIntent>):DashboardDeliveryCounts {
             val eligible=intents.filter {it.state!="DRAFT"}
-            fun confirmed(i:DriveSyncIntent)=i.state=="SYNCED" && i.revision==i.syncedRevision && i.receiptJson!=null && i.lastSyncedAt!=null
-            val errors=eligible.count {it.state in setOf("ERROR","CONFLICT","BLOCKED")}
+            fun confirmed(i:DriveSyncIntent)=com.tuempresa.inventariovial.core.SyncIntentPresentation.confirmed(i)
+            fun error(i:DriveSyncIntent)=i.state in setOf("CONFLICT","BLOCKED") || i.state=="ERROR" && i.error?.contains("(BUSY)")!=true || i.state=="SYNCED" && !confirmed(i)
+            val errors=eligible.count(::error)
             val synced=eligible.count(::confirmed)
-            val updates=eligible.count {!confirmed(it) && it.state !in setOf("ERROR","CONFLICT","BLOCKED") && it.syncedRevision>0 && it.revision>it.syncedRevision}
+            val updates=eligible.count {!confirmed(it) && !error(it) && it.syncedRevision>0 && it.revision>it.syncedRevision}
             return DashboardDeliveryCounts(synced,eligible.size-synced-errors-updates,errors,updates)
         }
     }

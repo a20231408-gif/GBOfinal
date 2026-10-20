@@ -49,7 +49,7 @@ object SicFormPolicy {
     val context=LocalContext.current
     val survey=remember(context){SurveyPreferences(context)}
     SurveyHeader(survey,draft.segment,draft.route,draft.roadbed,draft.direction,
-        {onChange(draft.copy(segment=it))},{onChange(draft.copy(route=it))},{onChange(draft.copy(roadbed=it))},{onChange(draft.copy(direction=it))})
+        {route,segment->onChange(draft.copy(route=route,segment=segment))},{onChange(draft.copy(roadbed=it))},{onChange(draft.copy(direction=it))})
     SicPrFields(reference,draft.route,draft.roadbed,draft.startPr,draft.startDistance,if(code=="SIC-22")"elemento" else "inicio",
         {onChange(draft.copy(startPr=it))},{onChange(draft.copy(startDistance=it))})
     if(SicFormPolicy.hasEnds(code,asset,classCode))SicPrFields(reference,draft.route,draft.roadbed,draft.endPr,draft.endDistance,"fin",

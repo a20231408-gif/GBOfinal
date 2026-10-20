@@ -51,6 +51,7 @@ internal object StructuredScapCompletion {
         if(s.photos.isEmpty())add("F2","Añadir registro fotográfico","inspection","addPhoto",true)
         s.defects.forEach{d->if(d.description.isBlank())add("F1","Observación · Descripción",d.id,"defectDescription",true)}
         for(type in listOf("ELEVATION","PLAN","CROSS_SECTION"))if(s.sketches.none{it.type==type})add("E","Croquis $type","inspection",type,true)
+        for(type in com.tuempresa.inventariovial.scap.data.ScapRepository.SKETCH_TYPES) if(s.sketches.any{it.type==type} && ScapSketchSelection.principal(s,type)==null)add("E","Croquis principal pendiente de selección · $type","inspection",type,true)
         return ScapCompleteness(complete.distinctBy{it.id},pending.distinctBy{it.id})
     }
 }

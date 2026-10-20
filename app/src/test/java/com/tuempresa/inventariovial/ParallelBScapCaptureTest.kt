@@ -7,6 +7,7 @@ import com.tuempresa.inventariovial.data.database.InventoryDatabase
 import com.tuempresa.inventariovial.scap.catalog.ScapCatalog
 import com.tuempresa.inventariovial.scap.data.*
 import com.tuempresa.inventariovial.scap.domain.*
+import com.tuempresa.inventariovial.scap.export.*
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import org.junit.Assert.*
@@ -44,7 +45,24 @@ class ParallelBScapCaptureTest {
     @Test fun canonicalCatalogContainsEverySourceOptionAndGUnitsFactors() {
         ScapBridgeType.entries.forEach {type->
             val cat=catalog(type)
-            val map=JSONObject(File("../docs/SCAP_${type.label}_FIELD_MAP.json").readText().removePrefix("\uFEFF"))
+            // Read the actual approved workbook instead of an absent, untracked extraction JSON.
+            val workbook=TemplateWorkbook(context.assets.open(type.templateAsset))
+            val strings=if(workbook.parts.containsKey("xl/sharedStrings.xml")) workbook.document("xl/sharedStrings.xml").nodes("si").map {it.textContent} else emptyList()
+            val map=JSONObject().put("sheets",org.json.JSONArray().apply {
+                workbook.document("xl/workbook.xml").nodes("sheet").forEachIndexed {index,sheet->
+                    put(JSONObject().put("name",sheet.getAttribute("name")).put("cells",org.json.JSONArray().apply {
+                        workbook.sheet(index+1).nodes("c").forEach {cell->
+                            val raw=cell.children().firstOrNull {it.localName=="v"}?.textContent.orEmpty()
+                            val value:Any=when(cell.getAttribute("t")) {
+                                "s"->strings[raw.toInt()]
+                                "inlineStr"->cell.textContent
+                                else->raw.toDoubleOrNull() ?: raw
+                            }
+                            put(JSONObject().put("cell",cell.getAttribute("r")).put("value",value))
+                        }
+                    }))
+                }
+            })
             val sheets=map.getJSONArray("sheets")
             val aux=(0 until sheets.length()).map{sheets.getJSONObject(it)}.first{it.getString("name")=="AUXILIAR"}.getJSONArray("cells")
             val sourceCodes=(0 until aux.length()).map{aux.getJSONObject(it)}.filter{it.getString("cell").matches(Regex("C[0-9]+")) && it.get("value") is Number && it.getDouble("value")>=100}.map{it.getInt("value").toString()}.toSet()
@@ -152,14 +170,14 @@ class ParallelBScapCaptureTest {
             repo.addRow(id,"SPAN");repo.selectElement(id,"104",true)
             val element=repo.dao.snapshot(id)!!.elements.single{it.element.elementCode=="104"}.element
             (0..5).forEach{repo.setField(id,element.id,"percent$it",if(it==1) "100" else "0")}
-            repo.complete(id)
+            repo.complete(id,warningsConfirmed=true)
             assertEquals("INCOMPLETE",repo.dao.snapshot(id)!!.values("completion")["status"])
             repo.reopen(id)
             repo.setField(id,element.id,"quantity","0")
             val snapshot=repo.dao.snapshot(id)!!
             assertTrue(ScapValidation.review(snapshot,cat).errors.isEmpty())
             assertTrue(ScapCompletion.assess(snapshot,cat).pending.any{it.section=="B"})
-            repo.complete(id)
+            repo.complete(id,warningsConfirmed=true)
             assertEquals("COMPLETE",repo.dao.inspection(id)!!.status)
             repo.reopen(id);repo.saveDraft(id)
             assertEquals(17,repo.dao.snapshot(id)!!.elements.size)

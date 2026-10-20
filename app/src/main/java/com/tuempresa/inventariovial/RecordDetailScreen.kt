@@ -39,6 +39,7 @@ val LocalReviewOnOpen = staticCompositionLocalOf { false }
 fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="DETAIL", onBack: () -> Unit) {
     val context = LocalContext.current
     val db = remember(context) { InventoryDatabase.getInstance(context) }
+    LaunchedEffect(id){if(com.tuempresa.inventariovial.localfiles.LocalCopySettings.enabled(context))kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.requestCurrent(context,db,"SIC",id,automatic=true)}}}
     val loaded by remember(db, id) { db.inventoryDao().observeSnapshot(id).map { true to it } }.collectAsState(false to null)
     val snapshot=loaded.second
     val intents by remember(db) { db.automaticSyncDao().observe() }.collectAsState(emptyList())

@@ -21,6 +21,11 @@ import java.util.zip.ZipInputStream
 class SicNewFormatsTest {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
     private fun db()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
+    private fun assertSubmittedFields(expected:SicFieldState,actual:SicFieldState?) {
+        requireNotNull(actual)
+        assertEquals(expected.format,actual.format);assertEquals(expected.sourceRecordId,actual.sourceRecordId)
+        expected.values.forEach {(key,value)->assertEquals(key,value,actual.text(key))}
+    }
     private fun state(f:SicFieldFormat)=SicFieldState(f,mapOf("routeCode" to "PE-3N","roadbedCode" to "UC","faja" to "2",
         "startPrCode" to "0042","startDistanceM" to "12.3456","endPrCode" to "0043","endDistanceM" to "123.4567",
         "surveyDate" to "08/10/2026","typeCode" to "1","directionCode" to "C","sideCode" to "D","classCode" to "15",
@@ -53,7 +58,7 @@ class SicNewFormatsTest {
             assertTrue(raw.completion().canSaveDraft);assertFalse(raw.completion().canFinalize)
             SicFieldRepository(db).save("draft",raw,"operator",false)
             db.close();db=Room.databaseBuilder(context,InventoryDatabase::class.java,name).build()
-            assertEquals(raw,SicFieldRepository(db).load("draft",SicFieldFormat.SIC08))
+            assertSubmittedFields(raw,SicFieldRepository(db).load("draft",SicFieldFormat.SIC08))
             assertTrue(db.inventoryDao().recordsForExport(null,null).isEmpty())
         } finally {db.close();context.deleteDatabase(name)}
     }
@@ -65,7 +70,7 @@ class SicNewFormatsTest {
             assertEquals("faja",inherited.sourceRecordId);assertEquals("2",inherited.text("faja"));assertEquals("0043",inherited.text("endPrCode"))
             val width=inherited.set("usefulWidthM","3.456789").set("totalWidthM","4.987654")
             repo.save("width",width,"operator",true)
-            assertEquals(width,repo.load("width",SicFieldFormat.SIC09));assertEquals(original,db.inventoryDao().sicExtension("faja"))
+            assertSubmittedFields(width,repo.load("width",SicFieldFormat.SIC09));assertEquals(original,db.inventoryDao().sicExtension("faja"))
             assertEquals(3.456789,width.exportValues()[7]);assertEquals(4.987654,width.exportValues()[8])
         } finally {db.close()}
     }
@@ -163,6 +168,11 @@ class SicNewFormatsTest {
             val repo=SicFieldRepository(db);repo.save("id",state(SicFieldFormat.SIC13),"owner",false)
             assertTrue(runCatching {repo.save("id",state(SicFieldFormat.SIC13),"other",false)}.isFailure)
             repo.save("id",state(SicFieldFormat.SIC13),"owner",true)
+            // Owner editing is supported, retaining the UUID. Annulled rows remain protected.
+            repo.save("id",state(SicFieldFormat.SIC13),"owner",false)
+            assertEquals("id",db.inventoryDao().recordById("id")!!.id)
+            assertEquals("owner",db.inventoryDao().sicExtension("id")!!.ownerUserId)
+            db.inventoryDao().setRecordStatus("id","ANNULLED",1000)
             assertTrue(runCatching {repo.save("id",state(SicFieldFormat.SIC13),"owner",false)}.isFailure)
         } finally {db.close()}
     }
@@ -185,7 +195,7 @@ class SicNewFormatsTest {
             repo.save(parentId,extra,"operator",true)
             val ready=delivery.prepare("PE-3N",reference,com.tuempresa.inventariovial.road.MatchConfig())
             val payloads=payloads(ready.batch.manifestPath).associateBy {it.getString("sicCode")}
-            for((code,family) in listOf("SIC-08" to "CALZADA_FAJAS","SIC-09" to "CALZADA_FAJAS","SIC-13" to "PUNTOS_CRITICOS","SIC-34" to "ACCIDENTES"))
+            for((code,family) in listOf("SIC-08" to "FAJAS_CALZADA","SIC-09" to "ANCHOS_FAJA","SIC-13" to "PUNTOS_CRITICOS","SIC-34" to "ACCIDENTES"))
                 assertTrue(payloads.getValue(code).getString("logicalPath").startsWith("PE-3N/$family/"))
             assertEquals(payloads.getValue("SIC-18").getString("logicalPath"),payloads.getValue("SIC-18A").getString("logicalPath"))
             assertEquals(parentId,payloads.getValue("SIC-18A").getString("recordId"))

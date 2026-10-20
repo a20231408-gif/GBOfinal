@@ -84,7 +84,8 @@ class TabletUxDataTest {
   val xml=ZipInputStream(ByteArrayInputStream(bytes)).use { zip -> var found="";while(true) {val entry=zip.nextEntry?:break;if(entry.name=="xl/worksheets/sheet1.xml") found=zip.readBytes().toString(Charsets.UTF_8)};found }
   assertFalse(xml.contains("Ubicación fin"));assertFalse(xml.contains("invalid-legacy"));assertTrue(xml.contains("Ubicación del elemento"));assertFalse(xml.contains("E12:F12"))
   val doc=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(ByteArrayInputStream(xml.toByteArray()))
-  val rows=doc.getElementsByTagName("row");for(i in 0 until rows.length) {val row=rows.item(i) as org.w3c.dom.Element;if(row.getAttribute("r") in listOf("13","14")) assertEquals(12,row.getElementsByTagName("c").length)}
+  val rows=doc.getElementsByTagName("row");for(i in 0 until rows.length) {val row=rows.item(i) as org.w3c.dom.Element;if(row.getAttribute("r") in listOf("13","14")) assertEquals(13,row.getElementsByTagName("c").length)}
+  assertTrue(xml.contains("OBSERVACIONES"))
   assertEquals(2,SicExportFormat.SIC21.columns.count{it.label=="Código PR"})
  }
  @Test fun singleLocationSic22AndLegacyEndFieldsPhotosSurviveRoomReopen()=runBlocking {

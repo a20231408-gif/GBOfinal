@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.first
 
 @Composable internal fun PavementOutputPanel(s:PavementSampleEntity, damages:List<PavementDamageEntity>, repo:PavementRepository) {
     val context=LocalContext.current;val scope=rememberCoroutineScope()
+    val localChoices by remember(context){com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).localFilesDao().choices()}.collectAsState(emptyList())
+    val onlyDevice=localChoices.any{it.key=="PAVEMENT/${s.id}"&&it.destination=="DEVICE"}
     val calculator=remember{PavementCalculator(context)}
     val result=remember(s,damages){calculator.calculate(s,damages)}
     var message by remember{mutableStateOf("")}
@@ -51,7 +53,7 @@ import kotlinx.coroutines.flow.first
         if(technicalDetails)result.pending.forEach{Text(it,style=MaterialTheme.typography.bodySmall)}
     }
     Row{TextButton(enabled=!busy,onClick={pdf.launch("Pavimentos-${s.muestra}.pdf")}){Text("Reporte PDF")};TextButton(enabled=!busy,onClick={excel.launch("Pavimentos-${s.surface}.xlsx")}){Text("Excel de superficie")}}
-    Button(enabled=!busy && s.status=="CLOSED", onClick={scope.launch {
+    Button(enabled=!busy && s.status=="CLOSED" && !onlyDevice, onClick={scope.launch {
         busy=true; message="Sincronizando pavimentos con Drive…"
         runCatching { com.tuempresa.inventariovial.core.AutomaticSync.manual(context,"PAVEMENT",s.id) }
             .onSuccess { message="Trabajo programado para cuando haya conexión." }

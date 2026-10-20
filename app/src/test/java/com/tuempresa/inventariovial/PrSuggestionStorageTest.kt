@@ -56,7 +56,7 @@ class PrSuggestionStorageTest {
             assertEquals(22L, snapshot.record.updatedAt)
             assertEquals("photo", snapshot.photos.single().id)
             assertEquals("/keep.jpg", snapshot.photos.single().localPath)
-            assertEquals(11, db.openHelper.readableDatabase.version)
+            assertEquals(20, db.openHelper.readableDatabase.version)
         } finally { db.close(); context.deleteDatabase(name) }
     }
 
@@ -105,7 +105,7 @@ class PrSuggestionStorageTest {
             0.0, .0053, 1f, "28/09/2026", "", "", SicFormDetail.Sic19(Sic19FormState()), segment = "Tramo 1")
         val prs = prSuggestionReference().prs.map { it.copy(prCode = if (it.prCode == "0010") "0042" else "0007") }
         val prefs = SurveyPreferences(context)
-        assertNull(prefs.validate(request, prs)) // 12650 -> 16000; PR labels themselves decrease.
+        assertNotNull(prefs.validate(request, prs)) // New input respects the approved three-integer-digit limit.
         assertNotNull(prefs.validate(request)) // Existing manual-only kilometre rules stay in place.
         assertNotNull(prefs.validate(request.copy(direction = "DECREASING"), prs))
         assertNull(prefs.continuityWarning(request, prs))

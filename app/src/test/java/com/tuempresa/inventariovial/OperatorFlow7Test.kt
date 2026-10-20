@@ -56,7 +56,8 @@ class OperatorFlow7Test {
         val second=exporter.prepareRoute(SicExportFormat.SIC18,"PE-22A")
         assertEquals(first.localPath,second.localPath)
         values=cells(File(second.localPath));assertEquals("325.0",values["D14"]);assertEquals("0011",values["C15"])
-        assertEquals(13,values.keys.count {it.matches(Regex("[A-Z]+14"))})
+        assertEquals(14,values.keys.count {it.matches(Regex("[A-Z]+14"))})
+        assertEquals("OBSERVACIONES",values["N13"])
         assertEquals(setOf("a","b"),d.inventoryDao().recordsForExport("SIC-18","PE-22A").map{it.record.id}.toSet())
         assertEquals(0L,d.automaticSyncDao().get("SIC/a")!!.syncedRevision)
         assertNotNull(LocalSicExport(context,d,this).cachedRoute(SicExportFormat.SIC18,"PE-22A"))
@@ -79,7 +80,7 @@ class OperatorFlow7Test {
         assertEquals("real_file",RecordDetailPresentation.remoteFile(i.copy(revision=2),"SIC-18"))
         assertNull(RecordDetailPresentation.remoteFile(i,"SIC-19"))
         assertNull(RecordDetailPresentation.remoteFile(i.copy(syncedRevision=2),"SIC-18"))
-        assertEquals("Sincronizando",RecordDetailPresentation.status(i.copy(state="UPLOADING"),true))
+        assertEquals("Pendiente de confirmación",RecordDetailPresentation.status(i.copy(state="UPLOADING"),true))
         assertEquals("Error",RecordDetailPresentation.status(i.copy(state="ERROR"),true))
         assertTrue(RecordDetailPresentation.status(i.copy(state="CONFLICT"),true).startsWith("Conflicto"))
     }

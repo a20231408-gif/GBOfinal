@@ -33,6 +33,10 @@ class SyncRecovery10DTest {
         val file=File(context.cacheDir,"$id.jpg");val bitmap=Bitmap.createBitmap(32,24,Bitmap.Config.ARGB_8888)
         file.outputStream().use {assertTrue(bitmap.compress(Bitmap.CompressFormat.JPEG,95,it))};bitmap.recycle()
         d.inventoryDao().insertPhoto(PhotoEntity("photo-$id",id,1,file.path,true,null,null,null,"PENDING",1,photoCategory="GENERAL"))
+        if(BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED) {
+            val preview=AutomaticDelivery.namingPreview(context,d,d.automaticSyncDao().all().single())
+            ReadablePhotoNames.remember(context,preview,ReleasePhotoV2Fixture.reservation(preview,"stable-folder"))
+        }
     }
     private fun receipt(p:JSONObject):JSONObject {
         val prefix="${p.getString("routeCode")}/${p.getString("familyPath")}/${p.getString("family")} 1"
@@ -52,6 +56,8 @@ class SyncRecovery10DTest {
         override fun supportsV3()=true
         override fun supportsFamilyPaths()=true
         override fun supportsTechnicalDeliveryWithoutGps()=true
+        override fun supportsReadablePhotoNames()=true
+        override fun reservePhotoNames(payload:JSONObject)=ReleasePhotoV2Fixture.reservation(payload,"stable-folder")
         override fun post(payload:JSONObject)=post(payload)
     }
     @Test fun lostFinalHttpAckReplaysCommitAndNeverRestagesVerifiedFiles()=runBlocking(Dispatchers.IO) {database().use {d->
@@ -61,7 +67,7 @@ class SyncRecovery10DTest {
         val phases=mutableListOf<DeliveryProgress>()
         val client=OkHttpClient.Builder().addInterceptor {chain->
             val request=chain.request()
-            val response=if(request.method=="GET")JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4).put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("photoNamingVersion",1).put("technicalDeliveryWithoutGps",true)
+            val response=if(request.method=="GET")JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4).put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("photoNamingVersion",1).put("readablePhotoNamingVersion",2).put("technicalDeliveryWithoutGps",true)
             else {
                 val buffer=Buffer();request.body!!.writeTo(buffer);val p=JSONObject(buffer.readUtf8())
                 if(p.getString("action")=="stageRecordV3") {
@@ -113,7 +119,7 @@ class SyncRecovery10DTest {
         assertTrue(SyncIntentPresentation.label(intent,true,true,true).contains("esperando ejecución"))
         assertEquals("Pendiente de conexión",SyncIntentPresentation.label(intent,true,false,true))
         assertEquals("Subiendo",SyncIntentPresentation.label(intent,true,true,true,running=true))
-        assertTrue(SyncIntentPresentation.label(intent.copy(state="ERROR"),true,true,true,retrying=true).startsWith("Reintentando"))
+        assertEquals("Esperando para reintentar",SyncIntentPresentation.label(intent.copy(state="ERROR"),true,true,true,retrying=true))
         assertFalse(SyncProgressPresentation.running(intent,emptyList()))
         val p=SyncProgress(1,"CONFIRMING",2,4,1000)
         assertTrue(SyncProgressPresentation.files(p).contains("50% de archivos transferidos"));assertTrue(SyncProgressPresentation.files(p).contains("pendientes: 2"))

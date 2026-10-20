@@ -59,8 +59,20 @@ class RouteDeliveryTest {
                 when (payload.getString("kind")) {
                     "photo" -> {
                         assertEquals("001_F01.jpg", payload.getString("fileName"))
-                        assertEquals("ALCANTARILLA 1", payload.getString("elementFolder"))
-                        assertArrayEquals(file.readBytes(),prepared.readBytes())
+                        assertEquals("ALCANTARILLA UUID_A", payload.getString("elementFolder"))
+                        // The delivery copy carries EXIF; its image pixels and the source stay intact.
+                        val originalImage=requireNotNull(android.graphics.BitmapFactory.decodeFile(file.path))
+                        val deliveredImage=requireNotNull(android.graphics.BitmapFactory.decodeFile(prepared.path))
+                        assertEquals(originalImage.width,deliveredImage.width);assertEquals(originalImage.height,deliveredImage.height)
+                        val originalPixels=IntArray(originalImage.width*originalImage.height)
+                        val deliveredPixels=IntArray(deliveredImage.width*deliveredImage.height)
+                        originalImage.getPixels(originalPixels,0,originalImage.width,0,0,originalImage.width,originalImage.height)
+                        deliveredImage.getPixels(deliveredPixels,0,deliveredImage.width,0,0,deliveredImage.width,deliveredImage.height)
+                        assertArrayEquals(originalPixels,deliveredPixels)
+                        originalImage.recycle();deliveredImage.recycle()
+                        val coordinates=FloatArray(2)
+                        assertTrue(ExifInterface(prepared.path).getLatLong(coordinates))
+                        assertEquals(-12.12,coordinates[0].toDouble(),.00001);assertEquals(-77.23,coordinates[1].toDouble(),.00001)
                         assertEquals(.8,payload.getDouble("photoGpsAccuracyM"),.001)
                         assertEquals("ORIGINAL_CLEAN",payload.getString("photoPolicy"))
                         assertEquals(2,payload.getInt("pathVersion"))
@@ -78,7 +90,7 @@ class RouteDeliveryTest {
                         assertEquals("SIC-18.xlsx", payload.getString("fileName"))
                         assertEquals("A",payload.getString("recordId"))
                         assertEquals(2,payload.getInt("pathVersion"))
-                        assertTrue(payload.getString("logicalPath").startsWith("R/ALCANTARILLAS/ALCANTARILLA_"))
+                        assertTrue(payload.getString("logicalPath").startsWith("R/ALCANTARILLAS/ALCANTARILLA UUID_"))
                         ZipFile(prepared).use { assertNotNull(it.getEntry("xl/workbook.xml")) }
                     }
                 }
@@ -149,8 +161,8 @@ class RouteDeliveryTest {
             }
             val delivery = RouteDelivery(context, db).prepare("PE-22A", reference, MatchConfig())
             val paths = delivery.plan.folders.flatMap { it.photos }.map { it.plannedPath }
-            assertEquals(listOf("PE-22A/ALCANTARILLAS/ALCANTARILLA_001/GENERAL/001_F01.jpg", "PE-22A/ALCANTARILLAS/ALCANTARILLA_001/GENERAL/002_F02.jpg",
-                "PE-22A/ALCANTARILLAS/ALCANTARILLA_002/GENERAL/003_F01.jpg"), paths)
+            assertEquals(listOf("PE-22A/ALCANTARILLAS/ALCANTARILLA UUID_demo-element-1/GENERAL/001_F01.jpg", "PE-22A/ALCANTARILLAS/ALCANTARILLA UUID_demo-element-1/GENERAL/002_F02.jpg",
+                "PE-22A/ALCANTARILLAS/ALCANTARILLA UUID_demo-element-2/GENERAL/003_F01.jpg"), paths)
             val manifest = JSONObject(File(delivery.batch.manifestPath).readText())
             val root = File(delivery.batch.manifestPath).parentFile!!
             val output = File("build/outputs/round2/DEMO-entrega-PE-22A.zip").apply { parentFile.mkdirs() }

@@ -9,12 +9,12 @@ import com.tuempresa.inventariovial.ChoiceSelector
 
 @Composable
 fun SurveyHeader(preferences: SurveyPreferences, segment: String, route: String, roadbed: String, direction: String,
-    onSegment: (String)->Unit, onRoute: (String)->Unit, onRoadbed: (String)->Unit, onDirection: (String)->Unit) {
+    onRoute: (String,String)->Unit, onRoadbed: (String)->Unit, onDirection: (String)->Unit) {
     Column(verticalArrangement=Arrangement.spacedBy(10.dp)) {
         Text("Ruta",style=MaterialTheme.typography.titleMedium)
         ChoiceSelector(preferences.projectRoutes.routeCodes,route) {
-            onRoute(it)
-            onSegment(preferences.projectRoutes.requireRoute(it).segmentCode)
+            // One event: two copies of the same old draft would undo the route selection.
+            onRoute(it,preferences.projectRoutes.requireRoute(it).segmentCode)
         }
         ProjectRouteFields(route)
         Text("Calzada",style=MaterialTheme.typography.titleMedium)

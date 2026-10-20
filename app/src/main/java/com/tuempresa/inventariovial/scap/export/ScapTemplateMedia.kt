@@ -27,7 +27,7 @@ internal object ScapTemplateMedia {
             w.set(photoSheet,"D$row",description)
         }
         replace(w,photoSheet,photos.map{if(it.localPath.isBlank())null else Picture(DriveUploadPolicy.uploadPath(it),com.tuempresa.inventariovial.scap.domain.ScapElementView.photoDescription(s,it.id,it.photoCategory,it.description))},read)
-        replace(w,2,listOf("ELEVATION","PLAN","CROSS_SECTION").map{type->s.sketches.singleOrNull{it.type==type}?.let{Picture(it.localUri,type)}},read)
+        replace(w,2,listOf("ELEVATION","PLAN","CROSS_SECTION").map{type->com.tuempresa.inventariovial.scap.domain.ScapSketchSelection.principal(s,type)?.let{Picture(it.localUri,type)}},read)
     }
     private fun replace(w:TemplateWorkbook,sheet:Int,pictures:List<Picture?>,read:(String)->ByteArray) {
         val sheetRelations=w.document("xl/worksheets/_rels/sheet$sheet.xml.rels")

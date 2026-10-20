@@ -21,7 +21,18 @@ import android.graphics.Color
 import kotlin.math.*
 
 internal object PavementDrawing {
-    fun draw(c: NativeCanvas, s: PavementSampleEntity, damages: List<PavementDamageEntity>, scale: Float, selected: Set<Int> = emptySet(), grid: Double = 1.0, highlightedDamageId: String? = null, labels: Boolean = true) {
+    /** Repaint only the confirmed shoulder tick after frames/leaders, at its original coordinates. */
+    fun drawShoulderMarkers(c: NativeCanvas, s: PavementSampleEntity, damages: List<PavementDamageEntity>, scale: Float, highlightedDamageId: String? = null) {
+        if(s.surface!="RIGID")return
+        val transform=PavementScale(s.largoM,scale)
+        val paint=Paint(Paint.ANTI_ALIAS_FLAG).apply { color=Color.RED;style=Paint.Style.STROKE }
+        for(d in damages.filter{it.code==27 && it.geometry=="SLABS"}) {
+            val p=runCatching{PavementBoundaryGeometry.resolve(s,d)}.getOrNull() ?: continue
+            paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
+            c.drawLine((p.markerA.x*scale).toFloat(),transform.canvasY(p.markerA.y),(p.markerB.x*scale).toFloat(),transform.canvasY(p.markerB.y),paint)
+        }
+    }
+    fun draw(c: NativeCanvas, s: PavementSampleEntity, damages: List<PavementDamageEntity>, scale: Float, selected: Set<Int> = emptySet(), grid: Double = 1.0, highlightedDamageId: String? = null, labels: Boolean = true, slabLabels: Boolean = true) {
         val w = s.anchoM.toFloat()*scale; val h = s.largoM.toFloat()*scale
         val transform = PavementScale(s.largoM, scale)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeWidth=1f; textSize=13f }
@@ -39,7 +50,7 @@ internal object PavementDrawing {
             paint.color=color; paint.style=Paint.Style.STROKE; c.drawRect(col*dx,transform.canvasY((row+1)*s.largoM/rows),(col+1)*dx,transform.canvasY(row*s.largoM/rows),paint); paint.style=Paint.Style.FILL
             c.drawText(label,col*dx+2,transform.canvasY(row*s.largoM/rows)-4,paint)
         }
-        if(rigid) for(n in 1..rows*cols) slab(n,n.toString(),Color.DKGRAY)
+        if(rigid && slabLabels) for(n in 1..rows*cols) slab(n,n.toString(),Color.DKGRAY)
         fun tag(text:String,left:Float,baseline:Float,color:Int) {
             paint.style=Paint.Style.FILL;paint.color=color
             c.drawRect(left-2,baseline-13,left+paint.measureText(text)+3,baseline+3,paint)
@@ -95,13 +106,49 @@ internal object PavementDrawing {
                 }
             }
             val kind=PavementSketch.kind(d.code)
+            if(rigid && d.code in setOf(25,27) && d.geometry=="SLABS") {
+                val projection=runCatching{PavementBoundaryGeometry.resolve(s,d)}.getOrNull()
+                if(projection!=null) {
+                    paint.color=Color.RED;paint.strokeWidth=1f
+                    c.drawLine((projection.a.x*scale).toFloat(),transform.canvasY(projection.a.y),(projection.b.x*scale).toFloat(),transform.canvasY(projection.b.y),paint)
+                    if(d.code==25) {
+                        paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
+                        c.drawLine((projection.markerA.x*scale).toFloat(),transform.canvasY(projection.markerA.y),(projection.markerB.x*scale).toFloat(),transform.canvasY(projection.markerB.y),paint)
+                    }
+                }
+                if(labels)tag("#${d.correlativo}${if(projection==null) " revisar junta/borde" else ""}",x+3,y-3,color)
+                continue
+            }
+            if(rigid && d.code in listOf(24,29,30) && d.geometry=="SLABS") {
+                for(trace in PavementRigidVisualGeometry.traces(s,d)) {
+                    val path=android.graphics.Path()
+                    trace.points.forEachIndexed {i,p->if(i==0)path.moveTo((p.x*scale).toFloat(),transform.canvasY(p.y))else path.lineTo((p.x*scale).toFloat(),transform.canvasY(p.y))}
+                    if(trace.closed)path.close()
+                    c.drawPath(path,paint)
+                }
+                if(labels) {
+                    val n=PavementRules.slabIds(d).minOrNull() ?: 1
+                    val lx=if(d.x1!=null)x else ((n-1)%cols*dx+3)
+                    val ly=if(d.y1!=null)y else transform.canvasY(((n-1)/cols+.5)*s.largoM/rows)
+                    val needsCorner=d.code==24 && PavementDurabilityGeometry.project(s,d).warning!=null
+                    tag("#${d.correlativo}${if(needsCorner) " revisar esquina" else if(!PavementSlabGeometry.localized(d)) " referencial" else ""}",lx+3,ly-3,color)
+                }
+                continue
+            }
             when(d.geometry){
                 "LINEAR" -> if(kind==PavementSketchKind.IRREGULAR_LINE) {
                     val p=android.graphics.Path();PavementSketch.crack(d.id,SketchPoint(d.x1!!,d.y1!!),SketchPoint(d.x2!!,d.y2!!),s.anchoM,s.largoM).forEachIndexed { i,pt -> if(i==0)p.moveTo((pt.x*scale).toFloat(),transform.canvasY(pt.y)) else p.lineTo((pt.x*scale).toFloat(),transform.canvasY(pt.y)) };c.drawPath(p,paint)
                 } else recipe(x,y,x2,y2,kind)
                 "AREA" -> recipe(min(x,x2),min(y,y2),max(x,x2),max(y,y2),kind)
                 "POTHOLE" -> { val radius=((d.diameterM?:0.0)*scale/2).toFloat();recipe(x-radius,y-radius,x+radius,y+radius,kind) }
-                "SLABS" -> if(PavementSlabGeometry.localized(d)) {
+                "SLABS" -> if(d.code==22 && PavementSlabGeometry.localized(d)) {
+                    val corner=runCatching {PavementCornerGeometry.resolve(s,d)}.getOrNull()
+                    val points=corner?.crack(d.id) ?: listOf(SketchPoint(d.x1?:0.0,d.y1?:0.0),SketchPoint(d.x2?:0.0,d.y2?:0.0))
+                    val path=android.graphics.Path()
+                    points.forEachIndexed {i,p->if(i==0)path.moveTo((p.x*scale).toFloat(),transform.canvasY(p.y))else path.lineTo((p.x*scale).toFloat(),transform.canvasY(p.y))}
+                    c.drawPath(path,paint)
+                    if(labels)tag("#${d.correlativo}${if(corner==null) " revisar" else ""}",x+3,y-3,color)
+                } else if(PavementSlabGeometry.localized(d)) {
                     when(PavementSlabGeometry.mark(d.code)) {
                         SlabMark.POINT -> recipe(x-4,y-4,x+4,y+4,PavementSketchKind.POINT)
                         SlabMark.LINE -> c.drawLine(x,y,x2,y2,paint)
@@ -111,29 +158,41 @@ internal object PavementDrawing {
                 } else PavementRules.slabIds(d).forEach { n ->
                     if(rigid && n in 1..rows*cols) {
                         val col=(n-1)%cols;val row=(n-1)/cols
-                        recipe(col*dx,transform.canvasY((row+1)*s.largoM/rows),(col+1)*dx,transform.canvasY(row*s.largoM/rows),kind)
-                        if(labels) tag("#${d.correlativo}",col*dx+3,transform.canvasY(row*s.largoM/rows)-14,color)
+                        if(d.code==22)c.drawRect(col*dx,transform.canvasY((row+1)*s.largoM/rows),(col+1)*dx,transform.canvasY(row*s.largoM/rows),paint)
+                        else recipe(col*dx,transform.canvasY((row+1)*s.largoM/rows),(col+1)*dx,transform.canvasY(row*s.largoM/rows),kind)
+                        if(labels) tag("#${d.correlativo}${if(d.code==22) " sin localizar" else ""}",col*dx+3,transform.canvasY(row*s.largoM/rows)-14,color)
                     }
                 }
-                "GLOBAL" -> if(labels) { paint.style=Paint.Style.FILL;c.drawText("#${d.correlativo} ${d.name} · global",3f,16f+damages.filter{it.geometry=="GLOBAL"}.indexOf(d)*16f,paint);paint.style=Paint.Style.STROKE }
+                "GLOBAL" -> {
+                    if(d.code==26)for(mark in PavementJointAnnotations.marks(s,d.id)) {
+                        val (a,b)=PavementJointAnnotations.endpoints(s,mark)
+                        paint.color=Color.rgb(210,55,20);paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
+                        if(mark.kind=="N")c.drawCircle((a.x*scale).toFloat(),transform.canvasY(a.y),minOf(5f,(minOf(s.anchoM/cols,s.largoM/rows)*scale*.12).toFloat()),paint)
+                        else c.drawLine((a.x*scale).toFloat(),transform.canvasY(a.y),(b.x*scale).toFloat(),transform.canvasY(b.y),paint)
+                    }
+                    if(labels) { paint.style=Paint.Style.FILL;paint.color=color;c.drawText("#${d.correlativo} ${d.name} · global",3f,16f+damages.filter{it.geometry=="GLOBAL"}.indexOf(d)*16f,paint);paint.style=Paint.Style.STROKE }
+                }
             }
             paint.style=Paint.Style.FILL
             if(labels && d.geometry !in listOf("GLOBAL","SLABS")) tag("#${d.correlativo}",x+3,y-3,color)
         }
         paint.color=Color.BLACK;paint.strokeWidth=2f;paint.style=Paint.Style.STROKE;c.drawRect(0f,0f,w,h,paint)
+        drawShoulderMarkers(c,s,damages,scale,highlightedDamageId)
         // Draw selection last so it remains visible above damage symbols and the sample border.
         paint.strokeWidth=6f
         for(n in selected) slab(n,"✓$n",Color.RED)
     }
 }
 
-@Composable internal fun PavementScheme(s:PavementSampleEntity, damages:List<PavementDamageEntity>, selected:Set<Int>, first:Pair<Double,Double>?, enabled:Boolean, moving:PavementDamageEntity?=null, onMove:(PavementDamageEntity)->Unit={}, highlightedDamageId:String?=null, onTap:(Double,Double)->Unit) {
+@Composable internal fun PavementScheme(s:PavementSampleEntity, damages:List<PavementDamageEntity>, selected:Set<Int>, first:Pair<Double,Double>?, enabled:Boolean, moving:PavementDamageEntity?=null, onMove:(PavementDamageEntity)->Unit={}, highlightedDamageId:String?=null, onMetricTap:((Double,Double,Double)->Unit)?=null, onTap:(Double,Double)->Unit) {
     var zoom by remember(s.id) { mutableFloatStateOf(1f) }; var pan by remember(s.id) { mutableStateOf(Offset.Zero) }; var grid by remember { mutableStateOf(1.0) }
     val tap by rememberUpdatedState(onTap)
+    val metricTap by rememberUpdatedState(onMetricTap)
     val move by rememberUpdatedState(onMove)
     var dragged by remember(moving) { mutableStateOf<PavementDamageEntity?>(null) }
     val gutter = with(androidx.compose.ui.platform.LocalDensity.current) { 64.dp.toPx() }
     val labelSize = with(androidx.compose.ui.platform.LocalDensity.current) { 14.sp.toPx() }
+    val touchRadius = with(androidx.compose.ui.platform.LocalDensity.current) { 18.dp.toPx() }
     Column {
         Row { TextButton(onClick={zoom=1f;pan=Offset.Zero}){Text("Ajustar")}; TextButton(onClick={grid=if(grid==1.0)0.5 else 1.0}){Text("Malla $grid m")} }
         Canvas(Modifier.fillMaxWidth().weight(1f).heightIn(min=180.dp).testTag("pavement-scheme")
@@ -142,7 +201,10 @@ internal object PavementDrawing {
                     val viewport=PavementViewport.fit(s.anchoM,s.largoM,size.width.toFloat(),size.height.toFloat(),gutter,zoom,pan.x,pan.y)
                     val scale=viewport.scale
                     val x=viewport.metresX(p.x);val y=viewport.metresY(p.y)
-                    if(x.toDouble() in 0.0..s.anchoM && y in 0.0..s.largoM) tap(x.toDouble(),y)
+                    if(x in 0.0..s.anchoM && y in 0.0..s.largoM) {
+                        val handler=metricTap
+                        if(handler!=null)handler(x,y,touchRadius/scale.toDouble())else tap(x,y)
+                    }
                 }
             } }
             .pointerInput(moving,enabled) {

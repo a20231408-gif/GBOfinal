@@ -118,13 +118,18 @@ class FieldSessionFormsTest {
         assertHeader("PE-22A","CD")
         compose.onAllNodesWithText("PE-22A").onFirst().performClick()
         compose.onNodeWithText("PE-3NG").performClick()
+        compose.onNodeWithText("PE-3NG").assertExists()
         compose.onAllNodesWithText("CD").onFirst().performClick()
         compose.onNodeWithText("UC").performClick()
         compose.onNodeWithText("Guardar borrador").performScrollTo().performClick()
         var saved:InventoryRecordEntity?=null
-        compose.waitUntil(20_000) {
-            saved=runBlocking {vm.field.dao.observeDrafts().first().firstOrNull {it.routeCode=="PE-3NG" && it.sicCode=="SIC-22"}}
-            saved!=null
+        try {
+            compose.waitUntil(20_000) {
+                saved=runBlocking {vm.field.dao.observeDrafts().first().firstOrNull {it.routeCode=="PE-3NG" && it.sicCode=="SIC-22"}}
+                saved!=null
+            }
+        } catch (timeout: ComposeTimeoutException) {
+            throw AssertionError("Drafts: ${runBlocking {vm.field.dao.observeDrafts().first()}}\n${compose.onRoot(useUnmergedTree=true).printToString()}",timeout)
         }
         val id=saved!!.id
         compose.onNodeWithText("← Volver").performScrollTo().performClick()

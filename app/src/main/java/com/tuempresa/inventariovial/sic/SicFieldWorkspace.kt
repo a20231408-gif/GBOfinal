@@ -136,7 +136,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
             openedRevision=db.inventoryDao().recordById(id)?.updatedAt
             complete=db.inventoryDao().sicExtension(id)?.status=="COMPLETE"
             trackRecordId=id
-            dirty=false;photosChanged=false;review=false;notice=if(finalize) "✓ Finalizado · guardado en tablet" else "✓ Borrador guardado en tablet"
+            dirty=false;photosChanged=false;review=false;notice=if(finalize) "Ficha finalizada y guardada dentro de GBO" else "Borrador guardado dentro de GBO"
             if(finalize) {
                 if(com.tuempresa.inventariovial.tracking.TrackCaptureService.activeRecordId.value==id)vm.field.stopTrack()
                 survey.remember(com.tuempresa.inventariovial.field.SurveyPosition(
@@ -151,6 +151,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
     if(!loaded) {Text(notice ?: "Cargando ficha…");return}
     val exportContent:@Composable ()->Unit = {
         if(independent) {
+            com.tuempresa.inventariovial.localfiles.LocalRecordFiles("SIC",id,complete && !dirty)
             val intents by db.automaticSyncDao().observe().collectAsState(initial=emptyList())
             val sync=intents.find {it.key=="SIC/$id"}
             Text(when {
@@ -158,7 +159,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
                 !complete -> "Borrador local"
                 sync?.state=="SYNCED" -> "Sincronizado"
                 sync?.state=="PENDING_VALIDATION" -> "Entrega pendiente de completar"
-                else -> "Guardado local · sincronización pendiente"
+                else -> "Ficha guardada dentro de GBO; consulta el destino y las copias debajo"
             },style=MaterialTheme.typography.bodySmall)
         } else com.tuempresa.inventariovial.core.AutomaticSyncPanel("SIC",id,complete && !dirty)
         if(complete) Button(enabled=!busy && !dirty,onClick={busy=true;scope.launch {try {
@@ -184,7 +185,7 @@ fun SicFieldWorkspace(vm:InventoryViewModel,format:SicFieldFormat,recordId:Strin
         onDraft={if(editable)save(false)},onBack=::leave,onReview={save(false){review=true}},exportContent=exportContent)
     if(review) com.tuempresa.inventariovial.field.LegacyRecordReviewDialog(
         format.fields.map {f->f.label to (f.options.find {it.code==state.text(f.key)}?.name ?: state.text(f.key))},
-        paths.map(::File),completion,enabled=!busy,onConfirm={save(true)},onDismiss={review=false})
+        paths.map(::File),completion,enabled=!busy,onConfirm={save(true)},onDismiss={review=false},recordId=id)
     if(exit) AlertDialog(onDismissRequest={exit=false},title={Text("Guardar cambios")},text={Text("Conserva los cambios como borrador antes de volver")},confirmButton={TextButton(enabled=!busy,onClick={save(false){exit=false;onBack()}}) {Text("Guardar borrador y volver")}},dismissButton={TextButton(onClick={exit=false}) {Text("Seguir editando")}})
 }
 

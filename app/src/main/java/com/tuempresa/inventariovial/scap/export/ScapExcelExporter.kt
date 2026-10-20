@@ -29,7 +29,7 @@ class ScapExcelExporter(private val template:()->InputStream, fieldMap:String,
         }
         if(selected.any{it.element.group !in groupRows}) errors+="Existe un grupo de elementos sin correspondencia en la plantilla."
         if(s.photos.size>32) errors+="La plantilla admite 32 fotos; esta inspección tiene ${s.photos.size}."
-        if(s.sketches.groupBy{it.type}.any{it.value.size>1}) errors+="La plantilla admite un croquis de cada tipo."
+        warnings+=com.tuempresa.inventariovial.scap.domain.ScapSketchSelection.warnings(s)
         warnings+="Excel recalculará las fórmulas al abrir. Una ficha incompleta puede no producir condición global."
         return ScapExportReview(errors,warnings)
     }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.time.LocalDate
 
 @Composable
 fun deviceAccessGate(viewModel: InventoryViewModel): Boolean {
@@ -44,7 +46,7 @@ fun SaveWarningsDialog(viewModel: InventoryViewModel) {
     pending?.let { save ->
         LegacyRecordReviewDialog(captureSummary(save.request),save.request.photoPaths.map(::File),
             com.tuempresa.inventariovial.core.CompletionResult(emptyList()),save.warnings.map {it.message},
-            onConfirm=viewModel::confirmSaveWarnings,onDismiss=viewModel::dismissSaveWarnings)
+            onConfirm=viewModel::confirmSaveWarnings,onDismiss=viewModel::dismissSaveWarnings,recordId=save.request.recordId)
     }
 }
 
@@ -62,12 +64,15 @@ fun FieldSecondaryTools(viewModel:InventoryViewModel) {
 }
 
 @Composable
-fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?=null) {
-    var project by remember { mutableStateOf(initial?.project.orEmpty()) }
+fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?=null,
+    today:()->LocalDate={LocalDate.now()}) {
+    var project by rememberSaveable(initial?.sessionId) { mutableStateOf(initial?.project ?: defaultSessionProjectName(today())) }
     val currentUser by field.auth.sessions.current.collectAsState()
     val operator = initial?.operator ?: currentUser?.displayName.orEmpty()
-    var road by remember { mutableStateOf(initial?.road.orEmpty()) };var roadbed by remember { mutableStateOf(initial?.roadbed.orEmpty()) }
-    var decreasing by remember { mutableStateOf(initial?.direction=="DECREASING") };var error by remember { mutableStateOf<String?>(null) }
+    var road by rememberSaveable(initial?.sessionId) { mutableStateOf(initial?.road.orEmpty()) }
+    var roadbed by rememberSaveable(initial?.sessionId) { mutableStateOf(initial?.roadbed.orEmpty()) }
+    var decreasing by rememberSaveable(initial?.sessionId) { mutableStateOf(initial?.direction=="DECREASING") }
+    var error by remember { mutableStateOf<String?>(null) }
     AlertDialog(onDismissRequest=onClose,title={Text(if(initial==null) "Nueva sesión" else "Configurar sesión")},text={ Column(Modifier.verticalScroll(rememberScrollState())) {
         OutlinedTextField(project,{project=it},label={Text("Proyecto")})
         OutlinedTextField(operator,{},readOnly=true,label={Text("Operador autenticado")})

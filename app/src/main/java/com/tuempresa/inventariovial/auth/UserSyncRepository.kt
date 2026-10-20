@@ -20,10 +20,13 @@ class UserSyncRepository(private val db: InventoryDatabase, private val service:
         settings.clearInitialProvisioning()
     }
     suspend fun sync(): Result<Unit> = withContext(Dispatchers.IO) { mutex.withLock {
+        var stage = UserServiceStage.LOCAL_STORAGE
         try {
             val old = db.userDao().syncState()
             val clientVersion = old?.usersVersion ?: -1
+            stage = UserServiceStage.POST
             val response = service.call("syncUsers", JSONObject().put("clientVersion", clientVersion))
+            stage = UserServiceStage.USER_DATA
             require(response.get("version") is Int || response.get("version") is Long)
             require(response.get("changed") is Boolean)
             val version = response.getLong("version")
@@ -48,8 +51,9 @@ class UserSyncRepository(private val db: InventoryDatabase, private val service:
                     require(row.get("updatedAt") is Long || row.get("updatedAt") is Int)
                     require(created > 0 && updated >= created)
                     val verifier = PinVerifier.parse(row)
-                    UserCacheEntity(id, username, name, role, row.getBoolean("active"),
-                        protector.encrypt(verifier.json().toString(), "user:$id"), created, updated, time)
+                    val encrypted = try { protector.encrypt(verifier.json().toString(), "user:$id") }
+                    catch (_: Exception) { throw UserServiceException("LOCAL_STORAGE_ERROR", UserServiceStage.LOCAL_STORAGE) }
+                    UserCacheEntity(id, username, name, role, row.getBoolean("active"), encrypted, created, updated, time)
                 }
                 require(parsed.map { it.id }.distinct().size == parsed.size && parsed.map { it.username }.distinct().size == parsed.size)
                 require(parsed.any { it.active && it.role == "ADMIN" })
@@ -58,6 +62,7 @@ class UserSyncRepository(private val db: InventoryDatabase, private val service:
                 require(old != null && version == clientVersion && db.userDao().countUsers() > 0)
                 null
             }
+            stage = UserServiceStage.LOCAL_STORAGE
             sessions.cacheMutex.withLock {
                 db.withTransaction {
                     if (users != null) {
@@ -82,8 +87,16 @@ class UserSyncRepository(private val db: InventoryDatabase, private val service:
                     sessions.refresh(emptyList())
                 }
             }
-            db.auditDao().insert(AuditLogEntity(action = "USER_SYNC_FAILED"))
-            Result.failure(if (error is UserServiceException) error else UserServiceException("SERVICE_ERROR"))
+            // A failed audit write must not hide the original failure or crash the retry UI.
+            try { db.auditDao().insert(AuditLogEntity(action = "USER_SYNC_FAILED")) }
+            catch (cancel: CancellationException) { throw cancel }
+            catch (_: Exception) { /* No payloads or credentials in fallback logs. */ }
+            val code = when (stage) {
+                UserServiceStage.USER_DATA -> "INVALID_USER_RESPONSE"
+                UserServiceStage.LOCAL_STORAGE -> "LOCAL_STORAGE_ERROR"
+                else -> "NETWORK_ERROR"
+            }
+            Result.failure(if (error is UserServiceException) error else UserServiceException(code, stage))
         }
     } }
 }

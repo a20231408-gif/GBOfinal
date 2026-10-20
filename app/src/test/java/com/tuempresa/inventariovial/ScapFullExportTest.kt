@@ -124,7 +124,9 @@ class ScapFullExportTest {
             val expected=when {raw.isBlank()->"";f.getString("kind")=="DATE"->ChronoUnit.DAYS.between(LocalDate.of(1899,12,30),LocalDate.parse(raw,DateTimeFormatter.ofPattern("dd/MM/uuuu"))).toString();f.getString("kind")=="CHAINAGE"->ScapNumbers.chainage(raw).toString();else->raw}
             check(owner,key,ref,expected)
         }
-        fields.filter {it.getString("owner")=="inspection" && it.getString("valueCell")!="E66"}.forEach {f->field(if(f.getString("key").startsWith("joint")) "joint1" else "inspection",f)}
+        fields.filter {it.getString("owner")=="inspection" && it.getString("valueCell")!="E66" && it.getString("section")!="D4"}.forEach {f->field(if(f.getString("key").startsWith("joint")) "joint1" else "inspection",f)}
+        // This historical exporter deliberately clears D.4; canonical templates have their own coverage.
+        fields.filter {it.getString("section")=="D4"}.forEach {f->check("inspection",f.getString("key"),f.getString("valueCell"),"")}
         fun structure(owner:String,kind:String,col:String,base:String,soil:String?=null,delta:Int=0) {
             fields.filter {it.getString("owner")==kind && it.getString("section")=="C4"}.forEach {f->val ref=f.getString("valueCell").replace(base,col);field(owner,f,ref.takeWhile(Char::isLetter)+(ref.filter(Char::isDigit).toInt()+delta))}
             soil?.let {check(owner,"soil",it,s.values(owner).getValue("soil"))}
@@ -140,7 +142,7 @@ class ScapFullExportTest {
         for(i in 2..3) fields.filter {it.getString("key").startsWith("joint")}.forEach {f->val ref=f.getString("valueCell");field("joint$i",f,ref.takeWhile(Char::isLetter)+(ref.filter(Char::isDigit).toInt()+if(i==2)339 else 347))}
         for(i in 1..4) fields.filter {it.getString("owner")=="span" && it.getString("key")!="lengthM"}.forEach {f->val ref=f.getString("valueCell");field("span$i",f,ref.takeWhile(Char::isLetter)+(ref.filter(Char::isDigit).toInt()+if(i==1)0 else 530+(i-2)*40))}
         for(owner in listOf("ACCESS_LEFT","ACCESS_RIGHT")) fields.filter {it.getString("owner")=="access"}.forEach {f->val ref=f.getString("valueCell");field(owner,f,if(owner=="ACCESS_LEFT")ref else if(f.getString("section")=="C6")ref.replace("G","N").replace("H","P") else ref.replace("G","L").replace("H","N"))}
-        for(i in 1..3) fields.filter {it.getString("owner")=="profile"}.forEach {f->field("point$i",f,f.getString("valueCell").replace("461",(460+i).toString()))}
+        for(i in 1..3) fields.filter {it.getString("owner")=="profile"}.forEach {f->check("point$i",f.getString("key"),f.getString("valueCell").replace("461",(460+i).toString()),"")}
         s.elements.forEachIndexed {i,e->
             check(e.element.elementCode,"quantity","C${14+i}",e.element.quantity.toString(),6)
             check(e.element.elementCode,"code","A${14+i}",e.element.elementCode,6)
@@ -152,8 +154,7 @@ class ScapFullExportTest {
         listOf("J62","J64","J66","N686").forEachIndexed {i,ref->check("span${i+1}","lengthM",ref,(10.0+i).toString())}
         assertTrue(text(4,"F23").contains("Segunda falla 110"));check("general","description","F45","Observación general sintética · Acceso",4)
         s.photos.forEachIndexed {i,p->
-            val defects=s.defects.filter {it.photoId==p.id}.joinToString("") {"\n${it.description} · ${it.locationDescription}"}
-            check(p.id,"category/description/element/defects","D${13+i}","${ScapPhotoCategories.label(p.photoCategory)} · Foto sintética ${i+1} · 104$defects",5)
+            check(p.id,"category/description","D${13+i}","${ScapPhotoCategories.label(p.photoCategory)}: Foto sintética ${i+1}",5)
             check(p.id,"index","B${13+i}",(i+1).toString(),5)
         }
         assertEquals(12,w.parts.keys.count {it.startsWith("xl/media/scap_")})

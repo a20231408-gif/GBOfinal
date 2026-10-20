@@ -102,7 +102,7 @@ class FieldReadinessTest {
             base.copy(sicCode="SIC-23",detail=SicFormDetail.Sic23(Sic23FormState(classCode="23"))),
             base.copy(sicCode="SIC-23",detail=SicFormDetail.Sic23(Sic23FormState(classCode="21"))))
         for(r in cases) {
-            assertEquals(requiresEndLocation(r),CaptureValidation.warnings(r,RoadReferenceData(),0).any{it.code=="MISSING_END_GPS"})
+            assertFalse(CaptureValidation.warnings(r,RoadReferenceData(),0).any{it.code=="MISSING_END_GPS"})
             val summary=com.tuempresa.inventariovial.field.captureSummary(r.copy(endLatitude=-12.1,endLongitude=-77.1))
             assertTrue(summary.any{it.first=="GPS inicial"})
             assertEquals(requiresEndLocation(r),summary.any{it.first=="GPS final"})

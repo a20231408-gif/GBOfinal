@@ -102,9 +102,10 @@ fun LegacyInventoryFormScaffold(title:String,subtitle:String,onSaveDraft:()->Uni
 
 /** Extracted from SaveWarningsDialog; the host retains its own validation and persistence. */
 @Composable fun LegacyRecordReviewDialog(fields:List<Pair<String,String>>,photos:List<File>,completion:CompletionResult,
-    warnings:List<String> = emptyList(),enabled:Boolean=true,onConfirm:()->Unit,onDismiss:()->Unit) {
+    warnings:List<String> = emptyList(),enabled:Boolean=true,onConfirm:()->Unit,onDismiss:()->Unit,recordId:String?=null) {
     AlertDialog(onDismissRequest=onDismiss,title={Text("Verificar registro antes de guardar")},
         text={Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)) {
+            recordId?.let {com.tuempresa.inventariovial.localfiles.RecordDeliveryChoice("SIC",it,false)}
             RecordReviewSection("Revisión SIC",fields,photos,completion,initiallyExpanded=true)
             warnings.forEach {Text("• $it")}
             Text("Puedes corregir los datos o guardar después de revisar estos avisos.")

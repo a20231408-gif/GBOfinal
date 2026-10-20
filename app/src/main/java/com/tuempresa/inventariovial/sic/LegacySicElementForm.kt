@@ -48,7 +48,7 @@ import com.tuempresa.inventariovial.viewmodel.InventoryViewModel
     LegacyInventoryFormScaffold(title,subtitle,onDraft,onBack,notice.orEmpty(),enabled=loaded && !busy,draftEnabled=editable && loaded && !busy) {
         item {
             SurveyHeader(survey,segment,route,bed,direction,
-                onSegment={change("_segment",it)},onRoute={change("routeCode",it);change("_routeSource",LocationSource.MANUAL_OVERRIDE);change("_locationSource",LocationSource.MANUAL_OVERRIDE);change("_endLocationSource",LocationSource.MANUAL_OVERRIDE)},
+                onRoute={selectedRoute,selectedSegment->change("routeCode",selectedRoute);change("_segment",selectedSegment);change("_routeSource",LocationSource.MANUAL_OVERRIDE);change("_locationSource",LocationSource.MANUAL_OVERRIDE);change("_endLocationSource",LocationSource.MANUAL_OVERRIDE)},
                 onRoadbed={manual("roadbedCode",it)},onDirection={change("_direction",it)})
         }
         item {OptionalDeviceGps(if(state.text("_gpsExplicit")=="true" || state.text("_latitude").isNotBlank()) {

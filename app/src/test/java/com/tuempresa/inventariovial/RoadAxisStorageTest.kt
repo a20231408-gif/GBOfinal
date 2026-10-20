@@ -69,7 +69,7 @@ class RoadAxisStorageTest {
                 roadMatchConfidence = null, matchedSegmentId = null, projectedLatitude = null, projectedLongitude = null))
             assertEquals(before.photos, after.photos)
             assertEquals(before.sic19, after.sic19)
-            assertEquals(11, db.openHelper.readableDatabase.version)
+            assertEquals(20, db.openHelper.readableDatabase.version)
         } finally { db.close(); context.deleteDatabase(name) }
     }
 
@@ -92,7 +92,7 @@ class RoadAxisStorageTest {
             assertEquals(17.0, edited.record.startDistanceM, 0.0)
             assertEquals(captured.createdAt, edited.record.createdAt)
             assertEquals(photo, edited.photos.single())
-            assertEquals("CUN-1", RoadOrdering.orderAssetsForRoute(dao.observeHistory().first()).single().shortCode)
+            assertEquals("CUN-id", RoadOrdering.orderAssetsForRoute(dao.observeHistory().first()).single().shortCode)
         } finally { db.close() }
     }
 
@@ -107,7 +107,7 @@ class RoadAxisStorageTest {
             try {
                 ZipFile(file).use { zip ->
                     val kml = zip.getInputStream(zip.getEntry("doc.kml")).bufferedReader().readText()
-                    assertTrue(kml.contains("ALC-1")); assertTrue(kml.contains("INICIO PE-3N"))
+                    assertTrue(kml.contains("ALC-inside")); assertTrue(kml.contains("INICIO PE-3N"))
                     assertFalse(kml.contains("PE-22A")); assertFalse(kml.contains("outside"))
                     assertNotNull(zip.getEntry("legend.png"))
                     assertEquals(149263.912, ref.forSelectedRoute("PE-3N").segments.single().points.last().chainageM, 0.02)

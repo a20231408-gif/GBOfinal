@@ -4,12 +4,14 @@ import android.content.Context
 import android.net.*
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.tuempresa.inventariovial.data.database.InventoryDatabase
@@ -64,16 +66,10 @@ import java.time.LocalDate
     when(screen) {
         "DRAFTS"->AllDraftsScreen(rows,sessions,reference.prs,onContinue) {screen="HOME"}
         "NEW"->NewRecordChooser(onAsset,onSic) {screen="HOME"}
-        "TOOLS"->LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
-            item {TextButton(onClick={screen="HOME"}) {Text("VOLVER")};Text("Herramientas y ajustes",style=MaterialTheme.typography.headlineSmall)}
-            item {OutlinedButton(onClick=onMap,modifier=Modifier.fillMaxWidth()) {Text("Mapa y orden de elementos")}}
-            item {OutlinedButton(onClick=onExport,modifier=Modifier.fillMaxWidth()) {Text("Exportaciones avanzadas · Excel SIC")}}
-            item {OutlinedButton(onClick={onAsset(RoadAssetType.BRIDGE)},modifier=Modifier.fillMaxWidth()) {Text("SCAP y puentes")}}
-            item {FieldSecondaryTools(vm)}
-            item {com.tuempresa.inventariovial.core.CoreFieldTools(vm)}
-            item {Text("Administración y cuenta",style=MaterialTheme.typography.titleMedium);com.tuempresa.inventariovial.auth.AuthHomePanel(vm.field.auth)}
-            item {message?.let {Text(it)}}
-        }
+        "TOOLS"->DashboardToolsScreen(onBack={screen="HOME"},onMap=onMap,onExport=onExport,
+            onBridge={onAsset(RoadAssetType.BRIDGE)},secondary={FieldSecondaryTools(vm)},
+            core={com.tuempresa.inventariovial.core.CoreFieldTools(vm)},
+            account={com.tuempresa.inventariovial.auth.AuthHomePanel(vm.field.auth)},message=message)
         else->DashboardScreen(session,sessions,rows,reference.prs,DashboardDeliveryCounts.from(intents),connected,today,
             onSession={showSession=true},onNew={screen="NEW"},onRecords=onRecords,onPavement=onPavement,
             onDrive={showDrive=true},onTools={screen="TOOLS"},onAllDrafts={screen="DRAFTS"},onContinue=onContinue,onMap=onMap)
@@ -83,8 +79,8 @@ import java.time.LocalDate
 }
 
 @Composable fun NewRecordChooser(onAsset:(RoadAssetType)->Unit,onSic:(SicFieldFormat)->Unit,onBack:()->Unit) {
-    LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-        item {TextButton(onClick=onBack) {Text("VOLVER")};Text("Nuevo registro",style=MaterialTheme.typography.headlineSmall)}
+    LazyColumn(Modifier.fillMaxSize().background(Color.White),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+        item {TextButton(onClick=onBack) {Text("VOLVER")};RutaClaraSectionHeader("Nuevo registro",com.tuempresa.inventariovial.R.drawable.gbo_dashboard_banner)}
         InventoryElements.home.groupBy {it.family}.forEach {(family,entries)->
             item {Text(family,style=MaterialTheme.typography.titleMedium)}
             items(entries) {entry->OutlinedButton(onClick={entry.asset?.let(onAsset);entry.format?.let(onSic)},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {

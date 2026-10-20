@@ -77,7 +77,7 @@ class PavementObservations10ITest {
         // Robolectric does not implement PdfDocument's native file handle here.
         // Exercise the exact production PDF page renderer on real native canvases.
         val pages=mutableListOf<Bitmap>()
-        PavementPdf.render(data,emptyMap(),{Bitmap.createBitmap(595,842,Bitmap.Config.ARGB_8888).also {pages+=it}.let(::Canvas)},{})
+        PavementPdf.render(data,emptyMap(),{Bitmap.createBitmap(PavementPdfLayout.PAGE_WIDTH,PavementPdfLayout.PAGE_HEIGHT,Bitmap.Config.ARGB_8888).also {pages+=it}.let(::Canvas)},{})
         assertTrue(pages.isNotEmpty())
         val out=File("build/campo-10i").apply {mkdirs()}
         File(out,"croquis-localizado.png").outputStream().use {assertTrue(pages.first().compress(Bitmap.CompressFormat.PNG,100,it))}

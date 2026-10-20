@@ -37,3 +37,8 @@ output/
 *.aab
 **/initial-results/
 **/refined-results/
+
+# Generated Python caches and Android release outputs
+__pycache__/
+*.py[cod]
+/app/release/

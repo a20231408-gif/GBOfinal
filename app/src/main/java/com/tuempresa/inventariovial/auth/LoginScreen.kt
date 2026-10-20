@@ -2,9 +2,7 @@ package com.tuempresa.inventariovial.auth
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -38,37 +36,37 @@ fun LoginScreen(graph: AuthGraph, lockedUsername: String? = null) {
     val state by graph.database.userDao().observeSyncState().collectAsState(initial = null)
     val syncing by graph.busy.collectAsState()
     val syncMessage by graph.message.collectAsState()
-    var username by remember { mutableStateOf(lockedUsername.orEmpty()) }
-    var pin by remember { mutableStateOf("") }
-    var url by remember { mutableStateOf("") }
-    var token by remember { mutableStateOf("") }
+    val inputs = rememberLoginFormInputs(lockedUsername)
+    var username by inputs::username
+    var pin by inputs::pin
+    var url by inputs::url
+    var token by inputs::token
     var configured by remember { mutableStateOf(graph.settings.configured) }
     var busy by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
-    var rotateToken by remember {mutableStateOf(false)}
+    var rotateToken by inputs::rotateToken
     SideEffect{com.tuempresa.inventariovial.diagnostics.StabilityDiagnostics.screen("AUTH")}
     BackHandler(lockedUsername != null) { }
-    Column(Modifier.fillMaxSize().padding(32.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text("Inventario Vial", style = MaterialTheme.typography.headlineLarge)
+    AuthPage(configured) {
         if (lockedUsername != null) Text("Vuelve a ingresar tu PIN para continuar. La ficha abierta se conserva.")
         if (!configured) {
-            Text("Configuración inicial del servicio de usuarios")
+            Text("Configuración inicial del servicio de usuarios", style = MaterialTheme.typography.titleLarge)
             Text("Solicita a GBO la URL del servicio y el token asignado a esta tablet.")
             Text("Huella de esta tablet:")
             SelectionContainer { Text(remember { DeviceAccessManager(context).fingerprint() }) }
             OutlinedTextField(url, { url = it }, label = { Text("URL HTTPS del servicio de usuarios") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             OutlinedTextField(token, { token = it.trim() }, label = { Text("Token de esta tablet") },
                 visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth(), singleLine = true)
-            Button(enabled = !busy, onClick = {
+            Button(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !busy, onClick = {
                 try { graph.settings.provision(url, token); token = ""; configured = true; graph.start(); scope.launch { graph.syncNow() } }
                 catch (_: Exception) { message = "No se pudo guardar. Revisa la URL HTTPS /exec y el token asignado por GBO." }
             }) { Text("Guardar configuración y sincronizar") }
         } else {
-            TextButton(enabled=!busy && lockedUsername==null,onClick={rotateToken=!rotateToken}){Text("Actualizar token autorizado de esta tablet")}
+            TextButton(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled=!busy && lockedUsername==null,onClick={rotateToken=!rotateToken}){Text("Actualizar token autorizado de esta tablet")}
             if(rotateToken) {
                 Text("Solicita a GBO el nuevo token de esta misma huella. Se comprobará en el servidor antes de reemplazar la credencial cifrada.")
                 OutlinedTextField(token,{token=it.trim()},label={Text("Nuevo token de esta tablet")},visualTransformation=PasswordVisualTransformation(),modifier=Modifier.fillMaxWidth(),singleLine=true)
-                Button(enabled=!busy&&token.matches(Regex("[A-Za-z0-9_-]{43}")),onClick={val candidate=token.toCharArray();token="";busy=true;scope.launch{
+                Button(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled=!busy&&token.matches(Regex("[A-Za-z0-9_-]{43}")),onClick={val candidate=token.toCharArray();token="";busy=true;scope.launch{
                     try{graph.acceptRotatedTabletToken(candidate);rotateToken=false;message="Token verificado. Inicia sesión con tu usuario y PIN."}
                     catch(e:CancellationException){throw e}
                     catch(e:Exception){message=e.message ?: "El servidor no aceptó el token. La credencial anterior se conserva."}
@@ -81,7 +79,7 @@ fun LoginScreen(graph: AuthGraph, lockedUsername: String? = null) {
             OutlinedTextField(username, { username = it }, readOnly = lockedUsername != null,
                 label = { Text("Usuario") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             PinField(pin, { pin = it }, "PIN")
-            Button(enabled = !busy && state != null, onClick = {
+            Button(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !busy && state != null, onClick = {
                 val entered = pin.toCharArray(); pin = ""; busy = true
                 scope.launch {
                     try { message = graph.auth.login(username, entered) }
@@ -90,10 +88,10 @@ fun LoginScreen(graph: AuthGraph, lockedUsername: String? = null) {
                     finally { entered.fill('\u0000'); busy = false }
                 }
             }) { Text(if (busy) "Verificando…" else "Iniciar sesión") }
-            OutlinedButton(enabled = !syncing, onClick = { scope.launch { graph.syncNow() } }) {
+            OutlinedButton(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !syncing, onClick = { scope.launch { graph.syncNow() } }) {
                 Text(if (syncing) "Actualizando…" else "Sincronizar usuarios")
             }
-            if (state == null || state!!.usersVersion < 1) TextButton(enabled = !syncing, onClick = { scope.launch {
+            if (state == null || state!!.usersVersion < 1) TextButton(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !syncing, onClick = { scope.launch {
                 try { graph.sync.resetInitialProvisioning(graph.settings); configured = false }
                 catch (_: Exception) { message = "La configuración ya fue completada; contacta con GBO para cambiarla." }
             } }) { Text("Corregir configuración inicial") }

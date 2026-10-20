@@ -52,10 +52,11 @@ class InventoryRepository(
 
             dao.insertOrCompleteDraft(record)
 
-            dao.insertSic17(detail)
+            require(record.sicCode=="SIC-17" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic17==null) dao.insertSic17(detail) else dao.updateSic17(detail)
 
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
     }
 
@@ -70,10 +71,11 @@ class InventoryRepository(
 
             dao.insertOrCompleteDraft(record)
 
-            dao.insertSic18(detail)
+            require(record.sicCode=="SIC-18" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic18==null) dao.insertSic18(detail) else dao.updateSic18(detail)
 
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
     }
 
@@ -88,10 +90,11 @@ class InventoryRepository(
 
             dao.insertOrCompleteDraft(record)
 
-            dao.insertSic19(detail)
+            require(record.sicCode=="SIC-19" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic19==null) dao.insertSic19(detail) else dao.updateSic19(detail)
 
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
     }
 
@@ -105,6 +108,8 @@ class InventoryRepository(
 
         database.withTransaction {
 
+            com.tuempresa.inventariovial.model.form.Sic20Identity.requireDetail(record.assetType,detail.classCode)
+            dao.snapshot(record.id)?.sic20?.let {com.tuempresa.inventariovial.model.form.Sic20Identity.resolve(record.assetType,it.classCode,detail.classCode)}
             if(detail.classCode in setOf("13","14")) {
                 val allowed=if(detail.classCode=="13")setOf("S") else setOf("I","D")
                 val old=dao.snapshot(record.id)
@@ -115,11 +120,12 @@ class InventoryRepository(
 
             dao.insertOrCompleteDraft(record)
 
-            dao.insertSic20(detail)
+            require(record.sicCode=="SIC-20" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic20==null) dao.insertSic20(detail) else dao.updateSic20(detail)
             if(detail.classCode=="14") TechnicalLengthStore.remember(database,record,lengthMode)
 
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
     }
 
@@ -134,10 +140,11 @@ class InventoryRepository(
 
             dao.insertOrCompleteDraft(record)
 
-            dao.insertSic21(detail)
+            require(record.sicCode=="SIC-21" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic21==null) dao.insertSic21(detail) else dao.updateSic21(detail)
 
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
     }
 
@@ -152,19 +159,43 @@ class InventoryRepository(
 
             dao.insertOrCompleteDraft(record)
 
-            dao.insertSic22(detail)
+            require(record.sicCode=="SIC-22" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic22==null) dao.insertSic22(detail) else dao.updateSic22(detail)
 
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
     }
     suspend fun saveSic23(record: InventoryRecordEntity, detail: Sic23Entity, photos: List<PhotoEntity>) {
         database.withTransaction {
             dao.insertOrCompleteDraft(record)
-            dao.insertSic23(detail)
-            dao.insertPhotos(photos)
-            if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,record.updatedAt)
+            require(record.sicCode=="SIC-23" && detail.recordId==record.id)
+            if(dao.snapshot(record.id)?.sic23==null) dao.insertSic23(detail) else dao.updateSic23(detail)
+            mergePhotos(record,photos)
+            enqueue(record)
         }
+    }
+
+    /** Draft completion is additive; explicit removal/replacement stays in the authorized editor. */
+    private suspend fun mergePhotos(record:InventoryRecordEntity,photos:List<PhotoEntity>) {
+        val existing=requireNotNull(dao.snapshot(record.id)).photos.toMutableList()
+        var next=(existing.maxOfOrNull {it.photoIndex} ?: 0)+1
+        for(photo in photos.distinctBy {it.id}) {
+            require(photo.recordId==record.id) {"Fotografía de otra ficha"}
+            val sameId=dao.photoById(photo.id)
+            require(sameId==null || sameId.recordId==record.id && sameId.localPath==photo.localPath) {"La identidad de la fotografía cambió"}
+            val old=sameId ?: existing.firstOrNull {it.localPath==photo.localPath}
+            if(old==null) {
+                val added=photo.copy(photoIndex=next++,isPrimary=existing.isEmpty())
+                dao.insertPhoto(added);existing.add(added)
+            }
+            else if(old.photoCategory!=photo.photoCategory) dao.updatePhotoMetadata(old.copy(photoCategory=photo.photoCategory,syncStatus="PENDING"))
+        }
+        dao.refreshRecordPhotoStatus(record.id)
+    }
+
+    private suspend fun enqueue(record:InventoryRecordEntity) {
+        if(record.status=="ACTIVE") com.tuempresa.inventariovial.core.AutomaticSync.request(database,"SIC",record.id,requireNotNull(dao.recordById(record.id)).updatedAt)
     }
 
     suspend fun saveSupplementary(recordId: String, state: SupplementaryFormState,expectedUpdatedAt:Long?=null) {
