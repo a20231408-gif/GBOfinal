@@ -1,0 +1,14 @@
+# Prueba física pendiente — candidata 1.4.9 (23)
+
+No se instaló ni distribuyó automáticamente esta candidata. Usar solo una tablet de pruebas autorizada, sin desinstalar ni borrar datos. Una Debug con otro certificado no admite actualizarse con la Release; verificar primero firma y versión de esa instalación.
+
+1. Comprobar en Android la identidad interna 1.4.9 (23). Conservar la APK y su SHA-256 del informe de entrega.
+2. Activar modo avión. Crear una ficha SIC ficticia, guardar un borrador incompleto con una fotografía y esperar la confirmación de persistencia. Volver a Mis registros sin entrar a Exportar. Comprobar transición de actualización a archivos actualizados; abrir el XLSX provisional, su hoja PENDIENTES y la foto desde Archivos → Descargas → GBO_Ruta_Clara. La foto debe conservar sus dimensiones originales.
+3. Modificar un valor, confirmar el guardado y comprobar la revisión nueva. El archivo anterior permanece accesible. Completar los campos y verificar documento definitivo separado del provisional. Introducir un texto ficticio que empiece por = y comprobar que se muestra como texto, no se ejecuta.
+4. En un SCAP ficticio sin PR, guardar cinco croquis (dos de un mismo tipo), fotos y un video de prueba. No pulsar Exportar. Comprobar XLSX SCAP/SIC provisionales, JSON y todos los anexos. Revisar el aviso de Drive y el botón Ir a ubicación: debe abrir Datos para SIC / SIC-17 / Ubicación SIC. La copia local debe existir aun con ese bloqueo.
+5. Crear una muestra Pavimentos ficticia. Antes de completar cabecera, comprobar PDF borrador y Excel de datos. Guardar daños 22 en cuatro esquinas y el global 26 con juntas y cruces; verificar conservación al reabrir y su representación en el PDF nativo y en el JSON. El renderizado PDF real Android no se da por aprobado por el sustituto PDF usado en parte de las pruebas JVM.
+6. Tras ver Guardado local, cerrar GBO y reabrirlo. Comprobar datos y acceso a documentos en modo avión. Si se interrumpió una copia, debe reanudarse sin duplicar fotos/videos ya publicados. No afirmar persistencia de una escritura que no alcanzó a confirmarse en Room.
+7. Desde Mis registros, probar filtros SIC, SCAP y Pavimentos, Abrir archivo, selector, Compartir y Ver ubicación sin entrar al editor. Comprobar los permisos temporales y el comportamiento con/sin lector Excel/PDF instalado. Android puede abrir Descargas sin situarse en la carpeta exacta: verificar la ruta mostrada.
+8. Desactivar y volver a activar copias en Herramientas y ajustes, verificando el aviso de privacidad/espacio. Confirmar que no se inicia una exportación masiva histórica ni se cambia el destino Drive de ninguna ficha.
+
+No enviar esta prueba a Drive de producción sin autorización. Las pruebas BUSY/ACK de esta entrega son simuladas y no acreditan rendimiento del Apps Script real. Registrar modelo Android, hora, UUID ficticio, revisión, estado local y resultado de apertura para cada caso, sin tokens ni URL privadas.

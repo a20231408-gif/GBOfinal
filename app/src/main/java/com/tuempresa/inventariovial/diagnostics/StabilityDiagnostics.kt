@@ -83,6 +83,7 @@ object StabilityDiagnostics {
             .put("events",JSONArray(prefs.getString("events","[]")))
             .put("syncPerformance",SyncPerformance.report(context))
             .put("scapLocalSave",ScapSaveDiagnostics.report(context))
+            .put("sic20DraftRouting",Sic20DraftDiagnostics.report(context))
     }
     fun export(context:Context):File {
         val dir=File(context.cacheDir,"diagnostics").apply{mkdirs()}
@@ -90,6 +91,7 @@ object StabilityDiagnostics {
     }
     suspend fun exportWithSync(context:Context):File {
         val json=report(context).put("syncQueue",SyncQueueDiagnostics.snapshot(com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context)))
+        json.put("contractualReference",ContractualReferenceDiagnostics.snapshot(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context)))
         val work=JSONObject()
         for(name in listOf("automatic-drive-drain","automatic-drive-recovery")) {
             val summary=runCatching {

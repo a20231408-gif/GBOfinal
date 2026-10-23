@@ -71,15 +71,8 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
         when {
             r.sicCode == "SIC-18" -> CulvertUnifiedScreen(vm,id,onBack={page="DETAIL"})
             format != null -> InventoryElementWorkspace(vm,format,id) { page="DETAIL" }
-            else -> if(r.status=="DRAFT" && page!="REVIEW") {
-                if(r.sicCode in setOf("SIC-21","SIC-22")) {
-                    val signal=com.tuempresa.inventariovial.model.SignalizationType.entries.find {it.name==r.assetType} ?: when {r.sicCode=="SIC-22"->com.tuempresa.inventariovial.model.SignalizationType.VERTICAL;s.sic21?.classCode=="20"->com.tuempresa.inventariovial.model.SignalizationType.HORIZONTAL_STUDS;s.sic21?.classCode=="19"->com.tuempresa.inventariovial.model.SignalizationType.SAFETY;else->com.tuempresa.inventariovial.model.SignalizationType.HORIZONTAL_MARKS}
-                    SignalizationFormScreen(signal,vm,{page="DETAIL"},{page="DETAIL"},r)
-                } else {
-                    val type=when(r.sicCode){"SIC-17"->com.tuempresa.inventariovial.model.RoadAssetType.BRIDGE;"SIC-19"->com.tuempresa.inventariovial.model.RoadAssetType.DITCH;"SIC-23"->com.tuempresa.inventariovial.model.RoadAssetType.RIGHT_OF_WAY;else->when(s.sic20?.classCode){"13"->com.tuempresa.inventariovial.model.RoadAssetType.TUNNEL;"14"->com.tuempresa.inventariovial.model.RoadAssetType.WALL;else->com.tuempresa.inventariovial.model.RoadAssetType.FORD}}
-                    AssetFormScreen(type,vm,{page="DETAIL"},{page="DETAIL"},r)
-                }
-            } else EngineeringEditScreen(id) { page="DETAIL" }
+            else -> if(r.status=="DRAFT") ResumeDraftForm(vm,s) {page="DETAIL"}
+                else EngineeringEditScreen(id) { page="DETAIL" }
         }
         }
         return

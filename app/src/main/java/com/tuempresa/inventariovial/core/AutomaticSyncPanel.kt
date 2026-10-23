@@ -40,7 +40,7 @@ object SyncIntentPresentation {
     }
 }
 
-@Composable private fun observedDriveWork():List<WorkInfo> {
+@Composable internal fun observedDriveWork():List<WorkInfo> {
     val context=LocalContext.current
     val flow=remember(context) {val manager=WorkManager.getInstance(context)
         combine(manager.getWorkInfosForUniqueWorkFlow("automatic-drive-drain"),manager.getWorkInfosForUniqueWorkFlow("automatic-drive-recovery")){a,b->(a+b).distinctBy {it.id}}

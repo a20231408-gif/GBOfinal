@@ -13,7 +13,7 @@ object DashboardDrafts {
     fun title(record:InventoryRecordEntity):String = when(record.sicCode) {
         "SIC-19"->"Cuneta"; "SIC-21"->"Señalización"; "SIC-22"->"Elemento de seguridad"
         "SIC-17"->"Puente"; "SIC-23"->"Derecho de vía"
-        "SIC-20"->when(record.assetType.uppercase()) {"WALL","MURO"->"Muro";"TUNNEL","TUNEL"->"Túnel";else->"Badén"}
+        "SIC-20"->when(com.tuempresa.inventariovial.model.form.Sic20Identity.classOf(record.assetType)) {"14"->"Muro";"13"->"Túnel";"12"->"Badén";else->"SIC-20 · subtipo pendiente"}
         else->com.tuempresa.inventariovial.sic.InventoryElements.title(record.sicCode)
     }
     fun progressive(record:InventoryRecordEntity):String {

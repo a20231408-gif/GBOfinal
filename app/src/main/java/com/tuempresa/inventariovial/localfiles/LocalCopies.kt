@@ -32,6 +32,11 @@ object LocalCopies {
     suspend fun request(c:Context,db:InventoryDatabase,kind:String,id:String,revision:Long,scope:String="FULL",automatic:Boolean=false):LocalExportJob = db.withTransaction {
         val key="$kind/$id";val jobId=sha256((key+"/"+revision+"/"+scope).toByteArray())
         val dao=db.localFilesDao();val old=dao.job(jobId) ?: dao.jobForRevision(key,revision,scope)
+        if(!automatic&&scope in setOf("FULL","PHOTOS","ZIP")&&old?.manifestJson!=null&&old.state !in setOf("QUEUED","RUNNING")&&
+            LocalPlan.parse(old.manifestJson).publicNamingVersion<PublicLocalFolderNames.VERSION) {
+            // Explicit regeneration only: retain the historical job, URIs, bytes and frozen paths.
+            return@withTransaction request(c,db,kind,id,revision,scope+"_READABLE_V2",automatic=false)
+        }
         val job=old ?: LocalExportJob(jobId,key,kind,id,revision,scope,automatic=automatic)
         if(old==null)dao.saveJob(job)
         else if(!automatic&&old.state !in setOf("QUEUED","RUNNING"))dao.saveJob(old.copy(state="QUEUED",message="Revisando la copia local…"))
@@ -61,14 +66,18 @@ object LocalCopies {
             val a=android.util.AtomicFile(target);val out=a.startWrite();try{file.inputStream().use{it.copyTo(out,64*1024)};a.finishWrite(out)}catch(e:Exception){a.failWrite(out);throw e}
         }
         require(fileDigest(target)==digest){"El documento cambió durante la preparación."}
-        val entry=LocalSharedFile(id,id,key,"Download/GBO_Ruta_Clara/${if(kind=="PAVEMENT")"PAVIMENTOS" else kind}/${LocalExportNames.safe(route)}/EXPORTACIONES_MANUALES/$id/",file.name,mime,digest.first,digest.second,target.path)
-        db.withTransaction{val old=db.localFilesDao().job(id);if(old==null)db.localFilesDao().saveJob(job.copy(manifestJson=LocalPlan(listOf(entry),emptyList()).json()))else db.localFilesDao().saveJob(old.copy(state="QUEUED"))};wake(c)
+        val parent="Download/GBO_Ruta_Clara/${if(kind=="PAVEMENT")"PAVIMENTOS" else kind}/${LocalExportNames.safe(route)}/EXPORTACIONES_MANUALES/"
+        val folder=PublicLocalFolderNames.reserve(db,key,parent,"Exportación - ${file.nameWithoutExtension}")
+        val entry=LocalSharedFile(id,id,key,parent+folder+"/",file.name,mime,digest.first,digest.second,target.path)
+        db.withTransaction{val old=db.localFilesDao().job(id);if(old==null)db.localFilesDao().saveJob(job.copy(manifestJson=LocalPlan(listOf(entry),emptyList(),PublicLocalFolderNames.VERSION).json()))else db.localFilesDao().saveJob(old.copy(state="QUEUED"))};wake(c)
     }
     suspend fun photo(c:Context,db:InventoryDatabase,file:File)=withContext(Dispatchers.IO){
         val digest=fileDigest(file);val id=sha256(file.canonicalPath.toByteArray());val key="PHOTO/$id";val rev=file.lastModified();val jobId=sha256((key+"/"+rev+"/"+digest.second).toByteArray())
         val mime=photoMime(file);val suffix=when(mime){"image/jpeg"->"jpg";"image/png"->"png";"image/webp"->"webp";"image/heic"->"heic";else->file.extension.ifBlank{"bin"}}
-        val job=LocalExportJob(jobId,key,"PHOTO",id,rev,scope="DOCUMENT");val entry=LocalSharedFile(jobId,jobId,key,"Download/GBO_Ruta_Clara/FOTOGRAFIAS/INDIVIDUALES/$id/R_${rev}_${digest.second.take(8)}/",LocalExportNames.safe(file.nameWithoutExtension)+".$suffix",mime,digest.first,digest.second,file.path)
-        db.withTransaction{val old=db.localFilesDao().job(jobId);db.localFilesDao().saveJob((old?:job).copy(state="QUEUED",manifestJson=old?.manifestJson ?: LocalPlan(listOf(entry),emptyList()).json()))};wake(c)
+        val parent="Download/GBO_Ruta_Clara/FOTOGRAFIAS/INDIVIDUALES/"
+        val folder=PublicLocalFolderNames.reserve(db,key,parent,"Fotografía individual")
+        val job=LocalExportJob(jobId,key,"PHOTO",id,rev,scope="DOCUMENT");val entry=LocalSharedFile(jobId,jobId,key,parent+folder+"/R_${rev}_${digest.second.take(8)}/",LocalExportNames.safe(file.nameWithoutExtension)+".$suffix",mime,digest.first,digest.second,file.path)
+        db.withTransaction{val old=db.localFilesDao().job(jobId);db.localFilesDao().saveJob((old?:job).copy(state="QUEUED",manifestJson=old?.manifestJson ?: LocalPlan(listOf(entry),emptyList(),PublicLocalFolderNames.VERSION).json()))};wake(c)
     }
     fun photoMime(file:File):String {
         val b=file.inputStream().use{val x=ByteArray(16);x.take(maxOf(0,it.read(x))).toByteArray()}

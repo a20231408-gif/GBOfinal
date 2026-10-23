@@ -120,6 +120,9 @@ object InventoryDraftStore {
             check(db.inventoryDao().recordById(id)?.status.let { it==null || it=="DRAFT" }) { "La ficha ya está finalizada" }
             db.inventoryDao().insertOrCompleteDraft(record)
         }
+        if(r.sicCode=="SIC-20") (r.detail as? SicFormDetail.Sic20)?.state?.let {
+            com.tuempresa.inventariovial.diagnostics.Sic20DraftDiagnostics.record(context,"DRAFT_SAVED",r.assetType,it.classCode,it.typeCode)
+        }
         id
     }
     fun completed(context:Context,id:String) { file(context,id).delete() }

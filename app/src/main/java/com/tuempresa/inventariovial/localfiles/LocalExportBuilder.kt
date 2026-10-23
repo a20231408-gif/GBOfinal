@@ -19,13 +19,13 @@ import java.text.Normalizer
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-data class LocalPlan(val files:List<LocalSharedFile>,val problems:List<String>) {
+data class LocalPlan(val files:List<LocalSharedFile>,val problems:List<String>,val publicNamingVersion:Int=1) {
     fun json()=JSONObject().put("files",JSONArray(files.map{f->JSONObject().put("id",f.id).put("jobId",f.jobId).put("recordKey",f.recordKey)
         .put("relativePath",f.relativePath).put("name",f.name).put("mime",f.mimeType).put("size",f.size).put("sha256",f.sha256).put("source",f.source)}))
-        .put("problems",JSONArray(problems)).toString()
+        .put("problems",JSONArray(problems)).put("publicFolderNamingVersion",publicNamingVersion).toString()
     companion object {
         fun parse(value:String):LocalPlan {val j=JSONObject(value);val a=j.getJSONArray("files");return LocalPlan((0 until a.length()).map{n->val f=a.getJSONObject(n)
-            LocalSharedFile(f.getString("id"),f.getString("jobId"),f.getString("recordKey"),f.getString("relativePath"),f.getString("name"),f.getString("mime"),f.getLong("size"),f.getString("sha256"),f.getString("source"))},j.getJSONArray("problems").let{p->(0 until p.length()).map{p.getString(it)}})}
+            LocalSharedFile(f.getString("id"),f.getString("jobId"),f.getString("recordKey"),f.getString("relativePath"),f.getString("name"),f.getString("mime"),f.getLong("size"),f.getString("sha256"),f.getString("source"))},j.getJSONArray("problems").let{p->(0 until p.length()).map{p.getString(it)}},j.optInt("publicFolderNamingVersion",1))}
     }
 }
 object LocalExportNames {
@@ -45,7 +45,8 @@ object LocalExportBuilder {
     suspend fun build(context:Context,db:InventoryDatabase,job:LocalExportJob):LocalPlan {
         val dir=work(context,job);space(context,0)
         val files=mutableListOf<LocalSharedFile>();val problems=mutableListOf<String>();var root="";var location:LocalDocumentLocation?=null;var captureState="";val pendingFields=mutableListOf<String>()
-        val photosOnly=job.scope=="PHOTOS"
+        val exportScope=job.scope.removeSuffix("_READABLE_V2")
+        val photosOnly=exportScope=="PHOTOS"
         fun add(file:File,relative:String,mime:String){
             require(relative.split('/').all{it.isNotBlank()&&it!=".."&&it!="."})
             if(!file.isFile){problems+="Falta $relative";return}
@@ -171,7 +172,7 @@ object LocalExportBuilder {
         document("MANIFIESTO_LOCAL.json","application/json"){out->out.write(JSONObject().put("recordKey",job.recordKey).put("revision",job.revision).put("documentaryCopyOnly",true).put("roomRestorable",false)
             .put("captureState",captureState).put("pending",JSONArray(pendingFields.distinct())).put("remoteState",if(location?.ackRevision==job.revision)"PARENT_ACK_CONFIRMED"else"PARENT_NOT_CONFIRMED_FOR_THIS_REVISION").put("localState","GENERATED_PUBLICATION_REQUIRES_VERIFICATION").put("manifestNotSelfHashed",true).put("remoteConfirmationScope","PARENT_DELIVERY_ONLY_VIDEOS_HAVE_SEPARATE_ACK").put("localFilesExpected",files.size+1).put("generationComplete",problems.isEmpty()).put("publicationRequiresVerification",true)
             .put("location",location?.json()).put("problems",JSONArray(problems)).put("files",JSONArray(files.map{JSONObject().put("path",it.relativePath+it.name).put("sha256",it.sha256).put("size",it.size)})).toString(2).toByteArray())}
-        if(job.scope=="ZIP"){
+        if(exportScope=="ZIP"){
             val zip=File(dir,"Entrega_${LocalExportNames.safe(job.recordId)}_R${job.revision}.zip")
             atomic(zip){out->ZipOutputStream(out).use{z->
                 for(f in files){z.putNextEntry(ZipEntry(f.relativePath.removePrefix(location?.base ?: root)+f.name).apply{time=0});File(f.source).inputStream().use{it.copyTo(z,64*1024)};z.closeEntry()}
@@ -179,6 +180,6 @@ object LocalExportBuilder {
             }}
             files.clear();add(zip,zip.name,"application/zip")
         }
-        return LocalPlan(files,problems.distinct())
+        return LocalPlan(files,problems.distinct(),PublicLocalFolderNames.VERSION)
     }
 }

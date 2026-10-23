@@ -4,7 +4,7 @@ package com.tuempresa.inventariovial.localfiles
 object LocalCopyPresentation {
     fun context(job:LocalExportJob,current:Long?,latest:Boolean):String {
         val revision=when {current==null->"Revisión guardada ${job.revision}";job.revision==current->"Revisión actual ${job.revision}";else->"Revisión anterior ${job.revision}; la ficha actual es $current"}
-        val scope=when(job.scope){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";"ZIP"->"Paquete ZIP";else->"Documento"}
+        val scope=when(job.scope.removeSuffix("_READABLE_V2")){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";"ZIP"->"Paquete ZIP";else->"Documento"}
         return "$revision · $scope"+if(!latest)" · intento anterior"else""
     }
     fun result(job:LocalExportJob):String = when(job.state) {

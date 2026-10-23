@@ -261,15 +261,11 @@ internal fun InventoryWorkspace(inventoryViewModel: InventoryViewModel, graph: A
                             } else {
                             resumeScope.launch {
                                 try {
-                                    val snapshot=inventoryViewModel.field.dao.snapshot(draft.id)
-                                    snapshot?.let {com.tuempresa.inventariovial.model.form.requireSicSnapshot(it)}
-                                    val rawDraft=com.tuempresa.inventariovial.core.InventoryDraftStore.read(draftContext,draft.id)
-                                    rawDraft?.let {raw->
-                                        com.tuempresa.inventariovial.model.form.requireSicRawDetail(draft.sicCode,raw.getJSONObject("detail").getString("type"))
+                                    val snapshot=requireNotNull(inventoryViewModel.field.dao.snapshot(draft.id))
+                                    val destination=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                        resolveDraftDestination(draftContext,snapshot)
                                     }
-                                    val destination=draftDestination(draft,snapshot?.sic21?.classCode ?: snapshot?.sic20?.classCode,
-                                        if(draft.sicCode=="SIC-20")rawDraft?.getJSONObject("detail")?.getJSONObject("fields")?.optString("classCode") else null)
-                                    selectedDraft=draft
+                                    selectedDraft=snapshot.record
                                     selectedSignalization=destination.signal
                                     selectedAsset=destination.asset
                                 } catch(cancel:kotlinx.coroutines.CancellationException) {throw cancel}
@@ -1634,6 +1630,11 @@ private fun AssetFormContent(
         )
     }
 
+    LaunchedEffect(assetType,draftRecord?.id) {
+        if(assetType.sicCode=="SIC-20")com.tuempresa.inventariovial.diagnostics.Sic20DraftDiagnostics.record(
+            context,"FORM_SELECTED",assetType.name,sic20State.classCode,sic20State.typeCode)
+    }
+
 
     var sic23State by rememberSaveable(assetType) { mutableStateOf(Sic23FormState()) }
 
@@ -2192,6 +2193,9 @@ private fun AssetFormContent(
             }
         }
         if(draftRecord!=null)savedPhotoFingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString()
+        if(assetType.sicCode=="SIC-20")com.tuempresa.inventariovial.diagnostics.Sic20DraftDiagnostics.record(
+            context,"FORM_RESTORED",assetType.name,sic20State.classCode,sic20State.typeCode,
+            raw?.getJSONObject("detail")?.getJSONObject("fields")?.optString("classCode"))
     }
     LaunchedEffect(capturedPhotos,photoCaptures,photoCategories) {
         val fingerprint=capturedPhotos.toString()+photoCaptures.toString()+photoCategories.toString()

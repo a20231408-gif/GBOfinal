@@ -6,7 +6,7 @@ function zipParts(mode,data) {
   const script=`import sys,json,base64,zipfile,io\nj=json.load(sys.stdin)\nif j['mode']=='unzip':\n z=zipfile.ZipFile(io.BytesIO(base64.b64decode(j['data'])))\n print(json.dumps([{'name':n,'base64':base64.b64encode(z.read(n)).decode()} for n in z.namelist()]))\nelse:\n b=io.BytesIO()\n with zipfile.ZipFile(b,'w',zipfile.ZIP_DEFLATED) as z:\n  for p in j['data']:z.writestr(p['name'],base64.b64decode(p['base64']))\n print(base64.b64encode(b.getvalue()).decode())`;
   const r=spawnSync(PY,['-c',script],{input:JSON.stringify({mode,data}),encoding:'utf8',maxBuffer:32*1024*1024});assert.equal(r.status,0,r.stderr);return mode==='unzip'?JSON.parse(r.stdout):r.stdout.trim();
 }
-function environment() {
+function environment(adapterPath=__dirname+'/SyncV3.gs') {
   let held=false,seq=0,updateCount=0;const objects=new Map();const state={busy:false,failAfter:0};
   const iter=a=>{let i=0;return {hasNext:()=>i<a.length,next:()=>a[i++]};};
   function blob(bytes,mime='application/octet-stream',name='') {
@@ -42,7 +42,7 @@ function environment() {
     ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({setMimeType:()=>JSON.parse(s)})}
   });
   vm.runInContext(`const ROOT_FOLDER_ID=${JSON.stringify(root.id)};function jsonResponse(x){return x;}function getOrCreateFolder(p,n){const i=p.getFoldersByName(n);if(i.hasNext()){const f=i.next();if(i.hasNext())throw Error('duplicate folder');return f;}return p.createFolder(n);}`+
-    fs.readFileSync(__dirname+'/PhotoNamesV2Core.js','utf8')+'\n'+fs.readFileSync(__dirname+'/SyncV3Core.js','utf8')+'\n'+fs.readFileSync(__dirname+'/SyncV3.gs','utf8'),context);
+    fs.readFileSync(__dirname+'/PhotoNamesV2Core.js','utf8')+'\n'+fs.readFileSync(__dirname+'/SyncV3Core.js','utf8')+'\n'+fs.readFileSync(adapterPath,'utf8'),context);
   return {root,objects,state,context,send:p=>context.commitRecordV3(JSON.parse(JSON.stringify({...p,contentHash:hash(core.canonical(p))}))),get updates(){return updateCount;}};
 }
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');

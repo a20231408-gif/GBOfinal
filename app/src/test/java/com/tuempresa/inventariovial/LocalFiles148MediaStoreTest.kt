@@ -57,6 +57,17 @@ class LocalFiles148MediaStoreTest {
         provider.rows.values.single().put(MediaStore.MediaColumns.DISPLAY_NAME,"unexpected-name.pdf")
         assertTrue(runCatching{store.checkSlot(slot,entry)}.isFailure);assertEquals(slot.uri,store.reserve(entry,slot.uri).uri);assertEquals(1,provider.rows.size)
     }
+    @Test fun readableUnicodePathsRetainOwnershipAndVerification(){
+        val provider=Provider(c);provider.attachInfo(c,android.content.pm.ProviderInfo().apply{authority="media";exported=false});ShadowContentResolver.registerProviderInternal("media",provider)
+        val f=File(c.filesDir,"ficticio.txt").apply{writeText("FICTICIO")};val h=fileDigest(f)
+        val entry=LocalSharedFile("TEST_NAME","JOB","SCAP/FICTICIO","Download/GBO_Ruta_Clara/PE-28H/PUENTES/Puente 001 - Ñandú/REVISIONES/R_1/",f.name,"text/plain",h.first,h.second,f.path)
+        val storage=AndroidSharedDocumentStore(c);val slot=storage.reserve(entry);storage.checkSlot(slot,entry)
+        storage.write(slot.uri,f);assertEquals(h,storage.digest(slot.uri));storage.publish(slot,entry)
+        assertEquals(entry.relativePath,provider.rows.values.single().getAsString(MediaStore.MediaColumns.RELATIVE_PATH))
+        provider.rows.values.single().put(MediaStore.MediaColumns.OWNER_PACKAGE_NAME,"otro.propietario")
+        assertTrue(runCatching{storage.reserve(entry)}.isFailure);assertTrue(runCatching{storage.reserve(entry,slot.uri)}.isFailure)
+        assertEquals(1,provider.rows.size)
+    }
     @Test @Config(sdk=[28]) fun legacyRequiresLocalFolder(){
         c.getSharedPreferences("gbo_local_copies",0).edit().clear().commit()
         val entry=LocalSharedFile("TEST","JOB","SIC/TEST","Download/GBO_Ruta_Clara/","test.pdf","application/pdf",1,"a".repeat(64),"TEST_SOURCE")

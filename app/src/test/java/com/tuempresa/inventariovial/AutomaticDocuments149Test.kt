@@ -106,13 +106,16 @@ class AutomaticDocuments149Test {
         val plan=LocalExportBuilder.build(c,d,job);assertTrue(plan.problems.joinToString(),plan.problems.isEmpty());assertTrue(plan.files.any{it.name=="Inspeccion_BORRADOR.pdf"});assertTrue(plan.files.any{it.name=="Datos.xlsx"});assertTrue(plan.files.any{it.name=="Muestra.json"})
         assertEquals(before,PavementCalculator(c).calculate(d.pavementDao().sample(s.id)!!,emptyList()));assertEquals(s,d.pavementDao().sample(s.id));assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
-    @Test fun confirmedAckNamesNewCopiesButDoesNotMoveAnEarlierPlan()=runBlocking{db().use{d->
+    @Test fun confirmedAckDoesNotRenamePublicFolderOrMoveEarlierPlan()=runBlocking{db().use{d->
         val s=sample();d.pavementDao().saveSample(s);val job=d.localFilesDao().jobs().single();val before=LocalExportBuilder.build(c,d,job)
         val path="PE-3N/EVALUACION_SUPERFICIAL/TEST_TRAMO/RIGIDO/MUESTRA 42"
         val ack=JSONObject().put("ok",true).put("key",job.recordKey).put("revision",1).put("logicalPath",path).put("folderId","TEST_FOLDER")
         d.automaticSyncDao().put(DriveSyncIntent(job.recordKey,"PAVEMENT",s.id,1,1,"SYNCED",lastSyncedAt=1,receiptJson=ack.toString()))
         d.pavementDao().saveSample(s.copy(updatedAt=2));val next=d.localFilesDao().jobs().single{it.revision==2L};val after=LocalExportBuilder.build(c,d,next)
-        assertTrue(before.files.all{it.relativePath.contains("UUID")});assertTrue(after.files.all{it.relativePath.contains("MUESTRA_42")});assertTrue(before.files.all{File(it.source).exists()})
+        fun location(p:LocalPlan)=JSONObject(File(p.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText()).getJSONObject("location")
+        assertEquals(location(before).getString("localBase"),location(after).getString("localBase"))
+        assertEquals(path,location(after).getString("remoteLogicalPath"));assertTrue(before.files.all{File(it.source).exists()})
+        assertFalse(before.files.any{it.relativePath.contains("UUID")});assertFalse(after.files.any{it.relativePath.contains("MUESTRA_42")})
     }}
     @Test fun inventoryUnifiesAndDeduplicatesBridgeParentAndSortsAbdc()=runBlocking{db(false).use{d->
         val id=bridge(d);val b=d.scapDao().inspection(id)!!;val parent=d.inventoryDao().recordById(b.roadRecordId)!!

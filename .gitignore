@@ -42,3 +42,22 @@ output/
 __pycache__/
 *.py[cod]
 /app/release/
+
+# Private local configuration and data backups
+.env
+.env.*
+!.env.example
+!.env.sample
+*.local.properties
+*.private.*
+*.zip
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# UI test renderings are reproducible local outputs
+/docs/cola-historial-drive-20261021/previews/
+/docs/entregas-drive-final-20261020/previews/

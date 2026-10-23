@@ -15,8 +15,10 @@ internal fun draftDestination(record:InventoryRecordEntity,classCode:String?,raw
             ?: when(classCode) {"18"->SignalizationType.HORIZONTAL_MARKS;"19"->SignalizationType.SAFETY;"20"->SignalizationType.HORIZONTAL_STUDS
                 else->error("No se reconoce el subtipo SIC-21; conserva la ficha y solicita revisión.")})
     "SIC-20"->DraftDestination(when(com.tuempresa.inventariovial.model.form.Sic20Identity.resolve(record.assetType,classCode,rawSic20Class)) {
-        "12"->RoadAssetType.FORD;"13"->RoadAssetType.TUNNEL;else->RoadAssetType.WALL
+        "12"->RoadAssetType.FORD;"13"->RoadAssetType.TUNNEL;"14"->RoadAssetType.WALL
+        else->error("Subtipo SIC-20 no reconocido; conserva el borrador.")
     })
+    "SIC-17"->DraftDestination(RoadAssetType.BRIDGE)
     "SIC-18"->DraftDestination(RoadAssetType.CULVERT)
     "SIC-19"->DraftDestination(RoadAssetType.DITCH)
     "SIC-23"->DraftDestination(RoadAssetType.RIGHT_OF_WAY)
