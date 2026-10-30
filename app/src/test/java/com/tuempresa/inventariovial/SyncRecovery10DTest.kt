@@ -166,7 +166,9 @@ class SyncRecovery10DTest {
         assertEquals("PENDING_VALIDATION",blocked.state);assertEquals(0,commits);assertTrue(stages.isEmpty())
         assertTrue(AutomaticSync.compatibilityPending(blocked));assertEquals(original.revision,blocked.revision)
         panel=2
-        assertTrue(AutomaticSyncDrain.run(context,d,{http()},null))
+        val needsRetry=AutomaticSyncDrain.run(context,d,{http()},null)
+        val diagnostic=d.automaticSyncDao().get(original.key)!!
+        assertTrue("Expected lost-ACK retry, state=${diagnostic.state}, error=${diagnostic.error}",needsRetry)
         val uncertain=d.automaticSyncDao().get(original.key)!!
         assertEquals("ERROR",uncertain.state);assertEquals(0L,uncertain.syncedRevision);assertEquals(16,stages.size)
         assertFalse(AutomaticSyncDrain.run(context,d,{http()},null,onProgress={_,_,p->if(p.phase=="COMPLETE")throw IllegalStateException("TEST observer failure") }))

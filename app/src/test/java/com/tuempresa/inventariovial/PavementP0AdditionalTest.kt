@@ -104,7 +104,8 @@ class PavementP0AdditionalTest {
                     .put("files",JSONArray((0 until files.length()).map{n->val f=files.getJSONObject(n);JSONObject().put("key",f.getString("key")).put("sha256",f.getString("sha256")).put("fileId","FILE_$n").put("folderId","FOLDER_TEST").put("requestedPath",f.getString("path")).put("logicalPath",prefix+"/"+f.getString("path"))})).put("sicFiles",JSONArray())
             }
         }
-        assertFalse(AutomaticSyncDrain.run(c,d,{transport},null));val intent=d.automaticSyncDao().all().single();assertEquals("SYNCED",intent.state);assertTrue(AutomaticDelivery.validAck(JSONObject(intent.preparedJson!!),JSONObject(intent.receiptJson!!)))
+        val needsRetry=AutomaticSyncDrain.run(c,d,{transport},null);val intent=d.automaticSyncDao().all().single()
+        assertFalse("Unexpected retry, state=${intent.state}, error=${intent.error}",needsRetry);assertEquals("SYNCED",intent.state);assertTrue(AutomaticDelivery.validAck(JSONObject(intent.preparedJson!!),JSONObject(intent.receiptJson!!)))
         assertFalse(AutomaticSyncDrain.run(c,d,{transport},null));assertEquals(1,posts)
         val nextSample=s.copy(id="TEST_CHRONO",muestra=2);val nextDamage=damage(nextSample,"D_CHRONO")
         d.pavementDao().saveSample(nextSample);d.pavementDao().saveDamage(nextDamage);PavementRepository(d,sessions()).closeSample(nextSample.id)
