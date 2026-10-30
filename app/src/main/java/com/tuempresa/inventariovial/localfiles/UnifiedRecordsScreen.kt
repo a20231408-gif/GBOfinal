@@ -33,6 +33,9 @@ data class LocalInventoryItem(val kind:String,val id:String,val family:String,va
     val key get()="$kind/$id"
 }
 object LocalInventoryIndex {
+    fun chronological(items:List<LocalInventoryItem>)=items.sortedWith(compareByDescending<LocalInventoryItem>{parseRecordDate(it.surveyDate)}.thenBy{it.key})
+    fun cleanupCandidate(item:LocalInventoryItem,intent:DriveSyncIntent?,job:LocalExportJob?)=
+        intent!=null && DriveDeliveryPresentation.confirmed(intent,item.revision) && job?.state=="READY" && job.revision==item.revision
     fun project(records:List<InventoryRecordWithPhotos>,bridges:List<ScapInspectionEntity>,samples:List<PavementSampleEntity>):List<LocalInventoryItem> {
         val linked=bridges.map{it.roadRecordId}.toSet();val byId=records.associateBy{it.record.id}
         val items=records.filter{it.record.id !in linked && it.record.sicCode!="SCAP" && it.sicExtension?.sourceRecordId !in linked}.map {row->
@@ -72,6 +75,8 @@ object LocalInventoryIndex {
     var month by rememberSaveable{mutableStateOf<Int?>(null)}
     var day by rememberSaveable{mutableStateOf<Int?>(null)}
     var captureFilter by rememberSaveable{mutableStateOf("Todos")}
+    var newestFirst by rememberSaveable{mutableStateOf(true)}
+    var cleanupReview by remember{mutableStateOf<String?>(null)}
     val dateFilter=RecordDateSelection(year,month,day)
     var selected by remember {mutableStateOf(emptySet<String>())}
     var discardReview by remember {mutableStateOf<List<LocalDraftDiscard.Candidate>?>(null)}
@@ -93,13 +98,15 @@ object LocalInventoryIndex {
         dateFilter.matches(parseRecordDate(r.surveyDate)) && when(captureFilter) {
             "Borradores"->r.capture=="DRAFT"
             "Enviados"->d!=null && DriveDeliveryPresentation.confirmed(d,r.revision)
-            "Sin confirmar"->d==null || !DriveDeliveryPresentation.confirmed(d,r.revision)
+            "Pendientes","Sin confirmar"->r.capture!="DRAFT" && (d==null || !DriveDeliveryPresentation.confirmed(d,r.revision))
             else->true
         } &&
         "${r.name} ${r.id} ${r.route}".contains(search,true)&&r.route.contains(route,true)&&r.progressive.contains(pr,true)&&
         "${r.capture} ${d?.state.orEmpty()} ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)} ${LocalInventoryIndex.localState(r,j)} ${j?.state.orEmpty()}".contains(state,true)
-    }
+    }.let {if(newestFirst)LocalInventoryIndex.chronological(it)else it}
     val selectable=shown.filter{it.capture=="DRAFT" && it.kind in setOf("SIC","PAVEMENT")}
+    cleanupReview?.let{review->AlertDialog(onDismissRequest={cleanupReview=null},title={Text("Revisión de limpieza")},
+        text={Text(review)},confirmButton={TextButton(onClick={cleanupReview=null}){Text("Conservar y volver")}})}
     fun reviewDiscard(rows:List<LocalInventoryItem>) {
         discardReview=rows.map{LocalDraftDiscard.Candidate(it.kind,it.id,it.revision)}
         discardMessage=null
@@ -129,11 +136,16 @@ object LocalInventoryIndex {
             OutlinedTextField(state,{state=it},label={Text("Estado de captura / Drive / copia local")},modifier=Modifier.fillMaxWidth())
             RecordDateFilter(dateFilter,all.mapNotNull{parseRecordDate(it.surveyDate)}){year=it.year;month=it.month;day=it.day}
             Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-                listOf("Todos","Borradores","Enviados","Sin confirmar").forEach {f->FilterChip(captureFilter==f,{captureFilter=f},label={Text(f)})}
+                listOf("Todos","Borradores","Pendientes","Enviados").forEach {f->FilterChip(captureFilter==f,{captureFilter=f},label={Text(f)})}
             }
+            FilterChip(newestFirst,{newestFirst=!newestFirst},label={Text(if(newestFirst)"Fecha de registro: más recientes"else"Orden vial")})
             Row{Checkbox(historical,{historical=it});Text("Mostrar descartados y anulados")}
             Text("Copias automáticas ${if(LocalCopySettings.enabled(c))"activadas"else"desactivadas"}. Descargas ocupa espacio y puede ser visible para otras aplicaciones. Configura en Herramientas y ajustes → Copias locales.",style=MaterialTheme.typography.bodySmall)
             Text("${shown.size} registros")
+            TextButton(enabled=shown.isNotEmpty(),onClick={
+                val candidates=shown.count{LocalInventoryIndex.cleanupCandidate(it,drive.find{d->d.key==it.key},latest[it.key])}
+                cleanupReview="${shown.size} registros visibles: $candidates candidatos con ACK y copia local de la revisión actual; ${shown.size-candidates} protegidos o pendientes. No se eliminaron fichas, fotos ni archivos. Antes de liberar espacio se debe verificar físicamente el respaldo y revisar los vínculos SCAP/SIC. Los borradores se descartan por separado de forma recuperable."
+            }){Text("Preparar limpieza de registros visibles")}
             Row(Modifier.horizontalScroll(rememberScrollState())) {
                 TextButton(enabled=selectable.isNotEmpty(),onClick={selected=selectable.map{it.key}.toSet()}){Text("Seleccionar borradores visibles")}
                 TextButton(enabled=selected.isNotEmpty(),onClick={selected=emptySet()}){Text("Limpiar selección")}
@@ -152,9 +164,11 @@ object LocalInventoryIndex {
                     Text("Seleccionar borrador")
                 }
                 Text(r.name,style=MaterialTheme.typography.titleMedium);Text("${r.family} · ${r.route.ifBlank{"Ruta pendiente"}} · ${r.progressive}")
-                Text("UUID: ${r.id}",style=MaterialTheme.typography.bodySmall)
+                var technical by remember(r.key){mutableStateOf(false)}
                 Text("Fecha de registro: ${r.surveyDate.ifBlank{"Sin fecha registrada"}}",style=MaterialTheme.typography.bodySmall)
-                Text("Captura: ${r.capture} · revisión ${r.revision} · ${DateFormat.getDateTimeInstance().format(Date(r.revision))}",style=MaterialTheme.typography.bodySmall)
+                TextButton(onClick={technical=!technical}){Text(if(technical)"Ocultar detalles técnicos"else"Detalles técnicos")}
+                if(technical){Text("UUID: ${r.id}",style=MaterialTheme.typography.bodySmall)
+                    Text("Captura: ${r.capture} · revisión ${r.revision} · ${DateFormat.getDateTimeInstance().format(Date(r.revision))}",style=MaterialTheme.typography.bodySmall)}
                 Text("Drive de la ficha: ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)}${if(d?.syncedRevision!=null&&d.syncedRevision>0)" · ACK R${d.syncedRevision}"else" · sin ACK"}")
                 Text(LocalInventoryIndex.localState(r,job))
                 d?.receiptJson?.let{runCatching{JSONObject(it)}.getOrNull()}?.takeIf{it.optBoolean("ok")&&it.optString("key")==r.key&&it.optLong("revision")==d.syncedRevision}?.optString("logicalPath")?.takeIf{it.isNotBlank()}?.let{Text("Drive confirmado: $it",style=MaterialTheme.typography.bodySmall)}

@@ -32,18 +32,22 @@ object PublicLocalFolderNames {
     suspend fun reserve(db:InventoryDatabase,recordKey:String,parent:String,proposed:String):String=db.withTransaction {
         require((parent.startsWith("Download/GBO_Ruta_Clara/")||parent.startsWith(DriveMirrorPlan.ROOT))&&parent.endsWith('/'))
         val base=component(proposed);val dao=db.localFilesDao()
-        val key=PREFIX+sha256((parent+"\u0000"+recordKey+"\u0000"+base).toByteArray())
+        val key=PREFIX+sha256((parent+"\u0000"+recordKey).toByteArray())
         dao.choice(key)?.let {row->
             val j=JSONObject(row.destination)
-            check(j.getString("recordKey")==recordKey&&j.getString("parent")==parent&&j.getString("base")==base)
+            check(j.getString("recordKey")==recordKey&&j.getString("parent")==parent)
             val name=j.getString("name");check(component(name)==name);return@withTransaction name
         }
         val used=mutableSetOf<String>()
         // One-shot reads on this transaction's connection, never Flow collection while holding it.
-        db.openHelper.readableDatabase.query("SELECT destination FROM device_delivery_choices WHERE `key` GLOB 'LOCAL_PUBLIC_FOLDER_V2/*'").use {rows->
+        db.openHelper.readableDatabase.query("SELECT destination FROM device_delivery_choices WHERE `key` GLOB 'LOCAL_PUBLIC_FOLDER_V2/*' ORDER BY selectedAt,`key`").use {rows->
             while(rows.moveToNext()) {
                 // Fail closed on a damaged binding; never silently assign its folder to another UUID.
                 val j=JSONObject(rows.getString(0))
+                // A changed display label never relocates a UUID; retain legacy bindings.
+                if(j.getString("parent")==parent&&j.getString("recordKey")==recordKey) {
+                    val retained=j.getString("name");check(component(retained)==retained);return@withTransaction retained
+                }
                 if(j.getString("parent")==parent)used+=comparable(j.getString("name"))
             }
         }

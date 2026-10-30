@@ -51,7 +51,12 @@ import java.io.File
         TextButton(onClick={scope.launch{message=runCatching{LocalCopies.requestCurrent(c,db,kind,id,"PHOTOS");"Fotografías: copia local pendiente."}.getOrElse{it.message}}}){Text("Exportar fotografías")}
     }
     TextButton(onClick={scope.launch{message=runCatching{LocalCopies.requestCurrent(c,db,kind,id,"ZIP");"Paquete ZIP: copia local pendiente."}.getOrElse{it.message}}}){Text("Guardar paquete ZIP")}
-    TextButton(onClick={scope.launch{message=runCatching{DriveMirrorPlan.request(c,db,kind,id);"Reconciliación local programada. Se conservarán las copias anteriores."}.getOrElse{it.message}}}){Text("Reconciliar con Drive confirmado")}
+    var reconciliationExpanded by rememberSaveable(kind,id){mutableStateOf(false)}
+    TextButton(onClick={reconciliationExpanded=!reconciliationExpanded}){Text(if(reconciliationExpanded)"Ocultar reconciliación"else"Reconciliar con Drive ▾")}
+    if(reconciliationExpanded) {
+        Text("Solo publica copias locales acreditadas por un ACK completo. No borra originales ni modifica Drive.",style=MaterialTheme.typography.bodySmall)
+        TextButton(onClick={scope.launch{message=runCatching{DriveMirrorPlan.request(c,db,kind,id);"Reconciliación local programada. Se conservarán las copias anteriores."}.getOrElse{it.message}}}){Text("Reconciliar con Drive confirmado")}
+    }
     LocalFilesList(key)
     message?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
 }
@@ -71,13 +76,15 @@ import java.io.File
     var visible by remember(key){mutableIntStateOf(8)}
     val filtered=jobs.filter{kind==null||it.kind==kind}.sortedWith(compareByDescending<LocalExportJob>{it.revision}.thenByDescending{it.createdAt}.thenBy{it.id})
     var history by remember(key){mutableStateOf(false)}
-    filtered.take(if(history)filtered.size else 6).forEach{j->
+    val latest=filtered.distinctBy{it.recordKey to it.scope}
+    (if(history)filtered else latest).take(if(history)filtered.size else 6).forEach{j->
         Text(LocalCopyPresentation.context(j,if(key!=null)currentRevision else null,filtered.firstOrNull{it.recordKey==j.recordKey&&it.scope==j.scope}?.id==j.id),style=MaterialTheme.typography.bodySmall)
         Text(LocalCopyPresentation.result(j),style=MaterialTheme.typography.titleSmall)
         if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
     if(filtered.size>6)TextButton(onClick={history=!history}){Text(if(history)"Resumir intentos"else"Ver todos los intentos locales (${filtered.size}; fallidos/parciales: ${filtered.count{it.state in setOf("FAILED","PARTIAL")}})")}
-    val items=files.filter{it.state=="READY"&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
+    val visibleJobs=if(history)filtered.map{it.id}.toSet()else latest.map{it.id}.toSet()
+    val items=files.filter{it.state=="READY"&&it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
     items.take(visible).forEach{SavedFileActions(it)}
     if(items.size>visible)TextButton(onClick={visible+=12}){Text("Ver más archivos (${items.size})")}
 }

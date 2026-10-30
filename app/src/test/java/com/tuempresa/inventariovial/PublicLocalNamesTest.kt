@@ -97,7 +97,7 @@ class PublicLocalNamesTest {
         val ack=JSONObject().put("ok",true).put("key",j.recordKey).put("revision",revision).put("folderId","FICTICIO_FOLDER").put("logicalPath","PE-28H/PUENTES/PUENTE 49")
         val remote=DriveSyncIntent(j.recordKey,"SCAP",id,revision,revision,"SYNCED",lastSyncedAt=1,receiptJson=ack.toString());d.automaticSyncDao().put(remote)
         ScapRepository(d,ScapCatalog.load(c)).setField(id,"inspection","singularityName","Santa Rosa")
-        val next=job(d,id);val plan=LocalExportBuilder.build(c,d,next);assertTrue(base(plan).endsWith("/Puente - Santa Rosa/"));assertFalse(base(plan).contains(id))
+        val next=job(d,id);val plan=LocalExportBuilder.build(c,d,next);assertEquals(base(old),base(plan));assertEquals("Santa Rosa",d.scapDao().inspection(id)!!.bridgeName);assertFalse(base(plan).contains(id))
         assertFalse(base(plan).contains("/PUENTE 49/"));assertEquals(remote,d.automaticSyncDao().get(j.recordKey))
         d.localFilesDao().saveJob(next.copy(manifestJson=plan.json()));LocalCopyDrain.run(c,d,store)
         for((k,v)in previous)assertArrayEquals(v,store.data.getValue(k))
