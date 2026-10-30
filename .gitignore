@@ -25,6 +25,7 @@ output/
 
 # Historical production signing stays local
 /keystore.properties
+/gbo-inventario-vial-release
 *.jks
 *.keystore
 *.p12
