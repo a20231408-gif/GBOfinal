@@ -34,7 +34,7 @@ import java.util.zip.ZipFile
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class AutomaticDocuments149Test {
     private val c get()=ApplicationProvider.getApplicationContext<Context>()
-    private val examples get()=File("../output/GBO_RUTA_CLARA_CANDIDATA_1.4.9_23/ejemplos-ficticios").apply{mkdirs()}
+    private val examples get()=File(System.getProperty("gbo.p0.evidence", "../tmp/automatic-documents149"),"ejemplos-ficticios").apply{mkdirs()}
     @Before fun space(){ShadowStatFs.registerStats(c.filesDir.path,1_000_000,900_000,900_000)}
     private fun db(auto:Boolean=true)=Room.inMemoryDatabaseBuilder(c,InventoryDatabase::class.java).addCallback(object:RoomDatabase.Callback(){override fun onOpen(db:SupportSQLiteDatabase){AutomaticLocalDocuments.install(db,auto)}}).build()
     private fun sample(id:String="TEST_PAV_149",rev:Long=1)=PavementSampleEntity(id,"TEST_TRAMO","PE-3N",1,"Derecho","CD","00+000","00+020",10.0,20.0,"RIGID","2026-10-16","TEST_USER","FICTICIO",updatedAt=rev,slabRows=4,slabColumns=2)
@@ -67,7 +67,7 @@ class AutomaticDocuments149Test {
     @Test fun pendingRequestSurvivesReopenWithoutAProcessObserver()=runBlocking{
         val name="auto149.db";c.deleteDatabase(name)
         fun open()=Room.databaseBuilder(c,InventoryDatabase::class.java,name).addCallback(object:RoomDatabase.Callback(){override fun onOpen(db:SupportSQLiteDatabase){AutomaticLocalDocuments.install(db,true)}}).build()
-        open().use{it.pavementDao().saveSample(sample())};open().use{assertEquals("QUEUED",it.localFilesDao().jobs().single().state);assertEquals(20,it.openHelper.writableDatabase.version)}
+        open().use{it.pavementDao().saveSample(sample())};open().use{assertEquals("QUEUED",it.localFilesDao().jobs().single().state);assertEquals(21,it.openHelper.writableDatabase.version)}
     }
     @Test fun incompleteBridgeCreatesThreeRealXlsxWithPendingAndLiteralValues()=runBlocking{db().use{d->
         val id=bridge(d);val r=ScapRepository(d,ScapCatalog.load(c));r.setSicField(id,"SIC-17B","comments","=1+2 TEST_LITERAL")

@@ -1,13 +1,13 @@
 # Backend de pruebas y verificación real — Prompt 2B
 
-El GET consultado el 11/10/2026 confirma protocolo 3 y raíz aislada `1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk`, pero todavía pathVersion 3 y sin stableFamilyNumbering. No se hizo ninguna escritura remota 2B. Este servicio no es compatible con las rutas nuevas; Android conserva la cola sin enviarla. BACKEND_STATUS.json registra solamente capacidades públicas, sin URL privada ni token.
+El GET consultado el 11/10/2026 confirma protocolo 3 y raíz aislada `CONFIGURAR_ID_PRIVADO`, pero todavía pathVersion 3 y sin stableFamilyNumbering. No se hizo ninguna escritura remota 2B. Este servicio no es compatible con las rutas nuevas; Android conserva la cola sin enviarla. BACKEND_STATUS.json registra solamente capacidades públicas, sin URL privada ni token.
 
 ## Pasos del responsable
 
 1. Abrir SOLO el proyecto Apps Script independiente de pruebas; respaldar la versión y el registro ._GBO_SYNC_V3. No utilizar el proyecto original/productivo ni el servicio de usuarios.
 2. Copiar los tres archivos de deployment-test/: Code.gs, SyncV3Core.gs y SyncV3.gs. El paquete mantiene la raíz aislada y obtiene el token de la propiedad privada GBO_TEST_API_TOKEN. Configurar GBO_SYNC_V3_ENABLED=true y Drive API avanzado v3 habilitado.
 3. Publicar una versión nueva SOLO del despliegue de pruebas. Conservar su URL /exec o actualizar únicamente DRIVE_WEB_APP_URL y DRIVE_API_TOKEN en drive.local.properties de la copia aislada, sin pegar credenciales en informes/chat/Git.
-4. Comprobar GET: syncProtocol=3, pathVersion=4, stableFamilyNumbering=true, technicalDeliveryWithoutGps=true y raíz exacta. Diagnóstico seguro del token: stageRecordV3 con revisión 0 debe devolver INVALID_STAGE después de autenticar, sin escribir.
+4. Comprobar GET: syncProtocol=3, pathVersion=4, stableFamilyNumbering=true, technicalDeliveryWithoutGps=true y raíz exacta. Diagnóstico seguro de la credencial: stageRecordV3 con revisión 0 debe devolver INVALID_STAGE después de autenticar, sin escribir.
 5. Ejecutar la prueba siguiente en dispositivo secundario y datos ficticios, con UUID nuevos. El SIC-08 histórico SIB no debe migrarse automáticamente.
 
 ## Checklist verificable

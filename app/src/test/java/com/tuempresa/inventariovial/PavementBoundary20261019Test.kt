@@ -84,7 +84,7 @@ class PavementBoundary20261019Test {
         }
         open().use{db->
             val ps=db.pavementDao().sample(s.id)!!;val saved=db.pavementDao().damage(d.id)!!
-            assertEquals(20,db.openHelper.writableDatabase.version);assertEquals(1,db.pavementDao().damages(s.id).size)
+            assertEquals(21,db.openHelper.writableDatabase.version);assertEquals(1,db.pavementDao().damages(s.id).size)
             assertEquals(d.id,saved.id);assertEquals(d.x1,saved.x1);assertEquals(d.y2,saved.y2);assertEquals(1.0,PavementRules.quantity(saved),0.0)
             assertEquals("EXTERIOR_X0",PavementBoundaryGeometry.choice(ps,saved));assertEquals(1,db.pavementDao().photos(d.id).size)
             assertEquals("=1+2",JSONObject(ps.sicDataJson!!).getJSONObject("UNKNOWN").getString("literal"))

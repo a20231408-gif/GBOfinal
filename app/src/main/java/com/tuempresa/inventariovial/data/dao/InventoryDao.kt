@@ -71,6 +71,11 @@ interface InventoryDao {
         ORDER BY routeCode, roadbedCode, CAST(startPrCode AS REAL) * 1000 + startDistanceM, createdAt, id""")
     suspend fun recordsForExport(sicCode: String?, route: String?): List<com.tuempresa.inventariovial.data.entity.InventoryRecordForExport>
 
+    /** Local documentary bridge exports include drafts; remote/contractual queries stay unchanged. */
+    @Transaction
+    @Query("SELECT * FROM inventory_records WHERE sicCode='SIC-17' AND status IN ('ACTIVE','DRAFT') AND routeCode=:route")
+    suspend fun localBridgeRecordsForExport(route:String):List<com.tuempresa.inventariovial.data.entity.InventoryRecordForExport>
+
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertSic23(detail: Sic23Entity)

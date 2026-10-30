@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.tuempresa.inventariovial.camera.PhotoCaptureMetadata
@@ -21,6 +22,7 @@ import com.tuempresa.inventariovial.camera.createPhotoFile
 import com.tuempresa.inventariovial.scap.catalog.ScapCatalog
 import com.tuempresa.inventariovial.scap.data.ScapInspectionSnapshot
 import com.tuempresa.inventariovial.scap.domain.ScapElementView
+import com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,9 +32,9 @@ import java.util.Date
 import java.util.Locale
 
 /** A record retains its UUID when its image is replaced or removed. Originals remain on disk. */
-@Composable internal fun ScapPhotoRecords(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,editable:Boolean) {
+@Composable internal fun ScapPhotoRecords(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,editable:Boolean,initialElementCode:String?=null) {
     val context=LocalContext.current;val scope=rememberCoroutineScope()
-    val list=rememberLazyListState();val photos=s.photos.sortedBy{it.photoIndex}
+    val list=rememberLazyListState();val photos=ScapPhotoPanel.ordered(s)
     val historicVideos by remember(s.inspection.id) {com.tuempresa.inventariovial.media.VideoDatabase.get(context).videos().observe("SCAP/${s.inspection.id}")}.collectAsState(emptyList())
     val destination=LocalScapDestination.current
     LaunchedEffect(destination,photos.map{it.id}) {
@@ -53,7 +55,7 @@ import java.util.Locale
         if(ok&&path!=null) {
             val capture=PhotoCaptureMetadata(System.currentTimeMillis(),null)
             val category=categoryName
-            c.submit{repo->val photoId=id ?: repo.addPhotoRecord(s.inspection.id,category.orEmpty());repo.replacePhoto(s.inspection.id,photoId,path,capture)}
+            c.submit{repo->val photoId=id ?: repo.addPhotoRecord(s.inspection.id,category.orEmpty(),elementCode=initialElementCode);repo.replacePhoto(s.inspection.id,photoId,path,capture)}
             PhotoCaptureMetadata.capture(context,capture.capturedAt!!) {metadata->
                 c.submit{it.updatePhotoCapture(s.inspection.id,path,metadata)}
             }
@@ -79,35 +81,43 @@ import java.util.Locale
                         require(bounds.outWidth>0&&bounds.outHeight>0);file.absolutePath
                     }catch(e:Exception){file.delete();throw e}
                 }
-                c.submit{repo->val photoId=id ?: repo.addPhotoRecord(s.inspection.id,category.orEmpty());repo.replacePhoto(s.inspection.id,photoId,path)}
+                c.submit{repo->val photoId=id ?: repo.addPhotoRecord(s.inspection.id,category.orEmpty(),elementCode=initialElementCode);repo.replacePhoto(s.inspection.id,photoId,path)}
                 }
             }catch(e:Exception){message="No se pudo leer la imagen seleccionada."}finally{busy=false;target=null}
         }
     }
-    LazyColumn(Modifier.fillMaxSize(),state=list,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    LazyColumn(Modifier.fillMaxSize().testTag("scap-photo-panel"),state=list,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             Text("FOTOGRAFÍAS · F.2 PANEL FOTOGRÁFICO",style=MaterialTheme.typography.headlineSmall)
+            Text("Orden oficial 01–20 · fotografías y videos. Puedes registrar varias evidencias en cada apartado.")
             Text("NRO. · FECHA · DESCRIPCIÓN · DIGITAL")
             ScapFieldTarget("inspection","addPhoto"){OutlinedButton(enabled=editable&&!busy,onClick={adding=true}){Text("+ Añadir registro fotográfico")}}
             if(busy)LinearProgressIndicator(Modifier.fillMaxWidth())
             message?.let{Text(it,color=MaterialTheme.colorScheme.error)}
         }
-        val labels=(catalog.photoNames+photos.map {ScapElementView.photoName(s,it.id,it.photoCategory)}+historicVideos.map {it.categoryLabel}).distinct()
+        val labels=(ScapPhotoPanel.categories.map{it.label}+photos.filter{ScapPhotoPanel.category(s,it)==null}.map {ScapElementView.photoName(s,it.id,it.photoCategory)}+
+            historicVideos.filter{ScapPhotoPanel.resolve(it.category,it.categoryLabel)==null}.map {it.categoryLabel}).distinct()
         labels.forEach {label->
             val categoryPhotos=photos.filter {ScapElementView.photoName(s,it.id,it.photoCategory)==label}
             item(key="category:$label") {
-                val cat= historicVideos.firstOrNull {it.categoryLabel==label}?.category ?: "T_"+com.tuempresa.inventariovial.delivery.sha256(label.toByteArray()).take(16).uppercase()
-                com.tuempresa.inventariovial.media.BridgeMediaCategory("SCAP/${s.inspection.id}",com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(cat,label,cat),editable&&!busy,
+                val panel=ScapPhotoPanel.resolve(null,label)
+                val cat=panel?.key ?: historicVideos.firstOrNull {it.categoryLabel==label}?.category ?: "T_"+com.tuempresa.inventariovial.delivery.sha256(label.toByteArray()).take(16).uppercase()
+                com.tuempresa.inventariovial.media.BridgeMediaCategory("SCAP/${s.inspection.id}",com.tuempresa.inventariovial.field.PhotoCategoryPolicy.Category(cat,panel?.displayLabel ?: "HISTÓRICO · $label",panel?.shortName ?: cat),editable&&!busy&&panel!=null,
                     photoCount=categoryPhotos.count {it.localPath.isNotBlank()},
                     onPhoto={target=null;categoryName=label;if(ContextCompat.checkSelfPermission(context,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)take() else permission.launch(Manifest.permission.CAMERA)},
-                    onImportPhotos={target=null;categoryName=label;importer.launch(arrayOf("image/*"))}) {
+                    onImportPhotos={target=null;categoryName=label;importer.launch(arrayOf("image/*"))},
+                    videoMatches={v->if(panel!=null)ScapPhotoPanel.resolve(v.category,v.categoryLabel)?.key==panel.key else ScapPhotoPanel.resolve(v.category,v.categoryLabel)==null && v.categoryLabel==label}) {
                     categoryPhotos.forEach {photo->
 
             val values=scapValues(s,c,photo.id)
-            ScapElementCard("NRO. ${photo.photoIndex}") {
+            ScapElementCard("Evidencia ${categoryPhotos.indexOf(photo)+1}") {
                 ScapFieldTarget(photo.id,"photoName") {
-                    ScapChoice("Nombres de la plantilla",values["photoName"] ?: ScapElementView.photoName(s,photo.id,photo.photoCategory),catalog.photoNames,editable){c.edit(s.inspection.id,photo.id,"photoName",it)}
-                    OutlinedTextField(values["photoName"] ?: ScapElementView.photoName(s,photo.id,photo.photoCategory),{c.edit(s.inspection.id,photo.id,"photoName",it)},label={Text("Nombre / tipo (editable)")},enabled=editable,modifier=Modifier.fillMaxWidth().scapFocus())
+                    val panelCategory=ScapPhotoPanel.category(s,photo)
+                    Text(panelCategory?.displayLabel ?: ScapElementView.photoName(s,photo.id,photo.photoCategory))
+                    panelCategory?.let{Text(it.shortName,style=MaterialTheme.typography.bodySmall)}
+                    if(ScapPhotoPanel.forCode(photo.photoCategory)==null)Text("Evidencia histórica: se conserva su categoría y nombre remoto original.",style=MaterialTheme.typography.bodySmall)
+                    if(ScapPhotoPanel.forCode(photo.photoCategory)==null && panelCategory==null)
+                        OutlinedTextField(values["photoName"] ?: ScapElementView.photoName(s,photo.id,photo.photoCategory),{c.edit(s.inspection.id,photo.id,"photoName",it)},label={Text("Nombre histórico · no cambia la reserva Drive")},enabled=editable,modifier=Modifier.fillMaxWidth().scapFocus())
                 }
                 ScapFieldTarget(photo.id,"photoDate"){OutlinedTextField(values["photoDate"] ?: SimpleDateFormat("dd/MM/yyyy",Locale.ROOT).format(Date(photo.createdAt)),{c.edit(s.inspection.id,photo.id,"photoDate",it)},label={Text("Fecha (dd/MM/aaaa)")},enabled=editable,modifier=Modifier.fillMaxWidth().scapFocus())}
                 ScapFieldTarget(photo.id,"photoDescription") {
@@ -130,8 +140,8 @@ import java.util.Locale
                     }
                 }
                 Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                    TextButton(enabled=editable&&photo!=photos.firstOrNull(),onClick={c.submit{it.movePhoto(s.inspection.id,photo.id,-1)}}){Text("↑ Subir")}
-                    TextButton(enabled=editable&&photo!=photos.lastOrNull(),onClick={c.submit{it.movePhoto(s.inspection.id,photo.id,1)}}){Text("↓ Bajar")}
+                    TextButton(enabled=editable&&photo!=categoryPhotos.firstOrNull(),onClick={c.submit{it.movePanelPhoto(s.inspection.id,photo.id,-1)}}){Text("↑ Dentro del apartado")}
+                    TextButton(enabled=editable&&photo!=categoryPhotos.lastOrNull(),onClick={c.submit{it.movePanelPhoto(s.inspection.id,photo.id,1)}}){Text("↓ Dentro del apartado")}
                     TextButton(enabled=editable,onClick={remove=photo.id to true}){Text("Eliminar registro")}
                 }
             }
@@ -142,8 +152,8 @@ import java.util.Locale
     }
     if(adding)AlertDialog(onDismissRequest={adding=false},title={Text("Añadir registro fotográfico")},text={Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
         ScapChoice("Nombre de plantilla",name,catalog.photoNames){name=it}
-        OutlinedTextField(name,{name=it},label={Text("Nombre / tipo")},modifier=Modifier.fillMaxWidth())
+        Text("Selecciona uno de los 20 apartados oficiales.")
         OutlinedTextField(description,{description=it},label={Text("Descripción")},modifier=Modifier.fillMaxWidth())
-    }},confirmButton={TextButton(onClick={val n=name;val d=description;c.submit{it.addPhotoRecord(s.inspection.id,n,d)};adding=false;name="";description=""}){Text("Añadir")}},dismissButton={TextButton(onClick={adding=false}){Text("Cancelar")}})
+    }},confirmButton={TextButton(enabled=ScapPhotoPanel.resolve(null,name)!=null,onClick={val n=name;val d=description;c.submit{it.addPhotoRecord(s.inspection.id,n,d,initialElementCode)};adding=false;name="";description=""}){Text("Añadir")}},dismissButton={TextButton(onClick={adding=false}){Text("Cancelar")}})
     remove?.let{(id,record)->AlertDialog(onDismissRequest={remove=null},title={Text(if(record)"Eliminar registro" else "Eliminar imagen")},text={Text("Los archivos originales se conservarán en el dispositivo.")},confirmButton={TextButton(onClick={c.submit{if(record)it.removePhoto(s.inspection.id,id) else it.clearPhotoImage(s.inspection.id,id)};remove=null}){Text("Eliminar")}},dismissButton={TextButton(onClick={remove=null}){Text("Cancelar")}})}
 }

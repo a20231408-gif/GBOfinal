@@ -1,0 +1,191 @@
+// TEMPLATE: configure the authorized private test root before Google use. No deployment is performed.
+/** Real Google runner. No request is sent until the test-only capability handshake succeeds. */
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),vm=require('node:vm'),assert=require('node:assert/strict');
+const recovery=require('./recuperacion.cjs');
+const ROOT='<RAIZ_PRUEBAS_PRIVADA>',dir=__dirname;
+const clone=x=>JSON.parse(JSON.stringify(x)),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const scope=vm.createContext({});vm.runInContext(fs.readFileSync(path.join(dir,'../FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt'),'utf8'),scope);
+const canonical=p=>scope.SyncV3.canonical(p),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function checkCapability(cap,scriptId){assert.equal(cap.ok,true,'Backend not ready');const t=cap._gboTest;
+  assert.equal(t?.testOnly,true,'Not an isolated test deployment: abort before POST');assert.equal(t.authorizedRoot,ROOT);assert.equal(cap.rootFolderId,ROOT);assert.equal(t.scriptId,scriptId);
+  assert.ok(['BASE','CANDIDATO'].includes(t.run.variant));assert.match(t.run.runId,/^[a-f0-9]{32}$/);
+  for(const [k,v] of Object.entries({syncProtocol:3,pathVersion:4,readablePhotoNamingVersion:2,videoProtocol:1,videoScope:'SCAP_ONLY',sicObservationsVersion:1,readableVideoNamingVersion:2}))assert.equal(cap[k],v,k);
+  return t.run;
+}
+function endpoint(url){const u=new URL(url);assert.equal(u.origin,'https://script.google.com');assert.match(u.pathname,/^\/macros\/s\/[A-Za-z0-9_-]+\/exec$/);assert.equal(u.search,'');assert.equal(u.hash,'');return u.toString();}
+function ackFor(p,a){return recovery.validateAck(p,a);}
+function safeAck(a){const b=clone(a);delete b.sessionUrl;delete b._gboTest;return b;}
+function normalized(p){if(Array.isArray(p))return p.map(normalized);if(p&&typeof p==='object')return Object.fromEntries(Object.entries(p).filter(([k])=>!['fileId','folderId','id','run','runId','epoch','_gboTest','alreadyExists'].includes(k)).map(([k,v])=>[k,normalized(v)]));return p;}
+function extraRecords(corpus,n){
+  assert.ok(Number.isSafeInteger(n)&&n>=0&&n<=40);const result=[];
+  for(let i=0;i<n;i++)for(const index of [1,4,6]){const p=clone(corpus.records[index]),old=p.recordId,id='TEST_LOAD_'+p.kind+'_'+String(i).padStart(3,'0');p.recordId=id;p.key=p.kind+'/'+id;if(p.identityId)p.identityId=id+'_BRIDGE';p.startPrNumber=10+i;p.orderAxis=(10+i)*1000;
+    for(const r of p.sicRows){r.recordId=p.kind==='PAVEMENT'?r.recordId.replace(old,id):id;r.startPrNumber=10+i;r.orderAxis=(10+i)*1000;}
+    for(const f of p.files){if(f.key.startsWith('photo/'))f.key='photo/'+id;f.path=f.path.replaceAll(old,id);if(f.key==='metadata'){const b=Buffer.from(JSON.stringify({synthetic:true,recordId:id,operator:i%2?'TEST_CLIENT_149':'TEST_CLIENT_147'}));f.base64=b.toString('base64');f.sha256=hash(b);}}
+    result.push(p);
+  }return result;
+}
+async function main(options={}){
+  const mode=process.env.GBO_TEST_MODE||(options.simulated?'FULL':'DIAGNOSTIC');
+  recovery.check(['FULL','DIAGNOSTIC','RESUME'].includes(mode),'MODE_INVALID');
+  const tools={endpoint,checkCapability,canonical,extraRecords};
+  if(mode==='DIAGNOSTIC')return recovery.diagnose(tools,options);
+  if(mode==='RESUME'){
+    const proof=await recovery.diagnose(tools,{...options,requireVideo:true});
+    recovery.check(proof.source.cache.BUSY===true&&proof.source.cache._primed===true,'PRIOR_SETUP_NOT_CONFIRMED');
+    return runScenario({...options,recovery:proof});
+  }
+  recovery.check(!process.env.GBO_TEST_SOURCE_DIR,'FULL_CANNOT_REUSE_EXISTING_EVIDENCE');
+  return runScenario(options);
+}
+async function settleClients(tasks){const settled=await Promise.allSettled(tasks);const failed=settled.find(x=>x.status==='rejected'&&x.reason?.code!=='CLIENT_POOL_STOPPED')||settled.find(x=>x.status==='rejected');if(failed)throw failed.reason;return settled;}
+async function runScenario(options={}){
+  const url=endpoint(process.env.GBO_TEST_EXEC_URL||''),scriptId=process.env.GBO_TEST_SCRIPT_ID,token=process.env.GBO_TEST_TOKEN;
+  assert.ok(scriptId,'Independent script ID required');assert.match(token||'',/^[a-fA-F0-9]{64,128}$/,'Exclusive random test credential required');
+  const videoPath=process.env.GBO_TEST_VIDEO;assert.ok(videoPath&&fs.existsSync(videoPath),'Generate a fictitious playable video first (CREAR_VIDEO_FICTICIO.html)');
+  const video=fs.readFileSync(videoPath);assert.ok(video.length>0&&video.length<=32*1024*1024);
+  if(!options.simulated)assert.ok(video.length>256*1024,'Use a fictitious video >256 KiB to exercise resumable chunks');
+  const mime=path.extname(videoPath).toLowerCase()==='.webm'?'video/webm':'video/mp4';assert.ok(['.webm','.mp4'].includes(path.extname(videoPath).toLowerCase()));
+  const cap=await (await fetch(url,{signal:AbortSignal.timeout(90000)})).json(),run=checkCapability(cap,scriptId);
+  recovery.check(cap._gboTest.harnessRevision===2&&cap._gboTest.guardPolicy==='FRESH_WRITES_LOCKED_READ_CACHE_V2','HELPERS_V2_NOT_DEPLOYED');
+  if(options.recovery)recovery.check(recovery.sameRun(run,options.recovery.source.report.run),'RUN_OR_EPOCH_CHANGED');
+  const upgrade=run.folderVariant==='BASE'&&run.variant==='CANDIDATO';
+  const rootOut=path.resolve(process.env.GBO_TEST_OUTPUT||path.join(dir,'../RESULTADOS_GOOGLE'),(upgrade?'UPGRADE':run.variant)+'_'+run.runId);
+  const out=options.recovery?path.join(rootOut,'reanudaciones',Date.now()+'-'+crypto.randomUUID().slice(0,8)):rootOut;fs.mkdirSync(out,{recursive:true});
+  const reportPath=path.join(out,'resultado.json'),journalPath=path.join(out,'eventos.jsonl'),cachePath=path.join(out,'avance.json');
+  const previous=options.recovery?options.recovery.source.report:fs.existsSync(reportPath)?JSON.parse(fs.readFileSync(reportPath,'utf8')):null;
+  if(previous&&['PROTOCOL_CHECKS_PASSED_REVIEW_XLSX_AND_GOOGLE_LOGS','GOOGLE_UPGRADE_PROTOCOL_PASSED'].includes(previous.status)){console.log('This run is already complete. Start a NEW editor run for another measurement.');return;}
+  if(previous&&!options.recovery)fs.copyFileSync(reportPath,path.join(out,'resultado.respaldo-'+Date.now()+'.json'));
+  const events=options.recovery?clone(options.recovery.source.events):fs.existsSync(journalPath)?fs.readFileSync(journalPath,'utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x)):[];
+  let cache=options.recovery?clone(options.recovery.source.cache):fs.existsSync(cachePath)?JSON.parse(fs.readFileSync(cachePath,'utf8')):{};
+  if(options.recovery)fs.writeFileSync(journalPath,events.map(x=>JSON.stringify(x)).join('\n')+'\n');
+  const recordEvent=x=>{events.push(x);fs.appendFileSync(journalPath,JSON.stringify(x)+'\n');};
+  const corpus=JSON.parse(fs.readFileSync(path.join(dir,'fixtures/records.json'),'utf8'));let sequence=Math.max(0,...events.map(x=>x.sequence||0));
+  const photoProfile=process.env.GBO_TEST_PHOTO_PROFILE||'CAMPO';assert.ok(['CAMPO','COMPAT'].includes(photoProfile));
+  const extra=Number(process.env.GBO_TEST_EXTRA_PER_FAMILY||0),load=extraRecords(corpus,extra),expectedParents=8+3*extra;
+  const photo=photoProfile==='CAMPO'?fs.readFileSync(path.join(dir,'fixtures/FOTO_SINTETICA_2048.jpg')):null;
+  if(photo)for(const p of [...corpus.records,corpus.legacyEdit,corpus.blankEdit,...load])for(const f of p.files.filter(x=>x.key.startsWith('photo/'))){f.base64=photo.toString('base64');f.sha256=hash(photo);}
+  const signature=hash(JSON.stringify({corpus,load,video:hash(video),epoch:run.epoch}));
+  if(cache._fixtureSignature)assert.equal(cache._fixtureSignature,signature,'Changed fixture/profile/epoch: preserve evidence and start a NEW run');
+  cache._fixtureSignature=signature;save();
+  function save(){fs.writeFileSync(cachePath,JSON.stringify(cache,null,2));}
+  let stopped=false,currentStage='INITIALIZED',currentFamily='OTHER',retries=0,lastProgress=0;
+  const sessionStart=performance.now();
+  function progress(stage,family='OTHER',force=true){currentStage=stage;currentFamily=family;
+    if(force||performance.now()-lastProgress>5000){const confirmed=new Set(Object.values(cache).filter(v=>v?.ack&&v.payload).map(v=>v.payload.key)).size;
+      console.log('[GBO] etapa='+stage+'; familia='+family+'; padres='+confirmed+'/'+expectedParents+'; reintentos='+retries+'; segundos='+Math.round((performance.now()-sessionStart)/1000));lastProgress=performance.now();}}
+  async function call(p,options={}){
+    recovery.check(!stopped,'CLIENT_POOL_STOPPED');
+    const requestId=crypto.randomUUID(),request={...clone(p),token,_test:{runId:run.runId,variant:run.variant,epoch:run.epoch,requestId}};
+    let discarded=null;
+    for(let attempt=0;attempt<10;attempt++){
+      recovery.check(!stopped,'CLIENT_POOL_STOPPED');
+      const t=performance.now();let a;
+      const timeout=Number(process.env.GBO_TEST_TIMEOUT_MS||300000);recovery.check(Number.isSafeInteger(timeout)&&timeout>=60000&&timeout<=360000,'TIMEOUT_CONFIG_INVALID');
+      try{const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),signal:AbortSignal.timeout(timeout)});recovery.check(response.status===200,'HTTP_STATUS_FAILED');a=await response.json();}
+      catch(e){recordEvent({sequence:++sequence,action:p.action,family:p.kind||p.key?.split('/')[0]||null,scenario:options.scenario||'NORMAL',attempt,clientMs:performance.now()-t,code:'TRANSPORT_FAILED',transportKind:['TimeoutError','AbortError'].includes(e?.name)?'CLIENT_TIMEOUT':e?.code==='HTTP_STATUS_FAILED'?'HTTP_STATUS':'NETWORK_OR_JSON'});stopped=true;throw new recovery.SafeError('TRANSPORT_UNCERTAIN_REQUIRES_DIAGNOSTIC');}
+      recordEvent({sequence:++sequence,client:['1.4.7','1.4.9','147','1.4.9_LOCAL_COPY_REPLAY','SIMULATED'].includes(p._client)?p._client:null,family:p.kind||p.key?.split('/')[0]||(p.parentKey?'SCAP':null),scenario:options.scenario||(options.dropAck?'DISCARDED_ACK':'NORMAL'),action:p.action,attempt,clientMs:performance.now()-t,ok:a.ok===true,code:typeof a.code==='string'&&/^[A-Z_]{1,60}$/.test(a.code)?a.code:null,requestFingerprint:recovery.fp(requestId),responseTraceMatches:a._gboTest?.requestId===requestId,metrics:a._gboTest?.metrics,harnessRevision:a._gboTest?.harnessRevision||null,ackSummary:p.action==='commitRecordV3'?recovery.ackSummary(p,a,options.referenceAck):undefined,responseDiscardedByClient:!!options.dropAck&&!discarded&&a.ok===true});
+      recovery.validateTelemetry(a,run,requestId);
+      progress(currentStage,p.kind||p.key?.split('/')[0]||(p.parentKey?'SCAP':'OTHER'),false);
+      if(options.dropAck&&!discarded&&a.ok===true){discarded=safeAck(a);continue;}
+      if(a.ok===true){if(discarded){const b=safeAck(a);delete b.alreadyExists;delete discarded.alreadyExists;recovery.check(hash(JSON.stringify(b))===hash(JSON.stringify(discarded)),'LOST_RESPONSE_ACK_CHANGED');}return a;}
+      if(options.expectedCode&&a.code===options.expectedCode)return a;
+      recovery.check(a.retryable===true||a.code==='BUSY'||a.code==='TEST_GATE_BUSY','SERVER_REJECTED',{retryable:a.retryable===true});
+      retries++;progress('WAIT_RETRY',p.kind||p.key?.split('/')[0]||'OTHER');
+      await wait(Math.min(15000,1000*2**attempt)+Math.floor(Math.random()*250));
+    }throw Error('Retry budget exhausted; no false confirmation');
+  }
+  async function readFile(id){const r=await call({action:'testReadFile',fileId:id});return Buffer.from(r.base64,'base64');}
+  async function deliver(original,client,label){
+    if(cache[label])return cache[label];
+    recovery.check(!stopped,'CLIENT_POOL_STOPPED');progress('RESERVE_NAMES',original.kind);
+    const started=performance.now(),p=clone(original);p._client=client;
+    const naming=await call({...p,action:'reservePhotoNamesV2',photoNamingVersion:2,photos:p.files.filter(f=>f.key.startsWith('photo/')).map(f=>({id:f.key.slice(6),category:f.photoCategory}))});
+    p.photoNamingVersion=2;
+    for(const f of p.files.filter(f=>f.key.startsWith('photo/'))){const n=naming.photos.find(n=>n.id===f.key.slice(6));assert.ok(n);f.path=f.path.slice(0,f.path.lastIndexOf('/')+1)+n.name;}
+    // The hash excludes transport-only stageFileId and local automatic copies.
+    p.contentHash=hash(canonical(p));
+    for(const f of p.files){progress('STAGE_FILE',p.kind);const a=await call({action:'stageRecordV3',syncProtocol:3,key:p.key,revision:p.revision,file:f,_client:client},{dropAck:label==='TEST_SIC_A'&&f.key==='metadata'});
+      assert.equal(a.key,p.key);assert.equal(a.revision,p.revision);assert.equal(a.sha256,f.sha256);assert.equal(a.fileKey,f.key);assert.ok(a.stageFileId);f.stageFileId=a.stageFileId;delete f.base64;
+    }
+    progress('COMMIT_PARENT',p.kind);const a=ackFor(p,await call({...p,action:'commitRecordV3'},{dropAck:label==='TEST_SIC_A'})),confirmedMs=performance.now()-started;
+    cache[label]={payload:p,ack:safeAck(a),client,totalPrepareStageAckMs:confirmedMs,replayVerified:false};save();progress('PARENT_CONFIRMED',p.kind);
+    const replay=await call({...p,action:'commitRecordV3'},{scenario:'IDEMPOTENT_REPLAY',referenceAck:a});recovery.validateReplay(p,replay,a);
+    cache[label].replayVerified=true;save();return cache[label];
+  }
+  let report={environment:options.simulated?'LOCAL_SIMULATED_GOOGLE_NO_NETWORK':'REAL_GOOGLE_REQUESTS_FROM_OWNER_RUNNER',run,harnessRevision:2,guardPolicy:cap._gboTest.guardPolicy,recoveryContinuation:!!options.recovery,recoveryInputHashes:options.recovery?.source.inputHashes,started:new Date().toISOString(),status:'INCOMPLETE',extraPerFamily:extra,expectedParents,expectedRows:{'SIC-18':4+extra,'SIC-14':5+3*extra},photoFixture:{profile:photoProfile,sha256:photo&&hash(photo),sizeBytes:photo&&photo.length},videoFixture:{sha256:hash(video),sizeBytes:video.length,mimeType:mime},events};
+  try{
+    console.log('Isolated capability verified. Running two fictitious clients; no APK connections.');
+    if(upgrade){
+      const before=await call({action:'testSnapshot'});assert.equal(before.manifests.length,expectedParents);const old=before.manifests.find(m=>m.key==='SIC/TEST_SIC_A');assert.ok(old);assert.ok([3,4].includes(old.revision),'BASE must be fully completed before upgrade');
+      const q=clone(corpus.blankEdit);q.revision=4;q.baseRevision=3;
+      const delivered=await deliver(q,'1.4.9','upgradeEdit');assert.equal(delivered.ack.folderId,old.receipt.folderId);
+      const stale=clone(delivered.payload);stale.revision=2;stale.baseRevision=1;
+      // A valid stale request must carry its own inline bytes, never reuse a
+      // stageFileId bound to revision 4 (which correctly fails ownership first).
+      for(const f of stale.files){f.base64=q.files.find(x=>x.key===f.key).base64;delete f.stageFileId;}
+      stale.contentHash=hash(canonical(stale));assert.equal((await call(stale,{expectedCode:'STALE_REVISION',scenario:'UPGRADE_STALE'})).code,'STALE_REVISION');
+      const after=await call({action:'testSnapshot'});assert.equal(after.manifests.length,expectedParents);const current=after.manifests.find(m=>m.key===old.key);assert.equal(current.revision,4);assert.equal(current.receipt.folderId,old.receipt.folderId);assert.ok(after.journals.every(j=>j.status!=='PENDING'));
+      for(const m of before.manifests.filter(m=>m.key!==old.key)){const n=after.manifests.find(n=>n.key===m.key);assert.equal(n.revision,m.revision);assert.equal(n.contentHash,m.contentHash);assert.equal(n.receipt.folderId,m.receipt.folderId);}
+      report.status='GOOGLE_UPGRADE_PROTOCOL_PASSED';report.snapshot=after;report.upgradeAck=delivered.ack;report.finished=new Date().toISOString();return;
+    }
+    // Real lock contention: hold > tryLock(30000), observe BUSY before normal retry.
+    if(!cache.BUSY){const hold=call({action:'testHoldLock'});let observed=false;
+      for(let i=0;i<15;i++){await wait(500);if((await call({action:'testLockStatus'})).held){observed=true;break;}}
+      assert.ok(observed,'Could not observe lock holder');
+      const f=corpus.records[0].files[0];await call({action:'stageRecordV3',syncProtocol:3,key:corpus.records[0].key,revision:1,file:f,_client:'147'},{scenario:'FORCED_BUSY'});await hold;
+      assert.ok(events.some(e=>e.code==='BUSY'),'Contention did not produce BUSY; do not count test as passed');cache.BUSY=true;save();
+    }
+    // Deterministic fixture allocation keeps V2 names and numbers comparable across runs.
+    // The two clients still concurrently reserve existing names, stage bytes and commit.
+    if(!cache._primed){for(const p of [...corpus.records,...load])await call({...p,action:'reservePhotoNamesV2',photoNamingVersion:2,photos:p.files.filter(f=>f.key.startsWith('photo/')).map(f=>({id:f.key.slice(6),category:f.photoCategory}))},{scenario:'FIXTURE_ALLOCATION'});cache._primed=true;save();}
+    if(!options.recovery){
+      const client=async(version,records)=>{try{for(const p of records){recovery.check(!stopped,'CLIENT_POOL_STOPPED');await deliver(p,version,p.recordId);}}catch(error){stopped=true;throw error;}};
+      // Drain both clients before saving final failure: Promise.all used to let
+      // the second client keep writing after the report was already INCOMPLETE.
+      await settleClients([client('1.4.7',[corpus.records[0],corpus.records[2],corpus.records[4],corpus.records[6],...load.filter((_,i)=>i%2===0)]),client('1.4.9',[corpus.records[1],corpus.records[3],corpus.records[5],corpus.records[7],...load.filter((_,i)=>i%2===1)])]);
+      progress('INITIAL_SNAPSHOT');const first=await call({action:'testSnapshot'}), keys=first.manifests.map(m=>m.key);assert.equal(new Set(keys).size,expectedParents);assert.equal(keys.length,expectedParents);
+      const rows=first.manifests.flatMap(m=>m.receipt.sicFiles||[]).find(x=>x.format==='SIC-18'&&x.recordIds.length===4+extra);assert.ok(rows,'Final SIC-18 missing');assert.deepEqual(rows.recordIds.slice(0,4),['TEST_SIC_A','TEST_SIC_B','TEST_SIC_D','TEST_SIC_C']);
+    }else progress('EXISTING_PARENTS_VERIFIED_SKIP_UPLOADS');
+    // Automatic tablet copies use identical prepared bytes/revision: no new request is created.
+    // Replay deliberately models a duplicated remote job, a stronger server idempotence check.
+    progress('LOCAL_COPY_REPLAY','PAVEMENT');const original=cache.TEST_PAV_B;
+    const duplicate=await call({...original.payload,action:'commitRecordV3',_client:'1.4.9_LOCAL_COPY_REPLAY'},{scenario:'LOCAL_COPY_DUPLICATE_JOB',referenceAck:original.ack});
+    progress('LOCAL_COPY_ACK_VALIDATION','PAVEMENT');recovery.validateReplay(original.payload,duplicate,original.ack);
+    cache._localCopyReplayVerified=true;save();
+    progress('OBSERVATIONS_LEGACY_EDIT','SIC');
+    const legacy=await deliver(corpus.legacyEdit,'1.4.7','legacyEdit');
+    const inherited=await readFile(legacy.ack.sicFiles[0].fileId);fs.writeFileSync(path.join(out,'observaciones-heredadas.xlsx'),inherited);
+    progress('OBSERVATIONS_CLEAR_EDIT','SIC');await deliver(corpus.blankEdit,'1.4.9','blankEdit');
+    const scap=cache.TEST_SCAP_A;
+    const req={action:'beginVideoV1',videoProtocol:1,videoNamingVersion:2,parentKey:scap.payload.key,parentRevision:1,mediaId:'TEST_VIDEO_A',category:'UPSTREAM',categoryLabel:'Aguas arriba ficticio',mimeType:mime,sizeBytes:video.length,sha256:hash(video)};
+    progress('VIDEO','SCAP');if(!cache.VIDEO){let begin=await call(req);const repeat=await call(req);assert.equal(repeat.fileId,begin.fileId);assert.equal(repeat.fileName,begin.fileName);
+      if(!begin.complete){const u=new URL(begin.sessionUrl);assert.equal(u.origin,'https://www.googleapis.com');assert.equal(u.pathname,'/upload/drive/v3/files/'+begin.fileId);assert.ok(u.searchParams.has('upload_id'));
+        // Same binary PUT/range protocol as Android; no token or URL in evidence.
+        const status=await fetch(u,{method:'PUT',body:Buffer.alloc(0),headers:{'Content-Type':mime,'Content-Range':'bytes */'+video.length},redirect:'manual',signal:AbortSignal.timeout(90000)});
+        let offset=status.status===308?Number((/bytes=0-(\d+)/.exec(status.headers.get('range')||'')||[])[1]||-1)+1:video.length;
+        assert.ok([200,201,308].includes(status.status),'Video session unavailable; begin with resetSession only on explicit resume');
+        const chunk=256*1024;let recovered=false;
+        while(offset<video.length){const end=Math.min(offset+chunk,video.length),t=performance.now();const x=await fetch(u,{method:'PUT',body:video.subarray(offset,end),headers:{'Content-Type':mime,'Content-Range':`bytes ${offset}-${end-1}/${video.length}`},redirect:'manual',signal:AbortSignal.timeout(90000)});assert.ok([200,201,308].includes(x.status),'Chunk not accepted');recordEvent({action:'videoBinaryPUT',clientMs:performance.now()-t,bytes:end-offset,httpStatus:x.status});offset=end;
+          if(!recovered&&offset<video.length){const probeAt=performance.now();const probe=await fetch(u,{method:'PUT',body:Buffer.alloc(0),headers:{'Content-Type':mime,'Content-Range':'bytes */'+video.length},redirect:'manual',signal:AbortSignal.timeout(90000)});assert.equal(probe.status,308);const range=/bytes=0-(\d+)/.exec(probe.headers.get('range')||'');assert.ok(range);offset=Number(range[1])+1;assert.equal(offset,end);recordEvent({action:'videoResumeAfterDiscardedChunkResponse',clientMs:performance.now()-probeAt,confirmedBytes:offset});recovered=true;}
+        }
+      }
+      const done=await call({...req,action:'finishVideoV1',fileId:begin.fileId},{dropAck:true});assert.equal(done.complete,true);assert.equal(done.sha256,req.sha256);assert.equal(done.sizeBytes,video.length);cache.VIDEO=safeAck(done);save();
+    }
+    progress('FINAL_RECONCILIATION');const final=await call({action:'testSnapshot'});assert.equal(final.manifests.length,expectedParents);assert.ok(final.journals.every(j=>j.status!=='PENDING'));
+    for(const m of final.manifests){assert.equal(m.revision,m.key==='SIC/TEST_SIC_A'?3:1);for(const f of m.files){const actual=final.files.find(x=>x.id===f.fileId);assert.ok(actual);assert.equal(actual.sha256,f.sha256);}}
+    const owned=final.manifests.flatMap(m=>m.files.map(f=>f.fileId));assert.equal(new Set(owned).size,owned.length,'Duplicate owned active binary');
+    assert.equal(final.files.filter(f=>f.mimeType==='image/jpeg').length,expectedParents,'Duplicate/missing active photo');
+    const videoFile=final.files.find(f=>f.id===cache.VIDEO.fileId);assert.ok(videoFile);assert.equal(videoFile.sha256,hash(video));assert.equal(videoFile.sizeBytes,video.length);assert.equal(final.files.filter(f=>f.mimeType.startsWith('video/')).length,1,'Duplicate video binary');
+    const aggregateIds=[...new Set(final.manifests.flatMap(m=>m.receipt.sicFiles.map(f=>f.fileId)))];
+    for(let i=0;i<aggregateIds.length;i++)fs.writeFileSync(path.join(out,'consolidado-'+i+'.xlsx'),await readFile(aggregateIds[i]));
+    report.status='PROTOCOL_CHECKS_PASSED_REVIEW_XLSX_AND_GOOGLE_LOGS';report.snapshot=final;delete report.snapshot._gboTest;
+    report.deliveries=Object.fromEntries(Object.entries(cache).filter(([k,v])=>v?.ack).map(([k,v])=>[k,{ack:v.ack,client:v.client,totalPrepareStageAckMs:v.totalPrepareStageAckMs}]));
+    report.localCopies149={newRemoteJobs:0,extraReplayAlreadyExists:true,parentAckUnchanged:true,scope:'protocol scenario, not Android physical test'};
+    report.videoAck=cache.VIDEO;report.finished=new Date().toISOString();
+    progress('COMPLETE');
+  }catch(error){report.failure={...recovery.safeFailure(error,currentStage),family:currentFamily,lastSequence:sequence};console.error('[GBO] detenido; etapa='+currentStage+'; condicion='+report.failure.condition);throw error;}
+  finally{report.finished=new Date().toISOString();fs.writeFileSync(reportPath,JSON.stringify(report,null,2));console.log('[GBO] evidencia conservada; aprobacion productiva pendiente.');}
+}
+module.exports={canonical,checkCapability,endpoint,ackFor,normalized,hash,main,extraRecords,settleClients};
+if(require.main===module)main().catch(error=>{console.error('[GBO] fin sin aprobacion; condicion='+recovery.safeFailure(error).condition);process.exitCode=1;});

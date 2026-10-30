@@ -60,7 +60,7 @@ class PublicLocalNamesTest {
         val id=bridge(d,code="001");val before=d.scapDao().snapshot(id)!!
         assertEquals("Correviento",before.values()["singularityName"]);assertEquals("Correviento",before.inspection.bridgeName)
         assertTrue(ScapCatalog.load(c).forSnapshot(before).fields.any{it.section=="B"&&it.key=="singularityName"})
-        val plan=LocalExportBuilder.build(c,d,job(d,id));assertTrue(base(plan).endsWith("/Puente 001 - Correviento/"))
+        val plan=LocalExportBuilder.build(c,d,job(d,id));assertTrue(base(plan).endsWith("/Puente 001 - Correviento/"));assertFalse(base(plan).contains(id))
         assertEquals(ScapFieldBackup.capture(before).toString(),ScapFieldBackup.capture(d.scapDao().snapshot(id)!!).toString())
         assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
@@ -72,14 +72,14 @@ class PublicLocalNamesTest {
         val before=d.inventoryDao().snapshot(r.id)!!
         val j=LocalExportJob("FICTICIO_SIC17A","SIC/${r.id}","SIC",r.id,r.updatedAt)
         val destination=LocalDocumentLocation.resolve(d,j,r.routeCode,"PUENTES","PUENTE")
-        assertTrue(destination.base.endsWith("/Puente P-002 - Santa Rosa/"))
+        assertTrue(destination.base.endsWith("/Puente P-002 - Santa Rosa/"));assertFalse(destination.base.contains(r.id))
         assertEquals(before,d.inventoryDao().snapshot(r.id));assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
     @Test fun unnamedAndTwinNames()=runBlocking {db().use{d->
-        val nameless=bridge(d,"","");assertTrue(base(LocalExportBuilder.build(c,d,job(d,nameless))).contains("Puente - PE-28H"))
+        val nameless=bridge(d,"","");assertFalse(base(LocalExportBuilder.build(c,d,job(d,nameless))).contains(nameless))
         val a=bridge(d);val b=bridge(d)
         val first=base(LocalExportBuilder.build(c,d,job(d,a)));val second=base(LocalExportBuilder.build(c,d,job(d,b)))
-        assertTrue(first.endsWith("/Puente - Correviento/"));assertTrue(second.endsWith("/Puente - Correviento (2)/"))
+        assertTrue(first.endsWith("/Puente - Correviento/"));assertTrue(second.endsWith("/Puente - Correviento (2)/"));assertNotEquals(first,second)
         assertEquals(first,base(LocalExportBuilder.build(c,d,job(d,a))))
         assertEquals(second,base(LocalExportBuilder.build(c,d,job(d,b))))
     }}
@@ -97,12 +97,12 @@ class PublicLocalNamesTest {
         val ack=JSONObject().put("ok",true).put("key",j.recordKey).put("revision",revision).put("folderId","FICTICIO_FOLDER").put("logicalPath","PE-28H/PUENTES/PUENTE 49")
         val remote=DriveSyncIntent(j.recordKey,"SCAP",id,revision,revision,"SYNCED",lastSyncedAt=1,receiptJson=ack.toString());d.automaticSyncDao().put(remote)
         ScapRepository(d,ScapCatalog.load(c)).setField(id,"inspection","singularityName","Santa Rosa")
-        val next=job(d,id);val plan=LocalExportBuilder.build(c,d,next);assertTrue(base(plan).endsWith("/Puente - Santa Rosa/"))
-        assertFalse(base(plan).contains("49"));assertEquals(remote,d.automaticSyncDao().get(j.recordKey))
+        val next=job(d,id);val plan=LocalExportBuilder.build(c,d,next);assertTrue(base(plan).endsWith("/Puente - Santa Rosa/"));assertFalse(base(plan).contains(id))
+        assertFalse(base(plan).contains("/PUENTE 49/"));assertEquals(remote,d.automaticSyncDao().get(j.recordKey))
         d.localFilesDao().saveJob(next.copy(manifestJson=plan.json()));LocalCopyDrain.run(c,d,store)
         for((k,v)in previous)assertArrayEquals(v,store.data.getValue(k))
         assertEquals(oldPlan,d.localFilesDao().job(j.id)!!.manifestJson)
-        assertEquals("PE-28H/PUENTES/PUENTE 49",JSONObject(File(plan.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText()).getJSONObject("location").getString("remoteLogicalPath"))
+        assertTrue(JSONObject(File(plan.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText()).getJSONObject("location").isNull("remoteLogicalPath")) // A stale/incomplete receipt cannot accredit the current revision.
     }}
     @Test fun replayAndInterruptedCopyKeepUrisAndBytes()=runBlocking {db().use{d->
         val id=bridge(d);val repo=ScapRepository(d,ScapCatalog.load(c))
@@ -124,11 +124,11 @@ class PublicLocalNamesTest {
             val r=testRecord("FICTICIO_$code",sic="SIC-20",route="PE-28C",pr="0010",distance=60.0).copy(assetType=type,status="DRAFT")
             d.inventoryDao().insertRecord(r)
             val j=LocalExportJob("FICTICIO_$code","SIC/${r.id}","SIC",r.id,r.updatedAt)
-            val p=LocalExportBuilder.build(c,d,j);assertTrue(base(p).endsWith("/$title - PE-28C - PR 10+060/"));assertEquals(r,d.inventoryDao().recordById(r.id))
+            val p=LocalExportBuilder.build(c,d,j);assertTrue(base(p).contains(title));assertFalse(base(p).contains(r.id));assertEquals(r,d.inventoryDao().recordById(r.id))
         }
         val s=visualSample().copy(id="FICTICIO_PAV",tramo="Tramo 3",muestra=2,updatedAt=1);d.pavementDao().saveSample(s)
         val p=LocalExportBuilder.build(c,d,LocalExportJob("FICTICIO_PAV","PAVEMENT/${s.id}","PAVEMENT",s.id,1))
-        assertTrue(base(p).endsWith("/Pavimento rígido - Tramo 3 - Muestra 2/"));assertTrue(p.files.any{it.name.endsWith(".pdf")});assertTrue(p.files.any{it.name=="Datos.xlsx"})
+        assertTrue(base(p).contains("Muestra 2"));assertFalse(base(p).contains(s.id));assertTrue(p.files.any{it.name.endsWith(".pdf")});assertTrue(p.files.any{it.name=="Datos.xlsx"})
         assertEquals(s,d.pavementDao().sample(s.id));assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
     @Test fun unicodeLongNamesAndReservedPaths()=runBlocking {db().use{d->
@@ -146,11 +146,11 @@ class PublicLocalNamesTest {
         for(scope in listOf("FULL","PHOTOS","ZIP")) {
             val j=job(d,id,scope);val f=LocalSharedFile("FICTICIO_"+scope,j.id,j.recordKey,path,"anterior.txt","text/plain",digest.first,digest.second,raw.path,"content://anterior/$scope","READY")
             val plan=LocalPlan(listOf(f),emptyList()).json();d.localFilesDao().saveJob(j.copy(state="READY",manifestJson=plan));d.localFilesDao().saveFile(f)
-            val next=job(d,id,scope);assertEquals(scope+"_READABLE_V2",next.scope);assertNotEquals(j.id,next.id);assertEquals(plan,d.localFilesDao().job(j.id)!!.manifestJson);assertEquals(f,d.localFilesDao().files(j.id).single())
-            val built=LocalExportBuilder.build(c,d,next);assertEquals(2,built.publicNamingVersion)
+            val next=job(d,id,scope);assertEquals(scope+"_LAYOUT_V4",next.scope);assertNotEquals(j.id,next.id);assertEquals(plan,d.localFilesDao().job(j.id)!!.manifestJson);assertEquals(f,d.localFilesDao().files(j.id).single())
+            val built=LocalExportBuilder.build(c,d,next);assertEquals(4,built.publicNamingVersion)
             val expected=when(scope){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";else->"Paquete ZIP"}
             assertTrue(LocalCopyPresentation.context(next,next.revision,true).contains(expected))
-            assertTrue(built.files.all{!it.relativePath.contains("UUID")});assertEquals(next.id,job(d,id,scope).id)
+            assertTrue(built.files.all{it.relativePath.startsWith(DriveMirrorPlan.ROOT)});assertEquals(next.id,job(d,id,scope).id)
             if(scope=="ZIP")assertTrue(built.files.single().name.endsWith(".zip"))
             if(scope=="PHOTOS")assertFalse(built.files.any{it.name.endsWith(".xlsx")})
         }

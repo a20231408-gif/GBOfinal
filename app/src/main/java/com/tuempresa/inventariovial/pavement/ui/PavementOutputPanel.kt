@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.first
     val onlyDevice=localChoices.any{it.key=="PAVEMENT/${s.id}"&&it.destination=="DEVICE"}
     val calculator=remember{PavementCalculator(context)}
     val result=remember(s,damages){calculator.calculate(s,damages)}
+    var publishedUri by remember(s.id){mutableStateOf<String?>(null)}
     var message by remember{mutableStateOf("")}
     var busy by remember{mutableStateOf(false)}
     var technicalDetails by remember(s.id){mutableStateOf(false)}
@@ -30,7 +31,7 @@ import kotlinx.coroutines.flow.first
         if(uri!=null)scope.launch{busy=true;runCatching{
             val photos=damages.associate{it.id to repo.photos(it.id)}
             withContext(Dispatchers.IO){PavementGeneratedFiles.export(context,uri,s,"FIELD","application/pdf","pdf") { PavementPdf.write(it,PavementExportSample(s,damages,result),photos) }}
-        }.onSuccess{message="PDF guardado."}.onFailure{message=it.message.orEmpty()};busy=false}
+        }.onSuccess{publishedUri=it.destinationUri;message="ARCHIVO GUARDADO"}.onFailure{message=it.message.orEmpty()};busy=false}
     }
     val excel=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")){uri->
         if(uri!=null)scope.launch{busy=true;runCatching{
@@ -38,7 +39,7 @@ import kotlinx.coroutines.flow.first
             val data=samples.map{sample->val rows=repo.damages(sample.id).first();PavementExportSample(sample,rows,calculator.calculate(sample,rows))}
             val configs=repo.sections().first()
             withContext(Dispatchers.IO){PavementGeneratedFiles.export(context,uri,s,"GROUP_DATA","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","xlsx") { PavementExcel.write(it,data,configs) }}
-        }.onSuccess{message="Excel guardado: ${s.surface}."}.onFailure{message=it.message.orEmpty()};busy=false}
+        }.onSuccess{publishedUri=it.destinationUri;message="ARCHIVO GUARDADO"}.onFailure{message=it.message.orEmpty()};busy=false}
     }
     val reviewPhotos by produceState<List<java.io.File>>(emptyList(),s.id,damages) { value=damages.flatMap { repo.photos(it.id) }.map { java.io.File(it.localPath) } }
     com.tuempresa.inventariovial.core.RecordReviewSection("Revisión de muestra",
@@ -62,6 +63,7 @@ import kotlinx.coroutines.flow.first
     }}, modifier=Modifier.fillMaxWidth()) { Text("Subir muestra a Drive") }
     if(s.status!="CLOSED") Text("Cierra la muestra para habilitar su entrega a Drive.",style=MaterialTheme.typography.bodySmall)
     OutlinedButton(onClick={message="";sectionDialog=true}) { Text("Sección y muestras adicionales") }
+    com.tuempresa.inventariovial.localfiles.PublishedDocumentActions(publishedUri)
     if(message.isNotBlank())Text(message)
     if(sectionDialog) {
         var area by remember { mutableStateOf(section?.areaM2?.toString().orEmpty()) }

@@ -4,7 +4,7 @@
 
 Se leyó el endpoint configurado en `drive.local.properties` (`DRIVE_WEB_APP_URL`), sin enviar fichas ni fotografías. Su GET respondió `ok=true`, versión `v6.2 · encarpetado estricto por elemento + SCAP v2`, sin `syncProtocol`, `technicalDeliveryWithoutGps` ni raíz efectiva verificable. El endpoint de Drive es distinto del servicio de usuarios. Esta comprobación identifica la configuración local; no demuestra qué URL contiene la APK instalada en la tablet.
 
-Google Drive confirmó la existencia de [PRUEBA_FINAL](https://drive.google.com/drive/folders/1u7II1gvhSIHBwVxFjnx6VsAqa3O_jTIi), folderId `1u7II1gvhSIHBwVxFjnx6VsAqa3O_jTIi`, bajo `13. PUCP_SOFTWARE`. Tiene carpetas de rutas existentes. Su nombre y el ROOT_FOLDER_ID del código local no demuestran aislamiento respecto del despliegue productivo.
+Google Drive confirmó la existencia de [PRUEBA_FINAL](https://drive.google.com/drive/folders/CONFIGURAR_ID_PRIVADO), folderId `CONFIGURAR_ID_PRIVADO`, bajo `13. PUCP_SOFTWARE`. Tiene carpetas de rutas existentes. Su nombre y el ROOT_FOLDER_ID del código local no demuestran aislamiento respecto del despliegue productivo.
 
 No se creó `GBO_TEST_SIN_GPS_20261011`, no se publicó Apps Script y no hubo subidas remotas. La prueba real queda pendiente exclusivamente por falta de aislamiento confirmado y de URL de pruebas compatible.
 

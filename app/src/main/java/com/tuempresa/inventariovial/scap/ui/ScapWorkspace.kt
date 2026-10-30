@@ -38,9 +38,9 @@ internal val scapSections=linkedMapOf("A" to "Identificación", "B" to "Datos ge
     "G1" to "Condición estadística", "G2" to "Observaciones y recomendaciones", "SIC" to "Datos para SIC", "REVIEW" to "Revisión y exportación")
 
 @Composable
-fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,onBack:()->Unit) {
+fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,initialRoute:ScapFieldRoute?=null,onBack:()->Unit) {
     val c=vm.scap
-    LaunchedEffect(initialInspectionId) {if(initialInspectionId!=null)c.select(initialInspectionId)}
+    LaunchedEffect(initialInspectionId,initialRoute) {if(initialInspectionId!=null){c.select(initialInspectionId);initialRoute?.let(c::navigate)}}
     val catalog by c.catalog.collectAsState()
     val selected by c.selected.collectAsState()
     val snapshot by c.snapshot.collectAsState()
@@ -104,7 +104,7 @@ fun ScapWorkspace(vm:InventoryViewModel,initialInspectionId:String?=null,onBack:
     }
 }
 
-internal fun statusLabel(status:String)=when(status){"COMPLETE"->"Completa";"IN_PROGRESS"->"En progreso";else->"Borrador"}
+internal fun statusLabel(status:String)=when(status){"COMPLETE"->"Cerrada localmente";"IN_PROGRESS"->"En progreso";else->"Borrador"}
 
 @Composable
 internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,vm:InventoryViewModel,saved:String,pending:Int,error:String?) {
@@ -116,6 +116,10 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
         if(section=="F3") section="F2"
         if(section=="G") section="REVIEW"
     }
+    var exportRequest by rememberSaveable(s.inspection.id){mutableStateOf<String?>(null)}
+    var exportBusy by remember(s.inspection.id){mutableStateOf(false)}
+    var exportMessage by rememberSaveable(s.inspection.id){mutableStateOf<String?>(null)}
+    var formatDialog by remember{mutableStateOf(false)}
     var confirm by rememberSaveable {mutableStateOf(false)}
     var savedDraft by rememberSaveable(s.inspection.id){mutableStateOf(false)}
     var showPending by rememberSaveable(s.inspection.id){mutableStateOf(false)}
@@ -138,8 +142,11 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
         LazyRow(contentPadding=PaddingValues(horizontal=12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
             item {OutlinedButton(onClick={section="A"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FICHA")}}
             item {OutlinedButton(onClick={photoElement=null;section="F2"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FOTOGRAFÍAS (${s.photos.size})")}}
-            item {OutlinedButton(onClick={section="REVIEW"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER EXCEL SIC / SCAP")}}
         }
+        ScapExportActions(pending==0 && error==null,exportBusy,
+            onSic={formatDialog=true},onScap={section="REVIEW";exportRequest="SCAP:"+System.nanoTime()})
+        if(exportBusy) LinearProgressIndicator(Modifier.fillMaxWidth())
+        exportMessage?.let{Text(it,Modifier.padding(horizontal=12.dp),style=MaterialTheme.typography.bodyMedium)}
         if(savedDraft && pending==0 && error==null) Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.SpaceBetween) {
             Text("Ficha guardada dentro de GBO. Pendientes: ${completeness.pending.size}",Modifier.weight(1f).padding(top=12.dp))
             TextButton(onClick={showPending=true}){Text("Ver pendientes")}
@@ -162,6 +169,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             OutlinedButton(enabled=pending==0,onClick={c.submit {it.reopen(s.inspection.id)}}){Text("Reabrir para editar")}
         }
         if(!editable) Text(com.tuempresa.inventariovial.DriveUploadPolicy.SCAP_LOCAL_MESSAGE,Modifier.padding(horizontal=16.dp),style=MaterialTheme.typography.bodySmall)
+        if(!editable && completeness.pending.isNotEmpty())Text("Cierre local con ${completeness.pending.size} datos pendientes. No equivale a finalización contractual ni confirma Drive.",Modifier.padding(horizontal=16.dp),style=MaterialTheme.typography.bodySmall)
         Box(Modifier.weight(1f)) {
             CompositionLocalProvider(LocalScapDestination provides destination) {
             when(section) {
@@ -172,17 +180,23 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
                 "FOTO"->ScapMedia(s,c,catalog,editable,false,photoElement)
                 "G1"->ScapStatisticsPanel(s,c,catalog,editable)
                 "G2"->ScapRecommendationsPanel(s,c,editable)
-                "SIC"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {ScapSicSupplementPanel(s,c,editable)}
-                "REVIEW"->ScapReviewPanel(s,catalog,review,pending==0 && error==null,c) {c.navigate(it.route)}
+                "SIC"->Box(Modifier.fillMaxSize().padding(16.dp)) {ScapSicSupplementPanel(s,c,editable)}
+                "REVIEW"->ScapReviewPanel(s,catalog,review,pending==0 && error==null,c,
+                    exportRequest,{exportRequest=null},{b,m->exportBusy=b;exportMessage=m}) {c.navigate(it.route)}
                 else->ScapTechnicalSection(s,c,catalog,section,editable)
             }
             }
         }
         if(editable) Row(Modifier.fillMaxWidth().padding(12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick={c.submit{it.saveDraft(s.inspection.id);savedDraft=true}},modifier=Modifier.weight(1f)){Text("Guardar borrador")}
-            Button(enabled=pending==0 && error==null,onClick={section="REVIEW";confirm=true},modifier=Modifier.weight(1f)){Text("Revisar y finalizar")}
+            OutlinedButton(enabled=pending==0 && !exportBusy,onClick={c.submit{it.saveDraft(s.inspection.id);savedDraft=true}},modifier=Modifier.weight(1f)){Text("Guardar borrador")}
+            Button(enabled=pending==0 && error==null && !exportBusy,onClick={section="REVIEW";confirm=true},modifier=Modifier.weight(1f)){Text("Revisar y finalizar")}
         }
     }
+    if(formatDialog) AlertDialog(onDismissRequest={formatDialog=false},title={Text("Exportar SIC")},text={Column {
+        com.tuempresa.inventariovial.scap.domain.BridgeSicContract.formats.forEach {format->
+            TextButton(onClick={formatDialog=false;section="REVIEW";exportRequest=format+":"+System.nanoTime()}){Text(format)}
+        }
+    }},confirmButton={TextButton(onClick={formatDialog=false}){Text("Cerrar")}})
     if(confirm) AlertDialog(onDismissRequest={confirm=false},title={Text("Confirmar cierre SCAP")},
         text={Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState())) {
             com.tuempresa.inventariovial.localfiles.RecordDeliveryChoice("SCAP",s.inspection.id,false)
@@ -193,7 +207,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             Text("Datos pendientes: ${review.pending.size}")
             review.pending.forEach{Text("• $it")}
             completeness.pending.forEach {field->TextButton(onClick={c.navigate(field.route);confirm=false}) {Text("${field.section} · ${field.field}")}}
-        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar con el destino elegido" else "Confirmar cierre con pendientes")}},
+        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && completeness.pending.none{it.severity==ScapIssueSeverity.BLOCKING} && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar con el destino elegido" else "Confirmar cierre con pendientes")}},
         dismissButton={TextButton(onClick={confirm=false}){Text("Volver a la ficha")}})
     if(showPending) AlertDialog(onDismissRequest={showPending=false},title={Text("SCAP · Pendientes ${completeness.pending.size}")},
         text={Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState())) {
@@ -230,42 +244,40 @@ private fun ScapIdentification(s:ScapInspectionSnapshot,c:ScapController,catalog
         s.inspection.latitude?.let{Text("GNSS guardado: $it, ${s.inspection.longitude} · precisión ${s.inspection.gpsAccuracyM} m")}
         Text(if(catalog.bridgeType==null) "Las coordenadas UTM de la ficha se ingresan manualmente; la captura GNSS conserva latitud y longitud." else "Latitud y longitud de la ficha se ingresan en grados decimales. Aceptar GNSS conserva la ubicación observada.")
         ScapFields(s,c,catalog,"A",editable=editable)
-        ScapSicSupplementPanel(s,c,editable)
+        TextButton(onClick={c.navigate(ScapFieldRoute("SIC"))}){Text("Abrir SIC-17 / SIC-17A / SIC-17B")}
     }
 }
 
 @Composable
-private fun ScapReviewPanel(s:ScapInspectionSnapshot,catalog:ScapCatalog,review:ScapReview,ready:Boolean,controller:ScapController,onNavigate:(ScapPendingField)->Unit) {
-    val v=s.values()
-    val result=remember(s){ScapConditionCalculator.calculate(ScapElementView.applicable(s).map {e->
-        ScapCalculationInput(e.element.elementCode,ScapElementView.factor(s,e.element),e.condition?.let{ScapPercentages.values(it)} ?: List(6){null})
-    })}
+internal fun ScapExportActions(ready:Boolean,busy:Boolean,onSic:()->Unit,onScap:()->Unit) {
+    Row(Modifier.fillMaxWidth().padding(horizontal=12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(enabled=ready && !busy,onClick=onSic,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text("EXPORTAR SIC")}
+        Button(enabled=ready && !busy,onClick=onScap,modifier=Modifier.weight(1f).heightIn(min=48.dp)){Text("EXPORTAR SCAP")}
+    }
+}
+
+@Composable
+private fun ScapReviewPanel(s:ScapInspectionSnapshot,catalog:ScapCatalog,review:ScapReview,ready:Boolean,controller:ScapController,
+    request:String?,handled:()->Unit,status:(Boolean,String?)->Unit,onNavigate:(ScapPendingField)->Unit) {
+    var details by rememberSaveable(s.inspection.id){mutableStateOf(false)}
+    val completeness=ScapCompletion.assess(s,catalog)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
         Text("Revisión de inspección",style=MaterialTheme.typography.titleLarge)
-        Text("${s.inspection.bridgeName} · ${s.inspection.bridgeCode} · ${v["route"].orEmpty()} · ${v["progressive"].orEmpty()}")
-        Text("${s.spans.size} tramos · ${s.substructures.count{it.kind=="PIER"}} pilares · ${s.supports.size} apoyos")
-        Text("${review.present} elementos presentes · ${review.unevaluated} sin evaluar · ${s.defects.size} defectos · ${s.photos.size} fotos · ${s.sketches.size} croquis")
-        Text("Datos generales",style=MaterialTheme.typography.titleMedium)
-        catalog.fields("B","inspection").forEach {Text("${it.label}: ${v[it.key].orEmpty().ifBlank{"Pendiente"}}")}
-        s.spans.sortedBy{it.spanIndex}.forEach {Text("Tramo ${it.spanIndex}: ${it.category} / ${it.type} · ${it.lengthM ?: "—"} m")}
-        Text("Elementos seleccionados",style=MaterialTheme.typography.titleMedium)
-        s.elements.filter{it.element.isPresent}.forEach{e->Text("${e.element.elementCode} · ${e.element.description} · ${e.element.quantity ?: "Metrado pendiente"} ${e.element.unit}")}
-        Text("Defectos registrados",style=MaterialTheme.typography.titleMedium)
-        s.defects.forEach{Text("${it.elementCode ?: "General"} · ${it.description} · ${it.locationDescription}")}
-        HorizontalDivider()
-        Text("Resumen de G.1 · Condición estadística",style=MaterialTheme.typography.titleMedium)
-        if(result.value!=null) Text("${String.format(Locale.US,"%.3f",result.value)} · ${result.classification}",style=MaterialTheme.typography.headlineMedium)
-        else Text("Sin resultado: ${result.reason}")
-        Text("Resultado calculado en G.1 con la fórmula de la plantilla SCAP. Esta pantalla solo resume la revisión y exportación.")
-        result.elements.forEach {Text("${it.code} · condición ${String.format(Locale.US,"%.3f",it.condition)} · contribución ${String.format(Locale.US,"%.3f",it.contribution)}")}
-        Text("Errores que impiden cerrar (${review.errors.size})",style=MaterialTheme.typography.titleMedium)
-        review.errors.forEach{Text("• $it",color=MaterialTheme.colorScheme.error)}
-        Text("Pendientes para revisión (${review.pending.size})",style=MaterialTheme.typography.titleMedium)
-        ScapCompletion.assess(s,catalog).pending.forEach{field->TextButton(onClick={onNavigate(field)}) {Text("${field.section} · ${field.field}")}}
-        com.tuempresa.inventariovial.core.RecordReviewSection("Revisión de fotos",
-            listOf("Puente" to s.inspection.bridgeName),s.photos.sortedBy {it.photoIndex}.map {java.io.File(it.originalPath.ifBlank { it.localPath })},
-            com.tuempresa.inventariovial.core.CompletionResult(review.errors.map {com.tuempresa.inventariovial.core.ValidationIssue("SCAP",it,com.tuempresa.inventariovial.core.ValidationIssue.Severity.BLOCKING_EXPORT)}))
-        ScapSicSupplementPanel(s,controller,s.inspection.status!="COMPLETE")
-        ScapExportPanel(s,ready,controller,onCompleteMissing=onNavigate)
+        Text("${s.inspection.bridgeName} · ${statusLabel(s.inspection.status)}")
+        Text("${s.photos.size} fotografías · ${s.sketches.size} croquis · ${completeness.pending.size} pendientes")
+        // Keep export results and their correction action above the long completion report.
+        ScapExportPanel(s,ready,controller,onCompleteMissing=onNavigate,requestedAction=request,onHandled=handled,onStatus=status)
+        review.errors.forEach{Text(it,color=MaterialTheme.colorScheme.error)}
+        completeness.pending.take(6).forEach {field->TextButton(onClick={onNavigate(field)}){Text("Completar ${field.field}")}}
+        TextButton(onClick={details=!details}){Text(if(details)"Ocultar detalles de la ficha" else "Detalles de la ficha y pendientes")}
+        if(details) {
+            catalog.fields("B","inspection").forEach{Text("${it.label}: ${s.values()[it.key].orEmpty().ifBlank{"Pendiente"}}")}
+            completeness.pending.drop(6).forEach{field->TextButton(onClick={onNavigate(field)}){Text("${field.section} · ${field.field}")}}
+            s.defects.forEach{Text("${it.description} · ${it.locationDescription}")}
+            com.tuempresa.inventariovial.core.RecordReviewSection("Revisión de fotos",emptyList(),
+                s.photos.sortedBy{it.photoIndex}.map{java.io.File(it.originalPath.ifBlank{it.localPath})},
+                com.tuempresa.inventariovial.core.CompletionResult(emptyList()))
+            TextButton(onClick={controller.navigate(ScapFieldRoute("G1"))}){Text("Ver condición estadística G.1")}
+        }
     }
 }

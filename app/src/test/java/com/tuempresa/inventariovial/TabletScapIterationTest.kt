@@ -39,7 +39,8 @@ class TabletScapIterationTest {
                 val repo=ScapRepository(db,catalog);val id=repo.create("Inspector","device",null,type)
                 val initial=repo.dao.snapshot(id)!!;val expected=if(type==ScapBridgeType.SLAB)17 else 10
                 assertEquals(expected,initial.elements.size);assertEquals(expected,ScapElementView.applicable(initial).size)
-                assertTrue(initial.elements.all{ScapElementView.state(initial,it.element)==ScapElementState.UNSET&&it.condition==null&&it.element.quantity==null})
+                assertTrue(initial.elements.all{ScapElementView.state(initial,it.element)==ScapElementState.UNSET&&
+                    it.condition?.let{c->ScapPercentages.values(c).all{p->p==0.0}}==true&&it.element.quantity==null})
                 assertEquals(listOf(1,2),initial.supports.map{it.supportIndex}.sorted())
                 initial.supports.sortedBy{it.supportIndex}.forEachIndexed{i,b->repo.setField(id,b.id,"location",if(i==0)"LEFT" else "RIGHT")}
                 repo.addRow(id,"BEARING")
@@ -62,7 +63,7 @@ class TabletScapIterationTest {
                 val restored=db.scapDao().snapshot(id)!!;val changed=restored.elements.single{it.element.id==e.id}
                 assertEquals(expected+1,ScapElementView.applicable(restored).size)
                 assertEquals(20.25,changed.element.quantity!!,0.0)
-                assertEquals(listOf(null,90.0,10.0,null,null,null),ScapPercentages.values(changed.condition!!))
+                assertEquals(listOf(0.0,90.0,10.0,0.0,0.0,0.0),ScapPercentages.values(changed.condition!!))
                 assertEquals("Nombre observado",ScapElementView.name(restored,changed.element));assertEquals("Descripción real",ScapElementView.description(restored,changed.element))
                 assertEquals(listOf("LEFT","RIGHT",""),restored.supports.sortedBy{it.supportIndex}.map{it.location})
                 assertEquals("INCOMPLETE",restored.values("completion")["status"])
@@ -75,6 +76,7 @@ class TabletScapIterationTest {
             val repo=ScapRepository(db,catalog);val id=repo.create("Inspector","device",null,type)
             val s0=repo.dao.snapshot(id)!!;val e=s0.elements.sortedWith(compareBy({ScapPresentation.groups.indexOf(it.element.group)},{it.element.elementCode})).first().element
             repo.setField(id,e.id,"percent1","90");repo.setField(id,e.id,"percent2","10")
+            repo.setField(id,e.id,"percent3","") // Explicit blank is distinct from a new default zero.
             repo.setField(id,e.id,"globalDescription","Texto de campo");repo.setField(id,e.id,"customName","Nombre editado")
             repo.setField(id,e.id,"customCode","X-F1");repo.setField(id,e.id,"exportCode","X-G1")
             repo.addManualElement(id,"X-NEW","Elemento nuevo","","ml","");repo.addRow(id,"BEARING")
@@ -91,9 +93,10 @@ class TabletScapIterationTest {
                 val after=names.single{it.getAttribute("name")==before.getAttribute("name")&&it.getAttribute("localSheetId")==before.getAttribute("localSheetId")}
                 if(before.getAttribute("name")=="_xlnm.Print_Area")assertTrue(after.textContent.startsWith(before.textContent)) else assertEquals(before.textContent,after.textContent)
             }
-            assertEquals("",result.cell(5,"D14").textContent);assertEquals("",result.cell(5,"G14").textContent)
+            assertEquals("",result.cell(5,"D14").textContent);assertEquals("0.0",result.cell(5,"G14").textContent)
             assertEquals("90.0",result.cell(5,"H14").textContent);assertEquals("10.0",result.cell(5,"I14").textContent)
-            for(ref in listOf("J14","K14","L14"))assertEquals("",result.cell(5,ref).textContent)
+            assertEquals("",result.cell(5,"J14").textContent)
+            for(ref in listOf("K14","L14"))assertEquals("0.0",result.cell(5,ref).textContent)
             assertEquals("Nombre editado",result.cell(3,"C22").textContent);assertEquals("Texto de campo",result.cell(3,"F22").textContent)
             assertEquals("X-F1",result.cell(3,"B22").textContent);assertEquals("X-G1",result.cell(5,"A14").textContent)
             assertTrue(result.sheet(3).nodes("c").any{it.textContent=="Elemento nuevo"})
@@ -115,10 +118,10 @@ class TabletScapIterationTest {
             val source=TemplateWorkbook(context.assets.open(type.templateAsset))
             val strings=source.document("xl/sharedStrings.xml").nodes("si").map{it.textContent}
             val names=(11..42).map{row->source.cell(4,"D$row").let{cell->if(cell.getAttribute("t")=="s")strings[cell.textContent.toInt()] else cell.textContent}.substringBefore(':').trim()}.filter{it.isNotBlank()}.distinct()
-            assertEquals(names,catalog.forType(type).photoNames)
+            assertEquals(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.categories.map{it.label},catalog.forType(type).photoNames)
             assertEquals(31,names.size)
             val repo=ScapRepository(db,catalog);val id=repo.create("Inspector","device",null,type)
-            val photoId=repo.addPhotoRecord(id,names.first(),"")
+            val photoId=repo.addPhotoRecord(id,"HISTORICO SIN CLASIFICAR","")
             repo.setField(id,photoId,"photoName","AGUAS ABAJO EDITADA");repo.describePhoto(id,photoId,"Descripción editable")
             repo.setField(id,photoId,"photoDate","09/10/2026");repo.replacePhoto(id,photoId,image.absolutePath)
             val s=repo.dao.snapshot(id)!!;val out=ByteArrayOutputStream()

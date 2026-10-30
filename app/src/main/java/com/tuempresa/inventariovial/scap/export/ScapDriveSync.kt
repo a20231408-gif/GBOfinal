@@ -26,11 +26,10 @@ import java.util.concurrent.TimeUnit
 
 object ScapDriveSync {
     internal fun reviewForUpload(snapshot:ScapInspectionSnapshot,catalog:com.tuempresa.inventariovial.scap.catalog.ScapCatalog,warningsConfirmed:Boolean):com.tuempresa.inventariovial.scap.domain.ScapCompleteness {
-        val errors=com.tuempresa.inventariovial.scap.domain.ScapValidation.review(snapshot,catalog).errors
-        require(errors.isEmpty()){errors.joinToString("\n")}
+        com.tuempresa.inventariovial.scap.domain.ScapUploadReadiness.block(snapshot,catalog,warningsConfirmed)?.let {
+            throw com.tuempresa.inventariovial.core.SyncPending(it.message)
+        }
         val completion=com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(snapshot,catalog)
-        require(completion.pending.none{it.severity==com.tuempresa.inventariovial.scap.domain.ScapIssueSeverity.BLOCKING}) {"Corrige los valores inválidos antes de subir."}
-        require(completion.pending.isEmpty() || warningsConfirmed) {"Confirma la subida con datos pendientes."}
         return completion
     }
     suspend fun enqueue(context:Context,snapshot:ScapInspectionSnapshot,reviewedLayout:ScapHumanLayout?=null,warningsConfirmed:Boolean=false) {
@@ -43,7 +42,9 @@ object ScapDriveSync {
         val paths = (0 until files.length()).map {files.optJSONObject(it) ?: return false}
         val layout = ScapHumanLayout.saved(s)
         val expected = setOf("SCAP.xlsx", "manifest.json") +
-            (layout?.photoPaths?.values ?: s.photos.filter{it.localPath.isNotBlank()}.map {"fotos/${it.id}.jpg"}) +
+            (layout?.photoPaths?.values ?: s.photos.filter{it.localPath.isNotBlank()}.map {
+                if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.category(s,it)!=null)com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.photoPath(s,it) else "fotos/${it.id}.jpg"
+            }) +
             (layout?.sketchPaths?.values ?: s.sketches.map {"croquis/${it.id}.png"})
         return paths.size == expected.size && paths.map {it.optString("path")}.toSet() == expected &&
             paths.all {it.optString("fileId").isNotBlank() && it.optString("folderId").isNotBlank()} &&

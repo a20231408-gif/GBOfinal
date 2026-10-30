@@ -33,8 +33,8 @@ class LocalFiles148MigrationTest {
                 old.rawQuery("SELECT * FROM `$table`",null).use{cursor->assertTrue(cursor.moveToFirst());expected[table]=cursor.columnNames.associateWith{cursor.getString(cursor.getColumnIndexOrThrow(it))}}
             };old.version=19
         }
-        fun open()=Room.databaseBuilder(c,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_19_20).build()
-        open().use{d->val db=d.openHelper.writableDatabase;assertEquals(20,db.version)
+        fun open()=Room.databaseBuilder(c,InventoryDatabase::class.java,name).addMigrations(InventoryDatabase.MIGRATION_19_20,InventoryDatabase.MIGRATION_20_21).build()
+        open().use{d->val db=d.openHelper.writableDatabase;assertEquals(21,db.version)
             for((table,columns)in expected)db.query("SELECT * FROM `$table`").use{cursor->assertTrue(cursor.moveToFirst());for((col,value)in columns)assertEquals("$table.$col",value,cursor.getString(cursor.getColumnIndexOrThrow(col)))}
             assertTrue(d.localFilesDao().jobs().isEmpty());assertNull(d.localFilesDao().choice("SIC/TEST"));d.localFilesDao().saveJob(LocalExportJob("TEST_PERSISTENT_JOB","SIC/TEST","SIC","TEST",1,state="RUNNING"))
             d.localFilesDao().saveFile(LocalSharedFile("TEST_URI","TEST_PERSISTENT_JOB","SIC/TEST","Download/GBO_Ruta_Clara/","test.pdf","application/pdf",1,"a".repeat(64),"TEST_PRIVATE_SOURCE","content://media/external/downloads/42","WRITING"))

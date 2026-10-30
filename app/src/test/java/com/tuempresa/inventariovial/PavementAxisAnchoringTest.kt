@@ -124,7 +124,7 @@ class PavementAxisAnchoringTest {
         val sessions=AuthSessionManager().apply{login(UserCacheEntity("test","test","FICTICIO","OPERATOR",true,"",0,0,0))}
         open().use{db->db.pavementDao().saveSample(s);PavementRepository(db,sessions).saveDamageWithPatchMode(d,PavementPatchVisuals.ANCHORED)}
         open().use{db->
-            val saved=db.pavementDao().sample(s.id)!!;assertEquals(20,db.openHelper.writableDatabase.version)
+            val saved=db.pavementDao().sample(s.id)!!;assertEquals(21,db.openHelper.writableDatabase.version)
             assertTrue(PavementPatchVisuals.parallelAnchoring(saved,d.id));assertEquals(d.id,db.pavementDao().damage(d.id)!!.id)
             val points=PavementRigidVisualGeometry.traces(saved,db.pavementDao().damage(d.id)!!).first().points
             assertEquals(0.0,points.minOf{it.x},1e-8)

@@ -66,7 +66,9 @@ class PavementCalculator(context: Context) {
             return PavementResult(emptyList(),emptyList(),null,null,listOf("Losas de 8 m o más: define unidades con juntas imaginarias según el manual pp.39/159 antes de calcular."))
         val root=assets.open("pavement/curvas/$surface.json").bufferedReader().use{JSONObject(it.readText())}
         val curves=root.getJSONArray("curvas_vd")
-        val normalized = if(sample.surface=="RIGID") PavementSlabTotals.records(damages) else damages.map { it.copy(severity=PavementSeverity.canonical(it.severity)) }
+        if(PavementJointOccurrences.needsAssessment(sample,damages))issues.add("Daño 26: ocurrencias conservadas; falta una evaluación global explícita de la unidad. No se suman las gravedades de juntas individuales.")
+        val calculationDamages=PavementJointOccurrences.calculationRecords(sample,damages)
+        val normalized = if(sample.surface=="RIGID") PavementSlabTotals.records(calculationDamages) else calculationDamages.map { it.copy(severity=PavementSeverity.canonical(it.severity)) }
         val totals=normalized.groupBy { it.code to it.severity }.map { (key, records) ->
             val geometry=records.first().geometry
             val count=if(geometry=="SLABS") records.flatMap{PavementRules.slabIds(it)}.toSet().size.toDouble() else records.sumOf{PavementRules.quantity(it)}

@@ -227,12 +227,18 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
             Text("Copia local: incluye las fichas validadas de este SIC y ruta disponibles en esta tablet. No representa todo el inventario de Drive.")
             Text("La entrega automática funciona al validar; no depende de generar este archivo.")
             if(format!=null) Button(enabled=!busy,onClick={busy=true;scope.launch {
-                try {file=vm.localExport.prepareRoute(format,s.record.routeCode);message="XLSX local generado con la plantilla contractual."}
+                try {file=vm.localExport.prepareRoute(format,s.record.routeCode);message="ARCHIVO GUARDADO · XLSX local; los campos pendientes se mantienen vacíos y el documento puede ser provisional."}
                 catch(e:Exception){message=e.message} finally {busy=false}
             }},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text(if(busy) "Generando…" else "Generar / actualizar copia local")}
             file?.let {f ->
                 Text("LOCAL · ${java.io.File(f.localPath).name} · ${DateFormat.getDateTimeInstance().format(Date(f.createdAt))}")
                 Text("Es una copia de esa fecha; vuelve a generar para incluir cambios posteriores.")
+                if(format==com.tuempresa.inventariovial.export.SicExportFormat.SIC17){
+                    var publicUri by remember(f.localPath){mutableStateOf<String?>(null)}
+                    LaunchedEffect(f.localPath){publicUri=runCatching{com.tuempresa.inventariovial.export.LocalSicConsolidates.current(context,s.record.routeCode,format.code).uri.toString()}.getOrNull()}
+                    com.tuempresa.inventariovial.localfiles.PublishedDocumentActions(publicUri)
+                }
+
                 Button(onClick={runCatching {context.startActivity(GeneratedFileIndex.open(context,f))}.onFailure {message="No se pudo abrir. Instala una aplicación compatible con XLSX o comparte el archivo."}},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("Abrir XLSX local")}
                 OutlinedButton(onClick={runCatching {context.startActivity(GeneratedFileIndex.share(context,f))}.onFailure {message=it.message}},modifier=Modifier.fillMaxWidth().heightIn(min=56.dp)) {Text("Compartir XLSX local")}
             }

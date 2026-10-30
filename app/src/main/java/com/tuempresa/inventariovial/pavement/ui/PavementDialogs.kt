@@ -100,8 +100,10 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
 
 @Composable internal fun DamageDialog(d: PavementDamageEntity, feedback: String, dismiss: () -> Unit, save: (PavementDamageEntity) -> Unit,
     sample:PavementSampleEntity?=null,patchSave:((PavementDamageEntity,String)->Unit)?=null) {
-    var x1 by rememberSaveable { mutableStateOf(d.x1?.toString().orEmpty()) }; var y1 by rememberSaveable { mutableStateOf(d.y1?.toString().orEmpty()) }
-    var x2 by rememberSaveable { mutableStateOf(d.x2?.toString().orEmpty()) }; var y2 by rememberSaveable { mutableStateOf(d.y2?.toString().orEmpty()) }
+    var x1 by rememberSaveable { mutableStateOf(PavementCoordinateDisplay.text(d.x1)) }; var y1 by rememberSaveable { mutableStateOf(PavementCoordinateDisplay.text(d.y1)) }
+    var x2 by rememberSaveable { mutableStateOf(PavementCoordinateDisplay.text(d.x2)) }; var y2 by rememberSaveable { mutableStateOf(PavementCoordinateDisplay.text(d.y2)) }
+    var x1Edited by rememberSaveable {mutableStateOf(false)};var y1Edited by rememberSaveable {mutableStateOf(false)}
+    var x2Edited by rememberSaveable {mutableStateOf(false)};var y2Edited by rememberSaveable {mutableStateOf(false)}
     var diameter by rememberSaveable { mutableStateOf(d.diameterM?.toString().orEmpty()) }
     var depth by rememberSaveable { mutableStateOf(d.depthMm?.toString().orEmpty()) }
     var holeArea by rememberSaveable { mutableStateOf(d.areaM2?.toString().orEmpty()) }
@@ -116,8 +118,8 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
         runCatching {
             val geometric = d.geometry in listOf("AREA", "LINEAR", "POTHOLE") || localized
             val two = d.geometry in listOf("AREA", "LINEAR") || localized && PavementSlabGeometry.mark(d.code)!=SlabMark.POINT
-            val a = if (geometric) number(x1) else null; val b = if (geometric) number(y1) else null
-            val c = if (two) number(x2) else null; val e = if (two) number(y2) else null
+            val a = if (geometric) PavementCoordinateDisplay.value(x1,d.x1,x1Edited) else null; val b = if (geometric) PavementCoordinateDisplay.value(y1,d.y1,y1Edited) else null
+            val c = if (two) PavementCoordinateDisplay.value(x2,d.x2,x2Edited) else null; val e = if (two) PavementCoordinateDisplay.value(y2,d.y2,y2Edited) else null
             val w = if (two) abs(c!!-a!!) else null; val l = if (two) abs(e!!-b!!) else null
             val override = measure.takeIf { it.isNotBlank() }?.let { number(it) }
             val updated=d.copy(severity = severity, x1=a, y1=b, x2=c, y2=e,
@@ -140,15 +142,15 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
             Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically){Switch(localized,{localized=it});Text("Localizar dentro de las losas indicadas")}
             Text("Croquis ${PavementSlabGeometry.mark(d.code).name}: coordenadas en metros de la muestra. La cantidad contractual sigue siendo losas, nunca el área del dibujo.")
         }
-        if(d.geometry in listOf("AREA","LINEAR","POTHOLE") || localized) { Field("X1 / centro X (m)",x1){x1=it}; Field("Y1 / centro Y (m)",y1){y1=it} }
-        if(d.geometry in listOf("AREA","LINEAR") || localized && PavementSlabGeometry.mark(d.code)!=SlabMark.POINT) { Field("X2 (m)",x2){x2=it}; Field("Y2 (m)",y2){y2=it} }
+        if(d.geometry in listOf("AREA","LINEAR","POTHOLE") || localized) { Field("X1 / centro X (m)",x1){x1=it;x1Edited=true}; Field("Y1 / centro Y (m)",y1){y1=it;y1Edited=true} }
+        if(d.geometry in listOf("AREA","LINEAR") || localized && PavementSlabGeometry.mark(d.code)!=SlabMark.POINT) { Field("X2 (m)",x2){x2=it;x2Edited=true}; Field("Y2 (m)",y2){y2=it;y2Edited=true} }
         if(sample!=null && d.code in setOf(25,27) && sample.slabRows>0 && sample.slabColumns>0) {
             Text(if(d.code==25)"Vista previa · junta compartida"else "Vista previa · borde físico de berma",style=MaterialTheme.typography.titleSmall)
             Text("Carril ${sample.carril}; PR ${sample.prInicial} → ${sample.prFinal}. X es ancho e Y es longitud; el giro del PDF no cambia el borde físico.")
             if(d.code==27)Text("Confirma en campo qué borde lateral es la berma. No se deduce del carril ni se permite una junta interior.")
             Text("La línea fina muestra el tramo proyectado; la marca roja corta indica el desnivel. Se conservan los puntos originales y la cantidad por losas.")
-            val preview=runCatching{d.copy(x1=if(localized)number(x1)else null,y1=if(localized)number(y1)else null,
-                x2=if(localized)number(x2)else null,y2=if(localized)number(y2)else null,slabs=slabs)}.getOrNull()
+            val preview=runCatching{d.copy(x1=if(localized)PavementCoordinateDisplay.value(x1,d.x1,x1Edited)else null,y1=if(localized)PavementCoordinateDisplay.value(y1,d.y1,y1Edited)else null,
+                x2=if(localized)PavementCoordinateDisplay.value(x2,d.x2,x2Edited)else null,y2=if(localized)PavementCoordinateDisplay.value(y2,d.y2,y2Edited)else null,slabs=slabs)}.getOrNull()
             val options=preview?.let{runCatching{PavementBoundaryGeometry.options(sample,it)}.getOrDefault(emptyList())}.orEmpty()
             for(option in options)Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
                 RadioButton(boundaryChoice==option.key,{boundaryChoice=option.key})
@@ -170,8 +172,8 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
         if(sample!=null && d.code==24 && sample.slabRows>0 && sample.slabColumns>0) {
             Text("Vista previa D24 · abanico desde dos bordes adyacentes",style=MaterialTheme.typography.titleSmall)
             Text("Corrige los puntos y la losa aquí si la esquina no corresponde. Solo se proyecta el dibujo; no se cambian las medidas guardadas ni el PCI.")
-            val preview=runCatching {d.copy(x1=if(localized)number(x1)else null,y1=if(localized)number(y1)else null,
-                x2=if(localized)number(x2)else null,y2=if(localized)number(y2)else null,slabs=slabs)}.getOrNull()
+            val preview=runCatching {d.copy(x1=if(localized)PavementCoordinateDisplay.value(x1,d.x1,x1Edited)else null,y1=if(localized)PavementCoordinateDisplay.value(y1,d.y1,y1Edited)else null,
+                x2=if(localized)PavementCoordinateDisplay.value(x2,d.x2,x2Edited)else null,y2=if(localized)PavementCoordinateDisplay.value(y2,d.y2,y2Edited)else null,slabs=slabs)}.getOrNull()
             val projection=preview?.let{PavementDurabilityGeometry.project(sample,it)}
             if(projection==null || preview==null)Text("Completa coordenadas numéricas para ver la esquina.")
             else {
@@ -196,8 +198,8 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
                 }
             }
             val preview=runCatching {
-                d.copy(x1=if(localized)number(x1)else null,y1=if(localized)number(y1)else null,
-                    x2=if(localized)number(x2)else null,y2=if(localized)number(y2)else null,slabs=slabs)
+                d.copy(x1=if(localized)PavementCoordinateDisplay.value(x1,d.x1,x1Edited)else null,y1=if(localized)PavementCoordinateDisplay.value(y1,d.y1,y1Edited)else null,
+                    x2=if(localized)PavementCoordinateDisplay.value(x2,d.x2,x2Edited)else null,y2=if(localized)PavementCoordinateDisplay.value(y2,d.y2,y2Edited)else null,slabs=slabs)
                     .also {PavementSlabGeometry.validate(sample,it)}
             }.getOrNull()
             Text("Vista previa antes de aceptar. El adosado desplaza solo el dibujo; se conservan coordenadas, severidad y cantidad PCI.")

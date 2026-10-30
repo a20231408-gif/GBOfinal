@@ -13,7 +13,7 @@ internal object ScapTemplateMedia {
     private data class Picture(val path:String,val description:String)
     fun write(w:TemplateWorkbook,s:ScapInspectionSnapshot,read:(String)->ByteArray,
         photoSheet:Int=5,photoStartRow:Int=13,canonical:Boolean=false) {
-        val photos=s.photos.sortedBy{it.photoIndex}
+        val photos=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.ordered(s)
         if(!canonical) {w.set(photoSheet,"H1",photos.size);w.set(photoSheet,"H5","NO")}
         for(i in 0..31) {
             val p=photos.getOrNull(i);val row=i+photoStartRow

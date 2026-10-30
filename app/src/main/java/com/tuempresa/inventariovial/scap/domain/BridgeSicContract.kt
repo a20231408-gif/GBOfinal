@@ -114,7 +114,7 @@ object BridgeSicContract {
                 if(key=="wearingSurface" && value=="3" && !raw.contains(" - ") && s.values()[prefix+"wearingSurfaceDescription"].isNullOrBlank()) return@mapNotNull null
                 val prior=inherited.firstOrNull{it.sicField==key}
                 ScapMappedField(prefix+key,key,value,ScapMappingStatus.DIRECT,
-                    if(prior!=null) "Valor SIC revisado; origen SCAP: ${prior.scapField}. No modifica SCAP." else "Captura SIC; $SOURCE")
+                    if(prior!=null && prior.value!=value) "REVISAR: valor SIC distinto de SCAP (${prior.scapField}). Se conserva la edición SIC." else if(prior!=null) "Valor SIC revisado; origen SCAP: ${prior.scapField}. No modifica SCAP." else "Captura SIC; $SOURCE")
             }
         }
         return inherited.filter{it.sicField !in overrides}+manual

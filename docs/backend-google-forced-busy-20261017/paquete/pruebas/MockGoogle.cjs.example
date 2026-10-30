@@ -1,0 +1,55 @@
+// TEMPLATE: configure the authorized private test root before Google use. No deployment is performed.
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
+const ROOT='<RAIZ_PRUEBAS_PRIVADA>',base=path.resolve(__dirname,'..');
+function zip(mode,data){const py=process.env.GBO_TEST_PYTHON||'python';const code="import sys,json,base64,zipfile,io\nj=json.load(sys.stdin)\nif j['mode']=='unzip':\n z=zipfile.ZipFile(io.BytesIO(base64.b64decode(j['data'])))\n print(json.dumps([{'name':n,'base64':base64.b64encode(z.read(n)).decode()} for n in z.namelist()]))\nelse:\n b=io.BytesIO()\n with zipfile.ZipFile(b,'w') as z:\n  for p in j['data']:z.writestr(zipfile.ZipInfo(p['name'],(2020,1,1,0,0,0)),base64.b64decode(p['base64']),compress_type=zipfile.ZIP_DEFLATED)\n print(base64.b64encode(b.getvalue()).decode())";
+ const r=spawnSync(py,['-c',code],{input:JSON.stringify({mode,data}),encoding:'utf8',maxBuffer:32*1024*1024});if(r.status!==0)throw Error('Python ZIP helper failed: '+r.stderr);return JSON.parse(mode==='unzip'?r.stdout:JSON.stringify(r.stdout.trim()));}
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+function env(variant='BASE',options={}){
+ let seq=0,held=false,userHeld=false,failUpdate=false,updateCount=0;const objects=new Map(),writes=[],logs=[];
+ const props={GBO_TEST_SCRIPT_ID:'TEST_SCRIPT_ONLY',GBO_TEST_CONFIRM:'ONLY_'+ROOT,GBO_TEST_TOKEN:'a'.repeat(64)};
+ const blob=(b,mime='application/octet-stream',name='')=>{b=Buffer.isBuffer(b)?Buffer.from(b):typeof b==='string'?Buffer.from(b):Buffer.from(b);return {getBytes:()=>[...b],getContentType:()=>mime,getName:()=>name,getDataAsString:()=>b.toString('utf8'),copyBlob:()=>blob(b,mime,name)};};
+ const iter=a=>{let n=0;return {hasNext:()=>n<a.length,next:()=>a[n++]};};
+ class Folder{
+  constructor(name,parent=null,id=null){this.name=name;this.parent=parent;this.id=id||'folder_'+(++seq);this.files=[];this.folders=[];this.description='';objects.set(this.id,this);if(parent)parent.folders.push(this);}
+  getId(){return this.id;}getName(){return this.name;}getDescription(){return this.description;}getParents(){return iter(this.parent?[this.parent]:[]);}
+  getFiles(){return iter([...this.files]);}getFolders(){return iter([...this.folders]);}getFilesByName(n){return iter(this.files.filter(x=>x.name===n));}getFoldersByName(n){return iter(this.folders.filter(x=>x.name===n));}
+  createFolder(n){writes.push({op:'mkdir',parent:this.id});return new Folder(n,this);}createFile(b){writes.push({op:'create',parent:this.id});return new File(b,this);}
+  setName(n){writes.push({op:'rename',id:this.id});this.name=n;return this;}setDescription(s){writes.push({op:'description',id:this.id});this.description=s;return this;}
+  moveTo(p){writes.push({op:'move',id:this.id,parent:p.id});if(this.parent)this.parent.folders=this.parent.folders.filter(f=>f!==this);this.parent=p;p.folders.push(this);return this;}
+ }
+ class File{
+  constructor(b,p,id=null){this.b=b;this.name=b.getName();this.parent=p;this.id=id||'file_'+(++seq);this.description='';objects.set(this.id,this);p.files.push(this);}
+  getId(){return this.id;}getName(){return this.name;}getDescription(){return this.description;}getParents(){return iter([this.parent]);}getBlob(){return blob(this.b.getBytes(),this.b.getContentType(),this.name);}
+  setContent(s){writes.push({op:'content',id:this.id});this.b=blob(s,this.b.getContentType(),this.name);return this;}setDescription(s){writes.push({op:'description',id:this.id});this.description=s;return this;}
+  setName(n){writes.push({op:'rename',id:this.id});this.name=n;return this;}moveTo(p){writes.push({op:'move',id:this.id,parent:p.id});this.parent.files=this.parent.files.filter(f=>f!==this);this.parent=p;p.files.push(this);return this;}
+  makeCopy(n,p){writes.push({op:'copy',id:this.id,parent:p.id});return new File(blob(this.b.getBytes(),this.b.getContentType(),n),p);}
+ }
+ const root=new Folder('GBO_PRUEBAS_BACKEND_NO_PRODUCCION',null,ROOT),outside=new Folder('UNAUTHORIZED',null,'OUTSIDE_ROOT'),foreign=new File(blob('FOREIGN','text/plain','foreign.txt'),outside,'FOREIGN_FILE');
+ function lookup(id){if(!objects.has(id))throw Error('404 File not found');return objects.get(id);}
+ const rawProps={getProperties:()=>({...props}),getProperty:k=>props[k]??null,setProperty(k,v){props[k]=v;return this;},deleteProperty(k){delete props[k];return this;}};
+ let context=vm.createContext({console:{info:s=>logs.push(s)},PropertiesService:{getScriptProperties:()=>rawProps},ScriptApp:{getScriptId:()=>'TEST_SCRIPT_ONLY',getOAuthToken:()=>'MOCK_ONLY_NOT_A_CREDENTIAL'},
+  DriveApp:{getFolderById:lookup,getFileById:lookup},
+  Drive:{Files:{
+   get(id){const f=lookup(id);return {id:f.id,name:f.name,mimeType:f instanceof Folder?'application/vnd.google-apps.folder':f.b.getContentType(),parents:f.parent?[f.parent.id]:[],trashed:false,description:f.description,shortcutDetails:f.shortcutDetails,size:f instanceof File?f.b.getBytes().length:undefined,sha256Checksum:f instanceof File?sha(Buffer.from(f.b.getBytes())):undefined};},
+   update(meta,id,b){updateCount++;if(failUpdate){failUpdate=false;throw Error('INJECTED_FAILURE');}const f=lookup(id);writes.push({op:'update',id});f.b=b;f.name=meta.name;return{id};},
+   generateIds:()=>({ids:['video_'+(++seq)]}),
+   create(meta,b){writes.push({op:'advancedCreate',id:meta.id,parent:meta.parents[0]});const f=new File(b||blob('',meta.mimeType,meta.name),lookup(meta.parents[0]),meta.id);f.name=meta.name;f.description=meta.description;return{id:f.id};}
+  }},
+  LockService:{getScriptLock:()=>({tryLock:()=>{if(held)return false;held=true;return true;},releaseLock:()=>{held=false;}}),getUserLock:()=>({tryLock:()=>{if(userHeld)return false;userHeld=true;return true;},releaseLock:()=>{userHeld=false;}})},
+  Utilities:{DigestAlgorithm:{SHA_256:'SHA_256'},getUuid:()=>crypto.randomUUID(),sleep:()=>{},base64Encode:b=>Buffer.from(b).toString('base64'),base64Decode:s=>[...Buffer.from(s,'base64')],computeDigest:(_,b)=>[...crypto.createHash('sha256').update(typeof b==='string'?b:Buffer.from(b)).digest()],newBlob:blob,
+   unzip:b=>zip('unzip',Buffer.from(b.getBytes()).toString('base64')).map(p=>blob(Buffer.from(p.base64,'base64'),'application/xml',p.name)),zip:parts=>blob(Buffer.from(zip('zip',parts.map(p=>({name:p.getName(),base64:Buffer.from(p.getBytes()).toString('base64')}))),'base64'),'application/zip','out.xlsx')},
+  UrlFetchApp:{fetch:url=>({getResponseCode:()=>200,getAllHeaders:()=>({Location:url+'&upload_id=MOCK_ONLY'})})},
+  ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({getContent:()=>s,setMimeType(){return this;}})}
+ });
+ function load(selected){const folder=path.join(base,selected==='BASE'?'BASE_V20_PRUEBAS':'CANDIDATO_OPTIMIZADO_PRUEBAS');
+ for(const name of ['TestVariant','TestIsolation','Codigo','PhotoNamesV2Core','SicObservationsV1Core','SyncV3Core','SyncV3','VideoNamesV2Core','VideoV1Core','VideoV1','TestHttp']){
+   const file=options.helpersV1&&['TestIsolation','TestHttp'].includes(name)?path.join(__dirname,'fixtures-helpers-v1',name+'.gs.txt'):path.join(folder,name+'.gs');
+   let source=fs.readFileSync(file,'utf8');if(options.badRoot&&name==='Codigo')source=source.replace("const ROOT_FOLDER_ID = '"+ROOT+"'","const ROOT_FOLDER_ID = 'OUTSIDE_ROOT'");vm.runInContext(source,context,{filename:name+'.gs'});
+ }}load(variant);
+ function start(){return JSON.parse(JSON.stringify(context.gboTestStartNewRun()));}
+ function post(p,envelope){const r=props.GBO_TEST_RUN&&JSON.parse(props.GBO_TEST_RUN);return JSON.parse(context.doPost({postData:{contents:JSON.stringify({...p,token:props.GBO_TEST_TOKEN,_test:envelope||r})}}).getContent());}
+ function prepare(p){p=JSON.parse(JSON.stringify(p));const r=post({...p,action:'reservePhotoNamesV2',photoNamingVersion:2,photos:p.files.filter(f=>f.key.startsWith('photo/')).map(f=>({id:f.key.slice(6),category:f.photoCategory}))});if(!r.ok)throw Error(JSON.stringify(r));p.photoNamingVersion=2;for(const f of p.files.filter(f=>f.key.startsWith('photo/')))f.path=f.path.slice(0,f.path.lastIndexOf('/')+1)+r.photos.find(x=>x.id===f.key.slice(6)).name;p.contentHash=sha(context.SyncV3.canonical(p));return p;}
+ return {get context(){return context;},switchVariant(selected){const services={};for(const n of ['console','PropertiesService','ScriptApp','DriveApp','Drive','LockService','Utilities','UrlFetchApp','ContentService'])services[n]=context[n];context=vm.createContext(services);load(selected);},props,root,outside,foreign,objects,writes,logs,blob,start,post,prepare,hold(v){held=v;},fail(){failUpdate=true;},get updateCount(){return updateCount;},get run(){return JSON.parse(props.GBO_TEST_RUN);}};
+}
+module.exports={env,sha,zip,ROOT};

@@ -2,7 +2,7 @@
 
 No publicado ni ejecutado remotamente en Prompt 2A. El endpoint privado de pruebas comprobado en Prompt 1 anuncia syncProtocol=3/pathVersion=3; no se presupone actualizado. Android nuevo exige syncProtocol=3, pathVersion=4, stableFamilyNumbering=true y technicalDeliveryWithoutGps=true. Conserva la cola con UNCONFIGURED si falta compatibilidad. No se reutiliza el endpoint operativo antiguo ni el servicio de usuarios.
 
-Paquete preparado en deployment-test/: Code.gs, SyncV3Core.gs y SyncV3.gs. Raíz de pruebas fijada a 1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk (GBO_TEST_V3_20261011). Code.gs del paquete lee el token de la propiedad privada GBO_TEST_API_TOKEN, sin incluir su valor. El Code.gs genérico del repositorio mantiene su configuración histórica; NO copiarlo como configuración de este despliegue. Cambios de código verificables en BACKEND_CHANGES.patch.
+Paquete preparado en deployment-test/: Code.gs, SyncV3Core.gs y SyncV3.gs. Raíz de pruebas fijada a CONFIGURAR_ID_PRIVADO (GBO_TEST_V3_20261011). Code.gs del paquete lee el token de la propiedad privada GBO_TEST_API_TOKEN, sin incluir su valor. El Code.gs genérico del repositorio mantiene su configuración histórica; NO copiarlo como configuración de este despliegue. Cambios de código verificables en BACKEND_CHANGES.patch.
 
 Pasos concretos para autorizar/ejecutar por el responsable:
 1. Abrir exclusivamente el proyecto Apps Script V3 de pruebas independiente. Guardar una versión de respaldo del código/despliegue y su registro ._GBO_SYNC_V3. No modificar el proyecto original/productivo.

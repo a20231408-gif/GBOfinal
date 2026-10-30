@@ -76,10 +76,12 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
         PavementRules.validate(sample, damage, dao.damages(sample.id))
         val user = sessions.requireUser()
         val old = dao.damage(damage.id)
+        require(damage.retiredAt==null && old?.retiredAt==null){"La ocurrencia está archivada; su evidencia se conserva."}
         require(old == null || old.sampleId == sample.id) { "El daño pertenece a otra muestra." }
-        val next = (dao.damages(sample.id).maxOfOrNull { it.correlativo } ?: 0) + 1
+        require(damage.code!=26 || old!=null || dao.damages(sample.id).none{it.code==26} || PavementJointOccurrences.individual(sample,damage.id)){"Agrega otra ocurrencia seleccionando su junta y defecto."}
+        val next = (dao.damageHistory(sample.id).maxOfOrNull { it.correlativo } ?: 0) + 1
         dao.saveDamage(damage.copy(severity = PavementSeverity.canonical(damage.severity), correlativo = old?.correlativo ?: next, inspectorUserId = old?.inspectorUserId ?: user.id,
-            inspectorName = old?.inspectorName ?: user.displayName))
+            inspectorName = old?.inspectorName ?: user.displayName,createdAt=old?.createdAt ?: damage.createdAt))
         photoRevision(sample)
     }
     /** One confirmation: existing validations run inside the same local transaction. */
@@ -98,10 +100,26 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     }
     /** One confirmation: existing validations run inside the same local transaction. */
     suspend fun saveDamageWithJointMarks(damage:PavementDamageEntity,marks:Set<PavementJointAnnotations.Mark>) = db.withTransaction {
-        require(damage.code==26 && damage.geometry=="GLOBAL") { "La selección corresponde al daño global 26." }
-        saveDamage(damage)
-        saveJointMarks(damage.sampleId,damage.id,marks)
+        require(damage.code==26 && damage.geometry=="GLOBAL")
+        val sample=editable(damage.sampleId);val old=dao.damage(damage.id)
+        val individual=old==null||PavementJointOccurrences.individual(sample,damage.id)
+        if(individual)PavementJointOccurrences.validateNew(sample,damage,marks,dao.damages(sample.id))
+        val endpoints=marks.firstOrNull()?.let{PavementJointAnnotations.endpoints(sample,it)}
+        val localized=if(individual)damage.copy(x1=endpoints?.first?.x,y1=endpoints?.first?.y,x2=endpoints?.second?.x,y2=endpoints?.second?.y,
+            lengthM=PavementJointOccurrences.referenceLength(sample,marks))else damage
+        if(individual){
+            val reviewed=PavementJointOccurrences.preserveHistoricalAssessment(sample,dao.damages(sample.id))
+            dao.saveSample(reviewed.copy(sicDataJson=PavementJointOccurrences.markIndividual(reviewed,damage.id)))
+        }
+        saveDamage(localized)
+        val current=requireNotNull(dao.sample(sample.id))
+        val withMarks=current.copy(sicDataJson=PavementJointAnnotations.update(current,localized,marks))
+        dao.saveSample(if(individual)withMarks.copy(sicDataJson=PavementJointOccurrences.markIndividual(withMarks,damage.id))else withMarks)
     }
+    suspend fun saveSealUnitAssessment(id:String,severity:String)=db.withTransaction {
+        val s=editable(id);dao.saveSample(s.copy(sicDataJson=PavementJointOccurrences.assess(s,severity),updatedAt=maxOf(s.updatedAt+1,System.currentTimeMillis())))
+    }
+
     suspend fun closeSample(id: String, calculator: PavementCalculator? = null) = db.withTransaction {
         val sample = editable(id)
         require(sample.anchoM > 0 && sample.largoM > 0 && sample.tramo.isNotBlank()) { "Guarda primero la cabecera." }
@@ -114,6 +132,7 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     suspend fun saveJointMarks(sampleId:String,damageId:String,marks:Set<PavementJointAnnotations.Mark>) = db.withTransaction {
         val sample=editable(sampleId)
         val damage=requireNotNull(dao.damage(damageId)) { "Registra primero el daño global 26." }
+        if(PavementJointOccurrences.individual(sample,damageId)){saveDamageWithJointMarks(damage,marks);return@withTransaction}
         require(!PavementJointAnnotations.needsReview(sample,damageId) || marks.isEmpty()) { "La malla cambió: revisa y limpia las marcas antes de volver a marcar." }
         dao.saveSample(sample.copy(sicDataJson=PavementJointAnnotations.update(sample,damage,marks),updatedAt=maxOf(System.currentTimeMillis(),sample.updatedAt+1)))
     }
@@ -133,13 +152,19 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     suspend fun deleteDamage(damage: PavementDamageEntity) = db.withTransaction {
         val stored=requireNotNull(dao.damage(damage.id)) { "El daño ya no existe." }
         val sample=editable(stored.sampleId)
+        if(stored.code==26){
+            if(stored.retiredAt!=null)return@withTransaction
+            dao.saveDamage(stored.copy(retiredAt=System.currentTimeMillis()))
+            photoRevision(sample)
+            return@withTransaction
+        }
         require(dao.photoHistory(stored.id).isEmpty()) { "El daño tiene evidencia fotográfica conservada; no se elimina su historial." }
         dao.deleteDamage(stored.id)
         photoRevision(sample)
     }
     suspend fun savePhoto(photo: PavementDamagePhotoEntity, sampleId: String) = db.withTransaction {
         val sample=editable(sampleId)
-        require(dao.damage(photo.damageId)?.sampleId==sampleId) { "La fotografía debe pertenecer a un daño de esta muestra." }
+        require(dao.damage(photo.damageId)?.let{it.sampleId==sampleId && it.retiredAt==null}==true) { "La fotografía debe pertenecer a un daño de esta muestra." }
         require(photo.retiredAt==null && photo.replacedByPhotoId==null) { "Usa la operación de retiro para cambiar el historial." }
         val old=dao.photo(photo.id)
         require(old==null || old==photo) { "No sobrescribas una fotografía existente; usa Reemplazar." }
@@ -148,7 +173,7 @@ class PavementRepository(private val db: InventoryDatabase, private val sessions
     suspend fun replacePhoto(oldId:String,newPhoto:PavementDamagePhotoEntity,sampleId:String) = db.withTransaction {
         val sample=editable(sampleId)
         val old=requireNotNull(dao.photo(oldId))
-        require(old.retiredAt==null && old.damageId==newPhoto.damageId && dao.damage(old.damageId)?.sampleId==sampleId) { "Fotografía retirada o ajena al daño." }
+        require(old.retiredAt==null && old.damageId==newPhoto.damageId && dao.damage(old.damageId)?.let{it.sampleId==sampleId && it.retiredAt==null}==true) { "Fotografía retirada o ajena al daño." }
         require(old.id!=newPhoto.id && old.localPath!=newPhoto.localPath && dao.photo(newPhoto.id)==null && newPhoto.retiredAt==null && newPhoto.replacedByPhotoId==null) { "El reemplazo necesita UUID y original nuevos." }
         dao.savePhoto(newPhoto)
         dao.savePhoto(old.copy(retiredAt=System.currentTimeMillis(),replacedByPhotoId=newPhoto.id))

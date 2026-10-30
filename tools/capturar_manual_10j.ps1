@@ -1,10 +1,16 @@
 param(
     [Parameter(Mandatory=$true)][ValidatePattern('^[a-z0-9][a-z0-9-]{1,60}$')][string]$Nombre,
     [string]$Descripcion='Pantalla de GBO abierta manualmente por el propietario',
-    [string]$Adb='D:\Android\Sdk\platform-tools\adb.exe',
-    [string]$Serial='523bc083'
+    [string]$Adb='' ,
+    [string]$Serial=$env:GBO_ADB_SERIAL
 )
 $ErrorActionPreference='Stop'
+if(!$Serial){throw 'Indica -Serial o GBO_ADB_SERIAL para la tablet autorizada; no se ejecutó ADB.'}
+if(!$Adb){
+    $sdkRoot=if($env:ANDROID_SDK_ROOT){$env:ANDROID_SDK_ROOT}else{$env:ANDROID_HOME}
+    if(!$sdkRoot){throw 'Indica -Adb o configura ANDROID_SDK_ROOT. No se ejecutó ADB.'}
+    $Adb=Join-Path $sdkRoot 'platform-tools\adb.exe'
+}
 $workspace=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $captureRoot=Join-Path $workspace 'docs\manual-10i\capturas-reales'
 $pendingRoot=Join-Path $captureRoot 'pendientes-privadas'

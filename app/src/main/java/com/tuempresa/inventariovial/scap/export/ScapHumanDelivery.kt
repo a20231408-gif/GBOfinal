@@ -54,8 +54,10 @@ object ScapHumanDelivery {
                 inspections.forEach { row ->
                     val s = row.snapshot
                     put(s.inspection.id, ScapHumanLayout(route, asset.folderName, asset.shortCode, key,
-                        s.photos.filter{it.localPath.isNotBlank()}.sortedBy { it.photoIndex }.mapIndexed { index, photo -> photo.id to
-                            ("fotos/" + DeliveryPhotoNameBuilder.build(photoOffset + index + 1, index + 1, asset,
+                        com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.ordered(s).filter{it.localPath.isNotBlank()}.mapIndexed { index, photo -> photo.id to
+                            (if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.category(s,photo)!=null)
+                                com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.photoPath(s,photo)
+                            else "fotos/" + DeliveryPhotoNameBuilder.build(photoOffset + index + 1, index + 1, asset,
                                 DeliveryNamingPolicy.FOLDER_COMPACT)) }.toMap(),
                         s.sketches.sortedBy { it.id }.mapIndexed { index, sketch -> sketch.id to "croquis/CROQUIS_${index + 1}.png" }.toMap()))
                 }

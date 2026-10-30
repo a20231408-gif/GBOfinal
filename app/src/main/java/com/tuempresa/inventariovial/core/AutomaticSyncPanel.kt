@@ -28,6 +28,8 @@ object SyncIntentPresentation {
         if(!validated)return if((intent?.syncedRevision ?: 0)>0) "Actualización pendiente · requiere cierre" else "Borrador"
         if(confirmed(intent))return "Sincronizado"
         if(intent?.state=="BLOCKED")return "Bloqueado"
+        if(intent?.state=="PENDING_VALIDATION" && (intent.error?.startsWith("Pendiente de compatibilidad del servidor")==true ||
+                intent.error?.contains("panel fotográfico SCAP")==true))return "Pendiente de compatibilidad del servidor"
         if(intent?.state=="PENDING_VALIDATION" || intent==null)return "Pendiente de validación/ordenamiento"
         if(!configured || intent.state=="UNCONFIGURED")return "Sin configurar"
         if(!connected)return if(intent.syncedRevision>0) "Actualización pendiente · sin conexión" else "Pendiente de conexión"
@@ -83,8 +85,8 @@ object SyncIntentPresentation {
     }
 }
 
-@Composable fun AutomaticSyncPanel(kind:String,id:String,validated:Boolean,compact:Boolean=false) {
-    val context=LocalContext.current;val db=remember(context){InventoryDatabase.getInstance(context)}
+@Composable fun AutomaticSyncPanel(kind:String,id:String,validated:Boolean,compact:Boolean=false,database:InventoryDatabase?=null) {
+    val context=LocalContext.current;val db=database ?: remember(context){InventoryDatabase.getInstance(context)}
     val intents by remember(db){db.automaticSyncDao().observe()}.collectAsState(emptyList())
     val intent=intents.find {it.key=="$kind/$id"};val scope=rememberCoroutineScope()
     val choices by db.localFilesDao().choices().collectAsState(emptyList())
@@ -94,18 +96,36 @@ object SyncIntentPresentation {
     val active=SyncProgressPresentation.running(intent,work)
     val retrying=work.any {it.state==WorkInfo.State.ENQUEUED && it.runAttemptCount>0}
     val currentProgress=progress["$kind/$id"]?.takeIf {it.revision==intent?.revision}
+    val scapIdentity by produceState<DriveDeliveryIdentity?>(null,db,kind,id,intent) {
+        val queued=intent
+        if(kind=="SCAP" && queued!=null)db.scapDao().observe(id).collect {
+            value=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){DriveDeliveryPresentation.identity(db,queued,context)}
+        }
+    }
     var message by remember {mutableStateOf<String?>(null)}
     var tick by remember {mutableIntStateOf(0)}
     LaunchedEffect(Unit){while(true){kotlinx.coroutines.delay(3000);tick++}}
     val connected=remember(tick){val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         manager.getNetworkCapabilities(manager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)==true}
     Column {
-        Text(if(onlyDevice) "Drive: no programado · Solo dispositivo" else "Drive: ${SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null,active,retrying)}")
+        val scapView=if(intent!=null)scapIdentity?.let{DriveDeliveryPresentation.view(intent,it,active,connected,DriveUploadPolicy.configurationError()==null,retrying,currentProgress)}else null
+        val confirmed=if(kind=="SCAP")scapView?.confirmed==true else SyncIntentPresentation.confirmed(intent)
+        Text(if(onlyDevice) "Drive: no programado · Solo dispositivo" else "Drive: ${scapView?.status?.label ?: SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null,active,retrying)}")
+        scapView?.let{Text(it.message)}
+        if(confirmed)Text("Entregado correctamente a Drive")
+        if(intent?.preparedJson?.let{runCatching{JSONObject(it).optJSONArray("pendingSic")?.length() ?: 0}.getOrDefault(0)}?.let{it>0}==true)
+            Text("Respaldo y consolidado SIC son distintos: hay aportes SIC pendientes. Revisa el detalle; no se acredita finalización contractual.")
+        else if(!onlyDevice && validated && intent!=null)Text(when(scapView?.status){
+            DriveDeliveryStatus.VERIFYING->"Guardado en tablet. Esperando la confirmación final de Drive (commit/ACK)."
+            DriveDeliveryStatus.UPLOADING->"Guardado en tablet. Envío en curso."
+            DriveDeliveryStatus.ATTENTION->"Guardado en tablet. Requiere revisar el motivo indicado."
+            else->"Guardado en tablet. Pendiente de Drive."
+        })
         currentProgress?.let {p->
             if(active)Text(SyncProgressPresentation.phase(p))
-            if(SyncIntentPresentation.confirmed(intent))Text("Entrega confirmada")
+            if(confirmed)Text("Entrega confirmada")
             Text(SyncProgressPresentation.files(p))
-            if(!SyncIntentPresentation.confirmed(intent)) {
+            if(!confirmed) {
                 Text(SyncProgressPresentation.elapsed(p,System.currentTimeMillis()))
                 Text("Tiempo restante no disponible")
             }
@@ -120,14 +140,14 @@ object SyncIntentPresentation {
                 val prepared=it.preparedJson?.let(::JSONObject);val receipt=it.receiptJson?.let(::JSONObject)
                 if(prepared?.optJSONObject("georeferencing")?.optString("externalSubmetricStatus")=="PENDING")
                     Text("Georreferenciación submétrica: pendiente",style=MaterialTheme.typography.bodySmall)
-                Text("Archivos preparados: ${prepared?.optJSONArray("files")?.length() ?: 0} · confirmados para esta revisión: ${if(it.syncedRevision==it.revision)receipt?.optJSONArray("files")?.length() ?: 0 else 0}")
-                receipt?.optString("logicalPath")?.takeIf {it.isNotBlank()}?.let {path->Text("Destino confirmado: $path")}
+                Text("Archivos preparados: ${prepared?.optJSONArray("files")?.length() ?: 0} · confirmados para esta revisión: ${if(confirmed)receipt?.optJSONArray("files")?.length() ?: 0 else 0}")
+                receipt?.optString("logicalPath")?.takeIf {it.isNotBlank()&&confirmed}?.let {path->Text("Destino confirmado: $path")}
                 receipt?.optString("folderId")?.takeIf {it.isNotBlank()}?.let {folder->Text("https://drive.google.com/drive/folders/$folder")}
                 prepared?.optJSONArray("pendingSic")?.let {pending->for(n in 0 until pending.length())Text("SIC pendiente: ${pending.getString(n)}")}
                 receipt?.optJSONArray("retainedSicFormats")?.let {prior->for(n in 0 until prior.length())Text("SIC conserva revisión anterior: ${prior.getString(n)}")}
                 it.error?.let {error->Text(error,color=MaterialTheme.colorScheme.error)}
             }
-            if(!onlyDevice && validated && intent?.state!="CONFLICT")TextButton(onClick={scope.launch {
+            if(!onlyDevice && validated && intent?.state!="CONFLICT" && scapView?.retryAllowed!=false)TextButton(onClick={scope.launch {
                 runCatching {AutomaticSync.manual(context,kind,id)}.onSuccess {message="Trabajo programado. Android lo ejecutará cuando haya conexión y recursos."}.onFailure {message=it.message}
             }}){Text("Reintentar ahora")}
             message?.let {Text(it)}

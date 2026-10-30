@@ -114,7 +114,9 @@ class PavementAnnotationSync147Test {
             val confirmed=db.automaticSyncDao().get(key)!!;assertTrue(confirmed.error,SyncIntentPresentation.confirmed(confirmed))
             val raw=server.native(firstRevision);val head=s.copy(sicDataJson=raw.getJSONObject("sample").getJSONObject("sicData").toString())
             assertEquals(marks,PavementJointAnnotations.marks(head,global().id));assertEquals(2,raw.getJSONArray("damages").length())
-            assertEquals(4,server.records.getValue(firstRevision).getJSONArray("files").length());assertEquals(5,server.stageCalls)
+            val deliveredFiles=server.records.getValue(firstRevision).getJSONArray("files")
+            assertEquals(5,deliveredFiles.length());assertEquals(6,server.stageCalls)
+            assertTrue((0 until deliveredFiles.length()).any{deliveredFiles.getJSONObject(it).getString("path")=="DATOS_APP/SIC-15.xlsx"})
             assertEquals(2,server.commitCalls);assertArrayEquals(original,file.readBytes())
             repo.reopenSample(s.id);repo.toggleJointMark(s.id,global().id,PavementJointAnnotations.Mark("H",1,0));repo.closeSample(s.id,PavementCalculator(context))
             val next=db.automaticSyncDao().get(key)!!;assertTrue(next.revision>firstRevision);assertEquals(firstRevision,next.syncedRevision)
@@ -125,7 +127,7 @@ class PavementAnnotationSync147Test {
             fun ids(j:JSONObject)=(0 until j.getJSONArray("files").length()).map {j.getJSONArray("files").getJSONObject(it).getString("fileId")}.toSet()
             assertEquals(ids(a),ids(b));assertArrayEquals(original,file.readBytes())
             val native=server.native(next.revision);assertEquals(3,PavementJointAnnotations.marks(s.copy(sicDataJson=native.getJSONObject("sample").getJSONObject("sicData").toString()),global().id).size)
-            val out=File("D:/Downloads/GBO_PRUEBAS_8B/tmp/rigidos-1.4.7-20261016/entrega-ficticia").apply {mkdirs()}
+            val out=File("../tmp/rigidos-1.4.7-20261016/entrega-ficticia").apply {mkdirs()}
             File(out,"Pavimentos-Rigidos-TEST.xlsx").writeBytes(server.file(next.revision,"sample_excel"))
             File(out,"Pavimentos-Rigidos-PDF_SIMULADO_NO_NATIVO.pdf").writeBytes(server.file(next.revision,"field"))
             File(out,"Muestra-Rigida-TEST.json").writeText(native.toString(2))

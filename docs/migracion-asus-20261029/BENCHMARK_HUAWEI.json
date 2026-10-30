@@ -1,0 +1,275 @@
+{
+  "hostDeclaredByOwner": "Huawei Intel Core i5-1155G7 / 8GB RAM / Intel Iris Xe",
+  "executionDateLocal": "2026-10-30",
+  "timeZone": "America/Lima",
+  "sourceExportTreeBeforeDocumentation": "3f96dfe0c7ac0ba5cd5bb4375f4f83fa4d52d4a6",
+  "sourceIsStagedTreeExportNotRemoteClone": true,
+  "finalRuntimeFilesCanonicalEquivalentToExport": 641,
+  "coldMeaning": "empty project build outputs, warm global dependency caches",
+  "testCompilationWarmForSuccessfulMeasurement": true,
+  "testTaskActuallyExecuted": true,
+  "downloadsIncluded": false,
+  "indexingIncluded": false,
+  "tests": {
+    "tests": 52,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": [
+      {
+        "name": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 29.065
+      },
+      {
+        "name": "com.tuempresa.inventariovial.MixedSic17HotfixTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 18.383
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementAnnotationSync147Test",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 7.662
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementJointPreviewUiTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 7.231
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementMigration21Test",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 0.254
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementP0AdditionalTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 1.909
+      },
+      {
+        "name": "com.tuempresa.inventariovial.ScapFinalP0Test",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 10.428
+      },
+      {
+        "name": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 18.463
+      }
+    ]
+  },
+  "phases": [
+    {
+      "phase": "cold",
+      "exitCode": 0,
+      "seconds": 402.02,
+      "gradleOffline": true,
+      "downloadsAllowed": false,
+      "dependencyCache": "existing global cache; project build outputs empty only for cold",
+      "androidStudioIndexingIncluded": false,
+      "profile": "Windows 8GB conservative, 1 worker / 2 visible processors / 2048MiB Gradle heap; repeat identical profile on ASUS",
+      "sourceCommentRestored": false,
+      "validationBuild": false,
+      "peakObservedProcessTreeRssMiB": 2646.9,
+      "peakObservedPrivateCommitMiB": 3075.8,
+      "sampleIntervalSeconds": 0.5,
+      "processesObserved": 6,
+      "memoryMetric": "Sampled sum for this process tree; shared pages may be counted twice; excludes Android Studio and unrelated apps.",
+      "commandOptions": [
+        "--no-daemon",
+        "--no-configuration-cache",
+        "--no-build-cache",
+        "--console=plain",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx2048m -XX:ActiveProcessorCount=2 -XX:HeapBaseMinAddress=8g -Dfile.encoding=UTF-8",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "--offline"
+      ],
+      "tasks": [
+        ":app:assembleDebug"
+      ]
+    },
+    {
+      "phase": "incremental",
+      "exitCode": 0,
+      "seconds": 196.59,
+      "gradleOffline": true,
+      "downloadsAllowed": false,
+      "dependencyCache": "existing global cache; project build outputs empty only for cold",
+      "androidStudioIndexingIncluded": false,
+      "profile": "Windows 8GB conservative, 1 worker / 2 visible processors / 2048MiB Gradle heap; repeat identical profile on ASUS",
+      "sourceCommentRestored": true,
+      "validationBuild": false,
+      "peakObservedProcessTreeRssMiB": 2199.0,
+      "peakObservedPrivateCommitMiB": 2610.6,
+      "sampleIntervalSeconds": 0.5,
+      "processesObserved": 4,
+      "memoryMetric": "Sampled sum for this process tree; shared pages may be counted twice; excludes Android Studio and unrelated apps.",
+      "commandOptions": [
+        "--no-daemon",
+        "--no-configuration-cache",
+        "--no-build-cache",
+        "--console=plain",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx2048m -XX:ActiveProcessorCount=2 -XX:HeapBaseMinAddress=8g -Dfile.encoding=UTF-8",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "--offline"
+      ],
+      "tasks": [
+        ":app:assembleDebug"
+      ]
+    },
+    {
+      "phase": "tests",
+      "exitCode": 0,
+      "seconds": 132.62,
+      "gradleOffline": true,
+      "downloadsAllowed": false,
+      "dependencyCache": "existing global cache; project build outputs empty only for cold",
+      "androidStudioIndexingIncluded": false,
+      "profile": "Windows 8GB conservative, 1 worker / 2 visible processors / 2048MiB Gradle heap; repeat identical profile on ASUS",
+      "sourceCommentRestored": false,
+      "validationBuild": false,
+      "peakObservedProcessTreeRssMiB": 1922.4,
+      "peakObservedPrivateCommitMiB": 2768.0,
+      "sampleIntervalSeconds": 0.5,
+      "processesObserved": 14,
+      "memoryMetric": "Sampled sum for this process tree; shared pages may be counted twice; excludes Android Studio and unrelated apps.",
+      "commandOptions": [
+        "--no-daemon",
+        "--no-configuration-cache",
+        "--no-build-cache",
+        "--console=plain",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx2048m -XX:ActiveProcessorCount=2 -XX:HeapBaseMinAddress=8g -Dfile.encoding=UTF-8",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "--offline",
+        "-Dgbo.migration.roboCache=<PROJECT>\\tmp\\robolectric-runtime"
+      ],
+      "tasks": [
+        "-I",
+        "<PROJECT>\\tools\\migracion\\pruebas.init.gradle",
+        "-Dgbo.migration.temp=<TEMP>",
+        ":app:testDebugUnitTest",
+        "--tests",
+        "com.tuempresa.inventariovial.PavementP0AdditionalTest",
+        "--tests",
+        "com.tuempresa.inventariovial.PavementMigration21Test",
+        "--tests",
+        "com.tuempresa.inventariovial.PavementJointPreviewUiTest",
+        "--tests",
+        "com.tuempresa.inventariovial.PavementAnnotationSync147Test",
+        "--tests",
+        "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+        "--tests",
+        "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "--tests",
+        "com.tuempresa.inventariovial.ScapFinalP0Test",
+        "--tests",
+        "com.tuempresa.inventariovial.MixedSic17HotfixTest"
+      ]
+    },
+    {
+      "phase": "release-check",
+      "exitCode": 0,
+      "seconds": 18.27,
+      "gradleOffline": true,
+      "downloadsAllowed": false,
+      "dependencyCache": "existing global cache; project build outputs empty only for cold",
+      "androidStudioIndexingIncluded": false,
+      "profile": "Windows 8GB conservative, 1 worker / 2 visible processors / 2048MiB Gradle heap; repeat identical profile on ASUS",
+      "sourceCommentRestored": false,
+      "validationBuild": false,
+      "peakObservedProcessTreeRssMiB": 566.2,
+      "peakObservedPrivateCommitMiB": 664.9,
+      "sampleIntervalSeconds": 0.5,
+      "processesObserved": 4,
+      "memoryMetric": "Sampled sum for this process tree; shared pages may be counted twice; excludes Android Studio and unrelated apps.",
+      "commandOptions": [
+        "--no-daemon",
+        "--no-configuration-cache",
+        "--no-build-cache",
+        "--console=plain",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx2048m -XX:ActiveProcessorCount=2 -XX:HeapBaseMinAddress=8g -Dfile.encoding=UTF-8",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "--offline"
+      ],
+      "tasks": [
+        ":app:validateReleaseConfiguration"
+      ]
+    },
+    {
+      "phase": "instrumentation-compile",
+      "exitCode": 0,
+      "seconds": 47.06,
+      "gradleOffline": true,
+      "downloadsAllowed": false,
+      "dependencyCache": "existing global cache; project build outputs empty only for cold",
+      "androidStudioIndexingIncluded": false,
+      "profile": "Windows 8GB conservative, 1 worker / 2 visible processors / 2048MiB Gradle heap; repeat identical profile on ASUS",
+      "sourceCommentRestored": false,
+      "validationBuild": false,
+      "peakObservedProcessTreeRssMiB": 1305.8,
+      "peakObservedPrivateCommitMiB": 1360.3,
+      "sampleIntervalSeconds": 0.5,
+      "processesObserved": 4,
+      "memoryMetric": "Sampled sum for this process tree; shared pages may be counted twice; excludes Android Studio and unrelated apps.",
+      "commandOptions": [
+        "--no-daemon",
+        "--no-configuration-cache",
+        "--no-build-cache",
+        "--console=plain",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx2048m -XX:ActiveProcessorCount=2 -XX:HeapBaseMinAddress=8g -Dfile.encoding=UTF-8",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "--offline"
+      ],
+      "tasks": [
+        ":app:compileDebugAndroidTestKotlin"
+      ]
+    }
+  ],
+  "firstTestAttempt": {
+    "tests": 52,
+    "failures": 20,
+    "errors": 0,
+    "skipped": 0,
+    "failureTypes": {
+      "java.lang.IllegalArgumentException": 20
+    },
+    "reason": "Offline harness cache directory included SDK34 only; SDK28 jar already available elsewhere. No application source fix.",
+    "seconds": 429.95,
+    "preservedPrivately": true
+  },
+  "historicalReleaseBuild": {
+    "newlyRunForMigration": false,
+    "seconds": 4047.7,
+    "firstNativeMemoryFailurePreserved": true,
+    "retrySucceeded": true
+  }
+}

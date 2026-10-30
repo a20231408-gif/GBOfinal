@@ -21,6 +21,13 @@ object ReadablePhotoNames {
             val source=expected.single {it.getString("key")=="photo/$id"};require(f.getString("category")==source.optString("photoCategory","GENERAL"))
             val name=f.getString("name")
             if(f.optBoolean("historical"))require(name==source.getString("path").substringAfterLast('/'))
+            else if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(f.getString("category"))!=null) {
+                val cat=requireNotNull(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(f.getString("category")))
+                require(p.getString("kind")=="SCAP")
+                val match=requireNotNull(Regex("${cat.number}_PUE([1-9][0-9]*)_${cat.abbreviation}_([0-9]{3})\\.jpg").matchEntire(name))
+                require(name.length<=80 && match.groupValues[2].toInt() in 1..999)
+                require(ack.getString("logicalPath").substringAfterLast("PUENTE ")==match.groupValues[1])
+            }
             else require(name.length<=20 && name.matches(Regex("[0-9]{3}_[A-Z]{3}[1-9][0-9]*_[A-Z]{3}\\.jpg")))
             prefs.getString(id,null)?.let {require(JSONObject(it).getString("name")==name) {"Reserva fotográfica cambió; conservar la asociación anterior."}}
             edit.putString(id,f.toString())

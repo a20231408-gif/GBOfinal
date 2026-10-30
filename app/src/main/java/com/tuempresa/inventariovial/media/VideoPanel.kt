@@ -29,7 +29,7 @@ import java.io.File
 import java.util.UUID
 
 @Composable fun BridgeMediaCategory(parentKey:String,mediaCategory:PhotoCategoryPolicy.Category,editable:Boolean=true,
-    photoCount:Int,onPhoto:()->Unit,onImportPhotos:()->Unit,photoContent:@Composable ()->Unit) {
+    photoCount:Int,onPhoto:()->Unit,onImportPhotos:()->Unit,videoMatches:((VideoEntity)->Boolean)?=null,photoContent:@Composable ()->Unit) {
     require(VideoPolicy.bridgeOnly(parentKey))
     val categories=listOf(mediaCategory)
     val context=LocalContext.current;val scope=rememberCoroutineScope()
@@ -59,7 +59,7 @@ import java.util.UUID
         categories.forEach {c->
             Card(Modifier.fillMaxWidth()) {Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                 Text(c.label,style=MaterialTheme.typography.titleMedium)
-                Text("$photoCount fotos · ${videos.count {it.category==c.key&&!it.retired}} videos")
+                Text("$photoCount fotos · ${videos.count {(videoMatches?.invoke(it) ?: (it.category==c.key))&&!it.retired}} videos")
                 Text("Evidencia del apartado · disponible offline. Videos MP4/WebM/3GP, hasta 32 MiB; originales conservados.",style=MaterialTheme.typography.bodySmall)
                 if(editable) {
                     Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
@@ -75,17 +75,18 @@ import java.util.UUID
                     TextButton(enabled=!busy,onClick=onImportPhotos){Text("Importar fotografías")}
                 }
                 photoContent()
-                videos.filter {it.category==c.key}.forEach {v->
+                videos.filter {videoMatches?.invoke(it) ?: (it.category==c.key)}.forEach {v->
                     val thumbnail by produceState<android.graphics.Bitmap?>(null,v.id) {
                         value=withContext(Dispatchers.IO) {runCatching {val r=MediaMetadataRetriever();try {r.setDataSource(v.localPath);r.frameAtTime?.let {original->val scale=minOf(1f,320f/maxOf(original.width,original.height));android.graphics.Bitmap.createScaledBitmap(original,(original.width*scale).toInt().coerceAtLeast(1),(original.height*scale).toInt().coerceAtLeast(1),true)}}finally{r.release()}}.getOrNull()}
                     }
                     thumbnail?.let {Image(it.asImageBitmap(),"Miniatura de video",Modifier.height(120.dp).fillMaxWidth())}
                     val status=when(v.state){"SYNCED"->"Sincronizado · confirmado por servidor";"BACKEND_REQUIRED"->"Pendiente del backend";"WAITING_PARENT"->"Pendiente de finalizar y sincronizar ficha";"UPLOADING"->"Subiendo ${v.uploadedBytes*100/v.sizeBytes}%";"ERROR"->"Error · original conservado";"RETIRED"->"Retirado · original conservado";else->"Entrega pendiente"}
-                    Text("${v.id.take(8)} · ${v.sizeBytes/1024} KiB · $status")
+                    val panel=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.resolve(v.category,v.categoryLabel)
+                    val position=videos.filter{it.category==v.category}.indexOfFirst{it.id==v.id}+1
                     val remoteName=remember(v.id,v.state,v.fileId){VideoNames.display(context,v.id)}
-                    remoteName?.let {Text(it,style=MaterialTheme.typography.bodySmall)}
+                    Text("${remoteName ?: panel?.fileName(position,when(v.mimeType){"video/webm"->"webm";"video/3gpp"->"3gp";else->"mp4"}) ?: "Video $position"} · ${v.sizeBytes/1024} KiB · $status")
                     v.error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
-                    TextButton(onClick={scope.launch {message=runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.document(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),File(v.localPath),"SCAP",v.mimeType);"Video: copia local pendiente. La sesión de subida se conserva."}.getOrElse{it.message}}}){Text("Guardar video en Descargas")}
+                    TextButton(onClick={scope.launch {message=runCatching{com.tuempresa.inventariovial.localfiles.LocalCopies.document(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),File(v.localPath),"SCAP",v.mimeType,displayName=remoteName ?: panel?.fileName(position,File(v.localPath).extension) ?: "VIDEO_HISTORICO_${position}.${File(v.localPath).extension}");"Video: copia local pendiente. La sesión de subida se conserva."}.getOrElse{it.message}}}){Text("Guardar video en Descargas")}
                     Row {TextButton(onClick={playing=v}){Text("Reproducir")}
                         if(!v.retired && v.state!="SYNCED")TextButton(onClick={scope.launch{storage.retry(v.id)}}){Text("Reintentar")}
                         if(editable&&!v.retired){TextButton(onClick={replace=v;category=c.key;picker.launch(arrayOf("video/mp4","video/webm","video/3gpp"))}){Text("Reemplazar")};TextButton(onClick={retiring=v}){Text("Retirar")}}

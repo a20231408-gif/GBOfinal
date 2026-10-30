@@ -1,0 +1,11 @@
+# Essential binary inputs must retain their exact bytes across Windows clones.
+*.jar -text
+*.xlsx -text
+*.zip -text
+*.webp -text
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.ttf -text
+gradlew text eol=lf
+gradlew.bat text eol=crlf

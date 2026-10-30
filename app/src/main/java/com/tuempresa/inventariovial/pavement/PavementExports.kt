@@ -18,10 +18,15 @@ object PavementExcel {
         val summary=mutableListOf<List<Any?>>(listOf("Tramo","Muestra","Fecha","Superficie","Área (m²)","Estado","PCI/URCI","Calificación","Pendientes"))
         val detail=mutableListOf<List<Any?>>(listOf("Tramo","Muestra","Correlativo","Código","Severidad","X2","Y2","Diámetro","Losas","Cantidad","Densidad (%)","VD"))
         samples.forEach { (s,damages,r) ->
+            val separateSeal=PavementJointOccurrences.assessment(s)!=null || damages.any{it.code==26 && PavementJointOccurrences.individual(s,it.id)}
             damages.forEach { d ->
                 rows.add(listOf(PavementChainage.display(s.prInicial),PavementChainage.display(s.prFinal),"${d.code} ${d.name}",PavementSeverity.canonical(d.severity)?:"N/A",d.x1,d.y1,d.widthM,d.lengthM,d.crackWidthMm,d.observation,s.carril,s.laneWidthM,d.inspectorName.ifBlank{s.inspectorNombre}))
-                val t=r.totals.firstOrNull{it.code==d.code && PavementSeverity.canonical(it.severity)==PavementSeverity.canonical(d.severity)}
-                detail.add(listOf(s.tramo,s.muestra,d.correlativo,d.code,PavementSeverity.canonical(d.severity),d.x2,d.y2,d.diameterM,d.slabs,PavementRules.quantity(d),t?.density,t?.vd))
+                val t=if(d.code==26 && separateSeal)null else r.totals.firstOrNull{it.code==d.code && PavementSeverity.canonical(it.severity)==PavementSeverity.canonical(d.severity)}
+                detail.add(listOf(s.tramo,s.muestra,d.correlativo,d.code,PavementSeverity.canonical(d.severity),d.x2,d.y2,d.diameterM,d.slabs,if(d.code==26 && PavementJointOccurrences.individual(s,d.id))null else PavementRules.quantity(d),t?.density,t?.vd))
+            }
+            if(separateSeal) {
+                val global=r.totals.singleOrNull{it.code==26}
+                detail.add(listOf(s.tramo,s.muestra,"GLOBAL PCI",26,PavementJointOccurrences.assessment(s,damages),null,null,null,"",null,null,global?.vd))
             }
             summary.add(listOf(s.tramo,s.muestra,s.fecha,PavementSurface.valueOf(s.surface).label,s.anchoM*s.largoM,if(s.status=="CLOSED")"Cerrada" else "Borrador",r.index,r.rating,r.pending.joinToString("; ")))
         }
@@ -207,7 +212,7 @@ object PavementPdf {
             for(d in damages) {
                 if(d.code==26) {
                     line("Daño 26 — Daño del sello de junta · ${PavementSeverity.label(d.severity)}")
-                    line(PavementJointAnnotations.legend)
+                    line(if(PavementJointOccurrences.individual(s,d.id))"Ocurrencia #${d.correlativo}: junta/segmento localizado. Longitud referencial ${fmt(d.lengthM)} m; evaluación global PCI independiente."else PavementJointAnnotations.legend)
                     line(if(PavementJointAnnotations.needsReview(s,d.id))"Malla distinta: marcas conservadas pendientes de revisión; no se representan." else if(PavementJointAnnotations.marks(s,d.id).isEmpty())"Daño GLOBAL sin juntas marcadas." else "Referencias visuales: ${PavementJointAnnotations.marks(s,d.id).size} marcas (segmentos/nodos).")
                 }
                 if(d.code==22 && PavementSlabGeometry.localized(d)) {

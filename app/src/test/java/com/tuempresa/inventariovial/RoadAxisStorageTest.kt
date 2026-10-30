@@ -69,7 +69,7 @@ class RoadAxisStorageTest {
                 roadMatchConfidence = null, matchedSegmentId = null, projectedLatitude = null, projectedLongitude = null))
             assertEquals(before.photos, after.photos)
             assertEquals(before.sic19, after.sic19)
-            assertEquals(20, db.openHelper.readableDatabase.version)
+            assertEquals(21, db.openHelper.readableDatabase.version)
         } finally { db.close(); context.deleteDatabase(name) }
     }
 

@@ -5,7 +5,7 @@
 // Excel: CARPETA RAÍZ / EXPORTACIONES_SIC / ARCHIVO
 // ============================================================
 
-const ROOT_FOLDER_ID = "1u7II1gvhSIHBwVxFjnx6VsAqa3O_jTIi";
+const ROOT_FOLDER_ID = "CONFIGURAR_ID_PRIVADO";
 
 const API_TOKEN = "PON_AQUI_TU_TOKEN_ACTUAL";
 

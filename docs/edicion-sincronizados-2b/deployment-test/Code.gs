@@ -5,7 +5,7 @@
 // Excel: CARPETA RAÍZ / EXPORTACIONES_SIC / ARCHIVO
 // ============================================================
 
-const ROOT_FOLDER_ID = "1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk";
+const ROOT_FOLDER_ID = "CONFIGURAR_ID_PRIVADO";
 
 const API_TOKEN = PropertiesService.getScriptProperties().getProperty("GBO_TEST_API_TOKEN");
 

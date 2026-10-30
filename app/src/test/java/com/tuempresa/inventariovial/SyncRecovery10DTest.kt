@@ -122,7 +122,78 @@ class SyncRecovery10DTest {
         assertEquals("Esperando para reintentar",SyncIntentPresentation.label(intent.copy(state="ERROR"),true,true,true,retrying=true))
         assertFalse(SyncProgressPresentation.running(intent,emptyList()))
         val p=SyncProgress(1,"CONFIRMING",2,4,1000)
-        assertTrue(SyncProgressPresentation.files(p).contains("50% de archivos transferidos"));assertTrue(SyncProgressPresentation.files(p).contains("pendientes: 2"))
+        assertTrue(SyncProgressPresentation.files(p).contains("50% transferidos a staging"));assertTrue(SyncProgressPresentation.files(p).contains("pendientes: 2"))
         assertTrue(SyncProgressPresentation.elapsed(p,61000).contains("1 min 0 s"));assertFalse(SyncIntentPresentation.confirmed(intent))
     }
+    @Test fun scapV20BlockRecoversWithFreshV21CapabilitiesAndLostAckNeverRestagesSixteenFiles()=runBlocking(Dispatchers.IO) {database().use {d->
+        val id=ScapP0Fixture.create(context,d,7)
+        val r=SicConsolidationFixtures.repo(context,d);r.reopen(id)
+        val first=r.dao.snapshot(id)!!
+        repeat(4){r.addSketch(id,com.tuempresa.inventariovial.scap.data.ScapRepository.SKETCH_TYPES.first(),first.sketches.first().localUri)}
+        r.complete(id,true)
+        val original=d.automaticSyncDao().get("SCAP/$id")!!
+        val naming=AutomaticDelivery.namingPreview(context,d,original)
+        val reserved=ReleasePhotoV2Fixture.reservation(naming,"stable-folder")
+        val reservedPhotos=reserved.getJSONArray("photos")
+        for(n in 0 until reservedPhotos.length()){
+            val f=reservedPhotos.getJSONObject(n)
+            com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(f.getString("category"))?.let{cat->f.put("name",cat.fileName(1,"jpg",1))}
+        }
+        ReadablePhotoNames.remember(context,naming,reserved)
+        val prepared=AutomaticDelivery.prepare(context,d,original);val frozen=prepared.toString()
+        assertEquals(16,prepared.getJSONArray("files").length())
+        var panel=0;var gets=0;var commits=0;val stages=mutableMapOf<String,Int>()
+        val client=OkHttpClient.Builder().addInterceptor {chain->
+            val request=chain.request()
+            val response=if(request.method=="GET") {gets++;JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4)
+                .put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("photoNamingVersion",1)
+                .put("readablePhotoNamingVersion",2).put("technicalDeliveryWithoutGps",true).put("scapPhotoPanelVersion",panel)
+            } else {
+                val buffer=Buffer();request.body!!.writeTo(buffer);val p=JSONObject(buffer.readUtf8())
+                when(p.getString("action")) {
+                    "stageRecordV3"->{val f=p.getJSONObject("file");val key=f.getString("key");stages[key]=(stages[key]?:0)+1
+                        JSONObject().put("ok",true).put("key",p.getString("key")).put("revision",p.getLong("revision"))
+                            .put("fileKey",key).put("sha256",f.getString("sha256")).put("stageFileId","stage-$key")}
+                    else->{commits++;if(commits==1)throw IOException("TEST lost ACK after server commit");receipt(p)}
+                }
+            }
+            Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(200).message("OK")
+                .body(response.toString().toResponseBody("application/json".toMediaType())).build()
+        }.build()
+        fun http()=AutomaticDriveHttp(client,"https://example.invalid/scap-p0","TEST_ONLY")
+        assertFalse(AutomaticSyncDrain.run(context,d,{http()},null))
+        val blocked=d.automaticSyncDao().get(original.key)!!
+        assertEquals("PENDING_VALIDATION",blocked.state);assertEquals(0,commits);assertTrue(stages.isEmpty())
+        assertTrue(AutomaticSync.compatibilityPending(blocked));assertEquals(original.revision,blocked.revision)
+        panel=2
+        assertTrue(AutomaticSyncDrain.run(context,d,{http()},null))
+        val uncertain=d.automaticSyncDao().get(original.key)!!
+        assertEquals("ERROR",uncertain.state);assertEquals(0L,uncertain.syncedRevision);assertEquals(16,stages.size)
+        assertFalse(AutomaticSyncDrain.run(context,d,{http()},null,onProgress={_,_,p->if(p.phase=="COMPLETE")throw IllegalStateException("TEST observer failure") }))
+        val confirmed=d.automaticSyncDao().get(original.key)!!
+        assertEquals("SYNCED",confirmed.state);assertEquals(original.revision,confirmed.syncedRevision)
+        assertEquals(3,gets);assertEquals(2,commits);assertTrue(stages.values.all{it==1})
+        assertEquals(frozen,confirmed.preparedJson);assertTrue(AutomaticDelivery.validAck(prepared,JSONObject(confirmed.receiptJson!!)))
+        // A legacy post-ACK failure is repaired only by this exact complete current receipt.
+        d.automaticSyncDao().put(confirmed.copy(state="ERROR",error="TEST old UI failure"))
+        assertEquals(1,AutomaticSync.recoverConfirmedReceipts(d));assertEquals("SYNCED",d.automaticSyncDao().get(original.key)!!.state)
+        d.automaticSyncDao().put(confirmed.copy(state="ERROR",receiptJson=null))
+        assertEquals(0,AutomaticSync.recoverConfirmedReceipts(d));assertEquals("ERROR",d.automaticSyncDao().get(original.key)!!.state)
+    }}
+
+    @Test fun exportSchedulingAndConcurrentAckNeverRestoreAStaleQueueSnapshot()=runBlocking(Dispatchers.IO) {database().use {d->
+        initializeIdleUiWorkers();save(d,"export-ack-race-p0")
+        assertFalse(AutomaticSyncDrain.run(context,d,{transport(::receipt)},null))
+        val confirmed=d.automaticSyncDao().all().single();assertEquals("SYNCED",confirmed.state)
+        repeat(30){
+            d.automaticSyncDao().put(confirmed.copy(state="PENDING_VALIDATION",syncedRevision=0,receiptJson=null,error="Pendiente de compatibilidad del servidor"))
+            coroutineScope {
+                val export=async(Dispatchers.IO){com.tuempresa.inventariovial.localfiles.LocalDeliveryScheduling.afterExport(context,d,"SIC",confirmed.recordId)}
+                val ack=async(Dispatchers.IO){d.withTransaction{d.automaticSyncDao().put(confirmed)}}
+                export.await();ack.await()
+            }
+            assertEquals(confirmed,d.automaticSyncDao().get(confirmed.key));assertEquals(1,d.automaticSyncDao().all().size)
+        }
+    }}
+
 }

@@ -1,0 +1,19 @@
+allprojects {
+    tasks.withType(Test).configureEach {
+        maxHeapSize = '2g'
+        maxParallelForks = 1
+        // A benchmark must execute tests even when compilation outputs are warm.
+        outputs.upToDateWhen { false }
+        jvmArgs '-XX:ActiveProcessorCount=2', '-XX:HeapBaseMinAddress=8g'
+        def destination = System.getProperty('gbo.migration.temp', rootProject.file('tmp/tests').absolutePath)
+        systemProperty 'java.io.tmpdir', destination
+        systemProperty 'gbo.p0.evidence', rootProject.file('tmp/migration-evidence').absolutePath
+        systemProperty 'gbo.large.evidence', rootProject.file('tmp/large-archive').absolutePath
+        def cache = System.getProperty('gbo.migration.roboCache')
+        if (cache) {
+            systemProperty 'robolectric.offline', 'true'
+            systemProperty 'robolectric.dependency.dir', cache
+        }
+        testLogging { events 'failed', 'skipped'; exceptionFormat = 'full' }
+    }
+}

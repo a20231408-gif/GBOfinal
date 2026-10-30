@@ -71,7 +71,7 @@ class PavementFinalGeometryTest {
         }
         open().use {db->
             val saved=db.pavementDao().sample(s.id)!!;val damage=db.pavementDao().damage(d.id)!!
-            assertEquals(20,db.openHelper.writableDatabase.version)
+            assertEquals(21,db.openHelper.writableDatabase.version)
             assertEquals(PavementPatchVisuals.ANCHORED,PavementPatchVisuals.mode(saved,d.id))
             assertEquals("=1+2",JSONObject(saved.sicDataJson!!).getJSONObject("HISTORICAL_UNKNOWN").getString("literal"))
             assertEquals(d.x1,damage.x1);assertEquals(d.y2,damage.y2);assertEquals(1,damage.correlativo)

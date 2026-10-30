@@ -22,7 +22,7 @@ import java.util.zip.ZipOutputStream
 /** One export path for local delivery and Drive. Never changes capture files. */
 object ScapDelivery {
     // v4 = protocol 1/2 + JPEG photographs + deterministic human layout cache.
-    const val SCAP_BUNDLE_VERSION = 8
+    const val SCAP_BUNDLE_VERSION = 9 // New cache generation; existing frozen upload manifests are retained.
 
     fun exporter(context: Context) = ScapExcelExporter({context.assets.open("scap_template.xlsx")},
         context.assets.open("scap_field_map.json").bufferedReader().use {it.readText()})
@@ -87,15 +87,17 @@ object ScapDelivery {
                 val photoPaths = mutableSetOf<String>()
                 val preparedSketchesById = mutableMapOf<String, ByteArray>()
                 val preparedSketchesByPath = mutableMapOf<String, ByteArray>()
-                val delivery = s.copy(photos = s.photos.sortedBy {it.photoIndex}.map { p ->
+                val delivery = s.copy(photos = com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.ordered(s).map { p ->
                     if(p.localPath.isBlank())return@map p
                     require(p.scapInspectionId == s.inspection.id && p.recordId == s.inspection.roadRecordId)
                     val marked = com.tuempresa.inventariovial.core.CleanPhotoPolicy.original(com.tuempresa.inventariovial.core.PhotoForDelivery(p.id, p.originalPath.ifBlank { p.localPath }, com.tuempresa.inventariovial.core.PhotoCategory.fromStored(p.photoCategory), "{}"))
                     photoPaths += marked.absolutePath
-                    val path = layout?.photoPaths?.getValue(p.id) ?: "fotos/${p.id}.jpg"
+                    val path = layout?.photoPaths?.getValue(p.id) ?: if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.category(s,p)!=null)
+                        com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.photoPath(s,p) else "fotos/${p.id}.jpg"
                     val metadata=JSONObject()
                         .put("photoId", p.id).put("order", p.photoIndex)
                         .put("category", p.photoCategory).put("elementCode", p.scapElementCode).put("description", p.description)
+                        .put("panelOrder",com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.category(s,p)?.order ?: JSONObject.NULL)
                         .put("capturedAt", p.capturedAt ?: JSONObject.NULL)
                         .put("latitude", p.photoLatitude ?: JSONObject.NULL).put("longitude", p.photoLongitude ?: JSONObject.NULL)
                         .put("altitudeM", p.photoAltitudeM ?: JSONObject.NULL).put("accuracyM", p.photoGpsAccuracyM ?: JSONObject.NULL)
@@ -114,7 +116,10 @@ object ScapDelivery {
                 }
 
                 val workbook = File(work, "SCAP.xlsx")
-                workbook.outputStream().use { exporter(context,delivery).write(it, delivery) { path ->
+                // F.2 is bounded; the ZIP and its existing manifest retain EVERY original above.
+                // This changes no file/ACK contract and never truncates the photographic delivery.
+                val forWorkbook=if(delivery.photos.size>32)delivery.copy(photos=delivery.photos.take(32))else delivery
+                workbook.outputStream().use { exporter(context,forWorkbook).write(it, forWorkbook) { path ->
                     if(path in photoPaths)readImage(context,path,photo=true,workbook=true) else preparedSketchesByPath[path] ?: readImage(context,path,workbook=true)
                 } }
                 workbookBytes = workbook.length()

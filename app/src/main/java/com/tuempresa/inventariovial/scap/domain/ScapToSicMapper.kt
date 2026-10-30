@@ -10,13 +10,17 @@ data class ScapSicMapping(val format:String,val roadRecordId:String,val fields:L
 object ScapToSicMapper {
     private fun direct(s:ScapInspectionSnapshot,pairs:List<Pair<String,String>>)=pairs.filterNot {it.first=="singularityName" && s.values()["nameContractVersion"]=="1"}.mapNotNull {(from,to)->
         (if(ScapBridgeType.from(s)!=null && from=="sidewalkWidthM") s.values()[from].orEmpty() else ScapFieldPolicy.exportValue(from,"inspection",s.values()))
+            .ifBlank{when(from){"bridgeName"->s.inspection.bridgeName;"bridgeCode"->s.inspection.bridgeCode;else->""}}
             .takeIf {it.isNotBlank()}?.let {ScapMappedField(from,to,it,ScapMappingStatus.DIRECT)}
     }
     fun mapToSic17(s:ScapInspectionSnapshot):ScapSicMapping {
-        val fields=direct(s,listOf("bridgeCode" to "bridgeCode","route" to "routeCode","lastInspection" to "surveyDate","totalLengthM" to "dimension1LengthM",
+        // B/lastInspection is an antecedent; D2/fieldClearanceDate dates a clearance measurement.
+        // Neither is an automatically equivalent current SIC survey date. Use persisted SIC capture/manual input.
+        val fields=direct(s,listOf("bridgeCode" to "bridgeCode","route" to "routeCode","totalLengthM" to "dimension1LengthM",
             "lowerClearanceM" to "dimension2LowerHeightM","upperClearanceM" to "dimension3UpperHeightM","singularityName" to "singularityName"))+
             (if(s.spans.isEmpty()) emptyList() else listOf(ScapMappedField("spans.count","spans",s.spans.size.toString(),ScapMappingStatus.TRANSFORM,"Cuenta tramos registrados; requiere revisión al confirmar la ficha.")))
-        return ScapSicMapping("SIC-17",s.inspection.roadRecordId,BridgeSicContract.withManual(s,"SIC-17",fields.filter{it.sicField!="routeCode"}+location(s)+ScapSicSupplement.fields(s).filter{it.sicField!="roadbedCode"}),emptyList())
+        return ScapSicMapping("SIC-17",s.inspection.roadRecordId,BridgeSicContract.withManual(s,"SIC-17",fields.filter{it.sicField!="routeCode"}+location(s)+ScapSicSupplement.fields(s).filter{it.sicField!="roadbedCode"}),
+            if(ScapSicLocation.needsReview(s)) listOfNotNull(ScapSicLocation.discrepancy(s)) else emptyList())
     }
     fun mapToSic17A(s:ScapInspectionSnapshot):ScapSicMapping {
         val coordinateFields=if(ScapBridgeType.from(s)!=null) direct(s,listOf("latitude" to "latitude","longitude" to "longitude")) else emptyList()
@@ -33,12 +37,12 @@ object ScapToSicMapper {
     private fun location(s:ScapInspectionSnapshot):List<ScapMappedField> {
         val r=s.roadRecord ?: return emptyList()
         val values=linkedMapOf("routeCode" to r.routeCode,"roadbedCode" to r.roadbedCode.ifBlank{s.values()["sic17.roadbedCode"].orEmpty()})
-        if(r.startPrCode.isNotBlank() && r.startDistanceM.isFinite() && r.startDistanceM>=0) {
+        if(!ScapSicLocation.needsReview(s) && r.startPrCode.isNotBlank() && r.startDistanceM.isFinite() && r.startDistanceM>=0) {
             values["startPrCode"]=r.startPrCode;values["startDistanceM"]=r.startDistanceM.toString()
         }
         if(!r.endPrCode.isNullOrBlank() && r.endDistanceM!=null && r.endDistanceM.isFinite() && r.endDistanceM>=0) {
             values["endPrCode"]=r.endPrCode;values["endDistanceM"]=r.endDistanceM.toString()
         }
-        return values.filterValues{it.isNotBlank()}.map {(key,value)->ScapMappedField("InventoryRecordEntity.$key",key,value,ScapMappingStatus.DIRECT,"Ubicación contractual vinculada por roadRecordId; ${r.locationSource}.")}
+        return values.filterValues{it.isNotBlank()}.map {(key,value)->ScapMappedField("InventoryRecordEntity.$key",key,value,ScapMappingStatus.DIRECT,"Identificación vial vinculada por roadRecordId; ${r.locationSource}. No implica equivalencia contractual entre PR.")}
     }
 }

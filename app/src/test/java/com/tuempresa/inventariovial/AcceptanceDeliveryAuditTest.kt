@@ -82,7 +82,7 @@ class AcceptanceDeliveryAuditTest {
             fun open()=Room.databaseBuilder(context,InventoryDatabase::class.java,name).addMigrations(*migrations).addMigrations(*allInventoryMigrations()).allowMainThreadQueries().build()
             try {
                 val room=open()
-                try {val db=room.openHelper.writableDatabase;assertEquals(20,db.version)
+                try {val db=room.openHelper.writableDatabase;assertEquals(21,db.version)
                     for((table,columns) in expected)db.query("SELECT * FROM `$table`").use{c->
                         assertTrue("Lost table $version/$table",c.moveToFirst())
                         for((column,value) in columns)assertEquals("Lost value $version/$table.$column",
@@ -90,7 +90,7 @@ class AcceptanceDeliveryAuditTest {
                         assertFalse("Unexpected duplicate $version/$table",c.moveToNext())
                     }
                 }finally{room.close()}
-                val reopened=open();try{assertEquals(20,reopened.openHelper.readableDatabase.version)}finally{reopened.close()}
+                val reopened=open();try{assertEquals(21,reopened.openHelper.readableDatabase.version)}finally{reopened.close()}
                 evidence.put(JSONObject().put("fromVersion",version).put("toVersion",19).put("tables",expected.size)
                     .put("columnsVerified",expected.values.sumOf{it.size}).put("result","PASS_LOCAL_SQLITE"))
             }finally{context.deleteDatabase(name)}

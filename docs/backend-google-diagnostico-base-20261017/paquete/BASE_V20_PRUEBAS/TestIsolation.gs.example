@@ -1,0 +1,187 @@
+// TEMPLATE: configure the authorized private test root before Google use. No deployment is performed.
+/** TEST ONLY. Native Google services are used only by this confinement adapter. */
+const GBO_TEST_HARNESS_REVISION = 2;
+const GBO_TEST_GUARD_POLICY = 'FRESH_WRITES_LOCKED_READ_CACHE_V2';
+var gboTestGuard_={held:false,readOnly:false,reads:Object.create(null)};
+function gboTestInvalidateReads_(){gboTestGuard_.reads=Object.create(null);}
+function gboTestWrite_(ids,operation){
+  if(gboTestGuard_.readOnly)gboTestFail_('TEST_READ_ONLY');
+  gboTestInvalidateReads_();
+  ids.forEach(function(id){gboTestAssertId_(id,true);});
+  try{return operation();}finally{gboTestInvalidateReads_();}
+}
+const GBO_TEST_AUTHORIZED_ROOT = '<RAIZ_PRUEBAS_PRIVADA>';
+var GboTestMeasure = {
+  state:null,
+  start:function(action){gboTestGuard_.held=false;gboTestGuard_.readOnly=false;gboTestInvalidateReads_();this.state={action:action,started:Date.now(),phases:{},operations:{},locks:[]};},
+  add:function(name,start){if(!this.state)return;var p=this.state.phases[name]||(this.state.phases[name]={count:0,ms:0});p.count++;p.ms+=Math.max(0,Date.now()-start);},
+  call:function(name,fn){var t=Date.now();try{return fn();}finally{this.add(name,t);}},
+  operation:function(name,fn){if(this.state)this.state.operations[name]=(this.state.operations[name]||0)+1;return this.call(name,fn);}
+};
+var gboTestContext_ = null;
+function gboTestFail_(code){var e=Error(code);e.code=code;e.retryable=false;throw e;}
+function gboTestRawProps_(){return PropertiesService.getScriptProperties();}
+function gboTestConfig_(){
+  var p=gboTestRawProps_(), all=p.getProperties();
+  if(ROOT_FOLDER_ID!==GBO_TEST_AUTHORIZED_ROOT)gboTestFail_('TEST_ROOT_MISMATCH');
+  if(Object.keys(all).some(function(k){return !/^GBO_TEST_/.test(k);}))gboTestFail_('TEST_FOREIGN_PROPERTIES');
+  if(all.GBO_TEST_SCRIPT_ID!==ScriptApp.getScriptId())gboTestFail_('TEST_SCRIPT_ID_MISMATCH');
+  if(all.GBO_TEST_CONFIRM!=='ONLY_'+GBO_TEST_AUTHORIZED_ROOT)gboTestFail_('TEST_NOT_ARMED');
+  if(!/^[a-fA-F0-9]{64,128}$/.test(all.GBO_TEST_TOKEN||''))gboTestFail_('TEST_EXCLUSIVE_TOKEN_REQUIRED');
+  var root=DriveApp.getFolderById(GBO_TEST_AUTHORIZED_ROOT);
+  if(root.getName()!=='GBO_PRUEBAS_BACKEND_NO_PRODUCCION')gboTestFail_('TEST_ROOT_NAME_MISMATCH');
+  return all;
+}
+function gboTestContextCheck_(){
+  if(gboTestContext_)return gboTestContext_;
+  var p=gboTestConfig_(), r;
+  try{r=JSON.parse(p.GBO_TEST_RUN||'null');}catch(e){gboTestFail_('TEST_RUN_INVALID');}
+  if(!r || r.variant!==GBO_TEST_VARIANT || !/^[a-f0-9]{32}$/.test(r.runId)||!r.folderId||!r.epoch)gboTestFail_('TEST_RUN_NOT_SELECTED');
+  var f=Drive.Files.get(r.folderId,{fields:'id,name,mimeType,parents,trashed,shortcutDetails',supportsAllDrives:true});
+  if(r.folderVariant && !(r.folderVariant==='BASE'&&r.variant==='CANDIDATO'))gboTestFail_('TEST_UPGRADE_INVALID');
+  if(f.trashed||f.mimeType!=='application/vnd.google-apps.folder'||(f.parents||[]).length!==1||f.parents[0]!==GBO_TEST_AUTHORIZED_ROOT||f.name!=='TEST_'+(r.folderVariant||r.variant)+'_'+r.runId)gboTestFail_('TEST_RUN_ROOT_INVALID');
+  gboTestContext_=r;return r;
+}
+/** Native metadata reads only. No shortcut, multi-parent, orphan or unknown ID is writable. */
+function gboTestAssertId_(id,forWrite){
+  var run=gboTestContextCheck_(), seen={}, original=id;
+  var cachedRead=!forWrite&&(gboTestGuard_.held||gboTestGuard_.readOnly);
+  if(cachedRead&&gboTestGuard_.reads[id]){GboTestMeasure.operation('guard.readCache.hit',function(){});return original;}
+  for(var i=0;i<64;i++){
+    if(typeof id!=='string'||seen[id])gboTestFail_('TEST_ANCESTRY_INVALID');seen[id]=true;
+    if(cachedRead&&gboTestGuard_.reads[id]){Object.keys(seen).forEach(function(k){gboTestGuard_.reads[k]=true;});GboTestMeasure.operation('guard.readCache.hit',function(){});return original;}
+    var m=GboTestMeasure.operation('guard.metadata.get',function(){return Drive.Files.get(id,{fields:'id,mimeType,parents,trashed,shortcutDetails',supportsAllDrives:true});});
+    if(m.trashed||m.shortcutDetails||m.mimeType==='application/vnd.google-apps.shortcut')gboTestFail_('TEST_UNSAFE_REFERENCE');
+    if(id===run.folderId){
+      if((m.parents||[]).length!==1||m.parents[0]!==GBO_TEST_AUTHORIZED_ROOT)gboTestFail_('TEST_RUN_MOVED');
+      if(cachedRead)Object.keys(seen).forEach(function(k){gboTestGuard_.reads[k]=true;});
+      return original;
+    }
+    if(id===GBO_TEST_AUTHORIZED_ROOT||(m.parents||[]).length!==1)gboTestFail_('TEST_OUTSIDE_RUN');
+    id=m.parents[0];
+  }
+  gboTestFail_('TEST_ANCESTRY_TOO_DEEP');
+}
+function gboTestNative_(object){return object&&object._gboNative?object._gboNative:object;}
+function gboTestIterator_(it,type){return {
+  hasNext:function(){return GboTestMeasure.operation('backend.iterator.hasNext',function(){return it.hasNext();});},
+  next:function(){return gboTestObject_(GboTestMeasure.operation('backend.iterator.next',function(){return it.next();}),type);}
+};}
+function gboTestObject_(obj,type){
+  var out={_gboNative:obj,getId:function(){return obj.getId();}};
+  ['getName','getDescription','getBlob'].forEach(function(n){out[n]=function(){gboTestAssertId_(obj.getId());return GboTestMeasure.operation('backend.'+type+'.'+n,function(){return obj[n]();});};});
+  ['getFiles','getFilesByName','getFoldersByName','getParents'].forEach(function(n){out[n]=function(){
+    gboTestAssertId_(obj.getId());var args=Array.prototype.slice.call(arguments);
+    var it=GboTestMeasure.operation('backend.'+type+'.'+n,function(){return obj[n].apply(obj,args);});
+    return gboTestIterator_(it,n==='getParents'||n==='getFoldersByName'?'Folder':'File');
+  };});
+  ['setContent','setName','setDescription'].forEach(function(n){out[n]=function(value){gboTestWrite_([obj.getId()],function(){return GboTestMeasure.operation('backend.'+type+'.'+n,function(){return obj[n](value);});});return out;};});
+  out.createFolder=function(name){return gboTestWrite_([obj.getId()],function(){return gboTestObject_(GboTestMeasure.operation('backend.Folder.createFolder',function(){return obj.createFolder(name);}), 'Folder');});};
+  out.createFile=function(blob){return gboTestWrite_([obj.getId()],function(){return gboTestObject_(GboTestMeasure.operation('backend.Folder.createFile',function(){return obj.createFile(blob);}), 'File');});};
+  out.moveTo=function(parent){gboTestWrite_([obj.getId(),parent.getId()],function(){return GboTestMeasure.operation('backend.'+type+'.moveTo',function(){return obj.moveTo(gboTestNative_(parent));});});return out;};
+  out.makeCopy=function(name,parent){if(!parent)gboTestFail_('TEST_COPY_PARENT_REQUIRED');return gboTestWrite_([obj.getId(),parent.getId()],function(){return gboTestObject_(GboTestMeasure.operation('backend.File.makeCopy',function(){return obj.makeCopy(name,gboTestNative_(parent));}),'File');});};
+  return out;
+}
+var GboTestDriveApp={
+  getFolderById:function(id){var r=gboTestContextCheck_();if(id===GBO_TEST_AUTHORIZED_ROOT)id=r.folderId;gboTestAssertId_(id);return gboTestObject_(GboTestMeasure.operation('backend.DriveApp.getFolderById',function(){return DriveApp.getFolderById(id);}),'Folder');},
+  getFileById:function(id){gboTestAssertId_(id);return gboTestObject_(GboTestMeasure.operation('backend.DriveApp.getFileById',function(){return DriveApp.getFileById(id);}),'File');}
+};
+var GboTestDrive={Files:{
+  get:function(id,options){
+    // Uncreated, server-allocated video IDs may legitimately return 404.
+    try{gboTestAssertId_(id);}catch(e){
+      var r=gboTestContextCheck_();
+      if(!/404|not found/i.test(String(e))||gboTestRawProps_().getProperty('GBO_TEST_ALLOC_'+r.runId+'_'+id)!=='1')throw e;
+    }
+    return GboTestMeasure.operation('backend.Drive.Files.get',function(){return Drive.Files.get(id,options);});
+  },
+  update:function(meta,id,blob,options){
+    gboTestAssertId_(id);
+    if(Object.keys(meta).some(function(k){return !['name','mimeType'].includes(k);})||options&&(options.addParents||options.removeParents))gboTestFail_('TEST_UNSUPPORTED_UPDATE');
+    return gboTestWrite_([id],function(){return GboTestMeasure.operation('backend.Drive.Files.update',function(){return Drive.Files.update(meta,id,blob,options);});});
+  },
+  generateIds:function(options){var r=gboTestContextCheck_();if(options.count!==1||options.space!=='drive')gboTestFail_('TEST_ALLOCATION_INVALID');
+    if(gboTestGuard_.readOnly)gboTestFail_('TEST_READ_ONLY');
+    var a=GboTestMeasure.operation('backend.Drive.Files.generateIds',function(){return Drive.Files.generateIds(options);});
+    a.ids.forEach(function(id){gboTestRawProps_().setProperty('GBO_TEST_ALLOC_'+r.runId+'_'+id,'1');});return a;
+  },
+  create:function(meta,blob,options){
+    var r=gboTestContextCheck_();
+    if(!Array.isArray(meta.parents)||meta.parents.length!==1)gboTestFail_('TEST_PARENT_REQUIRED');gboTestAssertId_(meta.parents[0]);
+    if(!meta.id||gboTestRawProps_().getProperty('GBO_TEST_ALLOC_'+r.runId+'_'+meta.id)!=='1')gboTestFail_('TEST_UNALLOCATED_ID');
+    if(Object.keys(meta).some(function(k){return !['id','name','mimeType','parents','description','appProperties'].includes(k);}))gboTestFail_('TEST_UNSUPPORTED_CREATE');
+    // Existing IDs are never overwritten via create, including IDs outside this run.
+    var existing=null;try{existing=Drive.Files.get(meta.id,{fields:'id',supportsAllDrives:true});}catch(e){if(!/404|not found/i.test(String(e)))throw e;}
+    if(existing)gboTestFail_('TEST_CREATE_ID_EXISTS');
+    return gboTestWrite_([meta.parents[0]],function(){return GboTestMeasure.operation('backend.Drive.Files.create',function(){return Drive.Files.create(meta,blob,options);});});
+  }
+}};
+var GboTestProperties={getScriptProperties:function(){return {
+  getProperty:function(key){
+    // Global const API_TOKEN is evaluated before the editor setup function.
+    if(key==='GBO_DRIVE_API_TOKEN')return gboTestRawProps_().getProperty('GBO_TEST_TOKEN');
+    gboTestContextCheck_();
+    if(['GBO_SYNC_V3_ENABLED','GBO_PHOTO_NAMES_V2_ENABLED','GBO_VIDEO_V1_ENABLED'].includes(key))return 'true';
+    return gboTestRawProps_().getProperty('GBO_TEST_DATA_'+gboTestContext_.runId+'_'+key);
+  },
+  setProperty:function(key,value){if(gboTestGuard_.readOnly)gboTestFail_('TEST_READ_ONLY');var r=gboTestContextCheck_();gboTestRawProps_().setProperty('GBO_TEST_DATA_'+r.runId+'_'+key,value);return this;},
+  deleteProperty:function(key){if(gboTestGuard_.readOnly)gboTestFail_('TEST_READ_ONLY');var r=gboTestContextCheck_();gboTestRawProps_().deleteProperty('GBO_TEST_DATA_'+r.runId+'_'+key);return this;}
+};}};
+var GboTestLocks={getScriptLock:function(){
+  var raw=LockService.getScriptLock(), row=null;
+  return {
+    tryLock:function(ms){gboTestContextCheck_();var t=Date.now(),ok=raw.tryLock(ms);row={waitMs:Date.now()-t,acquired:ok,heldMs:0};if(ok){row.at=Date.now();gboTestGuard_.held=true;gboTestInvalidateReads_();}if(GboTestMeasure.state)GboTestMeasure.state.locks.push(row);return ok;},
+    releaseLock:function(){try{return raw.releaseLock();}finally{gboTestGuard_.held=false;gboTestInvalidateReads_();if(row&&row.at!=null){row.heldMs=Date.now()-row.at;delete row.at;}}}
+  };
+}};
+var GboTestUtilities={DigestAlgorithm:Utilities.DigestAlgorithm};
+['computeDigest','base64Decode','newBlob','unzip','zip'].forEach(function(name){GboTestUtilities[name]=function(){var args=Array.prototype.slice.call(arguments);return GboTestMeasure.operation('cpu.'+name,function(){return Utilities[name].apply(Utilities,args);});};});
+function v3Store(timing){
+  var s=GboTestMeasure.call('registry.openAndRecover',function(){return gboV20Store_(timing);});
+  ['unpackWorkbook','packWorkbook','get','all','fileBytes','reserveReadablePhotos'].forEach(function(n){
+    var f=s[n];if(typeof f!=='function')return;
+    s[n]=function(){var args=Array.prototype.slice.call(arguments);return GboTestMeasure.call('store.'+n,function(){return f.apply(s,args);});};
+  });
+  var begin=s.begin;s.begin=function(){var args=Array.prototype.slice.call(arguments),tx=GboTestMeasure.call('transaction.begin',function(){return begin.apply(s,args);});
+    ['file','aggregate','save','finish','rollback','retireMissing'].forEach(function(n){var f=tx[n];if(typeof f!=='function')return;
+      tx[n]=function(){var values=Array.prototype.slice.call(arguments);return GboTestMeasure.call('transaction.'+n,function(){return f.apply(tx,values);});};
+    });return tx;
+  };return s;
+}
+var GboTestUrlFetch={fetch:function(url,options){
+  var m=/^https:\/\/www\.googleapis\.com\/upload\/drive\/v3\/files\/([A-Za-z0-9_-]+)\?uploadType=resumable&supportsAllDrives=true$/.exec(url);
+  if(!m||!options||options.method!=='patch'||options.followRedirects!==false)gboTestFail_('TEST_NETWORK_TARGET_REJECTED');
+  return gboTestWrite_([m[1]],function(){return GboTestMeasure.operation('backend.video.openSession',function(){return UrlFetchApp.fetch(url,options);});});
+}};
+/** Run from editor only. All created data lives below the one authorized root. */
+function gboTestStartNewRun(){
+  gboTestContext_=null;gboTestConfig_();var lock=LockService.getUserLock();
+  if(!lock.tryLock(1000))gboTestFail_('TEST_SWITCH_BUSY');
+  try{
+    var props=gboTestRawProps_();if(Number(props.getProperty('GBO_TEST_INFLIGHT')||0)!==0)gboTestFail_('TEST_INFLIGHT_NOT_ZERO');
+    var id=Utilities.getUuid().replace(/-/g,''), epoch=Utilities.getUuid();
+    // Config/root check above precedes the only native folder creation in the harness.
+    var folder=DriveApp.getFolderById(GBO_TEST_AUTHORIZED_ROOT).createFolder('TEST_'+GBO_TEST_VARIANT+'_'+id);
+    var run={runId:id,epoch:epoch,variant:GBO_TEST_VARIANT,folderId:folder.getId()};
+    props.setProperty('GBO_TEST_RUN',JSON.stringify(run));props.setProperty('GBO_TEST_INFLIGHT','0');
+    props.setProperty('GBO_TEST_LAST_'+GBO_TEST_VARIANT+'_RUN',JSON.stringify(run));
+    console.info(JSON.stringify({event:'GBO_TEST_RUN',run:run,scriptId:ScriptApp.getScriptId(),root:GBO_TEST_AUTHORIZED_ROOT}));
+    return run;
+  }finally{lock.releaseLock();}
+}
+function gboTestReadConfiguration(){gboTestContext_=null;var r=gboTestContextCheck_();console.info(JSON.stringify({testOnly:true,root:GBO_TEST_AUTHORIZED_ROOT,scriptId:ScriptApp.getScriptId(),run:r,inflight:Number(gboTestRawProps_().getProperty('GBO_TEST_INFLIGHT')||0)}));}
+/** Optional cutover rehearsal: candidate reads the SAME last BASE history, without copying IDs. */
+function gboTestResumePreviousBase(){
+  gboTestContext_=null;gboTestConfig_();if(GBO_TEST_VARIANT!=='CANDIDATO')gboTestFail_('TEST_CANDIDATE_REQUIRED');
+  var lock=LockService.getUserLock();if(!lock.tryLock(1000))gboTestFail_('TEST_SWITCH_BUSY');
+  try{
+    var props=gboTestRawProps_();if(Number(props.getProperty('GBO_TEST_INFLIGHT')||0)!==0)gboTestFail_('TEST_INFLIGHT_NOT_ZERO');
+    var r=JSON.parse(props.getProperty('GBO_TEST_LAST_BASE_RUN')||'null');
+    if(!r||r.variant!=='BASE'||!/^[a-f0-9]{32}$/.test(r.runId))gboTestFail_('TEST_BASE_HISTORY_MISSING');
+    var f=Drive.Files.get(r.folderId,{fields:'id,name,mimeType,parents,trashed',supportsAllDrives:true});
+    if(f.trashed||f.name!=='TEST_BASE_'+r.runId||f.mimeType!=='application/vnd.google-apps.folder'||(f.parents||[]).length!==1||f.parents[0]!==GBO_TEST_AUTHORIZED_ROOT)gboTestFail_('TEST_BASE_HISTORY_OUTSIDE_ROOT');
+    r.folderVariant='BASE';r.variant='CANDIDATO';r.epoch=Utilities.getUuid();props.setProperty('GBO_TEST_RUN',JSON.stringify(r));
+    // Only metadata of the independent test project changes. No Drive file is moved or rewritten.
+    console.info(JSON.stringify({event:'GBO_TEST_UPGRADE_SELECTED',run:r}));return r;
+  }finally{lock.releaseLock();}
+}

@@ -39,7 +39,7 @@ internal object StructuredScapCompletion {
             else if(com.tuempresa.inventariovial.scap.calculator.ScapPercentages.error(p)!=null)add("G1","$name · Revisar suma de calificación",e.id,"percent0",true)
             (0..5).forEach{i->val raw=v["percent$i"].orEmpty();if(raw.isNotBlank()&&ScapNumbers.decimal(raw)?.let{it in 0.0..100.0}!=true)add("G1","$name · Porcentaje $i inválido",e.id,"percent$i",false,true)}
         }
-        s.photos.forEach {p->
+        ScapPhotoPanel.ordered(s).forEach {p->
             add("F2","Foto ${p.photoIndex} · Nombre",p.id,"photoName",ScapElementView.photoName(s,p.id,p.photoCategory).isBlank())
             add("F2","Foto ${p.photoIndex} · Descripción",p.id,"photoDescription",p.description.isNullOrBlank())
             add("F2","Foto ${p.photoIndex} · Imagen",p.id,"photo",p.localPath.isBlank())

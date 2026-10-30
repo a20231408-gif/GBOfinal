@@ -1,0 +1,169 @@
+{
+  "preparationOnly": true,
+  "commitCreated": false,
+  "pushPerformed": false,
+  "branch": "codex/migracion-asus-20261029",
+  "baseCommit": "607d499300859321aa7a282b10ee7dfde17d14f8",
+  "indexedFiles": 1485,
+  "stagedCounts": {
+    "A": 361,
+    "M": 121,
+    "D": 195
+  },
+  "essentialInputs": {
+    "sourceAreaFileCounts": {
+      "app/src": 830,
+      "app/schemas": 19,
+      "buildSrc/src": 1,
+      "gradle": 4
+    },
+    "requiredAdditionalFiles": 12,
+    "essentialFilesAbsentFromIndex": [],
+    "pythonFilesParsed": 29,
+    "pythonSyntaxErrors": [],
+    "wrapperJarIncluded": true,
+    "compiledArtifactsInstalled": false
+  },
+  "backendSyntax": {
+    "filesParsed": 182,
+    "errors": [],
+    "executedGoogleCode": false
+  },
+  "runtimeMatchesRelease32SourceProof": {
+    "release32SourceProofFilesCompared": 609,
+    "runtimeBuildDifferencesFromRelease32SourceProof": [],
+    "onlyMigrationTestToolDocsChanges": true
+  },
+  "benchmarkRuntimeComparison": {
+    "sourceFilesCompared": 641,
+    "normalizedTextEol": true,
+    "substantiveDifferencesFromBenchmarkCopy": []
+  },
+  "criticalTests": {
+    "tests": 52,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": [
+      {
+        "name": "com.tuempresa.inventariovial.AutomaticSyncRegressionTest",
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 29.065
+      },
+      {
+        "name": "com.tuempresa.inventariovial.MixedSic17HotfixTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 18.383
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementAnnotationSync147Test",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 7.662
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementJointPreviewUiTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 7.231
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementMigration21Test",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 0.254
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementP0AdditionalTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 1.909
+      },
+      {
+        "name": "com.tuempresa.inventariovial.ScapFinalP0Test",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 10.428
+      },
+      {
+        "name": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 18.463
+      }
+    ]
+  },
+  "releaseArtifactReverified": {
+    "releasePreviouslyBuilt": true,
+    "newReleaseBuiltForMigration": false,
+    "versionName": "1.4.18",
+    "versionCode": 32,
+    "applicationId": "com.tuempresa.inventariovial",
+    "packageMetadataMatches": true,
+    "signatureValid": true,
+    "certificateSha256": "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315",
+    "certificateMatchesHistorical": true,
+    "zipAlign16KiB": true,
+    "sha256": "3fe18f61f1b3455e51553b263292e40dc7d593cd7df5c6ad2c58e848c2a3edc7",
+    "installed": false,
+    "distributed": false
+  },
+  "security": {
+    "repositoryVisibility": "public",
+    "currentCredentialValueMatchesInReviewedTree": 0,
+    "historyScannerFindings": 1,
+    "historyFindingClass": "false-positive prose mentions a protocol method after the word token; no literal credential",
+    "privateIdentifiersPreviouslyInHistory": true,
+    "oldReferenceRootMatchesCurrentV21": false,
+    "historyRewritten": false,
+    "privatePropertiesChanged": false,
+    "publicExamplesSanitized": true,
+    "trackedAdbDefaultSerialRemoved": true,
+    "currentKnownSecretsMatchedHistoryBlobs": 0,
+    "historyBlobsScanned": 1930,
+    "currentV21RootIdentifierPresentInHistory": true,
+    "currentV21RootMatchedHistoryBlobs": 8,
+    "identifiersAreNotCredentials": true,
+    "additionalPublicTestRootLiteralsSanitized": 4,
+    "instrumentedRealTestRequiresExplicitPrivateRootBeforeRequests": true
+  },
+  "finalStagedSecurityScan": {
+    "status": "PASS",
+    "filesScanned": 1485,
+    "nestedArchiveEntriesScanned": 789,
+    "privateMetadataFilesChecked": 19,
+    "gitleaksVersion": "8.30.1",
+    "gitleaksFindings": 0,
+    "exactPrivateValueMatches": 0,
+    "valuesOrCredentialsPrinted": false,
+    "historyRewritten": false
+  },
+  "devicesUsed": false,
+  "googleExecution": false,
+  "productionModified": false,
+  "allIndexRemovalFilesStillPresent": true,
+  "gitDiffCheck": {
+    "status": "WARN",
+    "whitespaceOnlyWarnings": 5,
+    "functionalErrors": false,
+    "existingNewSourcesAndHistoricalDocsNotReformatted": true
+  }
+}

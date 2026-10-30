@@ -200,7 +200,7 @@ object PavementDriveUploader {
             .put("muestra", sample.muestra).put("carril", sample.carril).put("calzada", sample.calzada)
             .put("prInicial", sample.prInicial).put("prFinal", sample.prFinal)
             .put("anchoM", sample.anchoM).put("largoM", sample.largoM).put("surface", sample.surface)
-            .put("fecha", sample.fecha).put("inspector", sample.inspectorNombre).put("status", sample.status)
+            .put("fecha", sample.fecha).put("createdAt",sample.createdAt).put("inspector", sample.inspectorNombre).put("status", sample.status)
             .put("slabRows",sample.slabRows).put("slabColumns",sample.slabColumns)
             .put("slabWidthM",sample.slabWidthM?:JSONObject.NULL).put("slabLengthM",sample.slabLengthM?:JSONObject.NULL)
             .put("sicData",sample.sicDataJson?.let(::JSONObject)?:JSONObject.NULL))
@@ -215,7 +215,7 @@ object PavementDriveUploader {
         .put("calculation",JSONObject(PavementResultJson.encode(result)))
         .put("damages", JSONArray().apply {
             damages.sortedBy { it.correlativo }.forEach { d ->
-                put(JSONObject().put("id", d.id).put("correlativo", d.correlativo).put("code", d.code).put("name", d.name)
+                put(JSONObject().put("id", d.id).put("createdAt",d.createdAt).put("correlativo", d.correlativo).put("code", d.code).put("name", d.name)
                     .put("severity", d.severity ?: JSONObject.NULL).put("geometry", d.geometry)
                     .put("x1", d.x1 ?: JSONObject.NULL).put("y1", d.y1 ?: JSONObject.NULL)
                     .put("x2", d.x2 ?: JSONObject.NULL).put("y2", d.y2 ?: JSONObject.NULL)

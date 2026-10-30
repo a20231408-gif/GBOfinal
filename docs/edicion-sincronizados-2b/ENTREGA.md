@@ -35,7 +35,7 @@ Cambiar PR actualiza orden técnico de inventario, Excel y mapa/KMZ, manteniendo
 
 El GET real confirmó la raíz aislada autorizada, pero todavía syncProtocol 3/pathVersion 3 y sin stableFamilyNumbering. Por eso no se intentó actualizar ningún registro remoto. No declarar éxito remoto a partir de estas pruebas locales.
 
-1. Publicar por el responsable exclusivamente los tres archivos de deployment-test/ en el proyecto Apps Script de pruebas independiente; no producción. Mantener rootFolderId 1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk y el token como propiedad privada. [Pasos exactos, instalación secundaria y checklist](DESPLIEGUE_Y_PRUEBA_REAL.md); [diferencias backend](BACKEND_CHANGES.patch).
+1. Publicar por el responsable exclusivamente los tres archivos de deployment-test/ en el proyecto Apps Script de pruebas independiente; no producción. Mantener rootFolderId CONFIGURAR_ID_PRIVADO y el token como propiedad privada. [Pasos exactos, instalación secundaria y checklist](DESPLIEGUE_Y_PRUEBA_REAL.md); [diferencias backend](BACKEND_CHANGES.patch).
 2. Confirmar GET compatible, autenticación y pruebas físicas de A–K con UUID nuevos; descargar fotos/Excel y comprobar IDs/hash. No instalar sobre la tablet de campo.
 3. Conflictos detectados requieren conciliación manual con respaldo local; no hay resolución automática ni importador nuevo. Movimientos de ruta/familia y migración SIB histórica conservan las restricciones de 2A y requieren autorización/manifiesto.
 4. No se subió esta rama. Fuentes y documentación sintética se protegen mediante checkpoint local; logs, APK/configuración privada y los archivos preexistentes de SCAP/proguard/herramientas siguen separados.

@@ -67,7 +67,7 @@ APK Debug de validación, con endpoints/credenciales locales omitidos; no está 
 
 GET del endpoint configurado localmente: `ok=true`, versión `v6.2 · encarpetado estricto por elemento + SCAP v2`, sin capacidades V3. Se verificó separación entre URL Drive y URL usuarios sin exponer sus valores privados. No se certificó la URL dentro de la APK instalada.
 
-PRUEBA_FINAL existe: folderId `1u7II1gvhSIHBwVxFjnx6VsAqa3O_jTIi`; su relación con producción no pudo comprobarse porque el despliegue actual no identifica su raíz efectiva. No se creó la subcarpeta ni se escribió a Drive. Pendientes: confirmación del árbol productivo, subcarpeta aislada, proyecto/despliegue independiente compatible, configuración de APK de prueba y prueba física A–H con IDs **reales**, apertura de archivos y reintento sin duplicados.
+PRUEBA_FINAL existe: folderId `CONFIGURAR_ID_PRIVADO`; su relación con producción no pudo comprobarse porque el despliegue actual no identifica su raíz efectiva. No se creó la subcarpeta ni se escribió a Drive. Pendientes: confirmación del árbol productivo, subcarpeta aislada, proyecto/despliegue independiente compatible, configuración de APK de prueba y prueba física A–H con IDs **reales**, apertura de archivos y reintento sin duplicados.
 
 El procedimiento completo y los pasos que el responsable debe autorizar/ejecutar están en [DESPLIEGUE_PRUEBAS.md](DESPLIEGUE_PRUEBAS.md). Paquete preparado: `deployment-test/`, con marcadores y sin credenciales.
 

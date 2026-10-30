@@ -10,7 +10,7 @@ enum class PavementSicFormat(val label: String, val surface: String, val source:
     SIC16("SIC-16", "UNSURFACED", "Formato SIC-16, imagen adjunta 5", listOf("Deformación","Erosión","Huecos","Encalaminento","Lodozal","Cruce de agua"),3)
 }
 
-data class PavementSicRow(val damageId: String, val values: List<Any?>, val missing: List<String>)
+data class PavementSicRow(val damageId: String, val values: List<Any?>, val missing: List<String>, val registeredDate:String="", val registeredAt:Long=0)
 data class PavementSicStatus(val format: PavementSicFormat, val rows: List<PavementSicRow>, val blockers: List<String>) {
     val missingCount get() = rows.sumOf { it.missing.size } + blockers.size
     val complete get() = rows.isNotEmpty() && missingCount == 0
@@ -56,11 +56,17 @@ object PavementSic {
                 val raw=text(key);val n=if(raw.isBlank())fallback else raw.toIntOrNull()
                 if(n==null || n !in range) { missing+=key;return null };return n
             }
-            fun pr(key: String): String? = text(key).takeIf { it.matches(Regex("[0-9]{4}")) } ?: run { missing+=key;null }
+            // Optional location is documentary data, never inferred from sample chainage.
+            fun pr(key:String):String?=text(key).takeIf{it.isNotBlank()}
+            fun optionalNumber(key:String,integer:Boolean=false):Any? {
+                val raw=text(key);if(raw.isBlank())return null
+                val n=raw.replace(',','.').toDoubleOrNull()?.takeIf{it.isFinite()&&it>=0&&(!integer||it>=1&&it%1.0==0.0)}
+                return n?.let{if(integer)it.toInt()else it} ?: raw // preserve volunteered text; never fabricate zero
+            }
             val type=code("tipo",1..format.types.size,knownType(format,d.code))
-            val faja=if(format==PavementSicFormat.SIC16)2 else code("faja",1..Int.MAX_VALUE)
-            val initial=pr("prInicio");val distanceInitial=numeric("distanciaInicio",zero=true)
-            val final=pr("prFin");val distanceFinal=numeric("distanciaFin",zero=true)
+            val faja=optionalNumber("faja",integer=true)
+            val initial=pr("prInicio");val distanceInitial=optionalNumber("distanciaInicio")
+            val final=pr("prFin");val distanceFinal=optionalNumber("distanciaFin")
             val length=numeric("longitud",when(d.geometry) { "LINEAR","AREA" -> d.lengthM; "POTHOLE" -> d.diameterM; else -> null })
             val width=numeric("ancho",when(d.geometry) { "LINEAR","AREA" -> d.widthM?.takeIf { it>0 }; "POTHOLE" -> d.diameterM; else -> null })
             val severity=code("gravedad",1..3,when(PavementSeverity.canonical(d.severity)) { "L" -> 1; "M" -> 2; "H" -> 3; else -> null })
@@ -68,7 +74,7 @@ object PavementSic {
             if(s.ruta.isBlank())missing+="ruta"
             if(s.calzada !in PavementHeader.roadbeds)missing+="calzada"
             if(s.fecha.isBlank())missing+="fecha"
-            PavementSicRow(d.id,listOf(s.ruta,s.calzada,faja,initial,distanceInitial,final,distanceFinal,type,length,width,severity,density,s.fecha),missing)
+            PavementSicRow(d.id,listOf(s.ruta,s.calzada,faja,initial,distanceInitial,final,distanceFinal,type,length,width,severity,density,s.fecha),missing,s.fecha,d.createdAt)
         }
         val blockers=buildList {
             if(damages.isEmpty())add("Sin daños capturados")
@@ -79,7 +85,11 @@ object PavementSic {
     }
     fun write(output: OutputStream, s: PavementSampleEntity, damages: List<PavementDamageEntity>, format: PavementSicFormat) {
         val status=status(s,damages,format)
-        require(status.complete) { "${format.label}: faltan ${status.missingCount}. ${status.blockers.joinToString()}" }
-        PavementExcel.workbook(output,listOf(format.label to (listOf(headers)+status.rows.map { it.values })),locationGroups=true)
+        require(status.rows.isNotEmpty()){ "${format.label}: sin daños capturados." }
+        val ordered=status.rows.sortedWith(compareBy<PavementSicRow>{it.registeredDate}.thenBy{it.registeredAt}.thenBy{it.damageId})
+        val raw=java.io.ByteArrayOutputStream()
+        PavementExcel.workbook(raw,listOf(format.label to (listOf(headers)+ordered.map { it.values })),locationGroups=true)
+        val globalPending=PavementJointOccurrences.needsAssessment(s,damages)
+        output.write(com.tuempresa.inventariovial.export.LocalSicWorkbookPolicy.status(raw.toByteArray(),!status.complete || globalPending,status.missingCount+if(globalPending)1 else 0))
     }
 }

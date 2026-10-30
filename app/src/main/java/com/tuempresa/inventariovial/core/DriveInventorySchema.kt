@@ -34,7 +34,8 @@ object DriveInventorySchema {
         "DEFECT" to "ANOMALIAS_FALLAS", "BRIDGE_ELEMENT" to "OTROS_ELEMENTOS_PUENTE",
         "TRANSVERSE" to "VISTA_TRANSVERSAL", "ELEMENT" to "ELEMENTO", "ACCESS" to "ACCESO",
         "CHANNEL" to "CAUCE", "OTHER" to "OTRA")
-    fun category(code: String?) = categories[code] ?: DriveAssetPathRouter.component(code?.takeIf { it.isNotBlank() } ?: "GENERAL")
+    fun category(code: String?) = com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(code)?.folder
+        ?: categories[code] ?: DriveAssetPathRouter.component(code?.takeIf { it.isNotBlank() } ?: "GENERAL")
     fun bind(context:Context,asset:com.tuempresa.inventariovial.road.OrderedAsset) = asset.copy(remoteLogicalPath=receipt(context,asset.recordId)?.optString("logicalPath"))
     fun receipt(context: Context, identity: String): JSONObject? = context.getSharedPreferences("drive_bindings_v4",Context.MODE_PRIVATE)
         .getString(identity,null)?.let(::JSONObject)

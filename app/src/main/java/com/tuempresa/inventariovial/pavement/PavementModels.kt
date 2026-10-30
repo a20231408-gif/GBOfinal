@@ -93,7 +93,8 @@ data class PavementDamageEntity(
     @ColumnInfo(defaultValue = "''") val slabs: String = "",
     @ColumnInfo(defaultValue = "''") val inspectorUserId: String = "",
     @ColumnInfo(defaultValue = "''") val inspectorName: String = "",
-    val depthMm: Double? = null
+    val depthMm: Double? = null,
+    val retiredAt:Long? = null
 ) : java.io.Serializable
 
 @Entity(tableName = "pavement_damage_photos", foreignKeys = [ForeignKey(entity = PavementDamageEntity::class, parentColumns = ["id"], childColumns = ["damageId"], onDelete = ForeignKey.CASCADE)], indices = [Index("damageId")])

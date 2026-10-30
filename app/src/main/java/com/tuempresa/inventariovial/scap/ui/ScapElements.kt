@@ -147,7 +147,7 @@ fun ScapStatisticsPanel(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
     LazyColumn(Modifier.fillMaxSize(),state=list,contentPadding=PaddingValues(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             Text("G.1 · CONDICIÓN ESTADÍSTICA DEL PUENTE",style=MaterialTheme.typography.headlineSmall)
-            Text("Todos los elementos de F.1 que aplican. Las celdas vacías permanecen vacías en Excel; para el cálculo se interpretan como 0. Una suma distinta de 100% se advierte sin bloquear el guardado ni la entrega.")
+            Text("Porcentajes por nivel de condición. Las fichas nuevas comienzan en 0%; no significa que el elemento esté evaluado como Muy bueno. Para una evaluación válida, distribuye el 100%. Los vacíos históricos se conservan; una suma pendiente no impide guardar la ficha.")
             if(present.isEmpty()) Text("No hay elementos presentes para evaluar.")
             Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(enabled=editable,onClick={catalogOpen=!catalogOpen}){Text("Elementos de la plantilla (${catalog.elements.size})")}

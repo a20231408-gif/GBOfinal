@@ -102,7 +102,7 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
                 Text("Las fichas y borradores están guardados dentro de GBO; exporta para disponer de documentos fuera de la app.")
             }
         }
-        Button(enabled = !locked && count > 0 && review?.pending?.isEmpty()==true, onClick = {
+        Button(enabled = !locked && count > 0 && review?.blocking?.isEmpty()==true, onClick = {
             pickerMessage = null
             exporter.prepare(format, route, ExportHeading(project.trim(), road.trim(), section.trim()))
         }, modifier = Modifier.fillMaxWidth()) {
@@ -112,7 +112,7 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
         state.message?.let { Text(it) }
         state.prepared?.let { prepared ->
             HorizontalDivider()
-            Text("Archivo preparado: ${prepared.file.name}")
+            Text("Archivo preparado: ${prepared.displayName}")
             Text("${prepared.recordCount} registros · ${prepared.workbookCount} Excel. Si cambias la selección o los encabezados, vuelve a generar.")
             Button(
                 enabled = !locked,
@@ -134,13 +134,14 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
             }
 
             Button(enabled=!locked,onClick={syncScope.launch {pickerMessage=runCatching {
-                com.tuempresa.inventariovial.localfiles.LocalCopies.document(syncContext,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(syncContext),prepared.file,"SIC",if(prepared.isZip)"application/zip"else SicExcelWriter.XLSX_MIME,route ?: "TODAS_LAS_RUTAS")
+                com.tuempresa.inventariovial.localfiles.LocalCopies.document(syncContext,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(syncContext),prepared.file,"SIC",if(prepared.isZip)"application/zip"else SicExcelWriter.XLSX_MIME,route ?: "TODAS_LAS_RUTAS",displayName=prepared.displayName)
+                for(item in selectedItems)runCatching{com.tuempresa.inventariovial.localfiles.LocalDeliveryScheduling.afterExport(syncContext,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(syncContext),"SIC",item.record.id)}
                 "Copia local pendiente. Se confirmará después de escribir y verificar en Descargas."
             }.getOrElse{it.message}}}){Text("Guardar en Descargas")}
             Button(enabled = !locked, onClick = {
                 try {
                     picking = true
-                    if (prepared.isZip) zipPicker.launch(prepared.file.name) else xlsxPicker.launch(prepared.file.name)
+                    if (prepared.isZip) zipPicker.launch(prepared.displayName) else xlsxPicker.launch(prepared.displayName)
                 } catch (error: Exception) {
                     picking = false
                     pickerMessage = "No se pudo abrir el selector de archivos: ${error.message}"

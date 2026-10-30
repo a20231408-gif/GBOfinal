@@ -16,13 +16,17 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
     private fun uuid()=UUID.randomUUID().toString()
     suspend fun create(operator:String,device:String,sessionId:String?,bridgeType:ScapBridgeType?=null):String=db.withTransaction {
         val now=System.currentTimeMillis();val id=uuid();val roadId=uuid()
+        val captureDate=LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         val session=sessionId?.let {db.inventoryDao().sessionById(it)}?.takeIf {it.endTime==null}
         val defaults=com.tuempresa.inventariovial.field.FieldSessionDefaults.location(session,routes=projectRoutes)
         // Technical draft: absent coordinates are not exported as an observed (0,0) location.
         db.inventoryDao().insertRecord(InventoryRecordEntity(roadId,"SCAP","PUENTE",defaults.route,defaults.roadbed,"",0.0,null,null,null,
-            null,null,null,null,LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),null,"DRAFT","PENDING","PENDING",now,now,
+            null,null,null,null,captureDate,null,"DRAFT","PENDING","PENDING",now,now,
             sessionId=sessionId,segment=defaults.segment.takeIf {it.isNotBlank()},surveyDirection=session?.direction))
         dao.insertInspection(ScapInspectionEntity(id,roadId,"","",now,now,operator,device,"DRAFT","PENDING",null,null,null,null,"MANUAL"))
+        // Current survey date is an editable capture default, not the bridge's previous inspection.
+        // Only creation seeds it; opening an existing/historical inspection never invents a date.
+        dao.putValue(ScapFieldValueEntity(id,"inspection","sic17.surveyDate",captureDate,"CAPTURE_DATE_DEFAULT"))
         if(defaults.route.isNotBlank()) {
             dao.putValue(ScapFieldValueEntity(id,"inspection","route",defaults.route,"SESSION_DEFAULT"))
             dao.putValue(ScapFieldValueEntity(id,"inspection","segment",defaults.segment,"SESSION_DEFAULT"))
@@ -32,7 +36,8 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         dao.putValue(ScapFieldValueEntity(id,"inspection","nameContractVersion","1","NEW_INSPECTION_DEFAULT"))
         dao.putValue(ScapFieldValueEntity(id,"inspection","routeType","Nacional","NEW_INSPECTION_DEFAULT"))
         bridgeType?.let {dao.putValue(ScapFieldValueEntity(id,"inspection",ScapBridgeType.FIELD,it.name,"USER_SELECTED"))}
-        if(bridgeType!=null) ensureBridgeDefaults(id)
+        dao.putValue(ScapFieldValueEntity(id,"inspection","zeroPercentDefaultsVersion","1","NEW_INSPECTION_DEFAULT"))
+        if(bridgeType!=null) ensureBridgeDefaults(id,newInspection=true)
         id
     }
     private suspend fun editable(id:String):ScapInspectionSnapshot {
@@ -70,19 +75,20 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
                 bridgeName=values["bridgeName"] ?: s.inspection.bridgeName,bridgeCode=values["bridgeCode"] ?: s.inspection.bridgeCode,
                 createdBy=if(key=="createdBy") value else s.inspection.createdBy))
             val road=db.inventoryDao().recordById(s.inspection.roadRecordId)!!
-            // Only bootstrap an absent location from explicitly entered SCAP location fields.
-            // Arbitrary SCAP edits must never replace the linked contractual PR/distance.
-            val chainage=ScapNumbers.chainage(values["progressive"])
-            val seedPr=key=="progressive" && road.startPrCode.isBlank() && chainage!=null && road.locationSource!="SIC_CONFIRMED"
-            val seedRoute=key=="route" && road.startPrCode.isBlank() && road.locationSource!="SIC_CONFIRMED"
-            val seedRoadbed=key=="sic17.roadbedCode" && road.startPrCode.isBlank() && road.locationSource!="SIC_CONFIRMED"
+            // Every accepted keystroke may update an inherited location, not only the first '1'.
+            // Independent/confirmed SIC and the final PR are never inferred or overwritten here.
+            val location=ScapSicLocation.parse(values["progressive"])
+            val inherited=ScapSicLocation.mayInherit(road)
+            val seedPr=key=="progressive" && inherited && location!=null
+            val seedRoute=key=="route" && inherited
+            val seedRoadbed=key=="sic17.roadbedCode" && inherited
             if(seedPr || seedRoute || seedRoadbed) db.inventoryDao().updateRecord(road.copy(
                 routeCode=if(seedRoute) value else road.routeCode,
                 roadbedCode=if(seedRoadbed) value else road.roadbedCode,
                 segment=if(seedRoute) projectRoutes?.segment(value,values["segment"]) else road.segment,
-                startPrCode=if(seedPr) (chainage!!/1000).toInt().toString().padStart(4,'0') else road.startPrCode,
-                startDistanceM=if(seedPr) chainage!!%1000 else road.startDistanceM,
-                locationSource=if(seedPr) "SCAP_PROGRESSIVE" else road.locationSource,
+                startPrCode=if(seedPr) location!!.pr else road.startPrCode,
+                startDistanceM=if(seedPr) location!!.metres else road.startDistanceM,
+                locationSource=if(seedPr) ScapSicLocation.INHERITED else road.locationSource,
                 updatedAt=maxOf(System.currentTimeMillis(),road.updatedAt+1)))
         }
         s.spans.find {it.id==owner}?.let {span->
@@ -129,6 +135,20 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         }
         // Retire only the obsolete duplicate calzada value; the linked record owns location.
         dao.deleteValue(id,"inspection","sic17.roadbedCode")
+        dao.touch(id,System.currentTimeMillis())
+    }
+    /** Explicit operator choice; no automatic migration of historical or manually confirmed data. */
+    suspend fun useScapProgressive(id:String)=db.withTransaction {
+        val s=editable(id);val r=requireNotNull(s.roadRecord)
+        val location=requireNotNull(ScapSicLocation.parse(s.values()["progressive"])) {"Revisa el kilometraje SCAP en la sección A."}
+        val route=s.values()["route"].orEmpty()
+        require(route.isNotBlank() && route==r.routeCode) {"Las rutas son distintas. Revisa la ubicación SIC manualmente."}
+        db.inventoryDao().updateRecord(r.copy(startPrCode=location.pr,startDistanceM=location.metres,
+            locationSource=ScapSicLocation.INHERITED,updatedAt=maxOf(System.currentTimeMillis(),r.updatedAt+1)))
+        // Replace only the two fields explicitly chosen; preserve route, final PR and other drafts.
+        mapOf("startPrCode" to location.pr,"startDistanceM" to location.metres.toString()).forEach {(key,value)->
+            dao.putValue(ScapFieldValueEntity(id,"inspection","sicLocation.$key",value,ScapSicLocation.INHERITED))
+        }
         dao.touch(id,System.currentTimeMillis())
     }
     suspend fun setSicField(id:String,format:String,key:String,value:String)=db.withTransaction {
@@ -198,6 +218,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         require(item!=null || (old!=null && s.values(old.id)["elementSource"]=="MANUAL")) {"Código SCAP desconocido."}
         val element=old?.copy(isPresent=present) ?: requireNotNull(item).let{ScapElementEntity(uuid(),id,code,it.name,null,it.unit,it.importanceFactor,it.group,present)}
         dao.putElement(element)
+        if(old==null && s.values()["zeroPercentDefaultsVersion"]=="1")seedZeroPercentages(id,element.id)
         dao.putValue(ScapFieldValueEntity(id,element.id,"presence",if(present) "PRESENT" else "NOT_APPLICABLE","MANUAL"))
         dao.touch(id,System.currentTimeMillis())
     }
@@ -207,6 +228,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         val item=requireNotNull(catalog.forSnapshot(s).element(code))
         val element=ScapElementEntity(uuid(),id,code,item.name,null,item.unit,item.importanceFactor,item.group,false)
         dao.putElement(element)
+        if(s.values()["zeroPercentDefaultsVersion"]=="1")seedZeroPercentages(id,element.id)
         dao.putValue(ScapFieldValueEntity(id,element.id,"presence","UNSET","MANUAL"))
         dao.touch(id,System.currentTimeMillis())
     }
@@ -276,6 +298,15 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         dao.updatePhoto(other.copy(photoIndex=current.photoIndex,isPrimary=current.isPrimary))
         dao.updatePhoto(current.copy(photoIndex=other.photoIndex,isPrimary=other.isPrimary));dao.touch(id,System.currentTimeMillis())
     }
+    suspend fun movePanelPhoto(id:String,photoId:String,direction:Int)=db.withTransaction {
+        require(direction in setOf(-1,1))
+        val s=editable(id);val current=s.photos.single{it.id==photoId};val key=ScapPhotoPanel.category(s,current)?.key
+        val group=ScapPhotoPanel.ordered(s).filter{ScapPhotoPanel.category(s,it)?.key==key}
+        val other=group.getOrNull(group.indexOfFirst{it.id==photoId}+direction) ?: return@withTransaction
+        dao.updatePhoto(current.copy(photoIndex=(s.photos.maxOfOrNull{it.photoIndex} ?: 0)+1))
+        dao.updatePhoto(other.copy(photoIndex=current.photoIndex,isPrimary=current.isPrimary))
+        dao.updatePhoto(current.copy(photoIndex=other.photoIndex,isPrimary=other.isPrimary));dao.touch(id,System.currentTimeMillis())
+    }
     suspend fun removeSketch(id:String,sketchId:String)=db.withTransaction {editable(id);dao.deleteSketch(id,sketchId);dao.touch(id,System.currentTimeMillis())}
     suspend fun addPhoto(id:String,path:String,category:String,code:String?,stampedPath:String?=null,capture:com.tuempresa.inventariovial.camera.PhotoCaptureMetadata?=null)=db.withTransaction {
         val s=editable(id);require(category in PHOTO_CATEGORIES);require(knownElement(s,code))
@@ -287,9 +318,11 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         db.inventoryDao().insertPhoto(photo)
         dao.touch(id,System.currentTimeMillis())
     }
-    suspend fun addPhotoRecord(id:String,name:String,description:String=""):String=db.withTransaction {
+    suspend fun addPhotoRecord(id:String,name:String,description:String="",elementCode:String?=null):String=db.withTransaction {
         val s=editable(id);val index=(s.photos.maxOfOrNull{it.photoIndex} ?: 0)+1;val photoId=uuid()
-        db.inventoryDao().insertPhoto(PhotoEntity(photoId,s.inspection.roadRecordId,index,"",index==1,null,null,null,"PENDING",System.currentTimeMillis(),scapInspectionId=id,photoCategory="OTHER",description=description))
+        require(knownElement(s,elementCode)) {"Elemento SCAP desconocido."}
+        val category=ScapPhotoPanel.resolve(null,name)?.key ?: "OTHER"
+        db.inventoryDao().insertPhoto(PhotoEntity(photoId,s.inspection.roadRecordId,index,"",index==1,null,null,null,"PENDING",System.currentTimeMillis(),scapInspectionId=id,scapElementCode=elementCode,photoCategory=category,description=description))
         dao.putValue(ScapFieldValueEntity(id,photoId,"photoName",name,"MANUAL"));dao.touch(id,System.currentTimeMillis());photoId
     }
     suspend fun replacePhoto(id:String,photoId:String,path:String,capture:com.tuempresa.inventariovial.camera.PhotoCaptureMetadata?=null)=db.withTransaction {
@@ -344,6 +377,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         require(active.element(code.trim())==null && s.elements.none {it.element.elementCode==code.trim()}) {"El código ya existe; usa el elemento del catálogo."}
         val row=ScapElementEntity(uuid(),id,code.trim(),description,ScapNumbers.decimal(quantity),unit,ScapNumbers.decimal(factor) ?: 0.0,"DETALLES",true)
         dao.putElement(row)
+        if(s.values()["zeroPercentDefaultsVersion"]=="1")seedZeroPercentages(id,row.id)
         mapOf("elementSource" to "MANUAL","presence" to "PRESENT","quantity" to quantity,"unit" to unit,"importanceFactor" to factor,"description" to description).forEach {(key,value)->dao.putValue(ScapFieldValueEntity(id,row.id,key,value,"MANUAL"))}
         dao.touch(id,System.currentTimeMillis())
     }
@@ -356,6 +390,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
         val s=editable(id);val review=ScapValidation.review(s,catalog.forSnapshot(s))
         require(review.errors.isEmpty()) {review.errors.joinToString("\n")}
         val completion=ScapCompletion.assess(s,catalog.forSnapshot(s))
+        require(completion.pending.none{it.severity==ScapIssueSeverity.BLOCKING}) {"Corrige los valores inválidos antes del cierre; puedes guardar un borrador y su copia local."}
         dao.putValue(ScapFieldValueEntity(id,"completion","status",if(completion.pending.isEmpty())"COMPLETE" else "INCOMPLETE","REVIEW"))
         require(completion.pending.isEmpty() || warningsConfirmed) {"Confirma el cierre con datos pendientes."}
         dao.putValue(ScapFieldValueEntity(id,"completion","uploadedWithWarnings",warningsConfirmed.toString(),"USER_CONFIRMED"))
@@ -365,7 +400,7 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
     }
     private fun knownElement(snapshot:ScapInspectionSnapshot,code:String?)=code==null || catalog.forSnapshot(snapshot).element(code)!=null ||
         snapshot.elements.any{it.element.elementCode==code && snapshot.values(it.element.id)["elementSource"]=="MANUAL"}
-    suspend fun ensureBridgeDefaults(id:String)=db.withTransaction {
+    suspend fun ensureBridgeDefaults(id:String,newInspection:Boolean=false)=db.withTransaction {
         val s=dao.snapshot(id) ?: return@withTransaction
         val active=catalog.forSnapshot(s)
         if(active.bridgeType==null || s.inspection.status=="COMPLETE" || s.values()["bridgeDefaultsVersion"]=="1")return@withTransaction
@@ -378,13 +413,19 @@ class ScapRepository(private val db:InventoryDatabase,val catalog:ScapCatalog, p
             if(old==null) {
                 dao.putValue(ScapFieldValueEntity(id,e.id,"presence","UNSET","TEMPLATE"))
                 dao.putValue(ScapFieldValueEntity(id,e.id,"globalDescription","","TEMPLATE"))
-                // No G.1 example quantities or ratings are ever copied into a new inspection.
+                // Zero percent is valid per cell, but an all-zero distribution is NOT an evaluation.
+                // Only creation seeds it: opening a historical inspection never changes its ratings.
+                if(newInspection)seedZeroPercentages(id,e.id)
                 dao.putValue(ScapFieldValueEntity(id,e.id,"importanceFactor",d.importanceFactor?.toString().orEmpty(),"TEMPLATE"))
             }
         }
           for(index in 1..2)if(s.supports.none{it.supportIndex==index})dao.putSupport(ScapSupportEntity("$id:support:$index",id,index,"","","",null))
         dao.putValue(ScapFieldValueEntity(id,"inspection","bridgeDefaultsVersion","1","TEMPLATE"))
           dao.touch(id,System.currentTimeMillis())
+    }
+    private suspend fun seedZeroPercentages(id:String,elementId:String) {
+        dao.putCondition(ScapElementConditionEntity(uuid(),elementId,0.0,0.0,0.0,0.0,0.0,0.0))
+        (0..5).forEach{level->dao.putValue(ScapFieldValueEntity(id,elementId,"percent$level","0","ZERO_PERCENT_DEFAULT_NOT_EVALUATED"))}
     }
     suspend fun removeManualElement(id:String,elementId:String)=db.withTransaction {
         val s=editable(id);require(s.values(elementId)["elementSource"]=="MANUAL") {"Los elementos de la plantilla se marcan No aplica."}

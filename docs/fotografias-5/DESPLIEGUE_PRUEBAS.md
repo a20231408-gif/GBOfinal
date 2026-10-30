@@ -10,7 +10,7 @@ El responsable debe revisar y copiar **las fuentes integradas de esta rama**, no
 
 El despliegue anterior debe conservarse para recuperación. Ejecutar estos pasos exclusivamente en el proyecto independiente de pruebas, después de autorización del responsable:
 
-1. Verificar proyecto, URL `/exec` y raíz aislada autorizada `1FH56ZlgRRZzIrfMpL35EbjyX5HsZuzyk`. No usar raíz, URL ni token operativos. No alterar el proyecto original ni el servicio de usuarios.
+1. Verificar proyecto, URL `/exec` y raíz aislada autorizada `CONFIGURAR_ID_PRIVADO`. No usar raíz, URL ni token operativos. No alterar el proyecto original ni el servicio de usuarios.
 2. Respaldar fuentes/versión actuales del proyecto de pruebas. Copiar el paquete integrado; conservar las propiedades privadas y la configuración específica de ese proyecto. Revisar que la raíz siga siendo la aislada; no copiar una raíz productiva desde otra configuración.
 3. Confirmar servicio avanzado Drive y propiedad `GBO_SYNC_V3_ENABLED=true` según el despliegue V3 existente. Crear una nueva versión SOLO del despliegue de pruebas; el usuario conserva control sobre esta publicación.
 4. GET debe confirmar `ok=true`, `syncProtocol=3`, `pathVersion=4`, `stableFamilyNumbering=true`, `technicalDeliveryWithoutGps=true`, `photoCategoryVersion=1` y la raíz esperada. No imprimir el token. Diagnóstico privado de token con la operación segura existente, si está habilitada.

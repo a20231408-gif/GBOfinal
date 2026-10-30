@@ -4,20 +4,27 @@ import com.tuempresa.inventariovial.data.database.InventoryDatabase
 import com.tuempresa.inventariovial.localfiles.LocalExportJob
 import com.tuempresa.inventariovial.localfiles.PublicLocalFolderNames
 import org.json.JSONObject
+import android.content.Context
+import com.tuempresa.inventariovial.scap.catalog.ScapCatalog
+import com.tuempresa.inventariovial.scap.domain.*
 
-data class DriveDeliveryIdentity(val title:String,val location:String,val currentRevision:Long?,val validated:Boolean,val format:String="")
+data class DriveDeliveryIdentity(val title:String,val location:String,val currentRevision:Long?,val validated:Boolean,val format:String="",
+    val issue:String?=null,val target:ScapFieldRoute?=null,val provisional:Boolean=false,val onlyDevice:Boolean=false)
 enum class DriveDeliveryStatus(val label:String,val symbol:String,val priority:Int) {
     ATTENTION("Necesita atención","!",0), VERIFYING("Verificando entrega","◌",1),
     UPLOADING("Subiendo","↑",2), PENDING("Pendiente de subir","…",3), COMPLETE("Subido correctamente","✓",4)
 }
-data class DriveDeliveryView(val status:DriveDeliveryStatus,val message:String,val files:String,val confirmed:Boolean)
+data class DriveDeliveryView(val status:DriveDeliveryStatus,val message:String,val files:String,val confirmed:Boolean,
+    val review:Boolean=false,val retryAllowed:Boolean=true)
 
 /** Read-only presentation. Never reserves folders, prepares exports or mutates an outbox. */
 object DriveDeliveryPresentation {
     fun json(value:String?):JSONObject?=runCatching{value?.let(::JSONObject)}.getOrNull()
-    suspend fun identity(db:InventoryDatabase,i:DriveSyncIntent):DriveDeliveryIdentity {
+    suspend fun identity(db:InventoryDatabase,i:DriveSyncIntent,context:Context?=null):DriveDeliveryIdentity {
         var label=when(i.kind){"SCAP"->"Puente";"PAVEMENT"->"Pavimento";else->"Elemento SIC"}
         var location="Ubicación no disponible";var revision:Long?=null;var validated=false
+        var issue:String?=null;var target:ScapFieldRoute?=null;var provisional=false
+        val onlyDevice=com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,i.key)
         var format=when(i.kind){"SCAP"->"Ficha SCAP";"PAVEMENT"->"Pavimentos";else->"Ficha SIC"}
         when(i.kind) {
             "SIC"->db.inventoryDao().snapshot(i.recordId)?.let{s->
@@ -30,15 +37,24 @@ object DriveDeliveryPresentation {
             "SCAP"->db.scapDao().snapshot(i.recordId)?.let{s->
                 location=(s.roadRecord?.routeCode ?: s.values()["route"].orEmpty()).ifBlank{"Ruta pendiente"}
                 revision=s.inspection.updatedAt;validated=s.inspection.status=="COMPLETE"
+                provisional=s.values("completion")["status"]=="INCOMPLETE"
+                if(context!=null) {
+                    val catalog=ScapCatalog.load(context).forSnapshot(s)
+                    provisional=ScapCompletion.assess(s,catalog).pending.isNotEmpty()
+                    val consent=i.warningsConfirmed || s.inspection.status=="COMPLETE" && s.inspection.updatedAt==i.revision && i.preparedJson==null &&
+                        s.values.any{it.ownerId=="completion"&&it.key=="uploadedWithWarnings"&&it.value=="true"&&it.source=="USER_CONFIRMED"}
+                    ScapUploadReadiness.block(s,catalog,consent)?.let{issue=it.message;target=it.route}
+                }
             }
             "PAVEMENT"->db.pavementDao().sample(i.recordId)?.let{s->
                 location=s.ruta.ifBlank{"Ruta pendiente"};revision=s.updatedAt;validated=s.status=="CLOSED"
+                provisional=json(i.preparedJson)?.optJSONArray("pendingSic")?.length()?.let{it>0}==true
             }
         }
         // describe is a read-only formatter; reserve and LocalDocumentLocation are never called.
         val title=if(revision==null)label else PublicLocalFolderNames.describe(db,
             LocalExportJob("DISPLAY_ONLY",i.key,i.kind,i.recordId,i.revision),label)
-        return DriveDeliveryIdentity(title,location,revision,validated,format)
+        return DriveDeliveryIdentity(title,location,revision,validated,format,issue,target,provisional,onlyDevice)
     }
     fun confirmed(i:DriveSyncIntent,currentRevision:Long?):Boolean=runCatching {
         currentRevision==i.revision && SyncIntentPresentation.confirmed(i) &&
@@ -51,10 +67,15 @@ object DriveDeliveryPresentation {
         val current=identity.currentRevision==i.revision
         val complete=identity.validated&&confirmed(i,identity.currentRevision)
         val busy=i.error?.contains("(BUSY)")==true
+        val error=i.error.orEmpty()
+        val incompatible=error.contains("compatibilidad",true)||error.contains("panel fotográfico SCAP",true)||
+            error.contains("readablePhotoNamingVersion")||error.contains("backend",true)&&i.state=="UNCONFIGURED"
+        val preparation=error.startsWith("No se pudieron preparar")
         val status=when {
             i.state=="CONFLICT" || i.state=="BLOCKED"&&!busy->DriveDeliveryStatus.ATTENTION
             !identity.validated || identity.currentRevision==null || i.state in setOf("DRAFT","PENDING_VALIDATION")->DriveDeliveryStatus.ATTENTION
             complete->DriveDeliveryStatus.COMPLETE
+            identity.onlyDevice || identity.issue!=null || preparation&&!running->DriveDeliveryStatus.ATTENTION
             !configured || i.state=="UNCONFIGURED"->DriveDeliveryStatus.ATTENTION
             !current->DriveDeliveryStatus.PENDING
             running && progress?.revision==i.revision && progress.phase=="CONFIRMING"->DriveDeliveryStatus.VERIFYING
@@ -64,18 +85,31 @@ object DriveDeliveryPresentation {
             else->DriveDeliveryStatus.PENDING
         }
         val message=when(status) {
-            DriveDeliveryStatus.COMPLETE->"Revisión actual confirmada por el servidor."
-            DriveDeliveryStatus.UPLOADING->if(progress?.revision==i.revision&&progress.phase=="PHOTOS")"Subiendo fotografías"else"Envío en curso."
+            DriveDeliveryStatus.COMPLETE->if(identity.provisional)"Respaldo con datos pendientes confirmado por el servidor. No acredita finalización contractual."else"Revisión actual confirmada por el servidor."
+            DriveDeliveryStatus.UPLOADING->progress?.takeIf{it.revision==i.revision}?.let{SyncProgressPresentation.phase(it)} ?: "Envío en curso."
             DriveDeliveryStatus.VERIFYING->"Falta confirmar la entrega completa. La copia local se conserva."
             DriveDeliveryStatus.ATTENTION->when {
                 i.state=="CONFLICT"->"Revisa el conflicto de edición antes de reenviar."
-                !identity.validated || i.state in setOf("DRAFT","PENDING_VALIDATION")->"Revisa y finaliza la ficha."
+                identity.currentRevision==null->"No se pudo consultar la ficha local. Conserva los datos y solicita soporte."
+                identity.onlyDevice->"Destino Solo dispositivo. La ficha está guardada localmente; no se programó una nueva entrega Drive."
+                incompatible->"La última consulta indicó incompatibilidad del servidor. Reintentar ahora volverá a consultar sus capacidades; la ficha y la preparación se conservan."
+                identity.issue!=null->identity.issue
+                !identity.validated->"La ficha puede guardarse, pero faltan datos o confirmar el cierre de esta revisión para entregarla."
+                preparation->"No se pudieron preparar los archivos para esta entrega. La ficha y los medios se conservan; revisa el error y reintenta."
+                i.state=="DRAFT"->"La ficha ya está cerrada, pero su entrega no está programada. Pulsa Reintentar ahora; no necesitas finalizarla otra vez."
+                i.state=="PENDING_VALIDATION"->when {
+                    error.contains("ordenamiento",true)||error.contains("PR y la distancia")->"Revisa la ubicación PR y metros para ordenar la entrega. La ficha ya está guardada."
+                    error.contains("cambió",true)||error.contains("cambios locales",true)->"Hay una revisión o preparación anterior pendiente. Revisa los cambios guardados antes de reenviar."
+                    error.startsWith("Validación SCAP:")->error
+                    else->"La entrega requiere revisar su validación o preparación. Consulta el motivo en Detalles técnicos; el cierre local se conserva."
+                }
                 !configured || i.state=="UNCONFIGURED"->"Revisa la configuración de Drive."
-                else->"Revisa el motivo en Detalles técnicos. La ficha se conserva."
+                error.contains("(NOT_JPEG)")->"Una fotografía fue rechazada por su formato JPEG. Original conservado; revisa la evidencia y reintenta."
+                else->"El servidor o la preparación bloquearon esta entrega. Consulta el motivo en Detalles técnicos. La ficha se conserva."
             }
             DriveDeliveryStatus.PENDING->when {
                 !current->"Hay cambios locales pendientes de entregar."
-                !connected->"Esperando conexión a Internet."
+                !connected->"Guardado en la tablet. Esperando conexión a Internet y ejecución de Android."
                 busy || retrying->"Esperando para reintentar."
                 else->"Esperando turno para enviar."
             }
@@ -83,6 +117,9 @@ object DriveDeliveryPresentation {
         // Transfer/preparation counts are not final confirmations. Never present them as X/Y ACK.
         val count=if(complete)json(i.receiptJson)?.optJSONArray("files")?.length()else null
         val files=if(count!=null)"Archivos confirmados: $count de $count"else"Confirmación de archivos pendiente."
-        return DriveDeliveryView(status,message,files,complete)
+        val review=identity.currentRevision!=null && !identity.onlyDevice && (identity.issue!=null || !identity.validated ||
+            i.state=="PENDING_VALIDATION"&&!incompatible)
+        return DriveDeliveryView(status,message,files,complete,review,
+            !complete && identity.validated && identity.issue==null && !identity.onlyDevice && i.state!="CONFLICT")
     }
 }

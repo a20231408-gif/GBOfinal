@@ -1,7 +1,7 @@
 const fs=require('node:fs'), vm=require('node:vm'), assert=require('node:assert/strict'), crypto=require('node:crypto');
 const {test}=require('node:test');const {spawnSync}=require('node:child_process');const path=require('node:path');
 const core=require('./SyncV3Core.js');
-const PY=process.env.GBO_AUDIT_PYTHON || 'C:/Users/gerbc/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe';
+const PY=process.env.GBO_AUDIT_PYTHON || 'python';
 function zipParts(mode,data) {
   const script=`import sys,json,base64,zipfile,io\nj=json.load(sys.stdin)\nif j['mode']=='unzip':\n z=zipfile.ZipFile(io.BytesIO(base64.b64decode(j['data'])))\n print(json.dumps([{'name':n,'base64':base64.b64encode(z.read(n)).decode()} for n in z.namelist()]))\nelse:\n b=io.BytesIO()\n with zipfile.ZipFile(b,'w',zipfile.ZIP_DEFLATED) as z:\n  for p in j['data']:z.writestr(p['name'],base64.b64decode(p['base64']))\n print(base64.b64encode(b.getvalue()).decode())`;
   const r=spawnSync(PY,['-c',script],{input:JSON.stringify({mode,data}),encoding:'utf8',maxBuffer:32*1024*1024});assert.equal(r.status,0,r.stderr);return mode==='unzip'?JSON.parse(r.stdout):r.stdout.trim();

@@ -30,6 +30,7 @@ data class LocalSharedFile(@PrimaryKey val id:String,val jobId:String,val record
     @Query("SELECT IFNULL(MAX(rowid),0) FROM local_export_jobs") suspend fun requestSequence():Long
     @Upsert suspend fun saveJob(job:LocalExportJob)
     @Query("SELECT * FROM local_shared_files WHERE jobId=:id ORDER BY name,id") suspend fun files(id:String):List<LocalSharedFile>
+    @Query("SELECT * FROM local_shared_files WHERE recordKey=:key") suspend fun filesForRecord(key:String):List<LocalSharedFile>
     @Query("SELECT * FROM local_shared_files ORDER BY rowid DESC") fun observeFiles():Flow<List<LocalSharedFile>>
     @Query("SELECT * FROM local_shared_files WHERE (:key IS NULL OR recordKey=:key) ORDER BY rowid DESC LIMIT 200") fun observeFilesFor(key:String?):Flow<List<LocalSharedFile>>
     @Upsert suspend fun saveFile(file:LocalSharedFile)

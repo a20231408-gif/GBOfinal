@@ -1,0 +1,5 @@
+PROPUESTA SIN PUBLICAR. En el objeto de capacidades doGet existente, añadir exclusivamente:
+
+pavementSicChronologicalVersion: (typeof PavementSicChronologyV1 !== 'undefined' && PavementSicChronologyV1.ready()) ? 1 : 0,
+
+No reemplazar Código.gs ni cambiar sus otros indicadores. No anunciar antes de revisar la conciliación de fechas históricas y ensayar los módulos juntos en Google. La propiedad nueva no está habilitada en producción.

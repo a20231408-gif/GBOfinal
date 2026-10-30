@@ -34,7 +34,7 @@ internal val sketchLabels=linkedMapOf("ELEVATION" to "Elevación", "PLAN" to "Pl
 
 @Composable
 fun ScapMedia(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,editable:Boolean,sketch:Boolean,initialElementCode:String?=null) {
-    if(!sketch && catalog.bridgeType!=null) {ScapPhotoRecords(s,c,catalog,editable);return}
+    if(!sketch) {ScapPhotoRecords(s,c,catalog,editable,initialElementCode);return}
     val context=LocalContext.current
     val historicVideos by remember(s.inspection.id) {com.tuempresa.inventariovial.media.VideoDatabase.get(context).videos().observe("SCAP/${s.inspection.id}")}.collectAsState(emptyList())
     val scope=rememberCoroutineScope()

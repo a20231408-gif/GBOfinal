@@ -30,8 +30,8 @@ class LocalFiles148UiTest {
     @Test fun savedFileButtonsAndMissingAccess(){
         val f=LocalSharedFile("TEST","JOB","SIC/TEST","Download/GBO_Ruta_Clara/SIC/","test.pdf","application/pdf",1,"a".repeat(64),"TEST_SOURCE","content://missing.document/test","READY")
         ui.setContent{MaterialTheme{SavedFileActions(f)}}
-        for(text in listOf("Abrir archivo","Compartir","Ver ubicación","Guardar como…"))ui.onNodeWithText(text).assertExists()
-        ui.onNodeWithText("Abrir archivo").performClick();ui.waitUntil(5000){ui.onAllNodesWithText("El archivo fue movido",substring=true).fetchSemanticsNodes().isNotEmpty()}
+        for(text in listOf("ABRIR ARCHIVO","Compartir","VER UBICACIÓN","Guardar como…"))ui.onNodeWithText(text).assertExists()
+        ui.onNodeWithText("ABRIR ARCHIVO").performClick();ui.waitUntil(5000){ui.onAllNodesWithText("El archivo fue movido",substring=true).fetchSemanticsNodes().isNotEmpty()}
         ui.onNodeWithText("Recuperar copia en Descargas").assertExists()
     }
     @Test fun automaticRequiresVisibleConsent(){

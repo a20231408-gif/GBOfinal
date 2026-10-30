@@ -1,0 +1,77 @@
+{
+  "project": "GBO_Inventario",
+  "knownDeployedVersion": 21,
+  "downloadedImmutableSnapshot": true,
+  "privateDeploymentIdentifiersIncluded": false,
+  "deployPerformed": false,
+  "files": [
+    {
+      "file": "Codigo.gs.example",
+      "kind": "configuration-template",
+      "sha256": "0196345586cc3d14b4704ddb39e7cb9d35cd5f3796fa0e2340a589a60cb811eb",
+      "sourceVersion": 21,
+      "sourceUnmodified": false
+    },
+    {
+      "file": "PhotoNamesV2Core.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "66b65b8e2ef837854350ddc343441c310953cb0f79e8ca3f2b658b63fee260d9",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "ScapPhotoPanelV2.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "980b283ed8e01556ff3efbbcdd7d5e8d9cf1c655357ace1ef04e8bfefa339ec6",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "SicObservationsV1Core.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "c62649db9f23b0cb6f752be90f17fc943eac906f4cf25b05eaa4fee4227ed4fb",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "SyncV3.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "6fbf6d6a1cf2dac097e4443da023c2592443e9af8f315ff8a7bdca92e078e22d",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "SyncV3Core.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "0c1dc4da3b63e851824dc25d41bea9ce70d2fb194277d9341ae98a8a16a81f0e",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "VideoNamesV2Core.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "6285f8217ebf0274b2d587d8551d0f443b4cf2ff5a63b77ff87a678ee9da3ef2",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "VideoV1.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "59967fccc1895179916225d12ed3f8ef445cc4d3d643db2644c2d2242c14d3d7",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "VideoV1Core.gs",
+      "kind": "unchanged-pure-module",
+      "sha256": "3eb55c89834faef6391e5f8abdffcde669e6108e9671286e0ef255fa89442f9c",
+      "sourceVersion": 21,
+      "sourceUnmodified": true
+    },
+    {
+      "file": "appsscript.json",
+      "kind": "reference-manifest-not-deployed",
+      "sha256": "60e334ba610bc4b9af2816fbae6562b811449bf768173c94db3fe4452e687433"
+    }
+  ]
+}

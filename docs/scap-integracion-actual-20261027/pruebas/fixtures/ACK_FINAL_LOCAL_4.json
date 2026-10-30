@@ -1,0 +1,522 @@
+{
+  "ok": true,
+  "syncProtocol": 3,
+  "pathVersion": 4,
+  "key": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c",
+  "revision": 1793155836748,
+  "contentHash": "fcf710c02065c585a3afdcf1c9c27d74d0fd479311a11dc51213564477a9c780",
+  "folderId": "folder_5",
+  "logicalPath": "PE-22A/PUENTES/PUENTE 1",
+  "files": [
+    {
+      "key": "photo/bb55270e-2da8-4564-bc7b-95642d1a44a0",
+      "sha256": "2f43d994a1ca0adcb03c3fef007d30771d4e92d5f9074b7e0818469c489f36d5",
+      "fileId": "file_75",
+      "folderId": "folder_74",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/01_VISTA_PANORAMICA_LADO_DERECHO/01_PUE1_PAN_DER_001.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/01_VISTA_PANORAMICA_LADO_DERECHO/01_PUE1_PAN_DER_001.jpg"
+    },
+    {
+      "key": "photo/bf71740e-41a2-466c-98ba-b5a7656d803a",
+      "sha256": "ee5b4cbcde201cd3aeddeef81dd7cc72c8a4e2bcacfcfba626c9cadfd5047f10",
+      "fileId": "file_76",
+      "folderId": "folder_74",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/01_VISTA_PANORAMICA_LADO_DERECHO/01_PUE1_PAN_DER_002.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/01_VISTA_PANORAMICA_LADO_DERECHO/01_PUE1_PAN_DER_002.jpg"
+    },
+    {
+      "key": "photo/205f0cc8-4d34-4adb-b373-ba52545caae1",
+      "sha256": "f145f99db0c7b8e51bfe22a669f8f956a09d3bbebc19031bef7ac58c5d4eaa91",
+      "fileId": "file_77",
+      "folderId": "folder_74",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/01_VISTA_PANORAMICA_LADO_DERECHO/01_PUE1_PAN_DER_003.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/01_VISTA_PANORAMICA_LADO_DERECHO/01_PUE1_PAN_DER_003.jpg"
+    },
+    {
+      "key": "photo/cde40e79-49b9-4f27-a5aa-d3473c35f4fd",
+      "sha256": "f6cae98cf36cae5247e54d4b5425f5099f1d65614b9d623cc736c6262894920b",
+      "fileId": "file_79",
+      "folderId": "folder_78",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/02_VISTA_PANORAMICA_LADO_IZQUIERDO/02_PUE1_PAN_IZQ_004.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/02_VISTA_PANORAMICA_LADO_IZQUIERDO/02_PUE1_PAN_IZQ_004.jpg"
+    },
+    {
+      "key": "photo/980168f7-cb52-48e0-acf9-848d7940caef",
+      "sha256": "57c4a7c4fd871d4b950a3a959dc2abaf675c1393b9c34c8bb07c999c8bd2b7d7",
+      "fileId": "file_80",
+      "folderId": "folder_78",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/02_VISTA_PANORAMICA_LADO_IZQUIERDO/02_PUE1_PAN_IZQ_005.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/02_VISTA_PANORAMICA_LADO_IZQUIERDO/02_PUE1_PAN_IZQ_005.jpg"
+    },
+    {
+      "key": "photo/b581078b-cc2c-4269-a391-5d0f4427678a",
+      "sha256": "5321ff2456f556ecfae7fcb225eee28292c1df57baff5fa1175f985ef57224c7",
+      "fileId": "file_81",
+      "folderId": "folder_78",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/02_VISTA_PANORAMICA_LADO_IZQUIERDO/02_PUE1_PAN_IZQ_006.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/02_VISTA_PANORAMICA_LADO_IZQUIERDO/02_PUE1_PAN_IZQ_006.jpg"
+    },
+    {
+      "key": "photo/693e79d9-5aa8-4c13-9631-67a40c21e413",
+      "sha256": "5525f6ccae4860058c44e143b68141c8a9de42299075fce27a399b3903b575ec",
+      "fileId": "file_83",
+      "folderId": "folder_82",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/03_VISTA_PERFIL/03_PUE1_PERFIL_007.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/03_VISTA_PERFIL/03_PUE1_PERFIL_007.jpg"
+    },
+    {
+      "key": "photo/5eddb952-861b-40b9-b20c-108d6935fc18",
+      "sha256": "6e1445248cdbfc40d4b4118e905fb8619949ff2670849495b8c3127769911676",
+      "fileId": "file_84",
+      "folderId": "folder_82",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/03_VISTA_PERFIL/03_PUE1_PERFIL_008.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/03_VISTA_PERFIL/03_PUE1_PERFIL_008.jpg"
+    },
+    {
+      "key": "photo/a440cfa9-53d0-46d4-bb8b-877a33c67780",
+      "sha256": "80766832b14f6da49d888f2bfd362403d36d6c6ae6fd6c013674c5d62c450d06",
+      "fileId": "file_85",
+      "folderId": "folder_82",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/03_VISTA_PERFIL/03_PUE1_PERFIL_009.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/03_VISTA_PERFIL/03_PUE1_PERFIL_009.jpg"
+    },
+    {
+      "key": "photo/b5ccd84f-1561-49b2-813b-a3d8228c6cdc",
+      "sha256": "4060325e6efcf539b48d51baffa6d7c11092a30b3401c0c800901e8381fdbb1a",
+      "fileId": "file_87",
+      "folderId": "folder_86",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/04_ACCESO_IZQUIERDO_DEL_PUENTE/04_PUE1_ACC_IZQ_010.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/04_ACCESO_IZQUIERDO_DEL_PUENTE/04_PUE1_ACC_IZQ_010.jpg"
+    },
+    {
+      "key": "photo/7bc6707c-4b50-46d3-8f59-3d316dd4891f",
+      "sha256": "8e6a88a773c3102fb219fba017b2d5e9c114ee5eeb80bfaf6c15a0bf6d7b344f",
+      "fileId": "file_88",
+      "folderId": "folder_86",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/04_ACCESO_IZQUIERDO_DEL_PUENTE/04_PUE1_ACC_IZQ_011.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/04_ACCESO_IZQUIERDO_DEL_PUENTE/04_PUE1_ACC_IZQ_011.jpg"
+    },
+    {
+      "key": "photo/4420e9c6-c243-4bd9-89c8-a0192dc89e12",
+      "sha256": "e12b5656d0793a24521c20ffa39668b7cf01266e0dbab58c10309a77251ff909",
+      "fileId": "file_89",
+      "folderId": "folder_86",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/04_ACCESO_IZQUIERDO_DEL_PUENTE/04_PUE1_ACC_IZQ_012.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/04_ACCESO_IZQUIERDO_DEL_PUENTE/04_PUE1_ACC_IZQ_012.jpg"
+    },
+    {
+      "key": "photo/496f3374-afc6-4c9b-9a0c-d70fb9546642",
+      "sha256": "ff4d5aa1f280728c9b6f2d36ad06faa6c55a5e8614005420a812b1958a83d800",
+      "fileId": "file_91",
+      "folderId": "folder_90",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/05_ACCESO_DERECHO_DEL_PUENTE/05_PUE1_ACC_DER_013.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/05_ACCESO_DERECHO_DEL_PUENTE/05_PUE1_ACC_DER_013.jpg"
+    },
+    {
+      "key": "photo/805861ae-b411-42d6-9a9a-cdc2b71f0d5a",
+      "sha256": "19755b3f4392b874166c5acc8e1eae5e276d1317d6c347611b4b388949758dd0",
+      "fileId": "file_92",
+      "folderId": "folder_90",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/05_ACCESO_DERECHO_DEL_PUENTE/05_PUE1_ACC_DER_014.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/05_ACCESO_DERECHO_DEL_PUENTE/05_PUE1_ACC_DER_014.jpg"
+    },
+    {
+      "key": "photo/1e09d18e-894e-4564-8274-e468adfc35e5",
+      "sha256": "2d31995cec6b3e9b650951cfaaa5f60f5b7feff8e761bec1abf3fa21e2494fa3",
+      "fileId": "file_93",
+      "folderId": "folder_90",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/05_ACCESO_DERECHO_DEL_PUENTE/05_PUE1_ACC_DER_015.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/05_ACCESO_DERECHO_DEL_PUENTE/05_PUE1_ACC_DER_015.jpg"
+    },
+    {
+      "key": "photo/ebfb992b-098e-4c9f-afd1-44ea32c69aea",
+      "sha256": "97ce2ebca5eb40ec22bb1f0100af56ff8b15137a89a9507f7343c5c49ca48a71",
+      "fileId": "file_95",
+      "folderId": "folder_94",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/06_SENALES_INFORMATIVAS_ACCESO_IZQUIERDO/06_PUE1_SEN_ACC_IZQ_016.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/06_SENALES_INFORMATIVAS_ACCESO_IZQUIERDO/06_PUE1_SEN_ACC_IZQ_016.jpg"
+    },
+    {
+      "key": "photo/18dfd9e2-a366-45d6-9ada-e792d5d8f1a0",
+      "sha256": "b3f61d349b797676bd5747f4f087f07a920f95e7eef3c1247c104365007b3ce5",
+      "fileId": "file_96",
+      "folderId": "folder_94",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/06_SENALES_INFORMATIVAS_ACCESO_IZQUIERDO/06_PUE1_SEN_ACC_IZQ_017.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/06_SENALES_INFORMATIVAS_ACCESO_IZQUIERDO/06_PUE1_SEN_ACC_IZQ_017.jpg"
+    },
+    {
+      "key": "photo/d0de159b-08b8-45ba-b3bd-5dae40ec14fa",
+      "sha256": "8bec4383a5394cd18c2a46d921baafea1860876bbd1c93d1ddcf7b3955a12131",
+      "fileId": "file_97",
+      "folderId": "folder_94",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/06_SENALES_INFORMATIVAS_ACCESO_IZQUIERDO/06_PUE1_SEN_ACC_IZQ_018.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/06_SENALES_INFORMATIVAS_ACCESO_IZQUIERDO/06_PUE1_SEN_ACC_IZQ_018.jpg"
+    },
+    {
+      "key": "photo/223c4d64-a928-4e2a-b314-9358e2550a2a",
+      "sha256": "da752184b8dce2998b2085e396dfa6e9bd22a2aa95f564e9b3d53d3024b752da",
+      "fileId": "file_99",
+      "folderId": "folder_98",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/07_SENALES_INFORMATIVAS_ACCESO_DERECHO/07_PUE1_SEN_ACC_DER_019.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/07_SENALES_INFORMATIVAS_ACCESO_DERECHO/07_PUE1_SEN_ACC_DER_019.jpg"
+    },
+    {
+      "key": "photo/24ead5ba-6ea2-4a01-8112-89f7e758a18b",
+      "sha256": "4011cbe3e00576d3ea3e463d5540643fe843f0bfab34e65fbf965275a3feeaee",
+      "fileId": "file_100",
+      "folderId": "folder_98",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/07_SENALES_INFORMATIVAS_ACCESO_DERECHO/07_PUE1_SEN_ACC_DER_020.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/07_SENALES_INFORMATIVAS_ACCESO_DERECHO/07_PUE1_SEN_ACC_DER_020.jpg"
+    },
+    {
+      "key": "photo/f87978be-e5c3-4fd1-af8d-9301619af98c",
+      "sha256": "50303e1d12f430e126cced2415269a5a9cea5aeba81a65b128787f04e50808ee",
+      "fileId": "file_101",
+      "folderId": "folder_98",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/07_SENALES_INFORMATIVAS_ACCESO_DERECHO/07_PUE1_SEN_ACC_DER_021.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/07_SENALES_INFORMATIVAS_ACCESO_DERECHO/07_PUE1_SEN_ACC_DER_021.jpg"
+    },
+    {
+      "key": "photo/c16c309b-eb6e-4000-bedd-1a3f4d44e8b0",
+      "sha256": "13d308a76147ee4723e362a043f4dd6e493af7306afa9215c4b19c0412c307e9",
+      "fileId": "file_103",
+      "folderId": "folder_102",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/08_SUPERFICIE_DE_RODADURA/08_PUE1_RODADURA_022.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/08_SUPERFICIE_DE_RODADURA/08_PUE1_RODADURA_022.jpg"
+    },
+    {
+      "key": "photo/ddfd1f72-76dc-4e34-9546-a69915264f52",
+      "sha256": "8e6e0930a89042af2ea21aa58a74439f5d3bd0442672da9b8bf6594b1520d02d",
+      "fileId": "file_104",
+      "folderId": "folder_102",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/08_SUPERFICIE_DE_RODADURA/08_PUE1_RODADURA_023.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/08_SUPERFICIE_DE_RODADURA/08_PUE1_RODADURA_023.jpg"
+    },
+    {
+      "key": "photo/3f36d57a-a6ea-4130-b67f-82f43db514ec",
+      "sha256": "a75ed845a08531a7a48b8a955c6b922c14bd59ce14a4b2b3d9f261040bf70512",
+      "fileId": "file_105",
+      "folderId": "folder_102",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/08_SUPERFICIE_DE_RODADURA/08_PUE1_RODADURA_024.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/08_SUPERFICIE_DE_RODADURA/08_PUE1_RODADURA_024.jpg"
+    },
+    {
+      "key": "photo/7be4e3f7-6cf6-40c3-aac2-95b1cb52a531",
+      "sha256": "35bb7081cca388b7b7fd2956e621f3dcfa79e3c9882c8b2f99cfd95ce81c24bc",
+      "fileId": "file_107",
+      "folderId": "folder_106",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/09_IMAGEN_AGUAS_ARRIBA_SUPERESTRUCTURA/09_PUE1_SUPER_AGUAS_ARRIBA_025.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/09_IMAGEN_AGUAS_ARRIBA_SUPERESTRUCTURA/09_PUE1_SUPER_AGUAS_ARRIBA_025.jpg"
+    },
+    {
+      "key": "photo/2ce681e2-72ab-446e-b50f-6eae6bc43f31",
+      "sha256": "ea862e0b102b40e1062a64ba2fde4c7e3c963525ba21bd6928273d4089cf7640",
+      "fileId": "file_108",
+      "folderId": "folder_106",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/09_IMAGEN_AGUAS_ARRIBA_SUPERESTRUCTURA/09_PUE1_SUPER_AGUAS_ARRIBA_026.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/09_IMAGEN_AGUAS_ARRIBA_SUPERESTRUCTURA/09_PUE1_SUPER_AGUAS_ARRIBA_026.jpg"
+    },
+    {
+      "key": "photo/81db2526-2a7e-4819-b9fb-89b9e0e3e8da",
+      "sha256": "63982278284799fe32fbe0378b99b6726b28adbd17911725f1aa996961d1a4a9",
+      "fileId": "file_109",
+      "folderId": "folder_106",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/09_IMAGEN_AGUAS_ARRIBA_SUPERESTRUCTURA/09_PUE1_SUPER_AGUAS_ARRIBA_027.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/09_IMAGEN_AGUAS_ARRIBA_SUPERESTRUCTURA/09_PUE1_SUPER_AGUAS_ARRIBA_027.jpg"
+    },
+    {
+      "key": "photo/7c8130d1-2c2d-4516-99dc-53c02b4844e5",
+      "sha256": "f4f4ae3553faeb97fcaae23758b965378a8231e05011cb23f7fb15eebf9a6178",
+      "fileId": "file_111",
+      "folderId": "folder_110",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/10_IMAGEN_AGUAS_ABAJO_SUPERESTRUCTURA/10_PUE1_SUPER_AGUAS_ABAJO_028.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/10_IMAGEN_AGUAS_ABAJO_SUPERESTRUCTURA/10_PUE1_SUPER_AGUAS_ABAJO_028.jpg"
+    },
+    {
+      "key": "photo/d1dca539-2918-4ea8-8ec9-18f0fe2c33a2",
+      "sha256": "b56e5a58a4cf474a2cf25a4c93bada6fe5c7cf46eb6f0ee47d59f7904eec4db3",
+      "fileId": "file_112",
+      "folderId": "folder_110",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/10_IMAGEN_AGUAS_ABAJO_SUPERESTRUCTURA/10_PUE1_SUPER_AGUAS_ABAJO_029.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/10_IMAGEN_AGUAS_ABAJO_SUPERESTRUCTURA/10_PUE1_SUPER_AGUAS_ABAJO_029.jpg"
+    },
+    {
+      "key": "photo/ce93ac1b-beda-4486-ba38-d8ccbcac1ce5",
+      "sha256": "a4ab409f3c983ede400d4a7263849276b0c79a4cc4d258ea764a1e4d312f596f",
+      "fileId": "file_113",
+      "folderId": "folder_110",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/10_IMAGEN_AGUAS_ABAJO_SUPERESTRUCTURA/10_PUE1_SUPER_AGUAS_ABAJO_030.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/10_IMAGEN_AGUAS_ABAJO_SUPERESTRUCTURA/10_PUE1_SUPER_AGUAS_ABAJO_030.jpg"
+    },
+    {
+      "key": "photo/b839c5ea-53db-4458-b2c7-009ab4c8f044",
+      "sha256": "67d8d85d48434f3d35591b2dd6fae9c7745874e245c5b1ace974264cea67b28f",
+      "fileId": "file_115",
+      "folderId": "folder_114",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/11_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ARRIBA/11_PUE1_VEREDA_BARANDA_GUARDAVIA_ARRIBA_031.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/11_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ARRIBA/11_PUE1_VEREDA_BARANDA_GUARDAVIA_ARRIBA_031.jpg"
+    },
+    {
+      "key": "photo/26b21f48-5ed0-412f-817f-7aef7be702b7",
+      "sha256": "80552c1168800d1802a886c20d092091d48fc2c99e1d4fb873e7bc98ffe54d05",
+      "fileId": "file_116",
+      "folderId": "folder_114",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/11_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ARRIBA/11_PUE1_VEREDA_BARANDA_GUARDAVIA_ARRIBA_032.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/11_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ARRIBA/11_PUE1_VEREDA_BARANDA_GUARDAVIA_ARRIBA_032.jpg"
+    },
+    {
+      "key": "photo/8acebc37-697b-4248-9ef6-329e9ddf3fba",
+      "sha256": "3cf042ebff78a463206751326bc4c397204556b3ff528a2ea6f783fd2a511984",
+      "fileId": "file_117",
+      "folderId": "folder_114",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/11_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ARRIBA/11_PUE1_VEREDA_BARANDA_GUARDAVIA_ARRIBA_033.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/11_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ARRIBA/11_PUE1_VEREDA_BARANDA_GUARDAVIA_ARRIBA_033.jpg"
+    },
+    {
+      "key": "photo/4c7b5925-1eb7-40dd-9e66-bf2db4c2f542",
+      "sha256": "4eed336c629be6b0b04d303b122569869ac5909cd34e3d6a53f43792ec9fef1f",
+      "fileId": "file_119",
+      "folderId": "folder_118",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/12_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ABAJO/12_PUE1_VEREDA_BARANDA_GUARDAVIA_ABAJO_034.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/12_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ABAJO/12_PUE1_VEREDA_BARANDA_GUARDAVIA_ABAJO_034.jpg"
+    },
+    {
+      "key": "photo/981a0da6-abfe-41f8-b76b-cc6ae9017955",
+      "sha256": "30c54b47d05ea9bab3a9edd6f0049f27da66e524f8b5087203995be6da316054",
+      "fileId": "file_120",
+      "folderId": "folder_118",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/12_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ABAJO/12_PUE1_VEREDA_BARANDA_GUARDAVIA_ABAJO_035.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/12_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ABAJO/12_PUE1_VEREDA_BARANDA_GUARDAVIA_ABAJO_035.jpg"
+    },
+    {
+      "key": "photo/aa366f7e-9615-4ed7-8d2c-876441becce3",
+      "sha256": "f43192a11a8a2a20b3c727d66c8b6315d01e7df31a69039dd25a92e608d3794c",
+      "fileId": "file_121",
+      "folderId": "folder_118",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/12_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ABAJO/12_PUE1_VEREDA_BARANDA_GUARDAVIA_ABAJO_036.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/12_VEREDA_BARANDAS_Y_GUARDAVIA_AGUAS_ABAJO/12_PUE1_VEREDA_BARANDA_GUARDAVIA_ABAJO_036.jpg"
+    },
+    {
+      "key": "photo/f631537e-aee6-4ab5-b5a9-f68dff8a6a53",
+      "sha256": "31a462bc5000bde9c525554b8672e604f4aba68e1499288d375ce44f950a6971",
+      "fileId": "file_123",
+      "folderId": "folder_122",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/13_TUBERIA_DE_DRENAJE_AGUAS_ARRIBA/13_PUE1_DRENAJE_ARRIBA_037.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/13_TUBERIA_DE_DRENAJE_AGUAS_ARRIBA/13_PUE1_DRENAJE_ARRIBA_037.jpg"
+    },
+    {
+      "key": "photo/c33c72fc-3d35-47c8-9219-fa337e0fc11c",
+      "sha256": "755f91a0d3f69ac2de94dfe85dcc48976aa52d1466660c1656c4d1a1304e84b3",
+      "fileId": "file_124",
+      "folderId": "folder_122",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/13_TUBERIA_DE_DRENAJE_AGUAS_ARRIBA/13_PUE1_DRENAJE_ARRIBA_038.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/13_TUBERIA_DE_DRENAJE_AGUAS_ARRIBA/13_PUE1_DRENAJE_ARRIBA_038.jpg"
+    },
+    {
+      "key": "photo/3eb7cb7a-2e11-411d-b809-bfcbc2c847b1",
+      "sha256": "401e3384155856cf958feaa92737aff4fd39f7d15b06f33628fd179f255c65ed",
+      "fileId": "file_125",
+      "folderId": "folder_122",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/13_TUBERIA_DE_DRENAJE_AGUAS_ARRIBA/13_PUE1_DRENAJE_ARRIBA_039.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/13_TUBERIA_DE_DRENAJE_AGUAS_ARRIBA/13_PUE1_DRENAJE_ARRIBA_039.jpg"
+    },
+    {
+      "key": "photo/e84a7564-38da-4412-afa4-80432b221851",
+      "sha256": "c1189afda32797ffd62595352222deaa5a4d1773c2b4100171cf0295aad62530",
+      "fileId": "file_127",
+      "folderId": "folder_126",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/14_TUBERIA_DE_DRENAJE_AGUAS_ABAJO/14_PUE1_DRENAJE_ABAJO_040.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/14_TUBERIA_DE_DRENAJE_AGUAS_ABAJO/14_PUE1_DRENAJE_ABAJO_040.jpg"
+    },
+    {
+      "key": "photo/9dda318c-fd09-4705-8700-49fa300bf0f8",
+      "sha256": "d0528dc1a7dda656d03e4aa099ab2e8f18e8e20fdf35f426a9536daf09dfb736",
+      "fileId": "file_128",
+      "folderId": "folder_126",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/14_TUBERIA_DE_DRENAJE_AGUAS_ABAJO/14_PUE1_DRENAJE_ABAJO_041.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/14_TUBERIA_DE_DRENAJE_AGUAS_ABAJO/14_PUE1_DRENAJE_ABAJO_041.jpg"
+    },
+    {
+      "key": "photo/c6e8c7f4-597f-4581-8d92-6e59f820e4a0",
+      "sha256": "139fead0318a01d68b97cdd1a755f5126e8d2556ee42e8238f1cc4b3e36a250a",
+      "fileId": "file_129",
+      "folderId": "folder_126",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/14_TUBERIA_DE_DRENAJE_AGUAS_ABAJO/14_PUE1_DRENAJE_ABAJO_042.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/14_TUBERIA_DE_DRENAJE_AGUAS_ABAJO/14_PUE1_DRENAJE_ABAJO_042.jpg"
+    },
+    {
+      "key": "photo/16f8944b-459c-4dfa-aad7-89eef009b526",
+      "sha256": "bafcd569c5ec8be5aabb9cc2a0860a2ceeeeb4563cd133c4fa7dedc509822de6",
+      "fileId": "file_131",
+      "folderId": "folder_130",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/15_ESTRIBO_IZQUIERDO/15_PUE1_ESTRIBO_IZQ_043.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/15_ESTRIBO_IZQUIERDO/15_PUE1_ESTRIBO_IZQ_043.jpg"
+    },
+    {
+      "key": "photo/4a06584e-b634-4907-88d0-29d931adf772",
+      "sha256": "01489877034792f0c524ae0b116b1a4e00288644b6ba84eef3f3ab81da9bf80f",
+      "fileId": "file_132",
+      "folderId": "folder_130",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/15_ESTRIBO_IZQUIERDO/15_PUE1_ESTRIBO_IZQ_044.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/15_ESTRIBO_IZQUIERDO/15_PUE1_ESTRIBO_IZQ_044.jpg"
+    },
+    {
+      "key": "photo/1f87e2da-843b-42fa-be3f-f31accd918fc",
+      "sha256": "c0590f666860b5bf9ad3f71cb1c9a554325876df46004e4f8258d1225db5e363",
+      "fileId": "file_134",
+      "folderId": "folder_133",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/16_ESTRIBO_DERECHO/16_PUE1_ESTRIBO_DER_045.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/16_ESTRIBO_DERECHO/16_PUE1_ESTRIBO_DER_045.jpg"
+    },
+    {
+      "key": "photo/65d407fd-bc88-4244-8857-341920d5eb11",
+      "sha256": "f01d2882791ad0ae9fc3b6ff435ed216d24370d5b1d910a367c28a6641154724",
+      "fileId": "file_135",
+      "folderId": "folder_133",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/16_ESTRIBO_DERECHO/16_PUE1_ESTRIBO_DER_046.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/16_ESTRIBO_DERECHO/16_PUE1_ESTRIBO_DER_046.jpg"
+    },
+    {
+      "key": "photo/703f93bd-5641-46ac-ba62-46a19506d102",
+      "sha256": "dc97ec1c13db93c1f41f331201574e0389c32f3f3b1cc6aeed6cc98013b146b6",
+      "fileId": "file_137",
+      "folderId": "folder_136",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/17_PILARES/17_PUE1_PILARES_047.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/17_PILARES/17_PUE1_PILARES_047.jpg"
+    },
+    {
+      "key": "photo/4b6d5cf4-dc30-43a7-8649-729f7653a1e1",
+      "sha256": "fa0b7ab8231fb01b6138d773a76553688e84c0707fa1f7da52caf0527eca9228",
+      "fileId": "file_138",
+      "folderId": "folder_136",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/17_PILARES/17_PUE1_PILARES_048.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/17_PILARES/17_PUE1_PILARES_048.jpg"
+    },
+    {
+      "key": "photo/5b826774-dcb3-4e6a-99dd-8969fd06161e",
+      "sha256": "12b424614570672404f1f48db0e6e588e95cde3209764a23d61cd6b80e34a136",
+      "fileId": "file_140",
+      "folderId": "folder_139",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/18_TABLERO_VISTA_INFERIOR/18_PUE1_TABLERO_INF_049.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/18_TABLERO_VISTA_INFERIOR/18_PUE1_TABLERO_INF_049.jpg"
+    },
+    {
+      "key": "photo/2a20552f-16cf-44c7-b16f-52190d6a8193",
+      "sha256": "01e15e3df77cfd17f6020a20d3600cfec630ee9a526af34ae28df3c171337e87",
+      "fileId": "file_141",
+      "folderId": "folder_139",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/18_TABLERO_VISTA_INFERIOR/18_PUE1_TABLERO_INF_050.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/18_TABLERO_VISTA_INFERIOR/18_PUE1_TABLERO_INF_050.jpg"
+    },
+    {
+      "key": "photo/fd6fe898-bade-44c6-a8bf-3f76a9c22330",
+      "sha256": "2958b4fd89b73c75484bd29e7a13dcd6cc6fe7ebdc766b831e619f6c93a084ab",
+      "fileId": "file_143",
+      "folderId": "folder_142",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/19_VISTA_DE_CAUCE_AGUAS_ARRIBA/19_PUE1_CAUCE_ARRIBA_051.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/19_VISTA_DE_CAUCE_AGUAS_ARRIBA/19_PUE1_CAUCE_ARRIBA_051.jpg"
+    },
+    {
+      "key": "photo/306b62c6-559e-4f2c-9ac7-0a3c64257301",
+      "sha256": "45d5ac2e1e73cbda8bc52860d7af82b74215ebc51a8417be10fb17105c2d7185",
+      "fileId": "file_144",
+      "folderId": "folder_142",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/19_VISTA_DE_CAUCE_AGUAS_ARRIBA/19_PUE1_CAUCE_ARRIBA_052.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/19_VISTA_DE_CAUCE_AGUAS_ARRIBA/19_PUE1_CAUCE_ARRIBA_052.jpg"
+    },
+    {
+      "key": "photo/db87d670-4b10-4157-9418-42c6e5fa17bf",
+      "sha256": "a9a95c3a1bdb2e06f34a7f8c81c43c04842b26faacfa7424efd097e95bf5db10",
+      "fileId": "file_146",
+      "folderId": "folder_145",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/20_VISTA_DE_CAUCE_AGUAS_ABAJO/20_PUE1_CAUCE_ABAJO_053.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/20_VISTA_DE_CAUCE_AGUAS_ABAJO/20_PUE1_CAUCE_ABAJO_053.jpg"
+    },
+    {
+      "key": "photo/e81a5f93-ed36-4bf7-bb64-368cd58ce33d",
+      "sha256": "233135da63f54929b567200f02afd65325e6668d96570f7353cb9f2955ab949f",
+      "fileId": "file_147",
+      "folderId": "folder_145",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/20_VISTA_DE_CAUCE_AGUAS_ABAJO/20_PUE1_CAUCE_ABAJO_054.jpg",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/20_VISTA_DE_CAUCE_AGUAS_ABAJO/20_PUE1_CAUCE_ABAJO_054.jpg"
+    },
+    {
+      "key": "SCAP.xlsx",
+      "sha256": "cd9a7f3878720919cf3c0ae15b067f83cc977b9fc46c5d185c2a5636bfef63ea",
+      "fileId": "file_148",
+      "folderId": "folder_73",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/SCAP.xlsx",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/SCAP.xlsx"
+    },
+    {
+      "key": "sketch/a13df879-d00d-4e7f-a91b-63f0b20fefe2",
+      "sha256": "705ba7e4b77bf168d826a6fb525c897c98d256980434e613be34928261fc030d",
+      "fileId": "file_150",
+      "folderId": "folder_149",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/croquis/CROQUIS_1.png",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/croquis/CROQUIS_1.png"
+    },
+    {
+      "key": "sketch/d40b87e6-4b19-4197-a63c-78c1efe08e97",
+      "sha256": "705ba7e4b77bf168d826a6fb525c897c98d256980434e613be34928261fc030d",
+      "fileId": "file_151",
+      "folderId": "folder_149",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/croquis/CROQUIS_2.png",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/croquis/CROQUIS_2.png"
+    },
+    {
+      "key": "sketch/e4b65d15-b2ed-47c9-9491-06ba3ba54cf3",
+      "sha256": "705ba7e4b77bf168d826a6fb525c897c98d256980434e613be34928261fc030d",
+      "fileId": "file_152",
+      "folderId": "folder_149",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/croquis/CROQUIS_3.png",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/croquis/CROQUIS_3.png"
+    },
+    {
+      "key": "manifest.json",
+      "sha256": "bb9cc4047b8f465d8951dde98ee546b152e15c6995a77e3b6b0e0aff09d14983",
+      "fileId": "file_153",
+      "folderId": "folder_73",
+      "requestedPath": "SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/manifest.json",
+      "logicalPath": "PE-22A/PUENTES/PUENTE 1/SCAP/1a52f848-a10e-4a0c-b599-2825c948550c/manifest.json"
+    }
+  ],
+  "sicFiles": [
+    {
+      "format": "SIC-17",
+      "fileId": "file_155",
+      "folderId": "folder_154",
+      "logicalPath": "PE-22A/EXCEL_SIC/SIC-17.xlsx",
+      "sha256": "4a8a5e897f0cef9fc8e578e6955fc80467454fc49dc06151a93b9dcc90b0b8e0",
+      "recordIds": [
+        "82273228-6374-45b2-b58f-36384c398adf"
+      ]
+    },
+    {
+      "format": "SIC-17A",
+      "fileId": "file_157",
+      "folderId": "folder_154",
+      "logicalPath": "PE-22A/EXCEL_SIC/SIC-17A.xlsx",
+      "sha256": "b9f5fdc7a1bb6baafa495a8de6f28eaa0905ea3b6aabf41e818cb7f531ceb422",
+      "recordIds": [
+        "82273228-6374-45b2-b58f-36384c398adf"
+      ]
+    },
+    {
+      "format": "SIC-17B",
+      "fileId": "file_159",
+      "folderId": "folder_154",
+      "logicalPath": "PE-22A/EXCEL_SIC/SIC-17B.xlsx",
+      "sha256": "bf732d5a47c28267b6a9476dd0e08e86b490f6109ce4ac0d96eca89d54bced54",
+      "recordIds": [
+        "82273228-6374-45b2-b58f-36384c398adf"
+      ]
+    }
+  ],
+  "retainedSicFormats": [],
+  "alreadyExists": false,
+  "technicalDeliveryStatus": "DELIVERED",
+  "georeferencingStatus": "PENDING_EXTERNAL",
+  "externalGeoreferencingStatus": "PENDING",
+  "orderSource": "CONTRACTUAL_PR"
+}

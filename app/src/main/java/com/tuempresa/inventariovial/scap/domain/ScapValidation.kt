@@ -110,7 +110,7 @@ object ScapValidation {
                 else pending+="G1 · ${e.elementCode}: metrado pendiente."
             }
             val c=entry.condition
-            if(c==null || ScapPercentages.values(c).all {it==null}) unevaluated++
+            if(c==null || ScapPercentages.error(ScapPercentages.values(c))!=null) unevaluated++
             val err=if(c==null) "Falta evaluación de condición." else ScapPercentages.error(ScapPercentages.values(c))
             if(err!=null)pending+="G1 · ${e.elementCode}: $err"
             (0..5).forEach {level->val rawPercent=s.values(e.id)["percent$level"].orEmpty()

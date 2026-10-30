@@ -28,7 +28,7 @@ object PavementRules {
                 }
             }
             "SLABS" -> require(d.slabs.split(',').all { it.trim().toIntOrNull() != null } && slabIds(d).isNotEmpty() && slabIds(d).all { it in 1..(s.slabRows * s.slabColumns) }) { "Selecciona losas válidas." }
-            "GLOBAL" -> require(existing.none { it.id != d.id && it.code == d.code }) { "Este daño global ya fue registrado; modifícalo." }
+            "GLOBAL" -> require(d.code==26 || existing.none { it.id != d.id && it.code == d.code }) { "Este daño global ya fue registrado; modifícalo." }
         }
         PavementSlabGeometry.validate(s,d)
         if(PavementDamageFields.crackWidth(d.code))require(d.crackWidthMm == null || (d.crackWidthMm.isFinite() && d.crackWidthMm >= 0)) { "Ancho de fisura inválido." }

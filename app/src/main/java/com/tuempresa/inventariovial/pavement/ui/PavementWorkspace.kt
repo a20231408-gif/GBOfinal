@@ -170,10 +170,12 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
     var clearJoints by remember {mutableStateOf(false)}
     var jointDraft by remember(sample.id) {mutableStateOf<Set<PavementJointAnnotations.Mark>?>(null)}
     var jointUndo by remember(sample.id) {mutableStateOf<List<Set<PavementJointAnnotations.Mark>>>(emptyList())}
-    val jointPreviewId=remember(sample.id) {UUID.randomUUID().toString()}
+    var jointPreviewId by rememberSaveable(sample.id) {mutableStateOf(UUID.randomUUID().toString())}
+    var jointEditingId by rememberSaveable(sample.id) {mutableStateOf<String?>(null)}
     LaunchedEffect(definition.code) {
         if(definition.code==26) {
-            val global=damages.singleOrNull {it.code==26 && it.geometry=="GLOBAL"}
+            val existing=damages.firstOrNull{it.code==26};jointEditingId=existing?.id
+            val global=existing
             jointDraft=global?.let {PavementJointAnnotations.marks(sample,it.id)} ?: emptySet()
             jointUndo=emptyList();markingJoints=true
         }
@@ -247,7 +249,7 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                 Column {
                     Text("Origen inferior izquierdo · x/ancho → · y/largo ↑ · metros")
                     if(movingId!=null) TextButton(onClick={movingId=null}) { Text("Terminar movimiento") }
-                    val global=damages.singleOrNull {it.code==26 && it.geometry=="GLOBAL"}
+                    val global=damages.firstOrNull {it.id==jointEditingId && it.code==26}
                     val preview=if(definition.code==26 && jointDraft!=null)global ?: newDamage().copy(id=jointPreviewId) else null
                     val sketchSample=if(preview!=null)sample.copy(sicDataJson=PavementJointAnnotations.update(sample,preview,jointDraft!!))else sample
                     val sketchDamages=if(preview!=null && global==null)damages+preview else damages
@@ -272,7 +274,7 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                     if(sample.surface=="RIGID") Text("${sample.slabRows} filas × ${sample.slabColumns} columnas = ${PavementHeader.totalSlabs(sample)} losas · longitud: ${sample.slabRows} × ${PavementHeader.slabLength(sample)} = ${sample.largoM} m")
                     PavementRules.warnings(sample, damages).forEach { Text(it, color = MaterialTheme.colorScheme.error) }
                     if (editable) {
-                        Choice("Daño", definition, PavementCatalog.forSurface(surface), { "${it.code} · ${it.name}" }) { definition = it; severity = if(it.code==26)damages.singleOrNull {d->d.code==26}?.severity ?: it.severities.firstOrNull() else it.severities.firstOrNull(); jointDraft=null;jointUndo=emptyList(); first = null; slabSet = emptySet(); movingId=null;markingJoints=false;if(it.code in setOf(22,25,27))localSlab=true }
+                        Choice("Daño", definition, PavementCatalog.forSurface(surface), { "${it.code} · ${it.name}" }) { definition = it; severity = it.severities.firstOrNull(); jointDraft=null;jointUndo=emptyList(); first = null; slabSet = emptySet(); movingId=null;markingJoints=false;if(it.code in setOf(22,25,27))localSlab=true }
                         if (definition.severities.isNotEmpty()) Choice("Severidad", severity ?: definition.severities.first(), definition.severities, { PavementSeverity.label(it) }) { severity = it }
                         else Text("Severidad: no aplica según catálogo.")
                         val help = remember(definition.code, severity) { PavementTechnicalText.severity(context, definition.code, severity) }
@@ -284,9 +286,17 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                             Text(if(definition.code==22)"Rotura de esquina: toca dos puntos cerca de bordes adyacentes de la misma losa. Los extremos del croquis se ajustan a esos bordes; se conservan tus medidas." else if(localSlab) "${PavementSlabGeometry.mark(definition.code).name}: punto = un toque; línea o zona parcial = dos puntos. Cantidad medida en losas." else "Símbolo por losa sin extensión parcial. Selecciona las losas y acepta.")
                         }
                         if(definition.code==26) {
-                            val global=damages.singleOrNull {it.code==26 && it.geometry=="GLOBAL"}
+                            val global=damages.firstOrNull {it.id==jointEditingId && it.code==26}
                             Text("Selecciona la junta afectada")
-                            Text("Evaluación global: las marcas son referencias visuales, no cantidades PCI adicionales.")
+                            Text("Cada ocurrencia conserva junta, gravedad y evidencia. La evaluación global PCI se confirma por separado; no se suman deducciones por cada marca.")
+                            TextButton(onClick={jointEditingId=null;jointPreviewId=UUID.randomUUID().toString();jointDraft=emptySet();jointUndo=emptyList();markingJoints=true;selected=null}){Text("Agregar otro daño de junta")}
+                            damages.filter{it.code==26}.forEach{d->
+                                TextButton(onClick={jointEditingId=d.id;jointDraft=PavementJointAnnotations.marks(sample,d.id);jointUndo=emptyList();severity=d.severity;markingJoints=true;selected=d.id}){
+                                    Text("${if(PavementJointOccurrences.individual(sample,d.id))"Editar junta"else"Editar global histórico"} #${d.correlativo} · ${PavementSeverity.label(d.severity)} · ${PavementJointAnnotations.marks(sample,d.id).size} segmentos/cruces")
+                                }
+                            }
+                            Text("Calificación global PCI: ${PavementJointOccurrences.assessment(sample,damages)?.let{PavementSeverity.label(it)} ?: "Pendiente de evaluación global"}")
+                            Row{listOf("L","M","H").forEach{level->TextButton(onClick={scope.launch{runCatching{repo.saveSealUnitAssessment(sample.id,level)}.onFailure{message=it.message.orEmpty()}}}){Text("Global ${PavementSeverity.label(level)}")}}}
                             Text("Juntas/cruces seleccionados: ${(jointDraft ?: global?.let {PavementJointAnnotations.marks(sample,it.id)} ?: emptySet()).size}")
                             if(global!=null && PavementJointAnnotations.needsReview(sample,global.id))Text("La malla cambió: marcas conservadas pendientes de revisión.",color=MaterialTheme.colorScheme.error)
                             if(markingJoints) {
@@ -294,7 +304,7 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                                 TextButton(onClick={jointDraft=null;jointUndo=emptyList();markingJoints=false;message="Selección cancelada; juntas guardadas conservadas."}) {Text("Cancelar selección")}
                                 Button(enabled=global==null || !PavementJointAnnotations.needsReview(sample,global.id),onClick={message="";draft=global?.copy(severity=severity) ?: newDamage().copy(id=jointPreviewId)}) {Text("Confirmar juntas y severidad")}
                             } else OutlinedButton(onClick={jointDraft=global?.let {PavementJointAnnotations.marks(sample,it.id)} ?: emptySet();jointUndo=emptyList();markingJoints=true;movingId=null;first=null}) {Text("Editar juntas")}
-                            if(global!=null && !markingJoints)TextButton(onClick={clearJoints=true}) {Text("Limpiar todas las marcas de juntas")}
+                            if(global!=null && !markingJoints && !PavementJointOccurrences.individual(sample,global.id))TextButton(onClick={clearJoints=true}) {Text("Limpiar todas las marcas de juntas")}
                         }
                         if (definition.geometry == PavementGeometry.GLOBAL && definition.code!=26 || definition.geometry == PavementGeometry.SLABS && !localSlab && definition.code!=22) Button(onClick = { message=""; draft = if(definition.code==26)damages.singleOrNull {it.code==26}?.copy(severity=severity) ?: newDamage() else newDamage() }) { Text(if (definition.geometry == PavementGeometry.GLOBAL) "Registrar global" else "Aceptar ${slabSet.size} losas") }
                     }
@@ -307,12 +317,12 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                             Column(Modifier.padding(10.dp)) {
                                 Text("${d.code}-#${d.correlativo} ${d.name} · ${d.severity ?: "N/A"}")
                                 Text("X: ${PavementDisplay.number(d.x1)} m · Y: ${PavementDisplay.number(d.y1)} m")
-                                Text("Cantidad: ${PavementDisplay.number(PavementRules.quantity(d))} · ${d.observation.orEmpty()}")
+                                Text(if(d.code==26 && PavementJointOccurrences.individual(sample,d.id))"Longitud referencial: ${PavementDisplay.number(d.lengthM)} m · ${d.observation.orEmpty()}"else"Cantidad: ${PavementDisplay.number(PavementRules.quantity(d))} · ${d.observation.orEmpty()}")
                                 if(editable) PavementDamageActions(d,importing,
-                                    onModify={ chosen -> message="";draft=chosen;movingId=null },
+                                    onModify={ chosen -> message="";if(chosen.code==26){jointEditingId=chosen.id;jointDraft=PavementJointAnnotations.marks(sample,chosen.id);severity=chosen.severity};draft=chosen;movingId=null },
                                     onMove={ chosen -> movingId=chosen.id;first=null;slabSet=emptySet();message="Arrastra en el esquema para mover ${chosen.code}-#${chosen.correlativo}." },
                                     onCamera={takePhoto(d.id)},
-                                    onDelete={ chosen -> scope.launch {runCatching{repo.deleteDamage(chosen)}.onFailure{message=it.message.orEmpty()}} },
+                                    onDelete={ chosen -> scope.launch {runCatching{repo.deleteDamage(chosen)}.onSuccess{if(chosen.id==jointEditingId){jointEditingId=null;jointPreviewId=UUID.randomUUID().toString();jointDraft=emptySet()};selected=null}.onFailure{message=it.message.orEmpty()}} },
                                     onImport={chosen->importPhoto(chosen.id)})
                                 if (selected == d.id) key(d.id) { PhotoGallery(d.id, photoRevision, repo, editable, { photoRevision++ }, { message=it },
                                     onCamera={takePhoto(d.id)},onImport={importPhoto(d.id)},
@@ -354,16 +364,16 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
         }
     }
     if (header) SampleDialog(sample, message, { header = false }) { updated -> scope.launch { runCatching { repo.saveSample(updated) }.onSuccess { header = false; message = "Cabecera guardada." }.onFailure { message = it.message.orEmpty() } } }
-    if(clearJoints)AlertDialog(onDismissRequest={clearJoints=false},title={Text("¿Limpiar las marcas de juntas?")},text={Text("Se conservarán el daño GLOBAL, severidad, observaciones y fotografías.")},confirmButton={TextButton(onClick={
+    if(clearJoints)AlertDialog(onDismissRequest={clearJoints=false},title={Text("¿Limpiar las marcas de juntas?")},text={Text("Se conservarán esta ocurrencia, su gravedad, observaciones y fotografías. Las otras juntas no cambiarán.")},confirmButton={TextButton(onClick={
         clearJoints=false
-        damages.singleOrNull{it.code==26}?.let {d->scope.launch {runCatching {repo.saveJointMarks(sample.id,d.id,emptySet())}.onFailure {message=it.message.orEmpty()}}}
+        damages.firstOrNull{it.id==jointEditingId && it.code==26}?.let {d->scope.launch {runCatching {repo.saveJointMarks(sample.id,d.id,emptySet())}.onFailure {message=it.message.orEmpty()}}}
     }){Text("Limpiar marcas")}},dismissButton={TextButton(onClick={clearJoints=false}){Text("Cancelar")}})
     fun saveEditedDamage(updated:PavementDamageEntity,patchMode:String?=null) { scope.launch { runCatching {
         val marks=if(updated.code==26)jointDraft else null
         if(patchMode!=null && updated.code in setOf(25,27))repo.saveDamageWithBoundary(updated,patchMode)
         else if(patchMode!=null)repo.saveDamageWithPatchMode(updated,patchMode)
         else if(marks!=null)repo.saveDamageWithJointMarks(updated,marks)else repo.saveDamage(updated)
-    }.onSuccess { if(updated.code==26){jointDraft=null;jointUndo=emptyList();markingJoints=false};draft = null; slabSet = emptySet(); message = "Daño guardado." }.onFailure { message = it.message.orEmpty() } } }
+    }.onSuccess { if(updated.code==26){jointEditingId=updated.id;jointDraft=null;jointUndo=emptyList();markingJoints=false};draft = null; slabSet = emptySet(); message = "Daño guardado." }.onFailure { message = it.message.orEmpty() } } }
     draft?.let {damage->DamageDialog(damage,message,{draft=null},save={saveEditedDamage(it)},sample=sample,patchSave={d,m->saveEditedDamage(d,m)})}
 if (closeConfirm) AlertDialog(onDismissRequest = { closeConfirm = false }, title = { Text("Cerrar muestra") }, text = { Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
     com.tuempresa.inventariovial.localfiles.RecordDeliveryChoice("PAVEMENT",sample.id,false)

@@ -1,6 +1,6 @@
 # Registro de archivos de prueba — Drive V4
 
-Raíz autorizada: [GBO Inventario Vial](https://drive.google.com/drive/folders/1FQBVRD3BK1rOBfC8NdRzPQt3fvU40V23). Se conservó todo el contenido; no hubo limpieza. Esta lista deduplica IDs de ACK y muestra la última revisión observada de cada archivo. No es un inventario general del Drive del usuario.
+Raíz autorizada: [GBO Inventario Vial](https://drive.google.com/drive/folders/CONFIGURAR_ID_PRIVADO). Se conservó todo el contenido; no hubo limpieza. Esta lista deduplica IDs de ACK y muestra la última revisión observada de cada archivo. No es un inventario general del Drive del usuario.
 
 ## Elementos ficticios
 

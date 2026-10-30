@@ -18,7 +18,8 @@ import java.util.Date
 }
 
 /** No writes or background effects: callbacks remain the existing manual retry action. */
-@Composable fun DriveDeliveryCard(i:DriveSyncIntent,identity:DriveDeliveryIdentity,view:DriveDeliveryView,progress:SyncProgress?=null,onRetry:()->Unit) {
+@Composable fun DriveDeliveryCard(i:DriveSyncIntent,identity:DriveDeliveryIdentity,view:DriveDeliveryView,progress:SyncProgress?=null,
+    onReview:(()->Unit)?=null,onRetry:()->Unit) {
     key(i.key) {
         Card(Modifier.fillMaxWidth().testTag("delivery-${i.key}")) {
             Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
@@ -29,6 +30,7 @@ import java.util.Date
                     color=if(view.status==DriveDeliveryStatus.ATTENTION)MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
                 Text(view.message)
                 Text(view.files,style=MaterialTheme.typography.bodyMedium)
+                if(view.review && onReview!=null)OutlinedButton(onClick=onReview,modifier=Modifier.testTag("drive-review-fields")){Text("REVISAR CAMPOS")}
                 DeliveryDetail("Destino confirmado") {
                     val ack=DriveDeliveryPresentation.json(i.receiptJson)
                     if(view.confirmed&&ack!=null)SelectionContainer{Column {
@@ -70,7 +72,7 @@ import java.util.Date
                         i.error?.let{Text(it,color=MaterialTheme.colorScheme.error)}
                     }}
                 }
-                if(!view.confirmed&&identity.validated&&i.state!="CONFLICT")TextButton(onClick=onRetry){Text("Reintentar ahora")}
+                if(view.retryAllowed)TextButton(onClick=onRetry){Text("Reintentar ahora")}
             }
         }
     }

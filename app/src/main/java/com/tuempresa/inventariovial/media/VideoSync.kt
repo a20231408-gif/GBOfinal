@@ -32,19 +32,25 @@ class VideoHttp internal constructor(
 ):VideoTransport {
     private val scripts=client.newBuilder().followRedirects(true).build()
     private var namingVersion=0
+    private var panelVersion=0
     private fun request(payload:JSONObject):JSONObject=scripts.newCall(Request.Builder().url(endpoint).post(payload.put("token",apiToken).toString().toRequestBody("application/json".toMediaType())).build()).execute().use {require(it.isSuccessful);JSONObject(it.body?.string() ?: "{}")}
     override fun available():Boolean {
         namingVersion=0
+        panelVersion=0
         return scripts.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
             it.isSuccessful && JSONObject(it.body?.string() ?: "{}").let {c->
                 val available=c.optBoolean("ok") && c.optInt("videoProtocol")==1 && c.optString("videoScope")=="SCAP_ONLY"
                 if(available && c.optInt("readableVideoNamingVersion")==2)namingVersion=2
+                if(available)panelVersion=c.optInt("scapPhotoPanelVersion")
                 available
             }
         }
     }
     private fun payload(v:VideoEntity,action:String)=JSONObject().put("action",action).put("videoProtocol",1).put("parentKey",v.parentKey).put("mediaId",v.id).put("category",v.category).put("categoryLabel",v.categoryLabel).put("mimeType",v.mimeType).put("sizeBytes",v.sizeBytes).put("sha256",v.sha256)
-    private fun namedPayload(v:VideoEntity,action:String)=payload(v,action).also {if(namingVersion==2)it.put("videoNamingVersion",2)}
+    private fun namedPayload(v:VideoEntity,action:String)=payload(v,action).also {
+        if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(v.category)!=null && (panelVersion<2 || namingVersion!=2))throw VideoPanelBackendRequired()
+        if(namingVersion==2)it.put("videoNamingVersion",2)
+    }
     override fun begin(video:VideoEntity,revision:Long)=request(namedPayload(video,"beginVideoV1").put("parentRevision",revision).put("resetSession",video.fileId!=null && video.sessionUrl==null)).also {if(it.optBoolean("ok"))VideoNames.validate(it,video,namingVersion)}
     override fun finish(video:VideoEntity)=request(namedPayload(video,"finishVideoV1").put("parentRevision",video.parentRevision).put("fileId",video.fileId)).also {if(it.optBoolean("ok"))VideoNames.validate(it,video,namingVersion)}
     private fun session(v:VideoEntity):String=requireNotNull(v.sessionUrl).also {require(VideoPolicy.safeSession(it))}
@@ -63,6 +69,7 @@ class VideoHttp internal constructor(
     }
 }
 class ExpiredVideoSession:java.io.IOException("Sesión de carga caducada; se abrirá otra para el mismo archivo")
+class VideoPanelBackendRequired:java.io.IOException("El panel SCAP espera el backend compatible; original conservado")
 object VideoSync {
     private val mutex=Mutex()
     fun enqueue(context:Context) {
@@ -112,6 +119,7 @@ object VideoSync {
                 VideoNames.accept(context,v,ack)
                 dao.saveSync(v.copy(state="SYNCED",sessionUrl=null,uploadedBytes=v.sizeBytes,error=null))
             }catch(e:CancellationException){throw e}
+            catch(e:VideoPanelBackendRequired){dao.saveSync(v.copy(state="BACKEND_REQUIRED",error="El nuevo panel SCAP espera la actualización compatible del servidor. Video conservado."))}
             catch(e:ExpiredVideoSession){dao.saveSync(v.copy(state="ERROR",sessionUrl=null,error=e.message));retry=true}
             // Transport exceptions can contain a bearer resumable-session URL.
             // Only public, fixed diagnostics reach Room/the operator's screen.

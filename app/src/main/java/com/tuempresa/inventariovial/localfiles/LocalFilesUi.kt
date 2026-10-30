@@ -51,6 +51,7 @@ import java.io.File
         TextButton(onClick={scope.launch{message=runCatching{LocalCopies.requestCurrent(c,db,kind,id,"PHOTOS");"Fotografías: copia local pendiente."}.getOrElse{it.message}}}){Text("Exportar fotografías")}
     }
     TextButton(onClick={scope.launch{message=runCatching{LocalCopies.requestCurrent(c,db,kind,id,"ZIP");"Paquete ZIP: copia local pendiente."}.getOrElse{it.message}}}){Text("Guardar paquete ZIP")}
+    TextButton(onClick={scope.launch{message=runCatching{DriveMirrorPlan.request(c,db,kind,id);"Reconciliación local programada. Se conservarán las copias anteriores."}.getOrElse{it.message}}}){Text("Reconciliar con Drive confirmado")}
     LocalFilesList(key)
     message?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
 }
@@ -81,14 +82,21 @@ import java.io.File
     if(items.size>visible)TextButton(onClick={visible+=12}){Text("Ver más archivos (${items.size})")}
 }
 
+@Composable fun PublishedDocumentActions(uri:String?){
+    val c=LocalContext.current
+    val files by remember(c){InventoryDatabase.getInstance(c).localFilesDao().observeFiles()}.collectAsState(emptyList())
+    files.firstOrNull{it.uri==uri&&it.state=="READY"}?.let{SavedFileActions(it)}
+}
+
 @Composable fun SavedFileActions(file:LocalSharedFile){
     val c=LocalContext.current;val scope=rememberCoroutineScope();var message by remember{mutableStateOf<String?>(null)}
+    val publicRoot=file.relativePath.removePrefix("Download/").substringBefore('/')
     var missing by remember(file.id,file.uri){mutableStateOf(false)}
     val saveAs=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(file.mimeType)){uri->if(uri!=null)scope.launch{
         message=runCatching{withContext(Dispatchers.IO){val source=File(file.source);require(fileDigest(source)==(file.size to file.sha256)){"El original preparado cambió."};requireNotNull(c.contentResolver.openOutputStream(uri,"wt")).use{out->source.inputStream().use{it.copyTo(out)}};LocalCopies.rememberSaf(c,InventoryDatabase.getInstance(c),source,file.recordKey.substringBefore('/'),file.mimeType,uri)};"Archivo exportado y verificado en la ubicación elegida."}.getOrElse{LocalCopyDrain.publicError(it as? Exception ?: Exception())}
     }}
     Column(Modifier.fillMaxWidth().padding(vertical=4.dp)){
-        Text("Archivo guardado correctamente · ${file.name}")
+        Text("ARCHIVO GUARDADO · ${file.name}")
         Text(if(Build.VERSION.SDK_INT<29&&file.relativePath.startsWith("Download/"))"Carpeta autorizada / "+file.relativePath.removePrefix("Download/")else file.relativePath.replace("Download/","Descargas/"),style=MaterialTheme.typography.bodySmall)
         fun open(share:Boolean){scope.launch{
             val valid=withContext(Dispatchers.IO){runCatching{AndroidSharedDocumentStore(c).digest(Uri.parse(file.uri))==(file.size to file.sha256)}.getOrDefault(false)}
@@ -96,8 +104,12 @@ import java.io.File
             missing=false
             message=runCatching{c.startActivity(if(share)SharedFileActions.share(Uri.parse(file.uri),file.mimeType)else SharedFileActions.view(Uri.parse(file.uri),file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));null}.getOrElse{if(share)"No se pudo abrir el menú de compartir."else"No hay una aplicación compatible para abrir este archivo."}
         }}
-        Row {TextButton(onClick={open(false)}){Text("Abrir archivo")};TextButton(onClick={open(true)}){Text("Compartir")}}
-        TextButton(onClick={message=if(Build.VERSION.SDK_INT<29||file.relativePath.startsWith("Ubicación"))"Abre Archivos y la carpeta elegida al guardar; Android no garantiza abrir esa carpeta desde GBO."else runCatching{c.startActivity(SharedFileActions.downloads());"Busca GBO_Ruta_Clara en Descargas; Android puede no abrir la carpeta exacta."}.getOrElse{"Abre Archivos → Descargas → GBO_Ruta_Clara. Esta tablet no ofrece acceso directo a Descargas."}}){Text("Ver ubicación")}
+        Row {TextButton(onClick={open(false)}){Text("ABRIR ARCHIVO")};TextButton(onClick={open(true)}){Text("Compartir")}}
+        TextButton(onClick={
+            val uri=Uri.parse(file.uri)
+            message=runCatching{c.startActivity(SharedFileActions.location(uri) ?: SharedFileActions.view(uri,file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));"Android puede abrir la ubicación accesible más cercana. Busca $publicRoot; ABRIR ARCHIVO permite acceder directamente al documento."}
+                .getOrElse{"Usa ABRIR ARCHIVO o Compartir, o entra a Archivos → Descargas → $publicRoot."}
+        }){Text("VER UBICACIÓN")}
         TextButton(onClick={runCatching{saveAs.launch(file.name)}.onFailure{message="No se pudo abrir el selector de Android."}}){Text("Guardar como…")}
         if(missing)TextButton(onClick={scope.launch{message=runCatching{val d=InventoryDatabase.getInstance(c);val job=d.localFilesDao().job(file.jobId);if(job?.scope=="SAF")LocalCopies.document(c,d,File(file.source),file.recordKey.substringBefore('/'),file.mimeType)else LocalCopies.retry(c,d,file.jobId);"Recuperación programada desde el original conservado."}.getOrElse{it.message}}}){Text("Recuperar copia en Descargas")}
         message?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
@@ -117,7 +129,7 @@ import java.io.File
         Text("Se aplica a nuevos registros y próximas modificaciones guardadas, también borradores. Incluye documentos y originales asociados; no exporta históricos por sí sola ni borra copias anteriores. Solo dispositivo siempre prepara su copia local.",style=MaterialTheme.typography.bodySmall)
         if(Build.VERSION.SDK_INT<29){Text("Android 8/9: elige una carpeta interna para permitir la copia sin permisos amplios.");TextButton(onClick={chooser.launch(null)}){Text("Elegir carpeta local")}}
         TextButton(onClick={scope.launch{history=withContext(Dispatchers.IO){LocalCopies.historyCandidates(db)}}}){Text("Exportar registros existentes al dispositivo")}
-        Text("Límite por copia: 512 MiB y 1000 archivos. El trabajo se agrupa durante cinco segundos; Android puede diferirlo por ahorro de batería.",style=MaterialTheme.typography.bodySmall)
+        Text("ZIP progresivo con verificación de integridad; el tamaño depende del espacio disponible. Máximo 1000 archivos por copia. El trabajo se agrupa durante cinco segundos; Android puede diferirlo por ahorro de batería.",style=MaterialTheme.typography.bodySmall)
         Text("¿Dónde están mis archivos?",style=MaterialTheme.typography.titleSmall)
         Text("Ficha guardada dentro de GBO y archivo exportado son pasos distintos. En Android 10 o posterior: Archivos → Almacenamiento interno → Download → GBO_Ruta_Clara. Las fotos se copian allí, no se publican adicionalmente en Galería. PDF, Excel y ZIP no equivalen a un respaldo restaurable de Room.",style=MaterialTheme.typography.bodySmall)
         TextButton(onClick={message=runCatching{c.startActivity(SharedFileActions.downloads());null}.getOrElse{"Abre el administrador Archivos y entra en Descargas."}}){Text("Abrir Descargas")}

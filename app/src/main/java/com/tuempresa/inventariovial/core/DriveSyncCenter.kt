@@ -54,9 +54,13 @@ fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
     val context=LocalContext.current;val scope=rememberCoroutineScope()
     val db=remember(context){InventoryDatabase.getInstance(context)}
     val intents by db.automaticSyncDao().observe().collectAsState(emptyList())
-    val identities by produceState<Map<String,DriveDeliveryIdentity>>(emptyMap(),intents) {
-        value=withContext(Dispatchers.IO){intents.associate{i->i.key to runCatching{DriveDeliveryPresentation.identity(db,i)}
-            .getOrElse{DriveDeliveryIdentity("Elemento ${i.kind}","No se pudo consultar la ficha",null,false)}}}
+    val identities by produceState<Map<String,DriveDeliveryIdentity>>(emptyMap(),db,intents) {
+        db.invalidationTracker.createFlow("scap_inspections","scap_values","scap_elements","scap_conditions",
+            "scap_spans","scap_substructures","scap_supports","scap_joints","scap_profile_points","scap_defects","scap_sketches",
+            "photos","inventory_records","pavement_samples","device_delivery_choices").collect {
+            value=withContext(Dispatchers.IO){intents.associate{i->i.key to runCatching{DriveDeliveryPresentation.identity(db,i,context)}
+                .getOrElse{DriveDeliveryIdentity("Elemento ${i.kind}","No se pudo consultar la ficha",null,false)}}}
+        }
     }
     val work=observedDriveWork()
     val progress by remember(context){SyncProgressStore.get(context).flow}.collectAsState()
@@ -70,6 +74,7 @@ fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
         SyncProgressPresentation.running(i,work),connected,DriveUploadPolicy.configurationError()==null,
         work.any{it.state==WorkInfo.State.ENQUEUED&&it.runAttemptCount>0}&&i.state=="ERROR",progress[i.key])}
     var message by remember {mutableStateOf<String?>(null)}
+    var review by remember{mutableStateOf<DriveDeliveryEntry?>(null)}
     AlertDialog(onDismissRequest=onClose,title={Text("Entregas Drive")},text={
         Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             Text("${views.values.count{it.confirmed}} confirmadas · ${views.values.count{!it.confirmed}} pendientes")
@@ -77,13 +82,18 @@ fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
             Button(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,false)} registros programados."}.getOrElse {it.message}}}) {Text("Sincronizar ahora")}
             OutlinedButton(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,true)} reintentos programados."}.getOrElse {it.message}}}) {Text("Reintentar errores")}
             val rows=intents.map{i->DriveDeliveryEntry(i,identities[i.key] ?: DriveDeliveryIdentity("Consultando ficha…","",null,false),views.getValue(i.key),progress[i.key])}
-            DriveDeliveryLists(rows){i->
+            DriveDeliveryLists(rows,onReview={row->if(row.intent.kind=="SCAP")review=row else message="Abre esta ficha desde Mis registros y revisa su validación."}){i->
                 scope.launch{message=runCatching{AutomaticSync.manual(context,i.kind,i.recordId);"Reintento programado."}.getOrElse{it.message}}
             }
             DeliveryCenterTechnicalSummary()
             message?.let {Text(it)}
         }
     },confirmButton={TextButton(onClick=onClose){Text("Cerrar")}})
+    review?.let{row->androidx.compose.ui.window.Dialog(onDismissRequest={review=null},
+        properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {
+        Surface(Modifier.fillMaxSize()) {com.tuempresa.inventariovial.scap.ui.ScapWorkspace(vm,
+            initialInspectionId=row.intent.recordId,initialRoute=row.identity.target ?: com.tuempresa.inventariovial.scap.domain.ScapFieldRoute("REVIEW"),onBack={review=null})}
+    }}
 }
 
 @Composable private fun DeliveryCenterTechnicalSummary() {

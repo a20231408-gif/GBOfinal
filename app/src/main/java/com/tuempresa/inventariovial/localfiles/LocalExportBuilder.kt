@@ -11,6 +11,7 @@ import com.tuempresa.inventariovial.pavement.*
 import com.tuempresa.inventariovial.scap.catalog.ScapCatalog
 import com.tuempresa.inventariovial.scap.export.*
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import org.json.*
 import java.io.File
@@ -38,28 +39,28 @@ object LocalExportNames {
 }
 /** Uses existing contractual exporters; never uses a Drive preparation, reservation, receipt or HTTP. */
 object LocalExportBuilder {
-    const val MAX_BYTES=512L*1024*1024
     fun work(context:Context,job:LocalExportJob)=File(context.filesDir,"local_exports/${job.id}").apply{check(isDirectory||mkdirs())}
-    fun space(context:Context,bytes:Long){require(bytes in 0..MAX_BYTES){"La entrega excede 512 MiB. Exporta fotografías por separado o divide el lote."};check(StatFs(context.filesDir.path).availableBytes>bytes+32L*1024*1024){"Espacio insuficiente. Libera espacio y reintenta; la ficha y los originales se conservan."}}
-    private fun atomic(file:File,write:(OutputStream)->Unit){file.parentFile!!.mkdirs();val a=AtomicFile(file);val out=a.startWrite();try{write(object:java.io.FilterOutputStream(out){override fun close(){flush()}});a.finishWrite(out)}catch(e:Exception){a.failWrite(out);throw e}}
+    fun space(context:Context,bytes:Long){VerifiedZipArchive.checkedSpace(StatFs(context.filesDir.path).availableBytes,bytes)}
+    private fun atomic(file:File,write:(OutputStream)->Unit){file.parentFile!!.mkdirs();val a=AtomicFile(file);val out=a.startWrite();try{write(object:java.io.FilterOutputStream(out){override fun write(b:ByteArray,o:Int,n:Int){out.write(b,o,n)};override fun write(b:Int){out.write(b)};override fun close(){flush()}});a.finishWrite(out)}catch(e:Exception){a.failWrite(out);throw e}}
     suspend fun build(context:Context,db:InventoryDatabase,job:LocalExportJob):LocalPlan {
         val dir=work(context,job);space(context,0)
         val files=mutableListOf<LocalSharedFile>();val problems=mutableListOf<String>();var root="";var location:LocalDocumentLocation?=null;var captureState="";val pendingFields=mutableListOf<String>()
-        val exportScope=job.scope.removeSuffix("_READABLE_V2")
+        val exportScope=job.scope.removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")
         val photosOnly=exportScope=="PHOTOS"
-        fun add(file:File,relative:String,mime:String){
+        fun add(file:File,relative:String,mime:String,officialPanel:Boolean=false){
             require(relative.split('/').all{it.isNotBlank()&&it!=".."&&it!="."})
             if(!file.isFile){problems+="Falta $relative";return}
             val (size,hash)=fileDigest(file);if(size==0L){problems+="Archivo vacío: $relative";return}
             val media=relative.substringBefore('/') in setOf("FOTOGRAFIAS","CROQUIS","VIDEOS")
-            val actual=if(media)relative.substringBeforeLast('.')+"_"+hash.take(16)+"."+relative.substringAfterLast('.')else relative
+            val actual=if(media && !officialPanel)relative.substringBeforeLast('.')+"_"+hash.take(16)+"."+relative.substringAfterLast('.')else relative
             val folder=actual.substringBeforeLast('/',"");val name=actual.substringAfterLast('/')
-            val targetRoot=if(media)location?.base ?: root else root
+            // Human panel names are immutable within a saved generation; revisions retain older copies.
+            val targetRoot=if(media && !officialPanel)location?.base ?: root else root
             files+=LocalSharedFile(com.tuempresa.inventariovial.delivery.sha256((job.id+"/"+relative).toByteArray()),job.id,job.recordKey,targetRoot+if(folder.isBlank())""else"$folder/",name,mime,size,hash,file.absolutePath)
         }
         suspend fun attempt(label:String,block:suspend ()->Unit){try{block()}catch(e:CancellationException){throw e}catch(e:Exception){problems+="$label: ${e.message?.take(180) ?: "no se pudo generar"}"}}
         fun document(name:String,mime:String,write:(OutputStream)->Unit){val f=File(dir,name);atomic(f,write);add(f,name,mime)}
-        fun original(id:String,path:String,category:String="GENERAL") {
+        fun original(id:String,path:String,category:String="GENERAL",panelPath:((String)->String)?=null) {
             val f=File(path);if(!f.isFile){problems+="Falta fotografía $id";return}
             val header=f.inputStream().use{val b=ByteArray(16);val n=it.read(b);b.take(maxOf(0,n)).toByteArray()}
             val (ext,mime)=when {
@@ -69,7 +70,7 @@ object LocalExportBuilder {
                 header.size>=12&&String(header,4,4)=="ftyp"->"heic" to "image/heic"
                 else->f.extension.lowercase().ifBlank{"bin"} to "application/octet-stream"
             }
-            add(f,"FOTOGRAFIAS/${LocalExportNames.safe(category)}/${LocalExportNames.safe(id)}.$ext",mime)
+            add(f,panelPath?.invoke(ext) ?: "FOTOGRAFIAS/${LocalExportNames.safe(category)}/${LocalExportNames.safe(id)}.$ext",mime,panelPath!=null)
         }
         when(job.kind){
             "SIC"->{
@@ -86,7 +87,11 @@ object LocalExportBuilder {
                     val author=r.sessionId?.let{db.inventoryDao().sessionById(it)?.operator}.orEmpty()
                     val valid=r.status=="ACTIVE" && runCatching{format.values(row)}.isSuccess && snapshot.sic22?.let{com.tuempresa.inventariovial.model.form.SignalIdentificationPolicy.completionPending(it).isEmpty()}!=false
                     attempt("Excel SIC"){
-                        if(valid)document("${r.sicCode}.xlsx",SicExcelWriter.XLSX_MIME){SicExcelWriter.write(it,listOf(row),format,ExportHeading())}
+                        if(r.sicCode=="SIC-17"){
+                            val bytes=java.io.ByteArrayOutputStream();LocalSicWorkbookPolicy.primary17(bytes,snapshot)
+                            document("SIC-17${if(valid)""else"_PROVISIONAL"}.xlsx",SicExcelWriter.XLSX_MIME){it.write(LocalSicWorkbookPolicy.status(bytes.toByteArray(),!valid,if(valid)0 else 1))}
+                        }
+                        else if(valid)document("${r.sicCode}.xlsx",SicExcelWriter.XLSX_MIME){SicExcelWriter.write(it,listOf(row),format,ExportHeading())}
                         else document("${r.sicCode}_PROVISIONAL.xlsx",SicExcelWriter.XLSX_MIME){ProvisionalSicExcel.write(it,snapshot,author)}
                     }
                     if(snapshot.sic18a!=null)attempt("SIC-18A"){
@@ -96,8 +101,9 @@ object LocalExportBuilder {
                     }
                     if(r.sicCode=="SIC-17")for(code in listOf("SIC-17A","SIC-17B"))attempt(code){
                         val p=ScapSicExporter.supplement(snapshot,code)
-                        if(valid&&p.missingRequired.isEmpty())document("$code.xlsx",SicExcelWriter.XLSX_MIME){SicExcelWriter.writeMappedRow(it,code,r.routeCode,p.columns,p.values,if(code=="SIC-17A")setOf(7,8)else emptySet())}
-                        else document("${code}_PROVISIONAL.xlsx",SicExcelWriter.XLSX_MIME){ProvisionalSicExcel.writeBridgeSupplement(it,snapshot,code,author)}
+                        val provisional=!valid||p.missingRequired.isNotEmpty()
+                        val bytes=java.io.ByteArrayOutputStream();SicExcelWriter.writeMappedRow(bytes,code,r.routeCode,p.columns,p.values,if(code=="SIC-17A")setOf(7,8)else emptySet())
+                        document("${code}${if(provisional)"_PROVISIONAL"else""}.xlsx",SicExcelWriter.XLSX_MIME){it.write(LocalSicWorkbookPolicy.status(bytes.toByteArray(),provisional,p.missingRequired.size))}
                     }
                     if(TechnicalLengthExport.applies(row))attempt("Longitud técnica"){
                         val reference=com.tuempresa.inventariovial.road.FieldPrRepository(db.inventoryDao()).merge(com.tuempresa.inventariovial.road.RoadReferenceRepository(context).loadFromAssets())
@@ -121,7 +127,8 @@ object LocalExportBuilder {
                     attempt("Excel SCAP"){
                         val isFinal=s.inspection.status=="COMPLETE" && s.values("completion")["status"]=="COMPLETE"
                         val raw=File(dir,"SCAP.generating.xlsx")
-                        val generated=try{ScapDelivery.writeExcel(context,s,raw);true}catch(e:CancellationException){throw e}catch(e:Exception){
+                        val forTemplate=if(s.photos.size>32)s.copy(photos=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.ordered(s).take(32))else s
+                        val generated=try{ScapDelivery.writeExcel(context,forTemplate,raw);true}catch(e:CancellationException){throw e}catch(e:Exception){
                             val reason=LocalCopyDrain.publicError(e);pendingFields+="Plantilla SCAP: $reason"
                             document("SCAP_PROVISIONAL.xlsx",SicExcelWriter.XLSX_MIME){ProvisionalScapWorkbook.write(it,s,reason)};false
                         }
@@ -129,9 +136,11 @@ object LocalExportBuilder {
                         if(generated)document(name,SicExcelWriter.XLSX_MIME){out->if(isFinal)raw.inputStream().use{it.copyTo(out)}else ProvisionalSicExcel.decorate(out,raw.readBytes(),s.inspection.id,s.inspection.createdBy,job.revision,s.inspection.createdAt,
                             com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(s,ScapCatalog.load(context).forSnapshot(s)).pending.map{ProvisionalSicExcel.Pending(it.field,it.section,"Dato pendiente de captura")},markerCell="C4")}
                     }
+                    if(s.photos.size>32)document("CONTINUACION_FOTOGRAFICA.html","text/html"){it.write(ScapPhotoContinuation.html(s).toByteArray())}
                     for(p in ScapSicExporter.previews(s))attempt(p.format){
-                        if(p.missingRequired.isEmpty()&&s.inspection.status=="COMPLETE")document("${p.format}.xlsx",SicExcelWriter.XLSX_MIME){ScapSicExporter.write(it,s,p.format)}
-                        else document("${p.format}_PROVISIONAL.xlsx",SicExcelWriter.XLSX_MIME){ProvisionalSicExcel.write(it,s,p.format)}
+                        val body=java.io.ByteArrayOutputStream();ScapSicExporter.writeLocal(body,s,p.format)
+                        val provisional=p.missingRequired.isNotEmpty()||s.inspection.status!="COMPLETE"
+                        document("${p.format}${if(provisional)"_PROVISIONAL"else""}.xlsx",SicExcelWriter.XLSX_MIME){it.write(LocalSicWorkbookPolicy.status(body.toByteArray(),provisional,p.missingRequired.size))}
                     }
                     document("INSPECCION.json","application/json"){it.write(ScapFieldBackup.capture(s).toString(2).toByteArray())}
                     for(sketch in s.sketches)attempt("Croquis ${sketch.id}"){
@@ -140,9 +149,21 @@ object LocalExportBuilder {
                         val mime=LocalCopies.photoMime(f);val ext=when(mime){"image/jpeg"->"jpg";"image/png"->"png";"image/webp"->"webp";"image/heic"->"heic";else->"bin"}
                         add(f,"CROQUIS/${LocalExportNames.safe(sketch.type)}_${LocalExportNames.safe(sketch.id)}.$ext",mime)
                     }
-                    for(v in videos){val f=File(v.localPath);if(!f.isFile)problems+="Falta video ${v.id}"else if(fileDigest(f)!=(v.sizeBytes to v.sha256))problems+="El video ${v.id} cambió; se conserva sin reescribir."else add(f,"VIDEOS/${LocalExportNames.safe(v.categoryLabel)}/${v.id}.${f.extension}",v.mimeType)}
+                    val orderedVideos=videos.sortedWith(compareBy({com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.resolve(it.category,it.categoryLabel)?.order ?: 21},{it.createdAt},{it.id}))
+                    for(v in orderedVideos){val f=File(v.localPath);val panel=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.resolve(v.category,v.categoryLabel)
+                        val index=orderedVideos.filter{com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.resolve(it.category,it.categoryLabel)?.key==panel?.key}.indexOfFirst{it.id==v.id}+1
+                        val confirmed=com.tuempresa.inventariovial.media.VideoNames.confirmedRelativePath(context,v)
+                        val path=confirmed ?: if(panel!=null)"VIDEOS/${panel.folder}/${panel.fileName(index,f.extension)}" else "VIDEOS/HISTORICO_SIN_CLASIFICAR/VIDEO_${index.toString().padStart(3,'0')}.${f.extension}"
+                        if(!f.isFile)problems+="Falta video ${v.id}"else if(fileDigest(f)!=(v.sizeBytes to v.sha256))problems+="El video ${v.id} cambió; se conserva sin reescribir."else add(f,path,v.mimeType,true)
+                    }
                 }
-                s.photos.forEach{original(it.id,it.originalPath.ifBlank{it.localPath},it.photoCategory ?: "GENERAL")}
+                com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.ordered(s).forEach{p->
+                    original(p.id,p.originalPath.ifBlank{p.localPath},p.photoCategory ?: "GENERAL"){ext->
+                        val projected=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.photoPath(s,p,ext,"FOTOGRAFIAS")
+                        val remoteName=if(ext=="jpg")runCatching{com.tuempresa.inventariovial.core.ReadablePhotoNames.name(context,p)}.getOrNull()else null
+                        if(remoteName!=null)projected.substringBeforeLast('/')+"/"+remoteName else projected
+                    }
+                }
                 document("datos_fotografias.json","application/json"){it.write(JSONObject().put("inspectionId",s.inspection.id).put("revision",job.revision).put("photos",JSONArray(s.photos.map{p->JSONObject().put("id",p.id).put("category",p.photoCategory).put("description",p.description).put("capturedAt",p.capturedAt).put("latitude",p.photoLatitude).put("longitude",p.photoLongitude).put("accuracyM",p.photoGpsAccuracyM)})).toString(2).toByteArray())}
             }
             "PAVEMENT"->{
@@ -159,11 +180,18 @@ object LocalExportBuilder {
                     document("Muestra.json","application/json"){it.write(PavementDriveUploader.nativeJson(s,damages,result,photos).toString(2).toByteArray())}
                     for(format in PavementSicFormat.entries.filter{it.surface==s.surface}){
                         val status=PavementSic.status(s,damages,format)
-                        if(status.complete)attempt(format.label){document("${format.label}.xlsx",SicExcelWriter.XLSX_MIME){PavementSic.write(it,s,damages,format)}}
+                        if(damages.isNotEmpty())attempt(format.label){document("${format.label}.xlsx",SicExcelWriter.XLSX_MIME){PavementSic.write(it,s,damages,format)}}
                         else pendingFields+="${format.label}: aporte contractual pendiente de completar"
                     }
                 }
                 photos.values.flatten().forEach{original(it.id,it.localPath)}
+                val retired=db.pavementDao().retiredDamages(s.id)
+                if(retired.isNotEmpty()){
+                    val archivedManifest=PavementDamageArchive.manifest(db,s).toString(2).toByteArray()
+                    document("DANOS_ARCHIVADOS.json","application/json"){it.write(archivedManifest)}
+                    for(d in retired)for(photo in db.pavementDao().photoHistory(d.id))original(photo.id,photo.localPath,"HISTORIAL_DANO_${d.correlativo}")
+                }
+
             }
             else->error("Familia no reconocida para generar la copia local.")
         }
@@ -173,13 +201,13 @@ object LocalExportBuilder {
             .put("captureState",captureState).put("pending",JSONArray(pendingFields.distinct())).put("remoteState",if(location?.ackRevision==job.revision)"PARENT_ACK_CONFIRMED"else"PARENT_NOT_CONFIRMED_FOR_THIS_REVISION").put("localState","GENERATED_PUBLICATION_REQUIRES_VERIFICATION").put("manifestNotSelfHashed",true).put("remoteConfirmationScope","PARENT_DELIVERY_ONLY_VIDEOS_HAVE_SEPARATE_ACK").put("localFilesExpected",files.size+1).put("generationComplete",problems.isEmpty()).put("publicationRequiresVerification",true)
             .put("location",location?.json()).put("problems",JSONArray(problems)).put("files",JSONArray(files.map{JSONObject().put("path",it.relativePath+it.name).put("sha256",it.sha256).put("size",it.size)})).toString(2).toByteArray())}
         if(exportScope=="ZIP"){
-            val zip=File(dir,"Entrega_${LocalExportNames.safe(job.recordId)}_R${job.revision}.zip")
-            atomic(zip){out->ZipOutputStream(out).use{z->
-                for(f in files){z.putNextEntry(ZipEntry(f.relativePath.removePrefix(location?.base ?: root)+f.name).apply{time=0});File(f.source).inputStream().use{it.copyTo(z,64*1024)};z.closeEntry()}
-
-            }}
+            val display=PublicLocalFolderNames.documentName(db,job,"zip")
+            val zip=File(dir,display)
+            val sources=files.map{f->VerifiedZipArchive.Source(f.relativePath.removePrefix(location?.base ?: root)+f.name,f.size,f.sha256){File(f.source).inputStream()}}
+            val execution=kotlinx.coroutines.currentCoroutineContext()
+            VerifiedZipArchive.write(zip,sources,cancel={execution.ensureActive()},progress={LocalArchiveProgress.record(job.id,it)})
             files.clear();add(zip,zip.name,"application/zip")
         }
-        return LocalPlan(files,problems.distinct(),PublicLocalFolderNames.VERSION)
+        return LocalPlan(files,problems.distinct(),4)
     }
 }

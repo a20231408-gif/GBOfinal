@@ -34,7 +34,7 @@ import com.tuempresa.inventariovial.pavement.*
                     TableCell("${d.correlativo}",0.55f); TableCell(PavementDisplay.number(d.x1),0.7f); TableCell(PavementDisplay.number(d.y1),0.7f)
                     TableCell(d.name,2.2f)
                     Text(PavementSeverity.label(d.severity),Modifier.weight(1.1f).background(androidx.compose.ui.graphics.Color(PavementSeverity.color(d.severity))).padding(3.dp),color=androidx.compose.ui.graphics.Color.Black,style=MaterialTheme.typography.bodySmall)
-                    TableCell(PavementDisplay.number(PavementRules.quantity(d)),1f)
+                    TableCell(if(d.code==26)if(d.x1!=null && d.lengthM!=null)"${PavementDisplay.number(d.lengthM)} m ref."else"Global"else PavementDisplay.number(PavementRules.quantity(d)),1f)
                 }
                 if(onViewPhotos!=null) Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                     if(onCamera!=null) TextButton(onClick={onCamera(d.id)},modifier=Modifier.heightIn(min=48.dp).testTag("damage-camera-${d.id}")) {Text("Tomar foto")}

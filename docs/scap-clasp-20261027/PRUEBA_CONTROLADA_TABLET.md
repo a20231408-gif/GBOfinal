@@ -1,0 +1,14 @@
+# Un único reintento desde la APK 1.4.15 (29)
+
+V21 ya responde panel 2. No hace falta instalar otra APK para esta corrección. No se realizará ninguna subida de fixtures a producción.
+
+1. Elegir una tablet con APK 1.4.15 (29) y la ficha SCAP original pendiente; coordinar que las otras tablets permanezcan sin conexión durante la primera comprobación. No borrar otras colas. Si la ficha ya figura confirmada por un intento automático, no volver a pulsar: revisar esa confirmación.
+2. Conectar esa tablet y abrir la ficha existente. Anotar la revisión local, revisión confirmada, estado y cantidad de archivos; no cambiar los datos ni recrear la ficha. En el panel de exportación de la ficha, pulsar UNA vez «Subir SCAP a Drive» o «Reintentar subida SCAP», según aparezca. Confirmar su diálogo solamente para esa misma ficha y sin introducir datos ficticios.
+3. Dejar terminar. No pulsar repetidamente ni usar el reintento global para esta comprobación. Si el botón está deshabilitado, falta o aparecen requisitos reales de validación, comunicar el mensaje: no editar datos para eludirlos. La advertencia anterior puede seguir visible hasta que un nuevo intento consulte las capacidades actualizadas.
+4. En Entregas Drive, comprobar que la revisión actual quede confirmada y pase al historial «Mis entregas». En detalles, verificar revisión local/confirmada y última confirmación. «Subiendo», archivos procesados o reserva de nombres no son ACK final. Si quedan cambios locales más recientes, no tratarlos como confirmados.
+5. Abrir la carpeta confirmada desde la aplicación y verificar SCAP.xlsx, manifiesto, fotografías y croquis esperados, con categorías numeradas y sin nuevos duplicados. El número de carpeta existente se conserva. Revisar también los Excel SIC correspondientes. El caso de 54 fotos/3 croquis fue un fixture local: la ficha real puede tener otra cantidad.
+6. Comunicar resultado, revisiones antes/después, número de archivos confirmados y mensaje exacto si falla. Compartir solo información necesaria o capturas recortadas; no enviar tokens, URL privadas, IDs completos ni recibos crudos.
+
+**Límite del aislamiento:** el botón por ficha programa el trabajador de la cola; puede procesar otras fichas validadas pendientes de ESA tablet. No hay una garantía de procesar un único registro cuando la tablet tiene más pendientes. Preferir una tablet que solo tenga esta entrega pendiente, sin limpiar datos para conseguirlo. La publicación ya puede desbloquear otras tablets conectadas.
+
+La app exige ACK de identidad/revisión y coteja hashes/archivos antes de confirmar; todavía no hemos inspeccionado el ACK de este caso real. El resultado del operador permitirá identificar qué evidencia falta. Una captura de estado no demuestra por sí sola todos los hashes en Drive. Conservar las evidencias completas de forma privada para una revisión dirigida, si hace falta.

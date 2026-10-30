@@ -1,6 +1,6 @@
 # Capturas reales para la guía visual 10J
 
-El 14 de octubre ADB se ejecutó con permisos de lectura del dispositivo, pero `adb devices -l` no listó dispositivos y el serial 523bc083 no estaba disponible. **No se obtuvieron capturas reales en ese intento.** No se sustituyen por interfaces dibujadas ni por fotos de un emulador que no se haya ejecutado.
+El 14 de octubre ADB se ejecutó con permisos de lectura del dispositivo, pero `adb devices -l` no listó dispositivos y la tablet autorizada no estaba disponible. **No se obtuvieron capturas reales en ese intento.** No se sustituyen por interfaces dibujadas ni por fotos de un emulador que no se haya ejecutado.
 
 Después de ese intento, el propietario **canceló la obtención de capturas por ADB** y decidió tomar y trabajar las imágenes por separado con ChatGPT. No se sigue esperando una conexión ni se ejecutará el procedimiento a continuación; queda como referencia opcional ya preparada. La guía y sus posiciones se entregan sin capturas.
 
@@ -11,7 +11,7 @@ Después de ese intento, el propietario **canceló la obtención de capturas por
 3. Ejecutar desde la raíz del proyecto, por ejemplo:
 
 ```powershell
-.\tools\capturar_manual_10j.ps1 -Nombre '01-inicio' -Descripcion 'Inicio con módulos de GBO'
+.\tools\capturar_manual_10j.ps1 -Serial '<serial autorizado>' -Nombre '01-inicio' -Descripcion 'Inicio con módulos de GBO'
 ```
 
 El script verifica el serial y que GBO esté en primer plano. Solo ejecuta screencap/pull y consultas de versión; no pulsa botones ni modifica registros. Si la sesión vence, el propietario introduce personalmente su PIN. Si no hay dispositivo, termina sin captura.

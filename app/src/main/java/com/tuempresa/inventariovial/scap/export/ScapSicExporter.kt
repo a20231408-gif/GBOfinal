@@ -14,7 +14,11 @@ data class ScapSicPreview(val format:String,val columns:List<SicColumn>,val valu
 object ScapSicExporter {
     fun writeConsolidated(output:OutputStream,snapshots:List<ScapInspectionSnapshot>,format:String) {
         val latest=snapshots.groupBy {it.inspection.roadRecordId}.values.map {it.maxBy {s->s.inspection.updatedAt}}
-        val ordered=latest.sortedWith(compareBy({it.roadRecord?.routeCode.orEmpty()}, {it.roadRecord?.axisMeasureM ?: Double.MAX_VALUE}, {it.inspection.roadRecordId}))
+        val ordered=latest.sortedWith {a,b->
+            val ar=a.roadRecord;val br=b.roadRecord
+            if(ar!=null && br!=null)com.tuempresa.inventariovial.road.SicTableOrder.comparator.compare(ar,br)
+            else a.inspection.roadRecordId.compareTo(b.inspection.roadRecordId)
+        }
         val rows=ordered.map {s->val bytes=java.io.ByteArrayOutputStream();write(bytes,s,format)
             (s.roadRecord?.routeCode ?: s.values()["route"].orEmpty()) to bytes.toByteArray()}
         SicConsolidatedWorkbook.write(output,rows)
@@ -55,5 +59,10 @@ object ScapSicExporter {
         val preview=previews(s).single{it.format==format}
         require(preview.missingRequired.isEmpty()){"$format: faltan ${preview.missingRequired.joinToString()}"}
         SicExcelWriter.writeMappedRow(output,format,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),preview.columns,preview.values,if(format=="SIC-17A") setOf(7,8) else emptySet())
+    }
+    /** Local documentary row only. The strict remote writer above remains unchanged. */
+    fun writeLocal(output:OutputStream,s:ScapInspectionSnapshot,format:String) {
+        val p=previews(s).single{it.format==format}
+        SicExcelWriter.writeMappedRow(output,format,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),p.columns,p.values,if(format=="SIC-17A")setOf(7,8)else emptySet())
     }
 }

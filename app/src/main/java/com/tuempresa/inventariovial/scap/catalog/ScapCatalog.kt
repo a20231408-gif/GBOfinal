@@ -19,7 +19,7 @@ data class ScapField(val key:String,val section:String,val owner:String,val labe
 class ScapCatalog(val elements:List<ScapCatalogElement>,val fields:List<ScapField>,
     private val options:Map<String,List<String>>,private val types:Map<String,List<String>>,val sourceHash:String,
     val bridgeType:ScapBridgeType?=null,val generalHeader:String="",val defaultElements:List<String> = emptyList(),
-    val canonicalElements:List<ScapCanonicalElement> = emptyList(),val photoNames:List<String> = emptyList()) {
+    val canonicalElements:List<ScapCanonicalElement> = emptyList(),val photoNames:List<String> = com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.categories.map{it.label}) {
     private var variants:Map<ScapBridgeType,ScapCatalog> = emptyMap()
     fun forType(type:ScapBridgeType?):ScapCatalog = if(type==null || bridgeType==type) this else requireNotNull(variants[type]) {"No se cargó el catálogo ${type.label}."}
     fun forSnapshot(snapshot:ScapInspectionSnapshot)=forType(ScapBridgeType.from(snapshot))

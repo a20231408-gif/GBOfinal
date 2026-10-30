@@ -27,6 +27,15 @@ import java.io.File
 class PhotoCategories5Test {
     private val context get()=ApplicationProvider.getApplicationContext<Context>()
     private fun db()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
+    private suspend fun prepared(d:InventoryDatabase,intent:DriveSyncIntent):JSONObject {
+        // Ordinary V2 builds require a server reservation before preparing readable filenames.
+        // Supply only a local fictitious ACK; do not disable the real build flag or contact Google.
+        if(BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED){
+            val preview=AutomaticDelivery.namingPreview(context,d,intent)
+            ReadablePhotoNames.remember(context,preview,ReleasePhotoV2Fixture.reservation(preview,"FICTICIO_FOLDER_${intent.recordId}"))
+        }
+        return AutomaticDelivery.prepare(context,d,intent)
+    }
     private fun jpg(name:String):String {
         val f=File(context.filesDir,"photo5/$name.jpg");f.parentFile!!.mkdirs()
         val b=Bitmap.createBitmap(24,18,Bitmap.Config.ARGB_8888)
@@ -77,9 +86,10 @@ class PhotoCategories5Test {
         assertEquals(keys,add(d,"culvert",keys).map {it.photoCategory})
         assertEquals(PhotoCategoryPolicy.culvert,PhotoCategoryPolicy.categories("SIC-18A"))
     }}
-    @Test fun bridgeUsesExactlyExistingScapCategories() {
-        val keys=com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.labels.keys
+    @Test fun bridgeSicRetainsItsWireCategoriesWithoutLeakingNewScapOnlyCodes() {
+        val keys=com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.historicalLabels.keys
         assertEquals(keys.toList(),PhotoCategoryPolicy.categories("SIC-17").map {it.key})
+        assertEquals(15,keys.size);assertTrue(keys.none{it.startsWith("SCAP20_")})
         assertEquals("AGUAS_ARRIBA",DriveInventorySchema.category("UPSTREAM"));assertEquals("AGUAS_ABAJO",DriveInventorySchema.category("DOWNSTREAM"))
     }
     @Test fun extraLinearModelsAndFordPhysicalEndsDoNotChangePointLocationContracts() {
@@ -145,7 +155,7 @@ class PhotoCategories5Test {
             record(d,id,sic,cls,ends=sic!="SIC-22")
             val keys=PhotoCategoryPolicy.categories(sic,classCode=cls,typeCode="1").flatMap {c->List(2){c.key}}+"GENERAL"
             add(d,id,keys);AutomaticSync.request(d,"SIC",id,1000)
-            val payload=AutomaticDelivery.prepare(context,d,d.automaticSyncDao().get("SIC/$id")!!)
+            val payload=prepared(d,d.automaticSyncDao().get("SIC/$id")!!)
             assertEquals(3,payload.getInt("syncProtocol"));assertEquals(4,payload.getInt("pathVersion"));assertEquals(1,payload.getInt("photoCategoryVersion"))
             assertFalse(payload.has("sibCode"));assertEquals("PENDING",payload.getJSONObject("georeferencing").getString("externalSubmetricStatus"))
             val files=payload.getJSONArray("files")
@@ -166,7 +176,7 @@ class PhotoCategories5Test {
         record(d,"order-general");val first=add(d,"order-general",listOf("GENERAL")).single()
         d.inventoryDao().insertPhoto(first.copy(id="old-null-category",localPath=jpg("old-null-category"),originalPath=jpg("old-null-original"),photoIndex=2,photoCategory=null))
         AutomaticSync.request(d,"SIC","order-general",1000)
-        val p=AutomaticDelivery.prepare(context,d,d.automaticSyncDao().get("SIC/order-general")!!)
+        val p=prepared(d,d.automaticSyncDao().get("SIC/order-general")!!)
         val files=p.getJSONArray("files");val meta=(0 until files.length()).map {files.getJSONObject(it)}.single {it.getString("key")=="metadata"}
         val photos=JSONObject(File(meta.getString("localFile")).readText()).getJSONArray("photos")
         assertEquals(listOf(1,2),(0 until photos.length()).map {photos.getJSONObject(it).getInt("categoryOrder")})
@@ -182,15 +192,21 @@ class PhotoCategories5Test {
         val schema17=JSONObject(File("schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/17.json").readText())
             .getJSONObject("database").getJSONArray("entities")
         val pavementPhotos=(0 until schema17.length()).map {schema17.getJSONObject(it)}.single {it.getString("tableName")=="pavement_damage_photos"}
+        val pavementDamages=(0 until schema17.length()).map {schema17.getJSONObject(it)}.single {it.getString("tableName")=="pavement_damages"}
         android.database.sqlite.SQLiteDatabase.openDatabase(context.getDatabasePath(name).path,null,0).use {sql->
             sql.execSQL("DROP TABLE photo_history")
             sql.execSQL("DROP TABLE pavement_damage_photos") // Empty in this fictitious SIC-only fixture.
+            sql.rawQuery("SELECT COUNT(*) FROM pavement_damages",null).use{it.moveToFirst();assertEquals(0,it.getInt(0))}
+            sql.execSQL("DROP TABLE pavement_damages")
+            sql.execSQL(pavementDamages.getString("createSql").replace("\${TABLE_NAME}","pavement_damages"))
+            val damageIndices=pavementDamages.getJSONArray("indices")
+            for(i in 0 until damageIndices.length())sql.execSQL(damageIndices.getJSONObject(i).getString("createSql").replace("\${TABLE_NAME}","pavement_damages"))
             sql.execSQL(pavementPhotos.getString("createSql").replace("\u0024{TABLE_NAME}","pavement_damage_photos"))
             val indices=pavementPhotos.getJSONArray("indices")
             for(i in 0 until indices.length())sql.execSQL(indices.getJSONObject(i).getString("createSql").replace("\u0024{TABLE_NAME}","pavement_damage_photos"))
             sql.version=17
         }
-        open().use {d->assertEquals(20,d.openHelper.writableDatabase.version);assertEquals(old,d.inventoryDao().snapshot("historical")!!.photos.single());assertTrue(d.inventoryDao().photoHistory("historical").isEmpty())}
+        open().use {d->assertEquals(21,d.openHelper.writableDatabase.version);assertEquals(old,d.inventoryDao().snapshot("historical")!!.photos.single());assertTrue(d.inventoryDao().photoHistory("historical").isEmpty())}
         open().use {d->assertEquals(old,d.inventoryDao().snapshot("historical")!!.photos.single())}
     }
 }

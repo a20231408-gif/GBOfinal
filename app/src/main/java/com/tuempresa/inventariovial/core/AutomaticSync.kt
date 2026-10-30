@@ -14,6 +14,21 @@ import com.tuempresa.inventariovial.diagnostics.SyncPerformance
 
 object AutomaticSync {
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
+    /** This describes the last failed negotiation, not a permanent verdict about the server. */
+    fun compatibilityPending(i:DriveSyncIntent):Boolean = i.state in setOf("PENDING_VALIDATION","UNCONFIGURED") &&
+        i.error.orEmpty().let{it.contains("compatibilidad",true)||it.contains("panel fotográfico SCAP",true)||
+            it.contains("readablePhotoNamingVersion")||it.contains("syncProtocol")||it.contains("pathVersion")||it.contains("technicalDeliveryWithoutGps")}
+    /** Repair a post-ACK UI/scheduling failure only from a complete receipt of the current source. */
+    suspend fun recoverConfirmedReceipts(db:InventoryDatabase):Int=db.withTransaction {
+        var count=0
+        for(i in db.automaticSyncDao().all()) {
+            if(i.state in setOf("SYNCED","CONFLICT") || i.syncedRevision!=i.revision || i.lastSyncedAt==null ||
+                com.tuempresa.inventariovial.localfiles.DeliveryDestination.revision(db,i.kind,i.recordId)!=i.revision)continue
+            val verified=runCatching{val p=JSONObject(requireNotNull(i.preparedJson));val a=JSONObject(requireNotNull(i.receiptJson))
+                p.optString("key")==i.key&&p.optLong("revision")==i.revision&&AutomaticDelivery.validAck(p,a)}.getOrDefault(false)
+            if(verified){db.automaticSyncDao().state(i.key,i.revision,"SYNCED",null);count++}
+        };count
+    }
     /** Called in the same Room transaction as validation. No HTTP/config dependency. */
     suspend fun request(db:InventoryDatabase,kind:String,id:String,revision:Long,warnings:Boolean=false,origin:String="AUTOMATIC") {
         val key="$kind/$id";val dao=db.automaticSyncDao();val old=dao.get(key)
@@ -31,6 +46,31 @@ object AutomaticSync {
     suspend fun draft(db:InventoryDatabase,kind:String,id:String) {
         val old=db.automaticSyncDao().get("$kind/$id") ?: return
         db.automaticSyncDao().put(old.copy(error=old.error?.takeIf {old.state=="CONFLICT"},state=if(old.state=="CONFLICT") "CONFLICT" else if(old.syncedRevision>0) "UPDATE_PENDING" else "DRAFT"))
+    }
+    /** Repair only the demonstrable stale DRAFT marker of the SAME already-closed SCAP revision. */
+    suspend fun recoverClosedScapDrafts(db:InventoryDatabase):Int=db.withTransaction {
+        var count=0
+        for(old in db.automaticSyncDao().all()) {
+            if(old.kind!="SCAP" || old.state!="DRAFT" || old.syncedRevision>=old.revision ||
+                com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,old.key))continue
+            val saved=db.scapDao().inspection(old.recordId) ?: continue
+            if(saved.status!="COMPLETE" || saved.updatedAt!=old.revision)continue
+            db.automaticSyncDao().put(old.copy(state="QUEUED",error=null));count++
+        }
+        count
+    }
+    internal suspend fun scapWarningConsent(db:InventoryDatabase,id:String):Boolean {
+        val saved=db.scapDao().snapshot(id) ?: return false
+        return saved.inspection.status=="COMPLETE" && saved.values.any{
+            it.ownerId=="completion" && it.key=="uploadedWithWarnings" && it.value=="true" && it.source=="USER_CONFIRMED"}
+    }
+    /** An outbox repair may reuse explicit consent of this closed revision, never infer consent. */
+    internal suspend fun restoreScapConsent(db:InventoryDatabase,old:DriveSyncIntent):DriveSyncIntent=db.withTransaction {
+        val latest=db.automaticSyncDao().get(old.key) ?: return@withTransaction old
+        if(latest!=old)return@withTransaction latest
+        if(old.kind!="SCAP" || old.warningsConfirmed || old.preparedJson!=null || old.state=="CONFLICT" || old.syncedRevision>=old.revision ||
+            db.scapDao().inspection(old.recordId)?.updatedAt!=old.revision || !scapWarningConsent(db,old.recordId))return@withTransaction old
+        old.copy(warningsConfirmed=true).also{db.automaticSyncDao().put(it)}
     }
     /** Preserve identity/revision/receipts; recover only the previous GPS-only gate. */
     suspend fun recoverGpsBlocked(db:InventoryDatabase):Int=db.withTransaction {
@@ -85,19 +125,28 @@ object AutomaticSync {
         }
     }
     fun enqueue(context:Context) {
+        // Coalesce requests without cancelling active uploads. The signal appends a fresh
+        // drain, closing KEEP's finish/enqueue race and renegotiating old capabilities.
+        WorkManager.getInstance(context).enqueueUniqueWork("automatic-drive-signal",ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<AutomaticSyncSignalWorker>().setInitialDelay(1,TimeUnit.SECONDS).build())
+    }
+    internal fun appendDrain(context:Context):androidx.work.Operation {
         val job=OneTimeWorkRequestBuilder<AutomaticSyncWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .setInitialDelay(kotlin.random.Random.nextLong(1000,5001),TimeUnit.MILLISECONDS)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL,30,TimeUnit.SECONDS).build()
-        WorkManager.getInstance(context).enqueueUniqueWork("automatic-drive-drain",ExistingWorkPolicy.KEEP,job)
+        return WorkManager.getInstance(context).enqueueUniqueWork("automatic-drive-drain",ExistingWorkPolicy.APPEND_OR_REPLACE,job)
     }
     suspend fun retry(context:Context,key:String) {
         val db=InventoryDatabase.getInstance(context)
         db.withTransaction {
-            val old=db.automaticSyncDao().get(key) ?: return@withTransaction
+            val stored=db.automaticSyncDao().get(key) ?: return@withTransaction
+            val old=restoreScapConsent(db,stored)
             require(old.state!="CONFLICT") {"Conflicto de revisiones: conserva la edición local y concilia con el responsable antes de reenviar."}
-            require(old.state!="DRAFT") {"Valida primero la ficha."}
-            if(old.state in setOf("SYNCED","QUEUED","UPDATE_PENDING","UPLOADING"))return@withTransaction
+            require(old.state!="DRAFT" || AutomaticDelivery.validated(db,old)) {"Valida primero la ficha."}
+            if(old.state in setOf("QUEUED","UPDATE_PENDING","UPLOADING"))return@withTransaction
+            if(old.state=="SYNCED" && DriveDeliveryPresentation.confirmed(old,
+                    com.tuempresa.inventariovial.localfiles.DeliveryDestination.revision(db,old.kind,old.recordId)))return@withTransaction
             if(old.state=="BLOCKED" && old.error?.contains("(NOT_JPEG)")==true) {
                 recoverJpegBlocked(context,db)
             } else db.automaticSyncDao().put(old.copy(state="QUEUED",error=null,attempts=0,origin="MANUAL_APP"))
@@ -114,9 +163,13 @@ object AutomaticSync {
             else->requireNotNull(db.pavementDao().sample(id)).let {require(it.status=="CLOSED") {"Cierra primero la muestra."};it.updatedAt}
         }
         if(existing!=null && existing.revision>=revision) {
-            if(existing.state!="SYNCED")retry(context,existing.key)
-        }else db.withTransaction {request(db,kind,id,revision,warnings,"MANUAL_APP")}
+            if(existing.state!="SYNCED" || !DriveDeliveryPresentation.confirmed(existing,revision))retry(context,existing.key)
+        }else db.withTransaction {request(db,kind,id,revision,warnings || kind=="SCAP"&&scapWarningConsent(db,id),"MANUAL_APP")}
     }
+}
+
+class AutomaticSyncSignalWorker(context:Context,params:WorkerParameters):CoroutineWorker(context,params){
+    override suspend fun doWork():Result=withContext(Dispatchers.IO){AutomaticSync.appendDrain(applicationContext).result.get();Result.success()}
 }
 
 class AutomaticSyncWorker(context:Context,params:WorkerParameters):CoroutineWorker(context,params) {
@@ -147,6 +200,8 @@ object AutomaticSyncDrain {
         AutomaticSync.recoverGpsBlocked(db)
         AutomaticSync.recoverBusyBlocked(db)
         AutomaticSync.recoverJpegBlocked(context,db)
+        AutomaticSync.recoverClosedScapDrafts(db)
+        AutomaticSync.recoverConfirmedReceipts(db)
         val dao=db.automaticSyncDao()
         var retry=false
         val drainStart=SyncPerformance.now()
@@ -156,7 +211,7 @@ object AutomaticSyncDrain {
         val ordered=pending.map {it to AutomaticDelivery.order(context,db,it)}.sortedWith(compareBy({it.second.first},{it.second.second},{it.first.key})).map {it.first}
         for(queued in ordered) {
             val deliveryStart=SyncPerformance.now();var deliveryOutcome="UNCONFIRMED"
-            var intent=dao.get(queued.key) ?: continue
+            var intent=dao.get(queued.key)?.let{AutomaticSync.restoreScapConsent(db,it)} ?: continue
             if(intent.state=="CONFLICT" || !AutomaticDelivery.validated(db,intent))continue
             if(configurationError!=null) {dao.state(intent.key,intent.revision,"UNCONFIGURED",configurationError);continue}
             var last=DeliveryProgress("PREPARING")
@@ -199,7 +254,7 @@ object AutomaticSyncDrain {
                     }
                     ReadablePhotoNames.remember(context,preview,reservation)
                 }
-                val prepared=measured("PREPARE"){AutomaticDelivery.prepare(context,db,intent)}
+                val prepared=measured("PREPARE"){AutomaticDelivery.prepare(context,db,intent,pavementChronological=intent.kind=="PAVEMENT" && transport.supportsPavementChronologicalSic())}
                 dao.prepared(intent.key,intent.revision,prepared.toString())
                 if(prepared.optInt("technicalDeliveryVersion")==1 && !transport.supportsTechnicalDeliveryWithoutGps()) {
                     dao.state(intent.key,intent.revision,"UNCONFIGURED","El backend de Drive debe anunciar technicalDeliveryWithoutGps=true. Ficha y fotos conservadas; se comprobará automáticamente de nuevo.")
@@ -241,10 +296,12 @@ object AutomaticSyncDrain {
                         dao.state(intent.key,intent.revision,"PENDING_VALIDATION","La entrega anterior está confirmada; guarda y valida los cambios locales para enviar otra revisión.")
                     }
                 }
-                SyncPerformance.record(context,intent.kind,"ACK",SyncPerformance.now()-ackStart)
                 deliveryOutcome="OK"
-                progress(DeliveryProgress("COMPLETE",prepared.getJSONArray("files").length(),prepared.getJSONArray("files").length()))
-            com.tuempresa.inventariovial.media.VideoSync.enqueue(context)
+                // Telemetry, UI observers and the separate video scheduler are not the transaction.
+                // Their failure must never turn a durably acknowledged revision back into ERROR.
+                runCatching{SyncPerformance.record(context,intent.kind,"ACK",SyncPerformance.now()-ackStart)}
+                runCatching{progress(DeliveryProgress("COMPLETE",prepared.getJSONArray("files").length(),prepared.getJSONArray("files").length()))}
+                runCatching{com.tuempresa.inventariovial.media.VideoSync.enqueue(context)}
             }catch(e:CancellationException){
                 deliveryOutcome="CANCELLED"
                 withContext(NonCancellable) {dao.state(intent.key,intent.revision,"ERROR","Envío interrumpido por Android; confirmación pendiente. Se reintentará el mismo snapshot.")}
@@ -271,9 +328,13 @@ object AutomaticSyncDrain {
                 retry=retry || attempt<4
                 break
             }catch(_:IllegalArgumentException){
-                dao.state(intent.key,intent.revision,"BLOCKED","La ficha o los archivos requieren corrección antes de enviar. Revisa la validación del formato.")
+                dao.state(intent.key,intent.revision,"BLOCKED",if(last.phase=="PREPARING")
+                    "No se pudieron preparar los archivos para esta entrega. Revisa el formato y la disponibilidad de los medios; originales conservados."
+                    else "La ficha o los archivos requieren corrección antes de enviar. Revisa la validación del formato.")
             }catch(_:Exception){
-                dao.state(intent.key,intent.revision,"ERROR","No se confirmó la entrega. Archivos locales conservados; reintenta la comunicación.")
+                dao.state(intent.key,intent.revision,"ERROR",if(last.phase=="PREPARING" && intent.preparedJson==null)
+                    "No se pudieron preparar o comprobar los archivos para esta entrega. Copia local conservada; reintento pendiente."
+                    else "No se confirmó la entrega. Archivos locales conservados; reintenta la comunicación.")
                 retry=retry || attempt<4
             } finally {
                 SyncPerformance.record(context,intent.kind,"DELIVERY",SyncPerformance.now()-deliveryStart,outcome=deliveryOutcome)

@@ -135,7 +135,7 @@ class PavementRigid147Test {
         val saved=s.copy(sicDataJson=PavementJointAnnotations.update(s,global,setOf(PavementJointAnnotations.Mark("H",4,0),PavementJointAnnotations.Mark("N",4,1))))
         val segments=PavementPdfLayout.segments(saved.anchoM,saved.largoM)
         assertTrue(segments.size>1);assertTrue(segments.any {it.start>=20 && it.contains(saved,global)})
-        val target=File("D:/Downloads/GBO_PRUEBAS_8B/tmp/rigidos-1.4.7-20261015/visual").apply {mkdirs()}
+        val target=File("../tmp/rigidos-1.4.7-20261015/visual").apply {mkdirs()}
         for((name,head) in listOf("sin-marcas" to s,"con-marcas" to saved)) {
             val bitmap=Bitmap.createBitmap(420,1260,Bitmap.Config.ARGB_8888);val canvas=Canvas(bitmap)
             PavementDrawing.draw(canvas,head,listOf(global),20f,labels=false)

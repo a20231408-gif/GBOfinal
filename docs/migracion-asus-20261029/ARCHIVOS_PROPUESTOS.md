@@ -1,0 +1,2184 @@
+# Archivos propuestos para GitHub
+
+Índice preparado: 1485 archivos. Diferencia frente a HEAD: 361 A, 121 M, 195 D.
+
+A = nuevo; M = modificado; D = retirado solo del índice. Todos los D permanecen en disco y en el respaldo privado. No se borraron archivos.
+
+Este inventario incluye avances de campo que ya existían antes de la migración; no significa que se hayan desarrollado ahora. La base es 607d499300859321aa7a282b10ee7dfde17d14f8, anterior a estos cambios sin confirmar.
+
+## Diferencia completa frente a HEAD
+
+- **A** `.gitattributes`
+- **M** `.gitignore`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/ARCHIVOS_PUBLICADOS_REQUERIDOS.md`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/COMPARACION_Y_COMPATIBILIDAD.md`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/LEEME_PRIMERO_NO_PUBLICAR.md`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/MEJORAS_RECONSTRUCCION_EXCEL.md`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/RESPALDO_PRUEBA_PUBLICACION_REVERSION.md`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/candidato-no-publicar/SyncV3.gs`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/pruebas/REPRODUCIR.md`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/pruebas/compatibilidad.test.cjs`
+- **A** `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/referencia-no-reemplazar/SyncV3Core.gs`
+- **A** `MIGRACION_ASUS.md`
+- **M** `app/build.gradle.kts`
+- **A** `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/21.json`
+- **M** `app/src/androidTest/java/com/tuempresa/inventariovial/DriveV4RealIntegration8BTest.kt`
+- **M** `app/src/main/assets/scap_modular_catalog.json`
+- **M** `app/src/main/assets/scap_slab_catalog.json`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/DriveUploadPolicy.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/RecordDetailScreen.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/SicExportScreen.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticDelivery.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticSync.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticSyncPanel.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/core/DocumentTransferOrder.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/DriveAdapters.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryCard.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryLists.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryPresentation.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/DriveInventorySchema.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/DriveSyncCenter.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/ReadablePhotoNames.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/core/RemoteRevisionBudget.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/core/SyncProgress.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/data/dao/InventoryDao.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryDatabase.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/export/LocalBridgeDocument.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/export/LocalSic17Workbook.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/export/LocalSicConsolidates.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/export/LocalSicExport.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/export/LocalSicWorkbookPolicy.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/export/SicExcelWriter.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/export/SicRouteWorkbook.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/field/PhotoCategoryPolicy.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/localfiles/DriveMirrorPlan.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalArchiveProgress.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalCopies.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalCopyPresentation.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalDeliveryScheduling.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalDocumentLocation.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalExportBuilder.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalFilesData.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalFilesUi.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/PublicLocalFolderNames.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/localfiles/SharedDocumentStore.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/localfiles/VerifiedZipArchive.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/media/VideoNames.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/media/VideoPanel.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/media/VideoSync.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCalculation.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCoordinateDisplay.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDamageArchive.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDao.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDrive.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementExports.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementJointOccurrences.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementModels.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRepository.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRules.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSic.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDamageTable.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDialogs.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementOutputPanel.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementScheme.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementSicPanel.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementWorkspace.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/road/SicTableOrder.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/catalog/ScapCatalog.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapRepository.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/BridgeSicContract.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapElementState.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapPhotoPanel.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapPresentation.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapSicLocation.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapToSicMapper.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapUploadReadiness.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapValidation.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/domain/StructuredScapCompletion.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDelivery.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDriveSync.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapFieldBackup.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapHumanDelivery.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapPhotoContinuation.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapSicExporter.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapTemplateMedia.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapBridgeSicPanel.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapController.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapElements.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapExportPanel.kt`
+- **A** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapLocalExportStatus.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapMedia.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapPhotoRecords.kt`
+- **M** `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapWorkspace.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/AcceptanceDeliveryAuditTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/AutomaticDocuments149Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/AutomaticSyncRegressionTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/BridgeSicFlowTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/Engineering2DataTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/FieldCorrections20261023Test.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/FieldCorrectionsUi20261023Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/IntegratedMigration12To14Test.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/LargeLocalArchiveP0Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148MigrationTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148UiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/MixedSic17HotfixTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PavementAnnotationSync147Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PavementAxisAnchoringTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PavementBoundary20261019Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PavementFinalGeometryTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PavementJointPreviewUiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/PavementMigration21Test.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/PavementP0AdditionalTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PavementRigid147Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PhotoCategories5Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PrSuggestionStorageTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/PublicLocalNamesTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/RealEvidenceP0Test.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/RealLargeScapP0Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/RoadAxisStorageTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/RoomTestResources.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/RoundTwoStorageTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapFinalP0Test.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapFinalP0UiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapP0Test.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapP0UiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapPhotoPanelTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapPhotoPanelUiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapProgressiveTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/ScapProgressiveUiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationDurabilityTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationFixtures.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationMediaTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationSafTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationUiTest.kt`
+- **A** `app/src/test/java/com/tuempresa/inventariovial/SicLocalConsolidationTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/SicMigration14To15Test.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/SyncRecovery10DTest.kt`
+- **M** `app/src/test/java/com/tuempresa/inventariovial/TabletScapIterationTest.kt`
+- **A** `backend/referencia-v21/Codigo.gs.example`
+- **A** `backend/referencia-v21/PROCEDENCIA.json`
+- **A** `backend/referencia-v21/PhotoNamesV2Core.gs`
+- **A** `backend/referencia-v21/README.md`
+- **A** `backend/referencia-v21/ScapPhotoPanelV2.gs`
+- **A** `backend/referencia-v21/SicObservationsV1Core.gs`
+- **A** `backend/referencia-v21/SyncV3.gs`
+- **A** `backend/referencia-v21/SyncV3Core.gs`
+- **A** `backend/referencia-v21/VideoNamesV2Core.gs`
+- **A** `backend/referencia-v21/VideoV1.gs`
+- **A** `backend/referencia-v21/VideoV1Core.gs`
+- **A** `backend/referencia-v21/appsscript.json`
+- **M** `docs/CODEX_HANDOFF.md`
+- **M** `docs/ENTREGA_8B.md`
+- **M** `docs/PRUEBAS_REALES_DRIVE_8B.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/actualizar_helpers.py`
+- **A** `docs/backend-google-diagnostico-base-20261017/analizar_evidencia.py`
+- **A** `docs/backend-google-diagnostico-base-20261017/empacar_reparacion.py`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ARCHIVOS_MODIFICADOS_Y_PRUEBAS.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/Codigo.gs.example`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/PhotoNamesV2Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/SyncV3.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/TestHttp.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/TestVariant.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/VideoV1.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/Codigo.gs.example`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/PhotoNamesV2Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestHttp.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestVariant.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/COMPATIBILIDAD_Y_DIFERENCIAS.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/CRITERIOS_PUBLICACION.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ENTREGA_Y_PENDIENTES.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/Codigo.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/PhotoNamesV2Core.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1Core.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/GOOGLE_TEST_SETUP.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/INFORME_DIAGNOSTICO_BASE_V20.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/LEEME_REPARACION_BASE_V20.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/MEDICION_Y_RESULTADOS.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/comparar.py`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/ejecutar.cjs.example`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/fixtures/FOTO_SINTETICA_2048.jpg`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/fixtures/records.json`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/recuperacion.cjs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/Aislamiento.test.cjs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/Ejecutor.test.cjs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/MockGoogle.cjs.example`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/Recuperacion.test.cjs`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/fixtures-helpers-v1/TestHttp.gs.txt`
+- **A** `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/fixtures-helpers-v1/TestIsolation.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ARCHIVOS_MODIFICADOS_Y_PRUEBAS.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/Codigo.gs.example`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/PhotoNamesV2Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/SyncV3.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/TestHttp.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/TestVariant.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/VideoV1.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/Codigo.gs.example`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/PhotoNamesV2Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestHttp.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestVariant.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/COMPATIBILIDAD_Y_DIFERENCIAS.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/CRITERIOS_PUBLICACION.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ENTREGA_Y_PENDIENTES.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/Codigo.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/PhotoNamesV2Core.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1Core.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/GOOGLE_TEST_SETUP.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/INFORME_DIAGNOSTICO_BASE_V20.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/INFORME_FORCED_BUSY.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/LEEME_REPARACION_BASE_V20.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/MEDICION_Y_RESULTADOS.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ejecutor/comparar.py`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ejecutor/ejecutar.cjs.example`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ejecutor/fixtures/FOTO_SINTETICA_2048.jpg`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ejecutor/fixtures/records.json`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ejecutor/forced-busy.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/ejecutor/recuperacion.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/Aislamiento.test.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/ComparadorForcedBusy.test.py`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/Ejecutor.test.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/ForcedBusy.test.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/MockGoogle.cjs.example`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/Recuperacion.test.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/RunnerForcedBusy.test.cjs`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/fixtures-helpers-v1/TestHttp.gs.txt`
+- **A** `docs/backend-google-forced-busy-20261017/paquete/pruebas/fixtures-helpers-v1/TestIsolation.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/herramientas/TestHttp.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/herramientas/TestIsolation.gs.example`
+- **A** `docs/backend-google-pruebas-v20-20261017/herramientas/empacar.py`
+- **A** `docs/backend-google-pruebas-v20-20261017/herramientas/fixtures.cjs`
+- **A** `docs/backend-google-pruebas-v20-20261017/herramientas/preparar.py`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/Codigo.gs.example`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/PhotoNamesV2Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/SyncV3.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/TestHttp.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/TestVariant.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/VideoV1.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/Codigo.gs.example`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/PhotoNamesV2Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestHttp.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestVariant.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/COMPATIBILIDAD_Y_DIFERENCIAS.md`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/CRITERIOS_PUBLICACION.md`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/ENTREGA_Y_PENDIENTES.md`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/Codigo.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/PhotoNamesV2Core.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1Core.gs.txt`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/GOOGLE_TEST_SETUP.md`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/MEDICION_Y_RESULTADOS.md`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/comparar.py`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/ejecutar.cjs.example`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/fixtures/FOTO_SINTETICA_2048.jpg`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/fixtures/records.json`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/pruebas/Aislamiento.test.cjs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/pruebas/Ejecutor.test.cjs`
+- **A** `docs/backend-google-pruebas-v20-20261017/paquete/pruebas/MockGoogle.cjs.example`
+- **A** `docs/backend-v20-revision-20261016/INFORME_REVISION_V20.md`
+- **A** `docs/backend-v20-revision-20261016/LEEME_NO_PUBLICAR.md`
+- **A** `docs/backend-v20-revision-20261016/MEDICIONES_Y_LIMITES.md`
+- **A** `docs/backend-v20-revision-20261016/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- **A** `docs/backend-v20-revision-20261016/candidato-no-publicar/SyncV3.gs`
+- **A** `docs/backend-v20-revision-20261016/candidato-no-publicar/SyncV3Core.gs`
+- **A** `docs/backend-v20-revision-20261016/pruebas/CasosV20.cjs`
+- **A** `docs/backend-v20-revision-20261016/pruebas/HarnessV20.cjs`
+- **A** `docs/backend-v20-revision-20261016/pruebas/MedicionesV20.cjs`
+- **A** `docs/backend-v20-revision-20261016/pruebas/RevisionV20.test.cjs`
+- **D** `docs/campo-10/evidencia/HEIC_FIXTURE.md`
+- **D** `docs/campo-10/evidencia/android-b-xml/TEST-com.tuempresa.inventariovial.DriveFamilies2ATest.xml`
+- **D** `docs/campo-10/evidencia/android-b-xml/TEST-com.tuempresa.inventariovial.PhotoTransport10Test.xml`
+- **D** `docs/campo-10/evidencia/android-b-xml/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml`
+- **D** `docs/campo-10/evidencia/android-b-xml/TEST-com.tuempresa.inventariovial.SyncedRecordEdits2BTest.xml`
+- **D** `docs/campo-10/evidencia/android-b.log`
+- **D** `docs/campo-10/evidencia/anulacion-c.log`
+- **D** `docs/campo-10/evidencia/apk-debug-10.json`
+- **D** `docs/campo-10/evidencia/backend-b-corregido.log`
+- **D** `docs/campo-10/evidencia/backend-b-final-focalizado.log`
+- **D** `docs/campo-10/evidencia/backend-b.log`
+- **D** `docs/campo-10/evidencia/bloque-a-corregido.log`
+- **D** `docs/campo-10/evidencia/bloque-a-xml/TEST-com.tuempresa.inventariovial.AutomaticSyncRegressionTest.xml`
+- **D** `docs/campo-10/evidencia/bloque-a-xml/TEST-com.tuempresa.inventariovial.AutomaticSyncWithoutGpsTest.xml`
+- **D** `docs/campo-10/evidencia/bloque-a-xml/TEST-com.tuempresa.inventariovial.PhotoTransport10Test.xml`
+- **D** `docs/campo-10/evidencia/bloque-a-xml/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml`
+- **D** `docs/campo-10/evidencia/bloque-a.log`
+- **D** `docs/campo-10/evidencia/capacidades-reales.json`
+- **D** `docs/campo-10/evidencia/cierre-focalizado.log`
+- **D** `docs/campo-10/evidencia/cierre-xml/TEST-com.tuempresa.inventariovial.InventoryLifecycle10Test.xml`
+- **D** `docs/campo-10/evidencia/cierre-xml/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml`
+- **D** `docs/campo-10/evidencia/compatibilidad-b.log`
+- **D** `docs/campo-10/evidencia/debug-final-10.log`
+- **D** `docs/campo-10/evidencia/ficha-ficticia-identidad.json`
+- **D** `docs/campo-10/evidencia/foto-ficticia-recibida-drive.jpg`
+- **D** `docs/campo-10/evidencia/foto-ficticia.jpg`
+- **D** `docs/campo-10/evidencia/interfaz-a-xml/TEST-com.tuempresa.inventariovial.BridgeMedia10ScreenTest.xml`
+- **D** `docs/campo-10/evidencia/interfaz-a-xml/TEST-com.tuempresa.inventariovial.PavementParallelCUiTest.xml`
+- **D** `docs/campo-10/evidencia/interfaz-a.log`
+- **D** `docs/campo-10/evidencia/privacidad-10.json`
+- **D** `docs/campo-10/evidencia/prueba-drive-real-ficticia.json`
+- **D** `docs/campo-10c/evidencia/LIMITE_PDF_JVM.md`
+- **D** `docs/campo-10c/evidencia/apk-debug-10c.json`
+- **D** `docs/campo-10c/evidencia/contrato-autorizacion.log`
+- **D** `docs/campo-10c/evidencia/contrato-identidad.log`
+- **D** `docs/campo-10c/evidencia/correcciones-focalizadas.log`
+- **D** `docs/campo-10c/evidencia/cuarta-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10c/evidencia/debug-10c.log`
+- **D** `docs/campo-10c/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10c/evidencia/flujo-fotos-ack.log`
+- **D** `docs/campo-10c/evidencia/focalizado-10c.log`
+- **D** `docs/campo-10c/evidencia/orden-historico.log`
+- **D** `docs/campo-10c/evidencia/pavimentos.log`
+- **D** `docs/campo-10c/evidencia/preparacion-huella.log`
+- **D** `docs/campo-10c/evidencia/primera-xml/TEST-com.tuempresa.inventariovial.InventoryLifecycle10Test.xml`
+- **D** `docs/campo-10c/evidencia/primera-xml/TEST-com.tuempresa.inventariovial.LocalDraftDiscard10CTest.xml`
+- **D** `docs/campo-10c/evidencia/primera-xml/TEST-com.tuempresa.inventariovial.PavementModuleTest.xml`
+- **D** `docs/campo-10c/evidencia/primera-xml/TEST-com.tuempresa.inventariovial.PavementParallelCTest.xml`
+- **D** `docs/campo-10c/evidencia/primera-xml/TEST-com.tuempresa.inventariovial.PavementPhotoUi10CTest.xml`
+- **D** `docs/campo-10c/evidencia/primera-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10c/evidencia/privacidad-10c.json`
+- **D** `docs/campo-10c/evidencia/segunda-xml/TEST-com.tuempresa.inventariovial.LocalDraftDiscard10CTest.xml`
+- **D** `docs/campo-10c/evidencia/segunda-xml/TEST-com.tuempresa.inventariovial.PavementParallelCTest.xml`
+- **D** `docs/campo-10c/evidencia/segunda-xml/TEST-com.tuempresa.inventariovial.PavementPhotoUi10CTest.xml`
+- **D** `docs/campo-10c/evidencia/segunda-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10c/evidencia/tercera-xml/TEST-com.tuempresa.inventariovial.PavementPhotoUi10CTest.xml`
+- **D** `docs/campo-10c/evidencia/tercera-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10c/evidencia/transporte-final.log`
+- **D** `docs/campo-10c/evidencia/transporte-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10d/evidencia/apk-debug-10d-v2-test.json`
+- **D** `docs/campo-10d/evidencia/apk-debug-10d.json`
+- **D** `docs/campo-10d/evidencia/compilacion-inicial.log`
+- **D** `docs/campo-10d/evidencia/compilacion-interrumpida-memoria.log`
+- **D** `docs/campo-10d/evidencia/compilacion-segunda.log`
+- **D** `docs/campo-10d/evidencia/compilacion-tests-api.log`
+- **D** `docs/campo-10d/evidencia/criticas-intento-1.log`
+- **D** `docs/campo-10d/evidencia/criticas-intento-2.log`
+- **D** `docs/campo-10d/evidencia/debug-ordinario-compilacion.log`
+- **D** `docs/campo-10d/evidencia/debug-v2-compilacion.log`
+- **D** `docs/campo-10d/evidencia/final-focalizadas.log`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.BridgeMedia10ScreenTest.xml`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.CameraPreview10DTest.xml`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.FormRotation10DTest.xml`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotoUi10CTest.xml`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.PavementPhotos10CTest.xml`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml`
+- **D** `docs/campo-10d/evidencia/final-xml/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml`
+- **D** `docs/campo-10d/evidencia/parametro-ram-inicial.log`
+- **D** `docs/campo-10d/evidencia/pavimentos-ui-corregido.xml`
+- **D** `docs/campo-10d/evidencia/resultados-10d.json`
+- **D** `docs/campo-10d/evidencia/revision-privacidad-10d.json`
+- **D** `docs/campo-10d/evidencia/rotacion-intento-1.xml`
+- **D** `docs/campo-10d/evidencia/rotacion-intento-2.xml`
+- **D** `docs/campo-10d/evidencia/sync-5-aprobadas.xml`
+- **D** `docs/campo-10d/evidencia/v2-invocacion-inicial.log`
+- **D** `docs/campo-10e/evidencia/TEST-com.tuempresa.inventariovial.PhotoNamesIntegration10ETest.xml`
+- **D** `docs/campo-10e/evidencia/TEST-com.tuempresa.inventariovial.ReadablePhotoNames10Test.xml`
+- **D** `docs/campo-10e/evidencia/apk-classes.json`
+- **D** `docs/campo-10e/evidencia/apk-debug.json`
+- **D** `docs/campo-10e/evidencia/preexisting-release-inspection.json`
+- **D** `docs/campo-10e/evidencia/privacy-check.json`
+- **D** `docs/campo-10e/evidencia/results.json`
+- **D** `docs/campo-10e/evidencia/server-capabilities.json`
+- **D** `docs/campo-10f/evidencia/TEST-com.tuempresa.inventariovial.DeviceFingerprintTest.xml`
+- **D** `docs/campo-10f/evidencia/TEST-com.tuempresa.inventariovial.PhotoNamesIntegration10ETest.xml`
+- **D** `docs/campo-10f/evidencia/TEST-com.tuempresa.inventariovial.VideoClosure10FTest.xml`
+- **D** `docs/campo-10f/evidencia/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml`
+- **D** `docs/campo-10f/evidencia/apk-debug.json`
+- **D** `docs/campo-10f/evidencia/apk-modules.json`
+- **D** `docs/campo-10f/evidencia/findings-before-fix.xml`
+- **D** `docs/campo-10f/evidencia/node-video-adapter.json`
+- **D** `docs/campo-10f/evidencia/preexisting-release-inspection.json`
+- **D** `docs/campo-10f/evidencia/privacy-check.json`
+- **D** `docs/campo-10f/evidencia/results.json`
+- **D** `docs/campo-10f/evidencia/server-capabilities.json`
+- **D** `docs/campo-10h/evidencia/android-video-names.json`
+- **D** `docs/campo-10h/evidencia/apk-debug.json`
+- **D** `docs/campo-10h/evidencia/apk-release.json`
+- **D** `docs/campo-10h/evidencia/backend-video-names.json`
+- **D** `docs/campo-10h/evidencia/delivery-results.json`
+- **D** `docs/campo-10h/evidencia/privacy.json`
+- **D** `docs/campo-10h/evidencia/published-capabilities-before-update.json`
+- **D** `docs/campo-10h/evidencia/signing-configuration.json`
+- **D** `docs/campo-10i/evidencia/PavementFieldUi10ITest-inicial.json`
+- **D** `docs/campo-10i/evidencia/PavementPhotoPersistence10ITest-final.json`
+- **D** `docs/campo-10i/evidencia/SicObservations10ITest-inicial.json`
+- **D** `docs/campo-10i/evidencia/UserCreation10ITest-final.json`
+- **D** `docs/campo-10i/evidencia/apk-debug.json`
+- **D** `docs/campo-10i/evidencia/capacidades-publicadas.json`
+- **D** `docs/campo-10i/evidencia/compilacion-final.json`
+- **D** `docs/campo-10i/evidencia/etapa-a-inicial.json`
+- **D** `docs/campo-10i/evidencia/etapa-a-resultados.json`
+- **D** `docs/campo-10i/evidencia/etapa-b-resultados.json`
+- **D** `docs/campo-10i/evidencia/limitacion-pdf-prueba.json`
+- **D** `docs/campo-10i/evidencia/limitaciones-ui-pruebas.json`
+- **D** `docs/campo-10i/evidencia/manual-qa.json`
+- **D** `docs/campo-10i/evidencia/seguridad-y-respaldo.json`
+- **D** `docs/campo-10j/evidencia/apk-debug.json`
+- **D** `docs/campo-10j/evidencia/verificacion-cierre.json`
+- **D** `docs/campo-10k/evidencia/apk-debug.json`
+- **D** `docs/campo-10k/evidencia/cierre.json`
+- **D** `docs/campo-10k/evidencia/resultados.json`
+- **A** `docs/campo-20261023/INFORME_CAMPO.md`
+- **A** `docs/campo-20261023/MATRIZ_CAMPOS_SCAP_SIC.md`
+- **A** `docs/campo-20261023/RENDIMIENTO_Y_LIMITES.md`
+- **A** `docs/campo-20261023/backend-parche/INSTRUCCIONES_NO_DESPLEGAR.md`
+- **A** `docs/campo-20261023/backend-parche/OrdenProgresiva.test.cjs`
+- **A** `docs/campo-20261023/backend-parche/SyncV3Core.gs`
+- **D** `docs/campo-9/evidencia/ANTES_DETALLE.xml`
+- **D** `docs/campo-9/evidencia/ANTES_EXPORTACIONES_Y_DETALLE_INICIAL.xml`
+- **D** `docs/campo-9/evidencia/ANTES_MINIATURA.xml`
+- **D** `docs/campo-9/evidencia/POSTERIOR_EXPORTACIONES.xml`
+- **D** `docs/campo-9/evidencia/POSTERIOR_PRIMERA_EJECUCION/TEST-com.tuempresa.inventariovial.AutomaticSyncRegressionTest.xml`
+- **D** `docs/campo-9/evidencia/POSTERIOR_PRIMERA_EJECUCION/TEST-com.tuempresa.inventariovial.OperatorFlow7ScreenTest.xml`
+- **D** `docs/campo-9/evidencia/POSTERIOR_PRIMERA_EJECUCION/TEST-com.tuempresa.inventariovial.PhotoCategories5ScreenTest.xml`
+- **D** `docs/campo-9/evidencia/POSTERIOR_PRIMERA_EJECUCION/TEST-com.tuempresa.inventariovial.PhotoCategories5Test.xml`
+- **D** `docs/campo-9/evidencia/POSTERIOR_PRIMERA_EJECUCION/TEST-com.tuempresa.inventariovial.PhotoDrawing9Test.xml`
+- **D** `docs/campo-9b/evidencia/apk-debug.json`
+- **D** `docs/campo-9b/evidencia/backend-ejecutado.md`
+- **D** `docs/campo-9b/evidencia/cierre/TEST-com.tuempresa.inventariovial.AssetOrderingTest.xml`
+- **D** `docs/campo-9b/evidencia/cierre/TEST-com.tuempresa.inventariovial.OperatorFlow7ScreenTest.xml`
+- **D** `docs/campo-9b/evidencia/cierre/TEST-com.tuempresa.inventariovial.PavementParallelCUiTest.xml`
+- **D** `docs/campo-9b/evidencia/compilacion-debug.log`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.FieldContinuation9Test.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.OperatorFlow7ScreenTest.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.PhotoCategories5ScreenTest.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.PhotoCategories5Test.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.PhotoDrawing9Test.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.RoadPositionTest.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.ScapCanonicalExportTest.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.Sic0809ScreenTest.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.SyncedRecordEdits2BTest.xml`
+- **D** `docs/campo-9b/evidencia/primera-ejecucion/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.FieldContinuation9Test.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.PavementModuleTest.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.RoadPositionTest.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.ScapCanonicalExportTest.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.SyncedRecordEdits2BTest.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.UserAuthenticationTest.xml`
+- **D** `docs/campo-9b/evidencia/segunda-ejecucion/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.FieldContinuation9Test.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.OperatorFlow7ScreenTest.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.ScapCanonicalExportTest.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.Sic0809ScreenTest.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.SyncedRecordEdits2BTest.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.UserAuthenticationTest.xml`
+- **D** `docs/campo-9b/evidencia/tercera-ejecucion/TEST-com.tuempresa.inventariovial.VideoContinuation9Test.xml`
+- **M** `docs/drive-familias-2a/DESPLIEGUE_Y_PRUEBA_REAL.md`
+- **M** `docs/drive-familias-2a/ENTREGA.md`
+- **M** `docs/drive-familias-2a/deployment-test/Code.gs`
+- **M** `docs/edicion-sincronizados-2b/DESPLIEGUE_Y_PRUEBA_REAL.md`
+- **M** `docs/edicion-sincronizados-2b/ENTREGA.md`
+- **M** `docs/edicion-sincronizados-2b/deployment-test/Code.gs`
+- **M** `docs/fotografias-5/DESPLIEGUE_PRUEBAS.md`
+- **A** `docs/hotfix-progresiva-scap-sic-20261023/INFORME.md`
+- **M** `docs/integracion-real-8b/ARCHIVOS_DRIVE.md`
+- **D** `docs/integracion-real-8b/evidencia/ANDROID_REAL.json`
+- **D** `docs/integracion-real-8b/evidencia/APK_CONECTADO.json`
+- **D** `docs/integracion-real-8b/evidencia/APK_VALIDACION.json`
+- **D** `docs/integracion-real-8b/evidencia/ARCHIVOS_ACK.json`
+- **D** `docs/integracion-real-8b/evidencia/AUTENTICACION_REAL.json`
+- **D** `docs/integracion-real-8b/evidencia/CARPETAS_FOTOGRAFICAS.json`
+- **D** `docs/integracion-real-8b/evidencia/CONTROL_ENTREGA.json`
+- **D** `docs/integracion-real-8b/evidencia/ESTRUCTURA_DRIVE.json`
+- **D** `docs/integracion-real-8b/evidencia/INTENTO_FIXTURE_FALLIDO.json`
+- **D** `docs/integracion-real-8b/evidencia/LECTURA_DRIVE.json`
+- **D** `docs/integracion-real-8b/evidencia/LECTURA_OFFLINE_DRIVE.json`
+- **D** `docs/integracion-real-8b/evidencia/NEGATIVAS_HTTP.json`
+- **D** `docs/integracion-real-8b/evidencia/OFFLINE_WORKMANAGER_REAL.json`
+- **M** `docs/manual-10i/capturas-reales/README.md`
+- **D** `docs/manual-10i/capturas-reales/manifiesto.json`
+- **A** `docs/migracion-asus-20261029/ARCHIVOS_PROPUESTOS.md`
+- **A** `docs/migracion-asus-20261029/BENCHMARK_HUAWEI.json`
+- **A** `docs/migracion-asus-20261029/INFORME_PREPARACION.md`
+- **A** `docs/migracion-asus-20261029/VERIFICACIONES.json`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.AssetOrderingTest.xml`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.DeliveryMetadataTest.xml`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.DriveFamilies2ATest.xml`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.FieldContinuation9Test.xml`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.RoadPositionTest.xml`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.SyncedRecordEdits2BTest.xml`
+- **D** `docs/ordenamiento-9b/evidencia/TEST-com.tuempresa.inventariovial.core.DriveAssetPathRouterTest.xml`
+- **D** `docs/ordenamiento-9b/evidencia/compilacion-debug-resumen.json`
+- **D** `docs/ordenamiento-9b/evidencia/configuracion-local-sin-secretos.json`
+- **D** `docs/ordenamiento-9b/evidencia/pruebas-focalizadas.log`
+- **A** `docs/p0-real-20261028/ARCHIVOS_MODIFICADOS.md`
+- **A** `docs/p0-real-20261028/INFORME_P0_Y_CANDIDATA_1_4_17.md`
+- **A** `docs/p0-real-20261028/LIMITES_DRIVE_Y_PROPUESTA_NO_IMPLEMENTADA.md`
+- **A** `docs/p0-real-20261028/MATRIZ_ACEPTACION_P0.md`
+- **A** `docs/pavimentos-p0-20261029/CHECKLIST_TABLET.md`
+- **A** `docs/pavimentos-p0-20261029/INFORME_PAVIMENTOS_P0_Y_CANDIDATA_1_4_18.md`
+- **A** `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/CAPACIDADES_FRAGMENTO_NO_REEMPLAZAR_CODIGO.txt`
+- **A** `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/LEEME_NO_PUBLICAR.md`
+- **A** `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/PavementSicChronologyV1.gs`
+- **A** `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/SyncV3Core.gs`
+- **A** `docs/pavimentos-p0-20261029/pruebas/PavementChronology.test.cjs`
+- **A** `docs/pavimentos-p0-20261029/pruebas/fixtures/ANDROID_PAVEMENT_CHRONO.json`
+- **A** `docs/pavimentos-p0-20261029/pruebas/fixtures/ANDROID_PAVEMENT_V21.json`
+- **A** `docs/release-1.4.16-30-20261028/INFORME_RELEASE_1_4_16.md`
+- **A** `docs/release-candidate-1.4.14-28-20261026/RESULTADO.md`
+- **A** `docs/scap-backend-compat-20261027/DESPLIEGUE_CONTROLADO_Y_REVERSION.md`
+- **A** `docs/scap-backend-compat-20261027/INFORME_COMPATIBILIDAD_SCAP.md`
+- **A** `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/PhotoNamesV2Core.gs`
+- **A** `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/ScapPhotoPanelV2.gs`
+- **A** `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/SyncV3Core.gs`
+- **A** `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/VideoNamesV2Core.gs`
+- **A** `docs/scap-backend-compat-20261027/pruebas/Compatibilidad54.test.cjs`
+- **A** `docs/scap-backend-compat-20261027/pruebas/Harness.cjs`
+- **A** `docs/scap-backend-compat-20261027/pruebas/ScapPanelBackend.test.cjs`
+- **A** `docs/scap-backend-compat-20261027/pruebas/fixtures/ACK_CANDIDATO_54.json`
+- **A** `docs/scap-backend-compat-20261027/pruebas/fixtures/ACK_CANDIDATO_54_FINAL.json`
+- **A** `docs/scap-backend-compat-20261027/pruebas/fixtures/ANDROID_SCAP_54.json`
+- **A** `docs/scap-clasp-20261027/COMPARACION_Y_PRUEBAS.md`
+- **A** `docs/scap-clasp-20261027/ESTADO_PREVIO_A_PUBLICACION.md`
+- **A** `docs/scap-clasp-20261027/ESTADO_Y_AUTORIZACION.md`
+- **A** `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/PhotoNamesV2Core.gs`
+- **A** `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/ScapPhotoPanelV2.gs`
+- **A** `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/SyncV3Core.gs`
+- **A** `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/VideoNamesV2Core.gs`
+- **A** `docs/scap-clasp-20261027/PLAN_PREVIO_PUBLICACION_Y_REVERSION.md`
+- **A** `docs/scap-clasp-20261027/PRUEBA_CONTROLADA_TABLET.md`
+- **A** `docs/scap-clasp-20261027/REVERSION_Y_VERIFICACION.md`
+- **A** `docs/scap-integracion-actual-20261027/COMPARACION_9_ARCHIVOS.md`
+- **A** `docs/scap-integracion-actual-20261027/DESPLIEGUE_Y_REVERSION_NO_AUTORIZADO.md`
+- **A** `docs/scap-integracion-actual-20261027/GOOGLE_TEST_SETUP.md`
+- **A** `docs/scap-integracion-actual-20261027/LEEME_PRIMERO.md`
+- **A** `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/PhotoNameV2Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/ScapPhotoPanelV2.gs`
+- **A** `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/SyncV3Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/VideoNamesV2Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/Código.gs.example`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/PhotoNameV2Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/ScapEnsayo.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/ScapPhotoPanelV2.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/SicObservationsV1Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/SyncV3.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/SyncV3Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/TestHttp.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/TestIsolation.gs.example`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/TestVariant.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/VideoNamesV2Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/VideoV1.gs`
+- **A** `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/VideoV1Core.gs`
+- **A** `docs/scap-integracion-actual-20261027/PRUEBAS_LOCALES.md`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/Compatibilidad54.test.cjs`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/EnsayoAislado.test.cjs`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/Harness.cjs`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/MockActual.cjs`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/ScapPanelBackend.test.cjs`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/ACK_CANDIDATO_54.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/ACK_FINAL_LOCAL_4.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/ACK_INTEGRADO_LOCAL_3.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/ANDROID_SCAP_54.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/SCAP_54_FOTOS_3_CROQUIS_FICTICIO.zip`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/alcantarilla5.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/scap_modular_catalog.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/fixtures/scap_slab_catalog.json`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/Código.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/PhotoNameV2Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/ScapPhotoPanelV2.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/SyncV3.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/SyncV3Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/VideoV1.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/VideoV1Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/Código.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/PhotoNameV2Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/SyncV3.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/SyncV3Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/VideoV1.gs.txt`
+- **A** `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/VideoV1Core.gs.txt`
+- **A** `docs/scap-p0-20261027/ARCHIVOS_MODIFICADOS.md`
+- **A** `docs/scap-p0-20261027/DIAGNOSTICO_Y_PRUEBAS.md`
+- **A** `docs/scap-p0-20261027/INFORME_P0_SCAP.md`
+- **A** `docs/scap-p0-final-20261027/ARCHIVOS_MODIFICADOS.md`
+- **A** `docs/scap-p0-final-20261027/CHECKLIST_TABLET.md`
+- **A** `docs/scap-p0-final-20261027/COMPATIBILIDAD_RESPALDO_PROVISIONAL.md`
+- **A** `docs/scap-p0-final-20261027/ESCALAS_Y_CEROS.md`
+- **A** `docs/scap-p0-final-20261027/INFORME_P0_FINAL_1.4.15.md`
+- **A** `docs/scap-panel-oficial-20261023/ARCHIVOS_MODIFICADOS.md`
+- **A** `docs/scap-panel-oficial-20261023/ENTREGA_Y_ACTIVACION.md`
+- **A** `docs/scap-panel-oficial-20261023/MATRIZ_VALIDACION.md`
+- **A** `docs/scap-panel-oficial-20261023/RELEASE_1.4.13.md`
+- **A** `docs/scap-panel-oficial-20261023/ScapPanelBackend.test.cjs`
+- **A** `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/PhotoNamesV2Core.gs`
+- **A** `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/ScapPhotoPanelV2.gs`
+- **A** `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/SyncV3Core.gs`
+- **A** `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/VideoNamesV2Core.gs`
+- **A** `docs/sic-consolidados-20261026/ARCHIVOS_MODIFICADOS.md`
+- **A** `docs/sic-consolidados-20261026/ComparacionV20.test.cjs`
+- **A** `docs/sic-consolidados-20261026/INFORME.md`
+- **A** `docs/sic-consolidados-20261026/MATRIZ_VALIDACION.md`
+- **A** `docs/sic17-mixto-1.4.14-20261026/ARCHIVOS_MODIFICADOS.md`
+- **A** `docs/sic17-mixto-1.4.14-20261026/DIAGNOSTICO_Y_ESQUEMA.md`
+- **A** `docs/sic17-mixto-1.4.14-20261026/ENTREGA_1.4.14.md`
+- **M** `docs/sync-sin-gps-2026-10-11/DESPLIEGUE_PRUEBAS.md`
+- **M** `docs/sync-sin-gps-2026-10-11/ENTREGA.md`
+- **M** `drive.local.properties.example`
+- **M** `google-apps-script/Code.gs`
+- **M** `google-apps-script/DriveV4Harness.cjs`
+- **M** `google-apps-script/SyncV3.test.cjs`
+- **M** `google-apps-script/VideoNamesV2.test.cjs`
+- **M** `server.local.properties.example`
+- **M** `tools/capturar_manual_10j.ps1`
+- **A** `tools/gbo_paths.py`
+- **A** `tools/migracion/benchmark_windows.py`
+- **A** `tools/migracion/pruebas.init.gradle`
+- **A** `tools/migracion/tests_criticos.json`
+- **A** `tools/scap_ui_10g.py`
+- **M** `tools/verificar_d24_abanico_20261019.py`
+- **M** `tools/verificar_juntas_25_27_20261019.py`
+- **M** `tools/verificar_orientacion_definitiva_20261019.py`
+- **M** `tools/verificar_pavimentos_final_sin_apk_20261019.py`
+- **M** `tools/verificar_pavimentos_sin_apk_20261019.py`
+- **M** `tools/verificar_pdf_legibilidad_20261019.py`
+- **M** `tools/verificar_sic20_juntas_20261019.py`
+
+## Inventario completo del índice
+
+- `.gitattributes`
+- `.gitignore`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/ARCHIVOS_PUBLICADOS_REQUERIDOS.md`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/COMPARACION_Y_COMPATIBILIDAD.md`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/LEEME_PRIMERO_NO_PUBLICAR.md`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/MEJORAS_RECONSTRUCCION_EXCEL.md`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/RESPALDO_PRUEBA_PUBLICACION_REVERSION.md`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/candidato-no-publicar/SyncV3.gs`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/pruebas/REPRODUCIR.md`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/pruebas/compatibilidad.test.cjs`
+- `APPS_SCRIPT_OPTIMIZADO_LISTO_PARA_REVISION/referencia-no-reemplazar/SyncV3Core.gs`
+- `MIGRACION_ASUS.md`
+- `app/build.gradle.kts`
+- `app/proguard-rules.pro`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/10.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/11.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/12.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/13.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/14.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/15.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/16.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/17.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/18.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/19.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/20.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/21.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/4.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/5.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/6.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/7.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/8.json`
+- `app/schemas/com.tuempresa.inventariovial.data.database.InventoryDatabase/9.json`
+- `app/schemas/com.tuempresa.inventariovial.media.VideoDatabase/1.json`
+- `app/src/androidTest/assets/inventory-v1.sql`
+- `app/src/androidTest/assets/photo10.heic`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/DriveV4Offline8BTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/DriveV4RealIntegration8BTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/EngineeringUxScreenTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/ExampleInstrumentedTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/FieldCrashes9DeviceTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/InventoryMigrationTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/PavementDialogs10ITest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/PhotoFormats10InstrumentedTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/ScapAndroidExportTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/ScapDriveDeviceTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/SicExportScreenTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/SurveyFormsScreenTest.kt`
+- `app/src/androidTest/java/com/tuempresa/inventariovial/UserSecurityDeviceTest.kt`
+- `app/src/main/AndroidManifest.xml`
+- `app/src/main/assets/allowed_devices.json`
+- `app/src/main/assets/pavement/catalogo_danos.json`
+- `app/src/main/assets/pavement/curvas/asfalto.json`
+- `app/src/main/assets/pavement/curvas/no_pavimentado.json`
+- `app/src/main/assets/pavement/curvas/rigido.json`
+- `app/src/main/assets/project_routes.json`
+- `app/src/main/assets/road_reference.json`
+- `app/src/main/assets/scap_elements.json`
+- `app/src/main/assets/scap_fields.json`
+- `app/src/main/assets/scap_modular_catalog.json`
+- `app/src/main/assets/scap_options.json`
+- `app/src/main/assets/scap_slab_catalog.json`
+- `app/src/main/assets/signs/i_10.webp`
+- `app/src/main/assets/signs/i_11.webp`
+- `app/src/main/assets/signs/i_12.webp`
+- `app/src/main/assets/signs/i_13.webp`
+- `app/src/main/assets/signs/i_14.webp`
+- `app/src/main/assets/signs/i_15.webp`
+- `app/src/main/assets/signs/i_16.webp`
+- `app/src/main/assets/signs/i_17.webp`
+- `app/src/main/assets/signs/i_18.webp`
+- `app/src/main/assets/signs/i_19.webp`
+- `app/src/main/assets/signs/i_1a.webp`
+- `app/src/main/assets/signs/i_1b.webp`
+- `app/src/main/assets/signs/i_1c.webp`
+- `app/src/main/assets/signs/i_1d.webp`
+- `app/src/main/assets/signs/i_20.webp`
+- `app/src/main/assets/signs/i_21.webp`
+- `app/src/main/assets/signs/i_22.webp`
+- `app/src/main/assets/signs/i_23.webp`
+- `app/src/main/assets/signs/i_24.webp`
+- `app/src/main/assets/signs/i_25.webp`
+- `app/src/main/assets/signs/i_26.webp`
+- `app/src/main/assets/signs/i_27.webp`
+- `app/src/main/assets/signs/i_28.webp`
+- `app/src/main/assets/signs/i_29.webp`
+- `app/src/main/assets/signs/i_2a.webp`
+- `app/src/main/assets/signs/i_2b.webp`
+- `app/src/main/assets/signs/i_31.webp`
+- `app/src/main/assets/signs/i_32.webp`
+- `app/src/main/assets/signs/i_33.webp`
+- `app/src/main/assets/signs/i_34.webp`
+- `app/src/main/assets/signs/i_35.webp`
+- `app/src/main/assets/signs/i_3a.webp`
+- `app/src/main/assets/signs/i_3b.webp`
+- `app/src/main/assets/signs/i_4a.webp`
+- `app/src/main/assets/signs/i_4b.webp`
+- `app/src/main/assets/signs/i_5.webp`
+- `app/src/main/assets/signs/i_6.webp`
+- `app/src/main/assets/signs/i_7.webp`
+- `app/src/main/assets/signs/i_8.webp`
+- `app/src/main/assets/signs/i_9.webp`
+- `app/src/main/assets/signs/p_10a.webp`
+- `app/src/main/assets/signs/p_10b.webp`
+- `app/src/main/assets/signs/p_15.webp`
+- `app/src/main/assets/signs/p_16a.webp`
+- `app/src/main/assets/signs/p_16b.webp`
+- `app/src/main/assets/signs/p_17a.webp`
+- `app/src/main/assets/signs/p_17b.webp`
+- `app/src/main/assets/signs/p_17c.webp`
+- `app/src/main/assets/signs/p_18a.webp`
+- `app/src/main/assets/signs/p_18b.webp`
+- `app/src/main/assets/signs/p_1a.webp`
+- `app/src/main/assets/signs/p_1b.webp`
+- `app/src/main/assets/signs/p_21.webp`
+- `app/src/main/assets/signs/p_21a.webp`
+- `app/src/main/assets/signs/p_21b.webp`
+- `app/src/main/assets/signs/p_22c.webp`
+- `app/src/main/assets/signs/p_25.webp`
+- `app/src/main/assets/signs/p_25a.webp`
+- `app/src/main/assets/signs/p_25b.webp`
+- `app/src/main/assets/signs/p_28.webp`
+- `app/src/main/assets/signs/p_28a.webp`
+- `app/src/main/assets/signs/p_29.webp`
+- `app/src/main/assets/signs/p_29a.webp`
+- `app/src/main/assets/signs/p_2a.webp`
+- `app/src/main/assets/signs/p_2b.webp`
+- `app/src/main/assets/signs/p_31.webp`
+- `app/src/main/assets/signs/p_31a.webp`
+- `app/src/main/assets/signs/p_33a.webp`
+- `app/src/main/assets/signs/p_33b.webp`
+- `app/src/main/assets/signs/p_34.webp`
+- `app/src/main/assets/signs/p_34a.webp`
+- `app/src/main/assets/signs/p_35.webp`
+- `app/src/main/assets/signs/p_35c.webp`
+- `app/src/main/assets/signs/p_36.webp`
+- `app/src/main/assets/signs/p_38.webp`
+- `app/src/main/assets/signs/p_39.webp`
+- `app/src/main/assets/signs/p_3a.webp`
+- `app/src/main/assets/signs/p_3b.webp`
+- `app/src/main/assets/signs/p_41.webp`
+- `app/src/main/assets/signs/p_42.webp`
+- `app/src/main/assets/signs/p_43.webp`
+- `app/src/main/assets/signs/p_44.webp`
+- `app/src/main/assets/signs/p_44a.webp`
+- `app/src/main/assets/signs/p_44b.webp`
+- `app/src/main/assets/signs/p_45.webp`
+- `app/src/main/assets/signs/p_46.webp`
+- `app/src/main/assets/signs/p_46a.webp`
+- `app/src/main/assets/signs/p_46b.webp`
+- `app/src/main/assets/signs/p_46c.webp`
+- `app/src/main/assets/signs/p_46d.webp`
+- `app/src/main/assets/signs/p_46e.webp`
+- `app/src/main/assets/signs/p_48.webp`
+- `app/src/main/assets/signs/p_48a.webp`
+- `app/src/main/assets/signs/p_48b.webp`
+- `app/src/main/assets/signs/p_49.webp`
+- `app/src/main/assets/signs/p_49a.webp`
+- `app/src/main/assets/signs/p_49b.webp`
+- `app/src/main/assets/signs/p_4a.webp`
+- `app/src/main/assets/signs/p_4b.webp`
+- `app/src/main/assets/signs/p_50.webp`
+- `app/src/main/assets/signs/p_51.webp`
+- `app/src/main/assets/signs/p_52.webp`
+- `app/src/main/assets/signs/p_53.webp`
+- `app/src/main/assets/signs/p_55.webp`
+- `app/src/main/assets/signs/p_56.webp`
+- `app/src/main/assets/signs/p_58.webp`
+- `app/src/main/assets/signs/p_59.webp`
+- `app/src/main/assets/signs/p_5_1.webp`
+- `app/src/main/assets/signs/p_5_1a.webp`
+- `app/src/main/assets/signs/p_5_2a.webp`
+- `app/src/main/assets/signs/p_5_2b.webp`
+- `app/src/main/assets/signs/p_6.webp`
+- `app/src/main/assets/signs/p_60.webp`
+- `app/src/main/assets/signs/p_61.webp`
+- `app/src/main/assets/signs/p_62.webp`
+- `app/src/main/assets/signs/p_66.webp`
+- `app/src/main/assets/signs/p_66a.webp`
+- `app/src/main/assets/signs/p_6a.webp`
+- `app/src/main/assets/signs/p_6b.webp`
+- `app/src/main/assets/signs/p_7.webp`
+- `app/src/main/assets/signs/p_8.webp`
+- `app/src/main/assets/signs/p_9a.webp`
+- `app/src/main/assets/signs/p_9b.webp`
+- `app/src/main/assets/signs/r_1.webp`
+- `app/src/main/assets/signs/r_10.webp`
+- `app/src/main/assets/signs/r_11.webp`
+- `app/src/main/assets/signs/r_11a.webp`
+- `app/src/main/assets/signs/r_11b.webp`
+- `app/src/main/assets/signs/r_12.webp`
+- `app/src/main/assets/signs/r_14.webp`
+- `app/src/main/assets/signs/r_14a.webp`
+- `app/src/main/assets/signs/r_14b.webp`
+- `app/src/main/assets/signs/r_16.webp`
+- `app/src/main/assets/signs/r_16a.webp`
+- `app/src/main/assets/signs/r_17.webp`
+- `app/src/main/assets/signs/r_18.webp`
+- `app/src/main/assets/signs/r_19.webp`
+- `app/src/main/assets/signs/r_2.webp`
+- `app/src/main/assets/signs/r_20.webp`
+- `app/src/main/assets/signs/r_21.webp`
+- `app/src/main/assets/signs/r_22.webp`
+- `app/src/main/assets/signs/r_22a.webp`
+- `app/src/main/assets/signs/r_23.webp`
+- `app/src/main/assets/signs/r_24.webp`
+- `app/src/main/assets/signs/r_25.webp`
+- `app/src/main/assets/signs/r_25a.webp`
+- `app/src/main/assets/signs/r_25b.webp`
+- `app/src/main/assets/signs/r_25c.webp`
+- `app/src/main/assets/signs/r_25d.webp`
+- `app/src/main/assets/signs/r_26.webp`
+- `app/src/main/assets/signs/r_27.webp`
+- `app/src/main/assets/signs/r_27a.webp`
+- `app/src/main/assets/signs/r_28.webp`
+- `app/src/main/assets/signs/r_29.webp`
+- `app/src/main/assets/signs/r_3.webp`
+- `app/src/main/assets/signs/r_30.webp`
+- `app/src/main/assets/signs/r_30b.webp`
+- `app/src/main/assets/signs/r_30c.webp`
+- `app/src/main/assets/signs/r_30d.webp`
+- `app/src/main/assets/signs/r_30e.webp`
+- `app/src/main/assets/signs/r_30f.webp`
+- `app/src/main/assets/signs/r_30g.webp`
+- `app/src/main/assets/signs/r_31.webp`
+- `app/src/main/assets/signs/r_32.webp`
+- `app/src/main/assets/signs/r_33.webp`
+- `app/src/main/assets/signs/r_34.webp`
+- `app/src/main/assets/signs/r_35.webp`
+- `app/src/main/assets/signs/r_36.webp`
+- `app/src/main/assets/signs/r_37.webp`
+- `app/src/main/assets/signs/r_4.webp`
+- `app/src/main/assets/signs/r_40.webp`
+- `app/src/main/assets/signs/r_42.webp`
+- `app/src/main/assets/signs/r_42a.webp`
+- `app/src/main/assets/signs/r_42b.webp`
+- `app/src/main/assets/signs/r_42c.webp`
+- `app/src/main/assets/signs/r_43.webp`
+- `app/src/main/assets/signs/r_44.webp`
+- `app/src/main/assets/signs/r_45.webp`
+- `app/src/main/assets/signs/r_45a.webp`
+- `app/src/main/assets/signs/r_47.webp`
+- `app/src/main/assets/signs/r_48.webp`
+- `app/src/main/assets/signs/r_49.webp`
+- `app/src/main/assets/signs/r_5.webp`
+- `app/src/main/assets/signs/r_50.webp`
+- `app/src/main/assets/signs/r_52.webp`
+- `app/src/main/assets/signs/r_53.webp`
+- `app/src/main/assets/signs/r_54.webp`
+- `app/src/main/assets/signs/r_54a.webp`
+- `app/src/main/assets/signs/r_54b.webp`
+- `app/src/main/assets/signs/r_55a.webp`
+- `app/src/main/assets/signs/r_55b.webp`
+- `app/src/main/assets/signs/r_56.webp`
+- `app/src/main/assets/signs/r_58a.webp`
+- `app/src/main/assets/signs/r_58b.webp`
+- `app/src/main/assets/signs/r_5_1.webp`
+- `app/src/main/assets/signs/r_5_2.webp`
+- `app/src/main/assets/signs/r_5_3.webp`
+- `app/src/main/assets/signs/r_5_4.webp`
+- `app/src/main/assets/signs/r_6.webp`
+- `app/src/main/assets/signs/r_62.webp`
+- `app/src/main/assets/signs/r_64a.webp`
+- `app/src/main/assets/signs/r_64b.webp`
+- `app/src/main/assets/signs/r_6a.webp`
+- `app/src/main/assets/signs/r_7.webp`
+- `app/src/main/assets/signs/r_8.webp`
+- `app/src/main/assets/signs/r_8a.webp`
+- `app/src/main/assets/signs/r_9.webp`
+- `app/src/main/assets/signs/sign_assets_manifest.json`
+- `app/src/main/ic_launcher-playstore.png`
+- `app/src/main/java/com/tuempresa/inventariovial/DriveConfig.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/DriveFolderRouter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/DrivePathPlanner.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/DriveStatusPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/DriveSync.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/DriveUploadPolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/DriveUploadWorker.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/MainActivity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/RecordDetailPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/RecordDetailScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/RecordHistoryScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/Sic23Fields.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/SicExportScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/TrafficSignCatalog.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/access/DeviceAccessManager.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/access/DeviceFingerprint.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/ai/AiAnalyzer.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/AdminUsersRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/AdminUsersScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/AuthGraph.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/AuthPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/AuthRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/AuthSessionManager.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/CredentialProtector.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/LoginFormInputs.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/LoginScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/PasswordHasher.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/TabletAdminRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/TabletAdminScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/UserDao.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/UserEntities.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/UserServiceClient.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/UserSyncRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/auth/UserSyncWorker.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/camera/FieldThumbnailCache.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/camera/PhotoCaptureMetadata.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/camera/PhotoExif.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/camera/PhotoStampService.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/camera/PhotoUtils.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/camera/RequiredWatermark.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/catalog/EngineeringConditions.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/catalog/SicCatalogRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticDelivery.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticSync.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticSyncPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/AutomaticSyncStore.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/CameraPreviewTransform.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/CleanPhotoPolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/CoreFieldTools.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DeliveryJpeg.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DocumentTransferOrder.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveAdapters.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveAssetPathRouter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryCard.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryListPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryLists.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveDeliveryPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveInventorySchema.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DrivePaths.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/DriveSyncCenter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/FieldCameraActivity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/FieldCommonUi.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/GeneratedFileIndex.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/InventoryDraftStore.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/InventoryFormUi.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/InventoryLifecyclePolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/JpegEnvelope.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/LocalDraftDiscard.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/LocalDraftDiscardButton.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/PhotoCompatibilityDiagnostic.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/PhotoFilePicker.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/PhotoNamingDiagnostic.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/ReadablePhotoNames.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/RemoteRevisionBudget.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/StablePhotoNames.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/SyncOverview.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/core/SyncProgress.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/dashboard/DashboardHome.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/dashboard/DashboardPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/dashboard/DashboardScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/dashboard/RutaClaraComponents.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/dao/InventoryDao.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/data/dao.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/database/EngineeringMigration.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryDatabase.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/database/InventoryMigrations.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/database/RoundTwoMigration.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/DeliveryBatchEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/FieldPrEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/FieldSession.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/InventoryRecordEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/InventoryRecordForExport.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/InventoryRecordWithPhotos.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/InventorySnapshot.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/PhotoEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/PhotoHistoryEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic17AEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic17BEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic17Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic18AEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic18Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic19Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic20Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic21Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic22Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/Sic23Entity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/SicExtensionEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/data/entity/TrackPointEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryMetadata.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryPhotoNameBuilder.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/delivery/DeliveryReviewPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/delivery/DeliverySync.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/delivery/RouteDelivery.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/ContractualReferenceDiagnostics.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/ScapSaveDiagnostics.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/Sic20DraftDiagnostics.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/StabilityDiagnostics.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/StabilityScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/SyncPerformance.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/diagnostics/SyncQueueDiagnostics.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/LocalBridgeDocument.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/LocalSic17Workbook.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/LocalSicConsolidates.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/LocalSicExport.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/LocalSicWorkbookPolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/ObservationReport.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/ProvisionalSicExcel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/Sic18AExporter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/SicConsolidatedWorkbook.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/SicExcelWriter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/SicExportFormat.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/SicExportUploader.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/SicRouteWorkbook.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/SicWorkbookHeaderWriter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/export/TechnicalLengthExport.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/CaptureSummary.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/CaptureToolsUi.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/ConditionSelector.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/ContractualLocationFields.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/CulvertEditDraft.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/CulvertPhotos.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/CulvertUnifiedScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/DraftDestination.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/EngineeringEditScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/FieldController.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/FieldPrPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/FieldSessionDefaults.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/FieldSettings.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/FieldUi.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/InventoryPhotoGallery.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/LegacyInventoryForm.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/LocationSuggestionPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/ModuleElements.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/ObservationReportButton.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/OptionalDeviceGps.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/PhotoCategoryPolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/PrSuggestionPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/ProjectRouteFields.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/ResumeDraftForm.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/SessionProjectName.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/Sic18AExportButton.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/SicFormCore.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/SignalCodeFields.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/SurveyHeader.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/SurveyPreferences.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/TechnicalLengthField.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/field/TrafficSignVisualSelector.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/gis/KmlExporter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/gis/KmlMapImages.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/gis/KmlPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/gis/LocalKmlExport.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/AutomaticLocalDocuments.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/DeliveryDestination.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/DriveMirrorPlan.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalArchiveProgress.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalCopies.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalCopyPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalDeliveryScheduling.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalDocumentLocation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalExportBuilder.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalFilesData.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/LocalFilesUi.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/ProvisionalScapWorkbook.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/PublicLocalFolderNames.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/SharedDocumentStore.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/UnifiedRecordsScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/VerifiedZipArchive.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/localfiles/VideoDocumentOutbox.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/location/ExternalGnssProvider.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/location/GpsUtils.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/location/LocationProvider.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/location/TabletLocationProvider.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/media/VideoNames.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/media/VideoPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/media/VideoStorage.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/media/VideoSync.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/RoadAssetType.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/SignalizationType.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/CommonInventoryFormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/InventoryFormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/InventorySaveRequest.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic17FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic18FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic19FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic20FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic20Identity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic21FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic22FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/Sic23FormState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/model/form/SicIdentity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementBoundaryGeometry.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCalculation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCoordinateDisplay.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementCornerGeometry.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDamageArchive.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDamageFields.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDao.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDrive.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementDurabilityGeometry.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementExports.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementGeneratedFiles.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementHeader.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementHistory.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementJointAnnotations.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementJointOccurrences.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementMigration.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementModels.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementMovement.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementPatchVisuals.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementPhotos.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRigidPdfLayout.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRigidPdfScheme.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRigidVisualGeometry.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementRules.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementScale.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSection.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSic.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSketch.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/PavementSlabTotals.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDamageTable.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementDialogs.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementOutputPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementScheme.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementSicPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/pavement/ui/PavementWorkspace.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/repository/EngineeringEdits.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/repository/InventoryPhotoEdits.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/repository/InventoryRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/repository/TechnicalLengthStore.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/AssetOrderScreen.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/AssetPresentationCatalog.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/ContractualPrInput.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/FieldPrRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/GnssRouteIndicators.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/InventoryOrderingProjection.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/InventoryTechnicalOrder.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/KmzRouteImport.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/LiveRoadMap.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/LocalVisualOrder.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/LocationSuggestionEngine.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/OrderedAsset.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/PrSuggestionEngine.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/ProjectRouteCatalog.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/RoadAxisPositioner.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/RoadAxisStorage.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/RoadReference.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/RoadReferenceRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/road/SicTableOrder.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/calculator/ScapConditionCalculator.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/catalog/ScapCatalog.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapDao.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapEditJournal.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapEntities.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapJointEntity.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapMigration.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/data/ScapRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/BridgeSicContract.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapAiAnalyzer.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapBridgeType.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapCompleteness.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapElementState.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapFieldPolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapFieldRoute.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapPhotoPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapPresentation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapSicLocation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapSicSupplement.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapSketchSelection.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapToSicMapper.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapUploadReadiness.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/ScapValidation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/domain/StructuredScapCompletion.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapCanonicalExporter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapCaptureRows.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDelivery.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDriveLocation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDrivePayload.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapDriveSync.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapExcelExporter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapFieldBackup.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapHumanDelivery.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapImageOrientation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapPhotoContinuation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapSicExporter.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/ScapTemplateMedia.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/export/TemplateWorkbook.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapBridgeSicPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapController.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapElements.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapEngineeringPanels.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapExportPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapFieldTarget.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapForms.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapLocalExportStatus.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapMedia.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapPhotoRecords.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapSicSupplementPanel.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/scap/ui/ScapWorkspace.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/server/ServerApi.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/server/ServerPayload.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/server/ServerSyncWorker.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/ElementExports.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/FajaCaptureForm.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/InventoryElements.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/LegacySicElementForm.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/SicCaptureContext.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/SicDeliveryStatus.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldFormats.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldRepository.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/sic/SicFieldWorkspace.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/supplementary/Sic18AStatus.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/supplementary/SupplementaryForms.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/tracking/TrackCalculator.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/tracking/TrackCaptureService.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/ui/theme/Color.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/ui/theme/Theme.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/ui/theme/Type.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/validation/CaptureValidation.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/validation/ContractualLocationInput.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/validation/EndLocationPolicy.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/validation/TechnicalElementRules.kt`
+- `app/src/main/java/com/tuempresa/inventariovial/viewmodel/InventoryViewModel.kt`
+- `app/src/main/keepRules/rules.keep`
+- `app/src/main/res/drawable-land-nodpi/gbo_dashboard_header.webp`
+- `app/src/main/res/drawable-land-nodpi/gbo_login_background.webp`
+- `app/src/main/res/drawable-land-nodpi/gbo_setup_background.webp`
+- `app/src/main/res/drawable-nodpi/gbo_auth_logo.png`
+- `app/src/main/res/drawable-nodpi/gbo_dashboard_banner.webp`
+- `app/src/main/res/drawable-nodpi/gbo_dashboard_header.webp`
+- `app/src/main/res/drawable-nodpi/gbo_login_background.webp`
+- `app/src/main/res/drawable-nodpi/gbo_logo_watermark.png`
+- `app/src/main/res/drawable-nodpi/gbo_map_header.webp`
+- `app/src/main/res/drawable-nodpi/gbo_setup_background.webp`
+- `app/src/main/res/drawable-nodpi/gbo_tools_header.webp`
+- `app/src/main/res/drawable/ic_launcher_background.xml`
+- `app/src/main/res/drawable/ic_launcher_foreground.xml`
+- `app/src/main/res/drawable/ic_media_photo.xml`
+- `app/src/main/res/drawable/ic_media_video.xml`
+- `app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
+- `app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml`
+- `app/src/main/res/mipmap-hdpi/ic_launcher.webp`
+- `app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp`
+- `app/src/main/res/mipmap-hdpi/ic_launcher_round.webp`
+- `app/src/main/res/mipmap-mdpi/ic_launcher.webp`
+- `app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp`
+- `app/src/main/res/mipmap-mdpi/ic_launcher_round.webp`
+- `app/src/main/res/mipmap-xhdpi/ic_launcher.webp`
+- `app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp`
+- `app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp`
+- `app/src/main/res/mipmap-xxhdpi/ic_launcher.webp`
+- `app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp`
+- `app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp`
+- `app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp`
+- `app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp`
+- `app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp`
+- `app/src/main/res/values/colors.xml`
+- `app/src/main/res/values/ic_launcher_background.xml`
+- `app/src/main/res/values/strings.xml`
+- `app/src/main/res/values/themes.xml`
+- `app/src/main/res/xml/backup_rules.xml`
+- `app/src/main/res/xml/data_extraction_rules.xml`
+- `app/src/main/res/xml/file_paths.xml`
+- `app/src/main/res/xml/network_security_config.xml`
+- `app/src/main/resources/sic_header/image1.png`
+- `app/src/main/resources/sic_header/image2.jpeg`
+- `app/src/test/java/com/tuempresa/inventariovial/AcceptanceDeliveryAuditTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AssetOrderingTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AuthForegroundRecoveryTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AuthRutaClaraRenderTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AuthRutaClaraScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AutomaticDocuments149Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AutomaticSyncRegressionTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/AutomaticSyncWithoutGpsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/BridgeMedia10ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/BridgeSicFlowTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/BridgeSicUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/CameraPreview10DTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ContractualFields3ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ContractualForms3Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ContractualLength111Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/CorporateWatermarkTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Dashboard6PersistenceTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Dashboard6PresentationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Dashboard6ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DeliveryMetadataTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DeliverySyncTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DeviceFingerprintTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DriveDeliveryCardUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DriveDeliveryListsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DriveDeliveryListsUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DriveDeliveryPresentationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/DriveFamilies2ATest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Engineering2DataTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Engineering2ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/EngineeringDecisionsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/EngineeringUxTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ExampleUnitTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldContinuation9Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldCorrections20261023Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldCorrectionsUi20261023Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldLifecycleTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldReadinessTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldSessionDefaultsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldSessionFormsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FieldTestFixtures.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/FormRotation10DTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/GnssIndicators10KTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/HotfixBusy146Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/HotfixIntegrity146Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/HotfixPerformance146Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/HotfixSyncUi146Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/IntegratedMigration12To14Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/InventoryElementFlowTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/InventoryElementNavigationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/InventoryLifecycle10Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/InventoryRoomMigrationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LargeLocalArchiveP0Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalCopyFinalTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalDraftDiscard10CTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148BuildersTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148MediaStoreTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148MigrationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocalFiles148UiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocationSuggestionScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/LocationSuggestionTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/MixedSic17HotfixTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Navigation10KTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/OperatorFlow7ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/OperatorFlow7Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ParallelBInventoryPolicyTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ParallelBMigrationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ParallelBScapCaptureTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ParallelBSicHeaderTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ParallelBSignalStorageTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementAnnotationSync147Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementAxisAnchoringTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementAxisAnchoringUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementAxisExamplesTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementBoundary20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementBoundaryExamples20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementBoundaryUi20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementDurabilityExamplesTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementDurabilityFanTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementDurabilityUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementEditor147Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementFieldUi10ITest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementFinalExamplesTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementFinalGeometryTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementFinalIntegrityTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementFinalUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementJointFlow20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementJointPreviewUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementLegacyPdfFocusedTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementMigration21Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementModuleTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementObservations10ITest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementP0AdditionalTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementParallelCTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementParallelCUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementPdfDeliveryIntegrationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementPdfLegibilityTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementPhotoPersistence10ITest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementPhotoUi10CTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementPhotos10CTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementReportTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementRigid147Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementShoulderVisibility24Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementTouchTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementVisualCorrectionsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PavementVisualExamplesTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PdfDocument10CShadow.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PdfRuntime146Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PhotoCategories5ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PhotoCategories5Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PhotoDrawing9Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PhotoNamesIntegration10ETest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PhotoStampServiceTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PhotoTransport10Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PrSuggestionScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PrSuggestionStorageTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PrSuggestionTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ProjectRoutesTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/PublicLocalNamesTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ReadablePhotoNames10Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RealEvidenceP0Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RealLargeScapP0Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RecoveredD24Before19Drawing.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ReleasePhotoV2Fixture.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RoadAxisStorageTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RoadMatcherTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RoadPositionTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RoadReferenceDeliveryTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RoomTestResources.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RoundTwoStorageTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RouteDeliveryTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/RutaClaraDashboardTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapCalculationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapCanonicalExportTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapDriveTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapExportTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapFinalP0Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapFinalP0UiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapFullExportTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapHumanDeliveryTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapP0Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapP0UiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapPendingNavigationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapPhotoPanelTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapPhotoPanelUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapProgressiveTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapProgressiveUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapStorageTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ScapUrgentIntegrityTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SessionProjectDialogTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SessionProjectNameTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic0809CaptureTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic0809ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20DraftDetail111Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20DraftResolution111Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20FormRecoveryUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20Recovery20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20Regression20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20ScapRegression20261019Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic20Workspace111Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/Sic23Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationDurabilityTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationFixtures.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationMediaTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationSafTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicConsolidationUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicExcelWriterTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicFinalize10KTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicLocalConsolidationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicMigration14To15Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicNewFormatsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicObservations10ITest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicPlainObservations10KTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SicUiParityTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SignalAssetCatalogTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SurveyCorrectionsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SurveyRouteSelectionTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SurveyStorageTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SyncRecovery10DTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SyncedRecordEdits2BTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/SyntheticPdf146.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TabletAdminAndDiagnosticsTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TabletScapIterationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TabletUxDataTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TabletUxUiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TechnicalRules4ScreenTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TechnicalRules4Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TrackAndKmlTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/TrafficSignVisualSelectorTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/UiWorkerFixture.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/UnifiedRecords149UiTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/UserAuthenticationTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/UserCreation10ITest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/UserServiceTransportTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/ValidationAndServerTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/VideoClosure10FTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/VideoContinuation9Test.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/VideoNames10HTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/CleanPhotoPolicyTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/DriveAssetPathRouterTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/FieldCameraCatalogTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/GeneratedFileIndexTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/InventoryDraftStoreTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/KmzGeometryStoreTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/KmzRouteParserTest.kt`
+- `app/src/test/java/com/tuempresa/inventariovial/core/SyncOverviewTest.kt`
+- `app/src/test/resources/scap_agua_blanca.json`
+- `backend/referencia-v21/Codigo.gs.example`
+- `backend/referencia-v21/PROCEDENCIA.json`
+- `backend/referencia-v21/PhotoNamesV2Core.gs`
+- `backend/referencia-v21/README.md`
+- `backend/referencia-v21/ScapPhotoPanelV2.gs`
+- `backend/referencia-v21/SicObservationsV1Core.gs`
+- `backend/referencia-v21/SyncV3.gs`
+- `backend/referencia-v21/SyncV3Core.gs`
+- `backend/referencia-v21/VideoNamesV2Core.gs`
+- `backend/referencia-v21/VideoV1.gs`
+- `backend/referencia-v21/VideoV1Core.gs`
+- `backend/referencia-v21/appsscript.json`
+- `build.gradle.kts`
+- `buildSrc/build.gradle.kts`
+- `buildSrc/src/main/java/com/gbo/build/ValidateReleaseConfigurationTask.java`
+- `docs/ANULACION_CONTROLADA_10.md`
+- `docs/CAMBIOS_APPS_SCRIPT_10.md`
+- `docs/CAMBIOS_APPS_SCRIPT_10H.md`
+- `docs/CAMBIOS_APPS_SCRIPT_10I.md`
+- `docs/CAMBIOS_APPS_SCRIPT_10K.md`
+- `docs/CHECKLIST_RELEASE_10H.md`
+- `docs/CHECKLIST_RELEASE_10I.md`
+- `docs/CIERRE_CANDIDATA_FINAL_1_4_10_24.md`
+- `docs/CIERRE_GBO_10H.md`
+- `docs/CIERRE_PAVIMENTOS_RUTA_CLARA_1_4_7.md`
+- `docs/CIERRE_RUTA_CLARA_1_4_5.md`
+- `docs/CODEX_HANDOFF.md`
+- `docs/COLA_E_HISTORIAL_DRIVE_20261021.md`
+- `docs/D24_ABANICO_CUATRO_ESQUINAS_20261019.md`
+- `docs/DECISION_CAMPO_2026_10_16_GBO_1_4_6.md`
+- `docs/DIAGNOSTICO_EXPORTACION_PAVIMENTOS_10J.md`
+- `docs/DIAGNOSTICO_USUARIOS_10I.md`
+- `docs/ENTREGA_10C.md`
+- `docs/ENTREGA_10D.md`
+- `docs/ENTREGA_10E.md`
+- `docs/ENTREGA_10F.md`
+- `docs/ENTREGA_10I.md`
+- `docs/ENTREGA_10J.md`
+- `docs/ENTREGA_10K.md`
+- `docs/ENTREGA_8B.md`
+- `docs/ENTREGA_COLABORADOR.md`
+- `docs/ENTREGA_FINAL_GBO_1_4_11_25_20261020.md`
+- `docs/ENTREGA_PROMPT_10.md`
+- `docs/ENTREGA_PROMPT_9.md`
+- `docs/ESTRUCTURA_DRIVE_10.md`
+- `docs/GBO_1_4_11.md`
+- `docs/GUIA_BREVE_INGENIEROS.md`
+- `docs/HOTFIX_RUTA_CLARA_1_4_6.md`
+- `docs/INSTALACION_Y_PRUEBA_1_4_10_24.md`
+- `docs/MATRIZ_10C.md`
+- `docs/MATRIZ_10D.md`
+- `docs/MATRIZ_10E.md`
+- `docs/MATRIZ_10F.md`
+- `docs/MATRIZ_OBSERVACIONES_10I.md`
+- `docs/MATRIZ_VALIDACION_10.md`
+- `docs/MATRIZ_VALIDACION_8B.md`
+- `docs/MATRIZ_VALIDACION_9.md`
+- `docs/NOMBRES_CARPETAS_LOCALES_20261020.md`
+- `docs/NOMBRES_VIDEOS_10H.md`
+- `docs/ORIENTACION_D_ANCLAJE_PARCHES_DEFINITIVO_20261019.md`
+- `docs/PAVIMENTOS_COPIA_LOCAL_CORRECCION_FINAL_20261019.md`
+- `docs/PAVIMENTOS_RIGIDOS_PDF_20261019.md`
+- `docs/PDF_PAVIMENTOS_RIGIDOS_LEGIBILIDAD_20261019.md`
+- `docs/PENDIENTES_BACKEND_10C.md`
+- `docs/PENDIENTES_BACKEND_10D.md`
+- `docs/PENDIENTES_SERVIDOR_9.md`
+- `docs/PLAN_REINICIO_PRODUCCION_10J.md`
+- `docs/PROMPT_7_COLABORADOR.md`
+- `docs/PROPUESTA_ORDENAMIENTO_DINAMICO_DRIVE_1_4_7.md`
+- `docs/PRUEBAS_REALES_DRIVE_8B.md`
+- `docs/PRUEBAS_TABLET_10.md`
+- `docs/PRUEBAS_TABLET_10D.md`
+- `docs/PRUEBAS_TABLET_9.md`
+- `docs/PRUEBA_FISICA_FINAL_1_4_10_24.md`
+- `docs/PRUEBA_INTEGRADA_8B.md`
+- `docs/RELEASE_CANDIDATE_1_4_10_24.md`
+- `docs/RENDIMIENTO_SINCRONIZACION_1_4_6.md`
+- `docs/RUTA_CLARA_ETAPA_A_Y_COMPATIBILIDAD.md`
+- `docs/RUTA_CLARA_ETAPA_B_VISUAL.md`
+- `docs/RUTA_CLARA_RECUPERACION_1_4_4.md`
+- `docs/SIC20_JUNTAS_25_27_20261019.md`
+- `docs/almacenamiento-local-1.4.8/DISENO_Y_GARANTIAS.md`
+- `docs/almacenamiento-local-1.4.8/ENTREGA_1_4_8.md`
+- `docs/almacenamiento-local-1.4.8/GUIA_Y_PRUEBA_FISICA.md`
+- `docs/almacenamiento-local-1.4.8/MAPA_ALMACENAMIENTO_ANTES.md`
+- `docs/automatic-sync-v16/examples/inputs/A/SIC-17.xlsx`
+- `docs/automatic-sync-v16/examples/inputs/B/SIC-17.xlsx`
+- `docs/automatic-sync-v16/examples/inputs/B_EDIT/SIC-17.xlsx`
+- `docs/automatic-sync-v16/examples/inputs/C/SIC-17.xlsx`
+- `docs/automatic-sync-v16/examples/inputs/D/SIC-17.xlsx`
+- `docs/automatic-sync-v16/examples/inputs/OTHER/SIC-17.xlsx`
+- `docs/backend-google-diagnostico-base-20261017/actualizar_helpers.py`
+- `docs/backend-google-diagnostico-base-20261017/analizar_evidencia.py`
+- `docs/backend-google-diagnostico-base-20261017/empacar_reparacion.py`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ARCHIVOS_MODIFICADOS_Y_PRUEBAS.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/Codigo.gs.example`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/PhotoNamesV2Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/SyncV3.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/SyncV3Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/TestHttp.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/TestIsolation.gs.example`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/TestVariant.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/VideoV1.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/BASE_V20_PRUEBAS/VideoV1Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/Codigo.gs.example`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/PhotoNamesV2Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestHttp.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestIsolation.gs.example`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestVariant.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1Core.gs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/COMPATIBILIDAD_Y_DIFERENCIAS.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/CRITERIOS_PUBLICACION.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ENTREGA_Y_PENDIENTES.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/Codigo.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/PhotoNamesV2Core.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1Core.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/GOOGLE_TEST_SETUP.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/INFORME_DIAGNOSTICO_BASE_V20.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/LEEME_REPARACION_BASE_V20.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/MEDICION_Y_RESULTADOS.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/comparar.py`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/ejecutar.cjs.example`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/fixtures/FOTO_SINTETICA_2048.jpg`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/fixtures/records.json`
+- `docs/backend-google-diagnostico-base-20261017/paquete/ejecutor/recuperacion.cjs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/Aislamiento.test.cjs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/Ejecutor.test.cjs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/MockGoogle.cjs.example`
+- `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/Recuperacion.test.cjs`
+- `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/fixtures-helpers-v1/TestHttp.gs.txt`
+- `docs/backend-google-diagnostico-base-20261017/paquete/pruebas/fixtures-helpers-v1/TestIsolation.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/ARCHIVOS_MODIFICADOS_Y_PRUEBAS.md`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/Codigo.gs.example`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/PhotoNamesV2Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/SyncV3.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/SyncV3Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/TestHttp.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/TestIsolation.gs.example`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/TestVariant.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/VideoV1.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/BASE_V20_PRUEBAS/VideoV1Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/Codigo.gs.example`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/PhotoNamesV2Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestHttp.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestIsolation.gs.example`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestVariant.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1Core.gs`
+- `docs/backend-google-forced-busy-20261017/paquete/COMPATIBILIDAD_Y_DIFERENCIAS.md`
+- `docs/backend-google-forced-busy-20261017/paquete/CRITERIOS_PUBLICACION.md`
+- `docs/backend-google-forced-busy-20261017/paquete/ENTREGA_Y_PENDIENTES.md`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/Codigo.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/PhotoNamesV2Core.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1Core.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/GOOGLE_TEST_SETUP.md`
+- `docs/backend-google-forced-busy-20261017/paquete/INFORME_DIAGNOSTICO_BASE_V20.md`
+- `docs/backend-google-forced-busy-20261017/paquete/INFORME_FORCED_BUSY.md`
+- `docs/backend-google-forced-busy-20261017/paquete/LEEME_REPARACION_BASE_V20.md`
+- `docs/backend-google-forced-busy-20261017/paquete/MEDICION_Y_RESULTADOS.md`
+- `docs/backend-google-forced-busy-20261017/paquete/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- `docs/backend-google-forced-busy-20261017/paquete/ejecutor/comparar.py`
+- `docs/backend-google-forced-busy-20261017/paquete/ejecutor/ejecutar.cjs.example`
+- `docs/backend-google-forced-busy-20261017/paquete/ejecutor/fixtures/FOTO_SINTETICA_2048.jpg`
+- `docs/backend-google-forced-busy-20261017/paquete/ejecutor/fixtures/records.json`
+- `docs/backend-google-forced-busy-20261017/paquete/ejecutor/forced-busy.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/ejecutor/recuperacion.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/Aislamiento.test.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/ComparadorForcedBusy.test.py`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/Ejecutor.test.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/ForcedBusy.test.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/MockGoogle.cjs.example`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/Recuperacion.test.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/RunnerForcedBusy.test.cjs`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/fixtures-helpers-v1/TestHttp.gs.txt`
+- `docs/backend-google-forced-busy-20261017/paquete/pruebas/fixtures-helpers-v1/TestIsolation.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/herramientas/TestHttp.gs`
+- `docs/backend-google-pruebas-v20-20261017/herramientas/TestIsolation.gs.example`
+- `docs/backend-google-pruebas-v20-20261017/herramientas/empacar.py`
+- `docs/backend-google-pruebas-v20-20261017/herramientas/fixtures.cjs`
+- `docs/backend-google-pruebas-v20-20261017/herramientas/preparar.py`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/Codigo.gs.example`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/PhotoNamesV2Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/SyncV3.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/SyncV3Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/TestHttp.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/TestIsolation.gs.example`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/TestVariant.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/VideoV1.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/BASE_V20_PRUEBAS/VideoV1Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/Codigo.gs.example`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/PhotoNamesV2Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/SyncV3Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestHttp.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestIsolation.gs.example`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/TestVariant.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CANDIDATO_OPTIMIZADO_PRUEBAS/VideoV1Core.gs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/COMPATIBILIDAD_Y_DIFERENCIAS.md`
+- `docs/backend-google-pruebas-v20-20261017/paquete/CRITERIOS_PUBLICACION.md`
+- `docs/backend-google-pruebas-v20-20261017/paquete/ENTREGA_Y_PENDIENTES.md`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/Codigo.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/PhotoNamesV2Core.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/SyncV3Core.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/FUENTES_V20_REFERENCIA_NO_IMPORTAR/VideoV1Core.gs.txt`
+- `docs/backend-google-pruebas-v20-20261017/paquete/GOOGLE_TEST_SETUP.md`
+- `docs/backend-google-pruebas-v20-20261017/paquete/MEDICION_Y_RESULTADOS.md`
+- `docs/backend-google-pruebas-v20-20261017/paquete/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/comparar.py`
+- `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/ejecutar.cjs.example`
+- `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/fixtures/FOTO_SINTETICA_2048.jpg`
+- `docs/backend-google-pruebas-v20-20261017/paquete/ejecutor/fixtures/records.json`
+- `docs/backend-google-pruebas-v20-20261017/paquete/pruebas/Aislamiento.test.cjs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/pruebas/Ejecutor.test.cjs`
+- `docs/backend-google-pruebas-v20-20261017/paquete/pruebas/MockGoogle.cjs.example`
+- `docs/backend-v20-revision-20261016/INFORME_REVISION_V20.md`
+- `docs/backend-v20-revision-20261016/LEEME_NO_PUBLICAR.md`
+- `docs/backend-v20-revision-20261016/MEDICIONES_Y_LIMITES.md`
+- `docs/backend-v20-revision-20261016/PROPUESTA_2_HISTORICOS_NO_IMPLEMENTADA.md`
+- `docs/backend-v20-revision-20261016/candidato-no-publicar/SyncV3.gs`
+- `docs/backend-v20-revision-20261016/candidato-no-publicar/SyncV3Core.gs`
+- `docs/backend-v20-revision-20261016/pruebas/CasosV20.cjs`
+- `docs/backend-v20-revision-20261016/pruebas/HarnessV20.cjs`
+- `docs/backend-v20-revision-20261016/pruebas/MedicionesV20.cjs`
+- `docs/backend-v20-revision-20261016/pruebas/RevisionV20.test.cjs`
+- `docs/campo-10/BLOQUE_A.md`
+- `docs/campo-10/BLOQUE_B.md`
+- `docs/campo-20261023/INFORME_CAMPO.md`
+- `docs/campo-20261023/MATRIZ_CAMPOS_SCAP_SIC.md`
+- `docs/campo-20261023/RENDIMIENTO_Y_LIMITES.md`
+- `docs/campo-20261023/backend-parche/INSTRUCCIONES_NO_DESPLEGAR.md`
+- `docs/campo-20261023/backend-parche/OrdenProgresiva.test.cjs`
+- `docs/campo-20261023/backend-parche/SyncV3Core.gs`
+- `docs/campo-9/capturas/detalle-0-false.png`
+- `docs/campo-9/capturas/detalle-1-false.png`
+- `docs/campo-9/capturas/detalle-1-true.png`
+- `docs/campo-9/capturas/detalle-3-false.png`
+- `docs/campo-9/capturas/exportaciones-con-foto.png`
+- `docs/campo-9b/ANTES_9B_ENTREGA_PROMPT_9.md`
+- `docs/campo-9b/ANTES_9B_GUIA_BREVE_INGENIEROS.md`
+- `docs/campo-9b/ANTES_9B_MATRIZ_VALIDACION_9.md`
+- `docs/campo-9b/ANTES_9B_PENDIENTES_SERVIDOR_9.md`
+- `docs/campo-9b/capturas/detalle-0-false.png`
+- `docs/campo-9b/capturas/detalle-1-false.png`
+- `docs/campo-9b/capturas/detalle-1-true.png`
+- `docs/campo-9b/capturas/detalle-3-false.png`
+- `docs/campo-9b/capturas/fajas/screenshots/SIC-08_inicio.png`
+- `docs/campo-9b/capturas/fajas/screenshots/SIC-08_observaciones.png`
+- `docs/campo-9b/capturas/fajas/screenshots/SIC-09_inicio.png`
+- `docs/campo-9b/capturas/fajas/screenshots/SIC-09_observaciones.png`
+- `docs/campo-9b/examples/ediciones/SIC-18-after-edit-local.xlsx`
+- `docs/campo-9b/examples/ediciones/condition-a.json`
+- `docs/campo-9b/examples/ediciones/initial-a.json`
+- `docs/campo-9b/examples/ediciones/initial-b.json`
+- `docs/campo-9b/examples/ediciones/local-receipts.json`
+- `docs/campo-9b/examples/ediciones/photos-added.json`
+- `docs/campo-9b/examples/ediciones/photos-removed.json`
+- `docs/campo-9b/examples/ediciones/progressive-a.json`
+- `docs/campo-9b/examples/fotos/alcantarilla5.json`
+- `docs/campo-9b/examples/fotos/baden5.json`
+- `docs/campo-9b/examples/fotos/cuneta5.json`
+- `docs/campo-9b/examples/fotos/guardavia5.json`
+- `docs/campo-9b/examples/fotos/muro5.json`
+- `docs/campo-9b/examples/fotos/senal5.json`
+- `docs/campo-9b/examples/fotos/tacha5.json`
+- `docs/campo-9b/examples/fotos/tunel5.json`
+- `docs/checkpoint-gbo-20261023/RESPALDO.md`
+- `docs/cierre-candidata-final-1.4.10-20261019/27-X0-Canvas-ROBOLECTRIC.png`
+- `docs/cierre-candidata-final-1.4.10-20261019/27-X0-PDF-ROBOLECTRIC.png`
+- `docs/cierre-candidata-final-1.4.10-20261019/27-XW-Canvas-ROBOLECTRIC.png`
+- `docs/cierre-candidata-final-1.4.10-20261019/27-XW-PDF-ROBOLECTRIC.png`
+- `docs/cierre-candidata-final-1.4.10-20261019/AJUSTE_VISIBILIDAD_27.diff`
+- `docs/cierre-candidata-final-1.4.10-20261019/PRUEBAS_FOCALIZADAS.json`
+- `docs/cierre-candidata-final-1.4.10-20261019/RESULTADOS.json`
+- `docs/cierre-candidata-final-1.4.10-20261019/REVISION_PDF.json`
+- `docs/cierre-candidata-final-1.4.10-20261019/gradle-final-resultado.json`
+- `docs/cierre-candidata-final-1.4.10-20261019/gradle-release-intento-inicial-resultado.json`
+- `docs/cierre-candidata-final-1.4.10-20261019/gradle-release-resultado.json`
+- `docs/cierre-candidata-final-1.4.10-20261019/gradle-test-resultado.json`
+- `docs/correcciones-tecnicas-4/ARCHIVOS.md`
+- `docs/correcciones-tecnicas-4/ENTREGA.md`
+- `docs/correcciones-tecnicas-4/VALIDACION.json`
+- `docs/dashboard-6/AUDITORIA_INICIO.md`
+- `docs/dashboard-6/ENTREGA.md`
+- `docs/dashboard-6/MATRIZ.md`
+- `docs/dashboard-6/VALIDACION.json`
+- `docs/dashboard-6/screenshots/01-dashboard-vertical-datos-ficticios.png`
+- `docs/dashboard-6/screenshots/02-dashboard-horizontal-fuente-130-datos-ficticios.png`
+- `docs/dashboard-6/screenshots/03-borradores-historicos-filtrados-datos-ficticios.png`
+- `docs/drive-familias-2a/AUDITORIA_Y_MIGRACION.md`
+- `docs/drive-familias-2a/BACKEND_CHANGES.patch`
+- `docs/drive-familias-2a/DESPLIEGUE_Y_PRUEBA_REAL.md`
+- `docs/drive-familias-2a/ENTREGA.md`
+- `docs/drive-familias-2a/ESQUEMA.md`
+- `docs/drive-familias-2a/MATRIZ_SIC.md`
+- `docs/drive-familias-2a/VALIDACION.json`
+- `docs/drive-familias-2a/deployment-test/Code.gs`
+- `docs/drive-familias-2a/deployment-test/SyncV3.gs`
+- `docs/drive-familias-2a/deployment-test/SyncV3Core.gs`
+- `docs/drive-familias-2a/examples/SIC-08/payload.json`
+- `docs/drive-familias-2a/examples/SIC-08/simulated-receipt.json`
+- `docs/drive-familias-2a/examples/SIC-09/payload.json`
+- `docs/drive-familias-2a/examples/SIC-09/simulated-receipt.json`
+- `docs/drive-familias-2a/examples/SIC-14-two-samples-local.xlsx`
+- `docs/drive-familias-2a/examples/culvert-a/payload.json`
+- `docs/drive-familias-2a/examples/culvert-b/payload.json`
+- `docs/drive-familias-2a/examples/ford-a/payload.json`
+- `docs/drive-familias-2a/examples/local-drive-v4-receipts.json`
+- `docs/drive-familias-2a/examples/mark-a/payload.json`
+- `docs/drive-familias-2a/examples/pavement-a/SIC-14.xlsx`
+- `docs/drive-familias-2a/examples/safety-a/payload.json`
+- `docs/drive-familias-2a/examples/stud-a/payload.json`
+- `docs/drive-familias-2a/examples/tunnel-a/payload.json`
+- `docs/drive-familias-2a/examples/wall-a/payload.json`
+- `docs/edicion-sincronizados-2b/BACKEND_CHANGES.patch`
+- `docs/edicion-sincronizados-2b/BACKEND_STATUS.json`
+- `docs/edicion-sincronizados-2b/DESPLIEGUE_Y_PRUEBA_REAL.md`
+- `docs/edicion-sincronizados-2b/ENTREGA.md`
+- `docs/edicion-sincronizados-2b/VALIDACION.json`
+- `docs/edicion-sincronizados-2b/deployment-test/Code.gs`
+- `docs/edicion-sincronizados-2b/deployment-test/SyncV3.gs`
+- `docs/edicion-sincronizados-2b/deployment-test/SyncV3Core.gs`
+- `docs/edicion-sincronizados-2b/examples/SIC-18-after-edit-local.xlsx`
+- `docs/edicion-sincronizados-2b/examples/condition-a.json`
+- `docs/edicion-sincronizados-2b/examples/initial-a.json`
+- `docs/edicion-sincronizados-2b/examples/initial-b.json`
+- `docs/edicion-sincronizados-2b/examples/local-receipts.json`
+- `docs/edicion-sincronizados-2b/examples/photos-added.json`
+- `docs/edicion-sincronizados-2b/examples/photos-removed.json`
+- `docs/edicion-sincronizados-2b/examples/progressive-a.json`
+- `docs/edicion-sincronizados-2b/nogps-regression/SIC-08/payload.json`
+- `docs/edicion-sincronizados-2b/nogps-regression/SIC-08/simulated-receipt.json`
+- `docs/edicion-sincronizados-2b/nogps-regression/SIC-09/payload.json`
+- `docs/edicion-sincronizados-2b/nogps-regression/SIC-09/simulated-receipt.json`
+- `docs/exportaciones-1.4.9-20261016/ARCHIVOS_MODIFICADOS.md`
+- `docs/exportaciones-1.4.9-20261016/COMPATIBILIDAD_Y_VERSIONADO.md`
+- `docs/exportaciones-1.4.9-20261016/FLUJO_INGENIEROS_Y_CARPETAS.md`
+- `docs/exportaciones-1.4.9-20261016/PRUEBA_FISICA_PENDIENTE.md`
+- `docs/exportaciones-1.4.9-20261016/RESULTADOS.md`
+- `docs/flujo-operador-7/ENTREGA.md`
+- `docs/flujo-operador-7/MATRIZ.md`
+- `docs/flujo-operador-7/VALIDACION.json`
+- `docs/flujo-operador-7/screenshots/01-detalle-vertical-datos-ficticios.png`
+- `docs/flujo-operador-7/screenshots/02-detalle-horizontal-datos-ficticios.png`
+- `docs/formularios-sic-3/ENTREGA.md`
+- `docs/formularios-sic-3/MATRIZ_SIC.md`
+- `docs/formularios-sic-3/VALIDACION.json`
+- `docs/fotografias-5/DESPLIEGUE_PRUEBAS.md`
+- `docs/fotografias-5/ENTREGA.md`
+- `docs/fotografias-5/MATRIZ.md`
+- `docs/fotografias-5/VALIDACION.json`
+- `docs/fotografias-5/examples/alcantarilla5.json`
+- `docs/fotografias-5/examples/baden5.json`
+- `docs/fotografias-5/examples/cuneta5.json`
+- `docs/fotografias-5/examples/guardavia5.json`
+- `docs/fotografias-5/examples/muro5.json`
+- `docs/fotografias-5/examples/senal5.json`
+- `docs/fotografias-5/examples/tacha5.json`
+- `docs/fotografias-5/examples/tunel5.json`
+- `docs/hotfix-1.4.6/backend-propuesto/AVISO_REVISION_COMPATIBILIDAD.md`
+- `docs/hotfix-1.4.6/backend-propuesto/LEEME_NO_DESPLEGADO.md`
+- `docs/hotfix-1.4.6/backend-propuesto/SyncV3.gs`
+- `docs/hotfix-1.4.6/backend-propuesto/SyncV3Core.gs`
+- `docs/hotfix-progresiva-scap-sic-20261023/INFORME.md`
+- `docs/integracion-android-8a/ENTREGA.md`
+- `docs/integracion-android-8a/VALIDACION.json`
+- `docs/integracion-real-8b/ARCHIVOS_DRIVE.md`
+- `docs/integracion-real-8b/VALIDACION.json`
+- `docs/manual-10i/GUIA_VISUAL_GBO_10J.docx`
+- `docs/manual-10i/GUIA_VISUAL_GBO_10J.md`
+- `docs/manual-10i/GUIA_VISUAL_GBO_10J.pdf`
+- `docs/manual-10i/MANUAL_USUARIO_GBO_INVENTARIO_VIAL.docx`
+- `docs/manual-10i/MANUAL_USUARIO_GBO_INVENTARIO_VIAL.md`
+- `docs/manual-10i/MANUAL_USUARIO_GBO_INVENTARIO_VIAL.pdf`
+- `docs/manual-10i/capturas-reales/.gitignore`
+- `docs/manual-10i/capturas-reales/README.md`
+- `docs/manual-10i/estado-guia-visual-10j.json`
+- `docs/manual-10i/figuras/croquis-explicativo.png`
+- `docs/manual-10i/figuras/diagrama-ahuellamiento.png`
+- `docs/manual-10i/figuras/diagrama-losa-localizada.png`
+- `docs/manual-10i/figuras/flujo-registro.png`
+- `docs/manual-10i/proveniencia-figuras.json`
+- `docs/manual-10i/qa-guia-visual-10j.json`
+- `docs/manual-10i/respaldo-10i.json`
+- `docs/migracion-asus-20261029/ARCHIVOS_PROPUESTOS.md`
+- `docs/migracion-asus-20261029/BENCHMARK_HUAWEI.json`
+- `docs/migracion-asus-20261029/INFORME_PREPARACION.md`
+- `docs/migracion-asus-20261029/VERIFICACIONES.json`
+- `docs/ordenamiento-9b/INFORME.md`
+- `docs/p0-real-20261028/ARCHIVOS_MODIFICADOS.md`
+- `docs/p0-real-20261028/INFORME_P0_Y_CANDIDATA_1_4_17.md`
+- `docs/p0-real-20261028/LIMITES_DRIVE_Y_PROPUESTA_NO_IMPLEMENTADA.md`
+- `docs/p0-real-20261028/MATRIZ_ACEPTACION_P0.md`
+- `docs/parche-apps-script-10k/SicObservationsV1Core.gs`
+- `docs/parche-apps-script-10k/SyncV3.gs`
+- `docs/parche-apps-script-10k/SyncV3Core.gs`
+- `docs/pavimentos-p0-20261029/CHECKLIST_TABLET.md`
+- `docs/pavimentos-p0-20261029/INFORME_PAVIMENTOS_P0_Y_CANDIDATA_1_4_18.md`
+- `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/CAPACIDADES_FRAGMENTO_NO_REEMPLAZAR_CODIGO.txt`
+- `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/LEEME_NO_PUBLICAR.md`
+- `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/PavementSicChronologyV1.gs`
+- `docs/pavimentos-p0-20261029/backend-propuesto-NO-PUBLICAR/SyncV3Core.gs`
+- `docs/pavimentos-p0-20261029/pruebas/PavementChronology.test.cjs`
+- `docs/pavimentos-p0-20261029/pruebas/fixtures/ANDROID_PAVEMENT_CHRONO.json`
+- `docs/pavimentos-p0-20261029/pruebas/fixtures/ANDROID_PAVEMENT_V21.json`
+- `docs/reference/FICHA SCAP - GBO modelo - LOSA.xlsx`
+- `docs/reference/FICHA SCAP - GBO modelo - MODULAR.xlsx`
+- `docs/reference/SCAP_PUENTE_AGUA_BLANCA.xlsx`
+- `docs/release-1.4.16-30-20261028/INFORME_RELEASE_1_4_16.md`
+- `docs/release-candidate-1.4.11-20261020/ENTREGA.md`
+- `docs/release-candidate-1.4.11-20261020/PRUEBA_FISICA.md`
+- `docs/release-candidate-1.4.14-28-20261026/RESULTADO.md`
+- `docs/release-final-1.4.12-26-20261021/ENTREGA.md`
+- `docs/scap-backend-compat-20261027/DESPLIEGUE_CONTROLADO_Y_REVERSION.md`
+- `docs/scap-backend-compat-20261027/INFORME_COMPATIBILIDAD_SCAP.md`
+- `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/PhotoNamesV2Core.gs`
+- `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/ScapPhotoPanelV2.gs`
+- `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/SyncV3Core.gs`
+- `docs/scap-backend-compat-20261027/PARCHE_NO_DESPLEGADO/VideoNamesV2Core.gs`
+- `docs/scap-backend-compat-20261027/pruebas/Compatibilidad54.test.cjs`
+- `docs/scap-backend-compat-20261027/pruebas/Harness.cjs`
+- `docs/scap-backend-compat-20261027/pruebas/ScapPanelBackend.test.cjs`
+- `docs/scap-backend-compat-20261027/pruebas/fixtures/ACK_CANDIDATO_54.json`
+- `docs/scap-backend-compat-20261027/pruebas/fixtures/ACK_CANDIDATO_54_FINAL.json`
+- `docs/scap-backend-compat-20261027/pruebas/fixtures/ANDROID_SCAP_54.json`
+- `docs/scap-clasp-20261027/COMPARACION_Y_PRUEBAS.md`
+- `docs/scap-clasp-20261027/ESTADO_PREVIO_A_PUBLICACION.md`
+- `docs/scap-clasp-20261027/ESTADO_Y_AUTORIZACION.md`
+- `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/PhotoNamesV2Core.gs`
+- `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/ScapPhotoPanelV2.gs`
+- `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/SyncV3Core.gs`
+- `docs/scap-clasp-20261027/PARCHE_REVISADO_NO_DESPLEGAR/VideoNamesV2Core.gs`
+- `docs/scap-clasp-20261027/PLAN_PREVIO_PUBLICACION_Y_REVERSION.md`
+- `docs/scap-clasp-20261027/PRUEBA_CONTROLADA_TABLET.md`
+- `docs/scap-clasp-20261027/REVERSION_Y_VERIFICACION.md`
+- `docs/scap-integracion-actual-20261027/COMPARACION_9_ARCHIVOS.md`
+- `docs/scap-integracion-actual-20261027/DESPLIEGUE_Y_REVERSION_NO_AUTORIZADO.md`
+- `docs/scap-integracion-actual-20261027/GOOGLE_TEST_SETUP.md`
+- `docs/scap-integracion-actual-20261027/LEEME_PRIMERO.md`
+- `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/PhotoNameV2Core.gs`
+- `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/ScapPhotoPanelV2.gs`
+- `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/SyncV3Core.gs`
+- `docs/scap-integracion-actual-20261027/PARCHE_PRODUCCION_NO_PUBLICAR/VideoNamesV2Core.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/Código.gs.example`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/PhotoNameV2Core.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/ScapEnsayo.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/ScapPhotoPanelV2.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/SicObservationsV1Core.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/SyncV3.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/SyncV3Core.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/TestHttp.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/TestIsolation.gs.example`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/TestVariant.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/VideoNamesV2Core.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/VideoV1.gs`
+- `docs/scap-integracion-actual-20261027/PROYECTO_AISLADO_SOLO_PRUEBAS/VideoV1Core.gs`
+- `docs/scap-integracion-actual-20261027/PRUEBAS_LOCALES.md`
+- `docs/scap-integracion-actual-20261027/pruebas/Compatibilidad54.test.cjs`
+- `docs/scap-integracion-actual-20261027/pruebas/EnsayoAislado.test.cjs`
+- `docs/scap-integracion-actual-20261027/pruebas/Harness.cjs`
+- `docs/scap-integracion-actual-20261027/pruebas/MockActual.cjs`
+- `docs/scap-integracion-actual-20261027/pruebas/ScapPanelBackend.test.cjs`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/ACK_CANDIDATO_54.json`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/ACK_FINAL_LOCAL_4.json`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/ACK_INTEGRADO_LOCAL_3.json`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/ANDROID_SCAP_54.json`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/SCAP_54_FOTOS_3_CROQUIS_FICTICIO.zip`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/alcantarilla5.json`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/scap_modular_catalog.json`
+- `docs/scap-integracion-actual-20261027/pruebas/fixtures/scap_slab_catalog.json`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/Código.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/PhotoNameV2Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/ScapPhotoPanelV2.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/SyncV3.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/SyncV3Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/VideoV1.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/integrado_NO_IMPORTAR/VideoV1Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/Código.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/PhotoNameV2Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/SicObservationsV1Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/SyncV3.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/SyncV3Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/VideoNamesV2Core.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/VideoV1.gs.txt`
+- `docs/scap-integracion-actual-20261027/pruebas/referencia_actual_NO_IMPORTAR/VideoV1Core.gs.txt`
+- `docs/scap-p0-20261027/ARCHIVOS_MODIFICADOS.md`
+- `docs/scap-p0-20261027/DIAGNOSTICO_Y_PRUEBAS.md`
+- `docs/scap-p0-20261027/INFORME_P0_SCAP.md`
+- `docs/scap-p0-final-20261027/ARCHIVOS_MODIFICADOS.md`
+- `docs/scap-p0-final-20261027/CHECKLIST_TABLET.md`
+- `docs/scap-p0-final-20261027/COMPATIBILIDAD_RESPALDO_PROVISIONAL.md`
+- `docs/scap-p0-final-20261027/ESCALAS_Y_CEROS.md`
+- `docs/scap-p0-final-20261027/INFORME_P0_FINAL_1.4.15.md`
+- `docs/scap-panel-oficial-20261023/ARCHIVOS_MODIFICADOS.md`
+- `docs/scap-panel-oficial-20261023/ENTREGA_Y_ACTIVACION.md`
+- `docs/scap-panel-oficial-20261023/MATRIZ_VALIDACION.md`
+- `docs/scap-panel-oficial-20261023/RELEASE_1.4.13.md`
+- `docs/scap-panel-oficial-20261023/ScapPanelBackend.test.cjs`
+- `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/PhotoNamesV2Core.gs`
+- `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/ScapPhotoPanelV2.gs`
+- `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/SyncV3Core.gs`
+- `docs/scap-panel-oficial-20261023/backend-parche-NO-PUBLICADO/VideoNamesV2Core.gs`
+- `docs/scap-urgente-20261016/ARCHIVOS_Y_COMPATIBILIDAD.md`
+- `docs/scap-urgente-20261016/DIAGNOSTICO_Y_ESTRATEGIA.md`
+- `docs/scap-urgente-20261016/PRUEBA_FISICA_PENDIENTE.md`
+- `docs/scap-urgente-20261016/RESULTADO_FINAL.md`
+- `docs/sic-consolidados-20261026/ARCHIVOS_MODIFICADOS.md`
+- `docs/sic-consolidados-20261026/ComparacionV20.test.cjs`
+- `docs/sic-consolidados-20261026/INFORME.md`
+- `docs/sic-consolidados-20261026/MATRIZ_VALIDACION.md`
+- `docs/sic08-sic09-fix-2026-10-11/screenshots/SIC-08_inicio.png`
+- `docs/sic08-sic09-fix-2026-10-11/screenshots/SIC-08_observaciones.png`
+- `docs/sic08-sic09-fix-2026-10-11/screenshots/SIC-09_inicio.png`
+- `docs/sic08-sic09-fix-2026-10-11/screenshots/SIC-09_observaciones.png`
+- `docs/sic17-mixto-1.4.14-20261026/ARCHIVOS_MODIFICADOS.md`
+- `docs/sic17-mixto-1.4.14-20261026/DIAGNOSTICO_Y_ESQUEMA.md`
+- `docs/sic17-mixto-1.4.14-20261026/ENTREGA_1.4.14.md`
+- `docs/sync-sin-gps-2026-10-11/DESPLIEGUE_PRUEBAS.md`
+- `docs/sync-sin-gps-2026-10-11/ENTREGA.md`
+- `docs/sync-sin-gps-2026-10-11/VALIDACION.json`
+- `docs/sync-sin-gps-2026-10-11/backend-changes.patch`
+- `docs/sync-sin-gps-2026-10-11/deployment-test/Code.gs`
+- `docs/sync-sin-gps-2026-10-11/deployment-test/SyncV3.gs`
+- `docs/sync-sin-gps-2026-10-11/deployment-test/SyncV3Core.gs`
+- `docs/sync-sin-gps-2026-10-11/examples/SIC-08/payload.json`
+- `docs/sync-sin-gps-2026-10-11/examples/SIC-09/payload.json`
+- `drive.local.properties.example`
+- `google-apps-script/Code.gs`
+- `google-apps-script/Code.test.cjs`
+- `google-apps-script/DriveV4.test.cjs`
+- `google-apps-script/DriveV4Harness.cjs`
+- `google-apps-script/Field10.test.cjs`
+- `google-apps-script/Hotfix146.test.cjs`
+- `google-apps-script/HotfixLoad146.test.cjs`
+- `google-apps-script/InventoryAuthorization10C.js`
+- `google-apps-script/InventoryAuthorization10C.test.cjs`
+- `google-apps-script/Media9.test.cjs`
+- `google-apps-script/PhotoCategories5.test.cjs`
+- `google-apps-script/PhotoNamesV2Core.js`
+- `google-apps-script/SicObservations10I.test.cjs`
+- `google-apps-script/SicObservationsPlain10K.test.cjs`
+- `google-apps-script/SicObservationsV1Core.js`
+- `google-apps-script/SyncV3.gs`
+- `google-apps-script/SyncV3.test.cjs`
+- `google-apps-script/SyncV3Core.js`
+- `google-apps-script/SyncedEdits2B.test.cjs`
+- `google-apps-script/VideoNamesV2.test.cjs`
+- `google-apps-script/VideoNamesV2Core.js`
+- `google-apps-script/VideoV1.gs`
+- `google-apps-script/VideoV1Adapter.test.cjs`
+- `google-apps-script/VideoV1Core.js`
+- `gradle.properties`
+- `gradle/gradle-daemon-jvm.properties`
+- `gradle/libs.versions.toml`
+- `gradle/wrapper/gradle-wrapper.jar`
+- `gradle/wrapper/gradle-wrapper.properties`
+- `gradlew`
+- `gradlew.bat`
+- `server.local.properties.example`
+- `settings.gradle.kts`
+- `tools/apk_identity_audit.ps1`
+- `tools/build_manual_10i.py`
+- `tools/build_visual_manual_10j.py`
+- `tools/capturar_manual_10j.ps1`
+- `tools/check_manual_10i.py`
+- `tools/check_visual_manual_10j.py`
+- `tools/gbo_paths.py`
+- `tools/migracion/benchmark_windows.py`
+- `tools/migracion/pruebas.init.gradle`
+- `tools/migracion/tests_criticos.json`
+- `tools/prueba_drive_ficticia_10.py`
+- `tools/render_manual_10i.ps1`
+- `tools/revisar_d24_abanico_20261019.py`
+- `tools/revisar_juntas_25_27_20261019.py`
+- `tools/revisar_orientacion_definitiva_20261019.py`
+- `tools/revisar_pdf_legibilidad_20261019.py`
+- `tools/revisar_pdf_pavimentos_20261019.py`
+- `tools/scap_field_map.json`
+- `tools/scap_modular_field_map.json`
+- `tools/scap_slab_field_map.json`
+- `tools/scap_ui_10g.py`
+- `tools/verificar_d24_abanico_20261019.py`
+- `tools/verificar_juntas_25_27_20261019.py`
+- `tools/verificar_orientacion_definitiva_20261019.py`
+- `tools/verificar_pavimentos_final_sin_apk_20261019.py`
+- `tools/verificar_pavimentos_sin_apk_20261019.py`
+- `tools/verificar_pdf_legibilidad_20261019.py`
+- `tools/verificar_sic20_juntas_20261019.py`
+
+## Exclusiones
+
+- Configuración local real, claves, OAuth y configuración clasp: traslado privado.
+- `referencias/`: archivo real del ingeniero, conservado y respaldado; no se publica.
+- APK/AAB, outputs, build, cachés, logs, XML/JSON de evidencias, capturas y respaldos: fuera de Git.
+- 21 fuentes históricas configuradas para Google: originales privados y copias públicas `.example` sin raíz real.
+- Se conservan plantillas XLSX contractuales, JSON de catálogos/esquemas, wrapper JAR y fixtures sintéticos necesarios; no se aplicó una eliminación general por extensión.
+- Los diffs y hashes históricos generados se conservan en el respaldo privado; sus fuentes y documentación revisada permanecen versionables.

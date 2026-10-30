@@ -9,7 +9,8 @@ sys.stdout.reconfigure(errors='replace')
 ROOT=Path(__file__).resolve().parents[1]
 WORK=ROOT/'tmp/pavimentos-final-20261019'
 CACHE=Path.home()/'.gradle/caches/modules-2/files-2.1'
-JAVA=Path('D:/Android Studio/jbr/bin/java.exe')
+from gbo_paths import java_executable, android_sdk
+JAVA=java_executable()
 def jar(group,artifact,version):
     return next((CACHE/group/artifact/version).rglob(artifact+'-'+version+'.jar'))
 def quote(x):return '"'+str(x).replace('\\','/').replace('"','\\"')+'"'
@@ -27,8 +28,8 @@ def main():
     compiler=[jar('org.jetbrains.kotlin',a,v) for a,v in [('kotlin-compiler-embeddable','2.2.10'),('kotlin-stdlib','2.2.10'),('kotlin-script-runtime','2.2.10'),('kotlin-reflect','1.6.10'),('kotlin-daemon-embeddable','2.2.10')]]
     compiler += [jar('org.jetbrains.kotlinx','kotlinx-coroutines-core-jvm','1.8.0'),jar('org.jetbrains','annotations','13.0')]
     compose=jar('org.jetbrains.kotlin','kotlin-compose-compiler-plugin-embeddable','2.2.10')
-    android=Path('D:/Android/Sdk/platforms/android-36/android.jar')
-    if not android.exists():android=sorted(Path('D:/Android/Sdk/platforms').glob('android-*/android.jar'))[-1]
+    android=android_sdk()/'platforms/android-36/android.jar'
+    if not android.exists():android=sorted((android_sdk()/'platforms').glob('android-*/android.jar'))[-1]
     classes=WORK/('classes-'+mode);classes.mkdir(exist_ok=True)
     sources=[]
     if mode in ['after','legacy','render']:

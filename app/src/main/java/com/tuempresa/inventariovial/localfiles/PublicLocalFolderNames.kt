@@ -30,7 +30,7 @@ object PublicLocalFolderNames {
     private fun comparable(value:String)=Normalizer.normalize(value,Normalizer.Form.NFC).uppercase(Locale.ROOT)
     /** Durable collision suffixes are local display disambiguators, never contractual numbers. */
     suspend fun reserve(db:InventoryDatabase,recordKey:String,parent:String,proposed:String):String=db.withTransaction {
-        require(parent.startsWith("Download/GBO_Ruta_Clara/")&&parent.endsWith('/'))
+        require((parent.startsWith("Download/GBO_Ruta_Clara/")||parent.startsWith(DriveMirrorPlan.ROOT))&&parent.endsWith('/'))
         val base=component(proposed);val dao=db.localFilesDao()
         val key=PREFIX+sha256((parent+"\u0000"+recordKey+"\u0000"+base).toByteArray())
         dao.choice(key)?.let {row->
@@ -80,6 +80,14 @@ object PublicLocalFolderNames {
             "$title - $section - ${if(s.muestra>0)"Muestra ${s.muestra}"else"Muestra pendiente"}"
         }
         else->label
+    }
+    suspend fun documentName(db:InventoryDatabase,job:LocalExportJob,extension:String):String {
+        val title=describe(db,job,if(job.kind=="SCAP")"Puente"else job.kind).replace("Puente - ","Puente ")
+        val record=when(job.kind){"SCAP"->db.scapDao().snapshot(job.recordId)?.roadRecord;"SIC"->db.inventoryDao().recordById(job.recordId);else->null}
+        val route=record?.routeCode?.takeIf{it.isNotBlank()}
+        val pr=record?.startPrCode?.takeIf{it.isNotBlank()}?.let{p->record.startDistanceM.takeIf{it.isFinite()&&it>=0}?.let{m->
+            "PR ${p.trimStart('0').ifBlank{"0"}}+${java.math.BigDecimal.valueOf(m).stripTrailingZeros().toPlainString().padStart(3,'0')}"}}
+        return component(listOfNotNull(title,route?.takeUnless{title.contains(it)},pr?.takeUnless{title.contains(it)}).joinToString(" - "))+".$extension"
     }
     private fun location(title:String,r:com.tuempresa.inventariovial.data.entity.InventoryRecordEntity?):String {
         val route=r?.routeCode?.takeIf{it.isNotBlank()}

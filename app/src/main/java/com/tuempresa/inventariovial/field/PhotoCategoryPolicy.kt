@@ -14,7 +14,8 @@ object PhotoCategoryPolicy {
     fun categories(sicCode: String, assetType: String = "", classCode: String = "", typeCode: String = "", hasEnds: Boolean = true): List<Category> = when {
         sicCode in setOf("SIC-18", "SIC-18A") -> culvert
         sicCode == "SIC-22" -> vertical
-        sicCode == "SIC-17" -> com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.labels.map { Category(it.key,it.value,com.tuempresa.inventariovial.core.DriveInventorySchema.category(it.key)) }
+        // Standalone SIC-17 retains its existing wire categories; SCAP panel v2 is SCAP-only.
+        sicCode == "SIC-17" -> com.tuempresa.inventariovial.scap.domain.ScapPhotoCategories.historicalLabels.map { Category(it.key,it.value,com.tuempresa.inventariovial.core.DriveInventorySchema.category(it.key)) }
         sicCode == "SIC-20" && classCode == "12" -> linear // Physical entrance/exit of a ford, even with one contractual PR.
         hasEnds && (sicCode == "SIC-19" || sicCode == "SIC-20" || sicCode == "SIC-23" && classCode in setOf("21","22") || sicCode == "SIC-21" &&
             (classCode in setOf("18", "20") || classCode == "19" && typeCode == "1" || assetType == "HORIZONTAL_STUDS")) -> linear

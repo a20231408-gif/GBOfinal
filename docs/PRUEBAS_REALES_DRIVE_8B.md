@@ -2,7 +2,7 @@
 
 ## Condiciones y evidencias existentes
 
-Leer [entrega](ENTREGA_8B.md), [matriz](MATRIZ_VALIDACION_8B.md) y [registro de archivos](integracion-real-8b/ARCHIVOS_DRIVE.md) antes de repetir: cada ejecución crea UUID nuevos y deja archivos ficticios en la raíz definitiva autorizada `1FQBVRD3BK1rOBfC8NdRzPQt3fvU40V23`. No borrar ni modificar registros de campo. No volver a ejecutar casos aprobados sin un cambio o incidencia concreta. No cambiar Apps Script ni publicar otro endpoint.
+Leer [entrega](ENTREGA_8B.md), [matriz](MATRIZ_VALIDACION_8B.md) y [registro de archivos](integracion-real-8b/ARCHIVOS_DRIVE.md) antes de repetir: cada ejecución crea UUID nuevos y deja archivos ficticios en la raíz definitiva autorizada `CONFIGURAR_ID_PRIVADO`. No borrar ni modificar registros de campo. No volver a ejecutar casos aprobados sin un cambio o incidencia concreta. No cambiar Apps Script ni publicar otro endpoint.
 
 Configurar `DRIVE_WEB_APP_URL` y `DRIVE_API_TOKEN` únicamente en el archivo local ignorado `drive.local.properties`. No incluir credenciales en argumentos, documentación, capturas, logs o chat. Para usuarios, completar de forma local `server.local.properties` con el responsable del servicio independiente; no modificar ese proyecto desde esta tarea.
 

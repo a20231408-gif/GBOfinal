@@ -113,7 +113,7 @@ class BridgeSicFlowTest {
                     assertNull(preview.values[2]);assertEquals("Comentario SIC\nSegunda línea",preview.values.last())
                 }
             }
-            assertEquals(20,db.openHelper.readableDatabase.version)
+            assertEquals(21,db.openHelper.readableDatabase.version)
         } finally {db.close();context.deleteDatabase(name)}
     }
     @Test fun overridesKeepSourceRestoreScapAndNeverInferStructuresOrLanes()=runBlocking {
@@ -180,7 +180,7 @@ class BridgeSicFlowTest {
             val updated=db.scapDao().snapshot("inspection")!!
             assertEquals("HISTÓRICO",updated.sic17b!!.comments);assertEquals("12.5",updated.sic17b!!.maximumCapacity)
             assertEquals("3",ScapToSicMapper.mapToSic17B(updated).fields.single{it.sicField=="wearingSurface"}.value)
-            assertEquals(20,db.openHelper.readableDatabase.version)
+            assertEquals(21,db.openHelper.readableDatabase.version)
         } finally {db.close();context.deleteDatabase(name)}
     }
 

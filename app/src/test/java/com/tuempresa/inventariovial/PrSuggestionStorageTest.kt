@@ -56,7 +56,7 @@ class PrSuggestionStorageTest {
             assertEquals(22L, snapshot.record.updatedAt)
             assertEquals("photo", snapshot.photos.single().id)
             assertEquals("/keep.jpg", snapshot.photos.single().localPath)
-            assertEquals(20, db.openHelper.readableDatabase.version)
+            assertEquals(21, db.openHelper.readableDatabase.version)
         } finally { db.close(); context.deleteDatabase(name) }
     }
 

@@ -89,17 +89,37 @@ object SicExcelWriter {
 
     private fun writeWorkbook(output: OutputStream, records: List<InventoryRecordForExport>,
                               format: SicExportFormat, heading: ExportHeading) {
+        val rows=records.sortedWith { a,b -> com.tuempresa.inventariovial.road.SicTableOrder.comparator.compare(a.record,b.record) }
+            .map{WorkbookRow(it.record.routeCode,observationValues(format,it))}
+        writeRowsWorkbook(output,rows,format,heading)
+    }
+
+    private data class WorkbookRow(val route:String,val values:List<Any?>)
+
+    /** Local SIC-17 uses the existing primary template, including its plain trailing notes. */
+    internal fun writeLocalSic17Row(output:OutputStream,route:String,fields:Map<String,Any?>,observations:String?) {
+        require(fields.keys==LocalSic17Workbook.keys.toSet()){"Campos SIC-17 incompatibles."}
+        val values=LocalSic17Workbook.keys.map(fields::get)+observations
+        writeRowsWorkbook(output,listOf(WorkbookRow(route,values)),SicExportFormat.SIC17,ExportHeading())
+    }
+
+    internal fun writeLocalSic17Rows(output:OutputStream,rows:List<Pair<com.tuempresa.inventariovial.data.entity.InventoryRecordEntity,Map<String,Any?>>>,heading:ExportHeading){
+        val ordered=rows.sortedWith{a,b->com.tuempresa.inventariovial.road.SicTableOrder.comparator.compare(a.first,b.first)}
+        writeRowsWorkbook(output,ordered.map{(r,fields)->WorkbookRow(r.routeCode,LocalSic17Workbook.keys.map(fields::get)+r.observations)},SicExportFormat.SIC17,heading)
+    }
+
+    private fun writeRowsWorkbook(output:OutputStream,rows:List<WorkbookRow>,format:SicExportFormat,heading:ExportHeading) {
         val body=ByteArrayOutputStream()
-        writeWorkbookBody(body,records,format,heading)
+        writeWorkbookBody(body,rows,format,heading)
         SicWorkbookHeaderWriter.write(output,body.toByteArray(),format.columns.size)
     }
 
-    private fun writeWorkbookBody(output: OutputStream, records: List<InventoryRecordForExport>,
+    private fun writeWorkbookBody(output: OutputStream, records: List<WorkbookRow>,
                               format: SicExportFormat, heading: ExportHeading) {
-        val groups = records.groupBy { it.record.routeCode }.toSortedMap()
+        val groups = records.groupBy { it.route }.toSortedMap()
         val used = mutableSetOf<String>()
         val sheets = groups.entries.map { (route, rows) ->
-            Triple(sheetName(route, used), route, rows.sortedWith { a,b -> com.tuempresa.inventariovial.road.InventoryTechnicalOrder.comparator.compare(a.record,b.record) })
+            Triple(sheetName(route, used), route, rows)
         }
         ZipOutputStream(output).use { zip ->
             fun entry(path: String, body: String) {
@@ -156,7 +176,7 @@ object SicExcelWriter {
                 emit("</row>")
                 sheet.third.forEachIndexed { index, item ->
                     val row = index + 14
-                    val values = observationValues(format,item)
+                    val values = item.values
                     check(values.size == columns.size) { "Columnas incompatibles en ${format.code}." }
                     val lineCount = values.indices.filterNot {columns[it].label.equals("OBSERVACIONES",true)}.maxOf { c ->
                         val value = values[c]?.toString().orEmpty()

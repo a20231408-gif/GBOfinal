@@ -48,11 +48,15 @@ class DriveV4RealIntegration8BTest {
         require(DriveUploadPolicy.configurationError()==null) {"Private Drive configuration required"}
     }
     private fun capabilities() {
+        // Explicit private opt-in: no production/test folder identifier is embedded in Git.
+        val expectedTestRoot=InstrumentationRegistry.getArguments()
+            .getString("gboAuthorizedTestRoot")?.trim().orEmpty()
+        require(expectedTestRoot.isNotEmpty()) {"Explicit authorized test root required; no requests allowed"}
         val client=OkHttpClient()
         val caps=client.newCall(Request.Builder().url(DriveConfig.WEB_APP_URL).build()).execute().use {
             require(it.isSuccessful) {"Capability HTTP failure"};JSONObject(it.body!!.string())
         }
-        require(caps.optString("rootFolderId")=="1FQBVRD3BK1rOBfC8NdRzPQt3fvU40V23") {"Unexpected Drive root; no test writes allowed"}
+        require(caps.optString("rootFolderId")==expectedTestRoot) {"Unexpected Drive root; no test writes allowed"}
         require(caps.optBoolean("ok") && caps.optInt("syncProtocol")==3 && caps.optInt("pathVersion")==4 &&
             caps.optBoolean("stableFamilyNumbering") && caps.optInt("photoCategoryVersion")==1 &&
             caps.optString("photoPolicy")=="ORIGINAL_CLEAN" && caps.optBoolean("strictElementFoldering") &&

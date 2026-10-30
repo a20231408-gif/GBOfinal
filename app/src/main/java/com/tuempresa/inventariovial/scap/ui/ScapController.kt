@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class ScapController(context:Context,private val db:InventoryDatabase,scope:CoroutineScope) {
+    internal val localDatabase:InventoryDatabase get()=db
     // Finishes accepted local writes across Activity/session navigation; no network dependency.
     private val writer=CoroutineScope(SupervisorJob()+Dispatchers.IO)
     private val journal=ScapEditJournal(context.applicationContext)
@@ -64,6 +65,11 @@ class ScapController(context:Context,private val db:InventoryDatabase,scope:Coro
     suspend fun savedSnapshot(id:String):ScapInspectionSnapshot {
         check(counter.get()==0 && failed.isEmpty() && !recoveryFailed) {"Espera a que termine el guardado local."}
         return withContext(Dispatchers.IO){requireNotNull(ready.await().dao.snapshot(id)){"Inspección inexistente."}}
+    }
+    /** Accepted export requests outlive the panel; bytes/publication remain in the existing Room outbox. */
+    fun localScapPackage(id:String):Deferred<com.tuempresa.inventariovial.localfiles.LocalExportJob> = writer.async {
+        val saved=savedSnapshot(id)
+        com.tuempresa.inventariovial.localfiles.LocalCopies.request(diagnostics,db,"SCAP",id,saved.inspection.updatedAt,"ZIP")
     }
     fun value(id:String,owner:String,key:String,s:ScapInspectionSnapshot):String =
         _overrides.value["$id/$owner/$key"] ?: s.values(owner)[key].orEmpty()

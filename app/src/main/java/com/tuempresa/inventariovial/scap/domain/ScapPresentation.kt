@@ -23,11 +23,13 @@ object ScapPresentation {
 }
 
 object ScapPhotoCategories {
-    val primary = linkedMapOf("RIGHT_SIDE" to "Vista lado derecho", "LEFT_SIDE" to "Vista lado izquierdo",
+    private val historicalPrimary = linkedMapOf("RIGHT_SIDE" to "Vista lado derecho", "LEFT_SIDE" to "Vista lado izquierdo",
         "UPSTREAM" to "Aguas arriba", "DOWNSTREAM" to "Aguas abajo", "ROAD_DECK" to "Carretera / tablero",
         "INFORMATIVE_SIGN" to "Señal informativa", "RAILINGS_SIDEWALKS_PIPES" to "Barandas / veredas / tuberías",
         "DEFECT" to "Anomalías o fallas", "BRIDGE_ELEMENT" to "Otros elementos del puente")
-    val labels = primary + linkedMapOf("GENERAL" to "Vista general", "TRANSVERSE" to "Vista transversal",
+    val primary = ScapPhotoPanel.categories.associate{it.key to it.displayLabel}
+    val historicalLabels = historicalPrimary + linkedMapOf("GENERAL" to "Vista general", "TRANSVERSE" to "Vista transversal",
         "ELEMENT" to "Elemento", "ACCESS" to "Acceso", "CHANNEL" to "Cauce", "OTHER" to "Otra")
+    val labels = primary + historicalLabels
     fun label(code:String?) = labels[code] ?: code.orEmpty().ifBlank { "Sin categoría (histórica)" }
 }

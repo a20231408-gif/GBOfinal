@@ -1,8 +1,11 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const names=require('./VideoNamesV2Core.js'),core=require('./VideoV1Core.js');
 const p=(mediaId='v1',category='UPSTREAM',categoryLabel='Aguas arriba',mimeType='video/mp4')=>({videoProtocol:1,parentKey:'SCAP/bridge',mediaId,category,categoryLabel,mimeType,sizeBytes:10,sha256:'a'.repeat(64),parentRevision:1});
-test('All real canonical SCAP labels match the checked-in naming catalog',()=>{
-  for(const variant of ['slab','modular'])assert.deepEqual(names.catalog.map(x=>x[0]),JSON.parse(fs.readFileSync(`app/src/main/assets/scap_${variant}_catalog.json`,'utf8')).photoNames);
+test('Historical video labels remain valid while Android uses the separately tested official twenty-category panel',()=>{
+  const official=JSON.parse(fs.readFileSync('docs/scap-panel-oficial-20261023/CATALOGO_OFICIAL.json','utf8'));
+  assert.equal(official.length,20);
+  for(const variant of ['slab','modular'])assert.deepEqual(official.map(x=>x.label),JSON.parse(fs.readFileSync(`app/src/main/assets/scap_${variant}_catalog.json`,'utf8')).photoNames);
+  assert.equal(names.catalog.length,31); // Historical reservations are deliberately not rewritten.
   assert.equal(new Set(names.catalog.map(x=>x[1])).size,names.catalog.length);
   for(const [label,code] of names.catalog) {
     const a=names.reserve(p('v','T_HASH',label),1).naming;

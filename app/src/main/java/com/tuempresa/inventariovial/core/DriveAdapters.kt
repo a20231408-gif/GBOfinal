@@ -60,7 +60,11 @@ class PavementSyncWorker(context:Context,params:WorkerParameters):CoroutineWorke
 
 object UnifiedSyncAdapter {
     suspend fun enqueue(context:Context,retryOnly:Boolean):Int=withContext(Dispatchers.IO) {
-        enqueue(InventoryDatabase.getInstance(context),retryOnly){kind,id,warnings->AutomaticSync.manual(context,kind,id,warnings)}
+        val count=enqueue(InventoryDatabase.getInstance(context),retryOnly){kind,id,warnings->AutomaticSync.manual(context,kind,id,warnings)}
+        // A signal appends work without cancelling uploads. A fresh drain negotiates capabilities, even if
+        // an old PENDING_VALIDATION row did not need a new revision or reservation.
+        AutomaticSync.enqueue(context)
+        count
     }
     internal suspend fun enqueue(db:InventoryDatabase,retryOnly:Boolean,request:suspend(String,String,Boolean)->Unit):Int {
         var count=0
@@ -74,7 +78,12 @@ object UnifiedSyncAdapter {
             if(com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,"$kind/$id"))continue
             val old=previous["$kind/$id"]
             // One record requiring human reconciliation must not abort scheduling the others.
-            if(old?.state in setOf("SYNCED","CONFLICT","BLOCKED","PENDING_VALIDATION") || retryOnly && old?.state!="ERROR")continue
+            val recoverable=old?.let(AutomaticSync::compatibilityPending)==true
+            if(old?.state in setOf("CONFLICT","BLOCKED","QUEUED","UPDATE_PENDING","UPLOADING") ||
+                old?.state=="PENDING_VALIDATION"&&!recoverable ||
+                old?.state=="SYNCED"&&DriveDeliveryPresentation.confirmed(old,
+                    com.tuempresa.inventariovial.localfiles.DeliveryDestination.revision(db,kind,id)) ||
+                retryOnly && old?.state!="ERROR"&&!recoverable)continue
             try {request(kind,id,old?.warningsConfirmed ?: false);count++}
             catch(_:IllegalArgumentException) { /* A concurrently reopened/unvalidated record stays local. */ }
         }

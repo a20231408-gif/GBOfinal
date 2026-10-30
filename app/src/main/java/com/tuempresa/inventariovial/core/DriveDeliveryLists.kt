@@ -11,7 +11,7 @@ import java.text.DateFormat
 import java.util.Date
 
 /** Switching, searching and reopening these sections have no enqueue or persistence effects. */
-@Composable fun DriveDeliveryLists(rows:List<DriveDeliveryEntry>,onRetry:(DriveSyncIntent)->Unit) {
+@Composable fun DriveDeliveryLists(rows:List<DriveDeliveryEntry>,onReview:((DriveDeliveryEntry)->Unit)?=null,onRetry:(DriveSyncIntent)->Unit) {
     var section by rememberSaveable{mutableStateOf(DriveDeliverySection.QUEUE)}
     var query by rememberSaveable{mutableStateOf("")}
     var filter by rememberSaveable{mutableStateOf(DriveDeliveryFilter.ALL)}
@@ -38,6 +38,6 @@ import java.util.Date
         // Persisted revision/ACK times only; do not invent a date for legacy counters.
         if(section==DriveDeliverySection.HISTORY&&row.activityAt>=946684800000L)
             Text("Última actividad: ${DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(Date(row.activityAt))}",style=MaterialTheme.typography.bodySmall)
-        DriveDeliveryCard(row.intent,row.identity,row.view,row.progress){onRetry(row.intent)}
+        DriveDeliveryCard(row.intent,row.identity,row.view,row.progress,onReview=onReview?.let{callback->{callback(row)}}){onRetry(row.intent)}
     }
 }

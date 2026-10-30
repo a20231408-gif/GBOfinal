@@ -17,6 +17,8 @@ interface SharedDocumentStore {
     fun write(uri:Uri,source:File)
     fun digest(uri:Uri):Pair<Long,String>
     fun publish(slot:Slot,file:LocalSharedFile):Uri
+    /** Journaled rename of verified bytes only; also resolves a lost result without overwriting a target. */
+    fun renameOwned(slot:Slot,from:LocalSharedFile,to:LocalSharedFile):Slot = error("El proveedor no permite sustituir el consolidado de forma recuperable.")
 }
 
 fun streamDigest(input:InputStream):Pair<Long,String> = input.use { stream->
@@ -87,14 +89,43 @@ class AndroidSharedDocumentStore(private val context:Context):SharedDocumentStor
         if(media){check(resolver.update(slot.uri,ContentValues().apply{put(MediaStore.MediaColumns.IS_PENDING,0)},null,null)==1){"Android no confirmó la publicación en Descargas."};return slot.uri}
         return requireNotNull(DocumentsContract.renameDocument(resolver,slot.uri,file.name)){"El proveedor no permite finalizar la copia. El original se conserva."}
     }
+    override fun renameOwned(slot:SharedDocumentStore.Slot,from:LocalSharedFile,to:LocalSharedFile):SharedDocumentStore.Slot {
+        require(from.relativePath==to.relativePath){"La sustitución no puede cambiar de ruta."}
+        if(media) {
+            val existing=findMedia(to)
+            require(existing==null || existing.uri==slot.uri){"El nombre está ocupado; no se sobrescribió otro documento."}
+            mediaQuery(slot.uri,arrayOf(MediaStore.MediaColumns.DISPLAY_NAME,MediaStore.MediaColumns.RELATIVE_PATH,MediaStore.MediaColumns.OWNER_PACKAGE_NAME))?.use{c->
+                require(c.moveToFirst() && c.getString(2)==context.packageName && c.getString(1)==from.relativePath && c.getString(0) in setOf(from.name,to.name)){"La copia cambió de propietario, nombre o carpeta."}
+            } ?: error("No se encontró la copia que se iba a sustituir.")
+            require(digest(slot.uri)==(from.size to from.sha256)){"El archivo cambió fuera de GBO; no se sobrescribió."}
+            check(resolver.update(slot.uri,ContentValues().apply{put(MediaStore.MediaColumns.DISPLAY_NAME,to.name)},null,null)==1)
+            return SharedDocumentStore.Slot(slot.uri,true).also{checkSlot(it,to)}
+        }
+        val parent=treeParent(to)
+        val files=children(parent)
+        if(files.none{it.first==slot.uri}) {
+            // Some SAF providers change documentId on rename. Reconcile a lost result by exact bytes;
+            // this branch only reads an existing destination and never overwrites an unknown document.
+            val recovered=files.singleOrNull{it.second.first==to.name}
+            require(recovered!=null && files.none{it.second.first==from.name} && digest(recovered.first)==(from.size to from.sha256)){"El proveedor cambió la identidad del documento; conserva el respaldo y revisa el destino."}
+            return SharedDocumentStore.Slot(recovered.first,true)
+        }
+        require(files.any{it.first==slot.uri && it.second.first in setOf(from.name,to.name)}){"La copia autorizada no está en la carpeta esperada."}
+        require(files.none{it.second.first==to.name && it.first!=slot.uri}){"El nombre está ocupado; no se sobrescribió otro documento."}
+        require(digest(slot.uri)==(from.size to from.sha256)){"El documento cambió; no se sobrescribió."}
+        val result=if(files.any{it.first==slot.uri && it.second.first==to.name})slot.uri else
+            requireNotNull(DocumentsContract.renameDocument(resolver,slot.uri,to.name)){"El proveedor no permite renombrar; originales conservados."}
+        require(children(parent).any{it.first==result && it.second.first==to.name}){"El proveedor no confirmó el nombre final."}
+        return SharedDocumentStore.Slot(result,true)
+    }
     private fun children(parent:Uri):List<Pair<Uri,Pair<String,String>>> {
         val uri=DocumentsContract.buildChildDocumentsUriUsingTree(parent,DocumentsContract.getDocumentId(parent))
         val rows=mutableListOf<Pair<Uri,Pair<String,String>>>()
-        resolver.query(uri,arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME,DocumentsContract.Document.COLUMN_MIME_TYPE),null,null,null)?.use {c->
+        resolver.query(uri,arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME,DocumentsContract.Document.COLUMN_MIME_TYPE),android.os.Bundle.EMPTY,null)?.use {c->
             while(c.moveToNext())rows+=DocumentsContract.buildDocumentUriUsingTree(parent,c.getString(0)) to (c.getString(1) to c.getString(2))
         };return rows
     }
-    private fun reserveTree(file:LocalSharedFile):SharedDocumentStore.Slot {
+    private fun treeParent(file:LocalSharedFile):Uri {
         val saved=prefs.getString("legacyTree",null) ?: error("Android 8/9: elige una carpeta local en Herramientas → Copias locales. La ficha sigue dentro de GBO.")
         val tree=Uri.parse(saved);require(tree.authority=="com.android.externalstorage.documents"){"Elige almacenamiento de la tablet, no un proveedor en Internet."}
         require(resolver.persistedUriPermissions.any {it.uri==tree&&it.isReadPermission&&it.isWritePermission}){"Vuelve a autorizar la carpeta local en Herramientas."}
@@ -105,6 +136,10 @@ class AndroidSharedDocumentStore(private val context:Context):SharedDocumentStor
             parent=found.singleOrNull()?.also {require(it.second.second==DocumentsContract.Document.MIME_TYPE_DIR)}?.first
                 ?: requireNotNull(DocumentsContract.createDocument(resolver,parent,DocumentsContract.Document.MIME_TYPE_DIR,name))
         }
+        return parent
+    }
+    private fun reserveTree(file:LocalSharedFile):SharedDocumentStore.Slot {
+        val parent=treeParent(file)
         val files=children(parent);val final=files.filter{it.second.first==file.name};require(final.size<=1)
         final.singleOrNull()?.let{return SharedDocumentStore.Slot(it.first,true)}
         val partialName=".${file.name}.gbo_partial";val partial=files.filter{it.second.first==partialName};require(partial.size<=1)
@@ -117,4 +152,13 @@ object SharedFileActions {
     fun share(uri:Uri,mime:String)=Intent.createChooser(Intent(Intent.ACTION_SEND).setType(mime).putExtra(Intent.EXTRA_STREAM,uri)
         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).apply{clipData=ClipData.newRawUri("Documento GBO",uri)},"Compartir archivo").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     fun downloads()=Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    /** Opens Downloads or the actually authorized SAF root; never fabricates an exact folder path. */
+    fun location(uri:Uri):Intent?=when {
+        uri.authority=="media"->downloads()
+        DocumentsContract.isTreeUri(uri)->runCatching {
+            val root=DocumentsContract.buildDocumentUriUsingTree(uri,DocumentsContract.getTreeDocumentId(uri))
+            view(root,DocumentsContract.Document.MIME_TYPE_DIR).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }.getOrNull()
+        else->null
+    }
 }

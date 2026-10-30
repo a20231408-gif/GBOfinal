@@ -1,7 +1,7 @@
 const fs=require('node:fs'), vm=require('node:vm'), assert=require('node:assert/strict'), crypto=require('node:crypto');
 const {test}=require('node:test');const {spawnSync}=require('node:child_process');const path=require('node:path');
 const core=require('./SyncV3Core.js');
-const PY=process.env.GBO_AUDIT_PYTHON || 'C:/Users/gerbc/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe';
+const PY=process.env.GBO_AUDIT_PYTHON || 'python';
 const output=process.env.GBO_SYNC_TEST_OUTPUT || path.resolve(__dirname,'../docs/automatic-sync-v16/evidence');fs.mkdirSync(output,{recursive:true});
 const inputRoot=path.resolve(__dirname,'../docs/automatic-sync-v16/examples/inputs');
 const fallback=path.resolve(__dirname,'../docs/acceptance-audit-v15-2026-10-10/scenarios/all-sic/SIC-17.xlsx');

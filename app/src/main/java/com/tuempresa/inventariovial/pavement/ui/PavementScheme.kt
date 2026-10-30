@@ -166,11 +166,11 @@ internal object PavementDrawing {
                 "GLOBAL" -> {
                     if(d.code==26)for(mark in PavementJointAnnotations.marks(s,d.id)) {
                         val (a,b)=PavementJointAnnotations.endpoints(s,mark)
-                        paint.color=Color.rgb(210,55,20);paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
+                        paint.color=color;paint.strokeWidth=if(d.id==highlightedDamageId)5f else 3.5f
                         if(mark.kind=="N")c.drawCircle((a.x*scale).toFloat(),transform.canvasY(a.y),minOf(5f,(minOf(s.anchoM/cols,s.largoM/rows)*scale*.12).toFloat()),paint)
                         else c.drawLine((a.x*scale).toFloat(),transform.canvasY(a.y),(b.x*scale).toFloat(),transform.canvasY(b.y),paint)
                     }
-                    if(labels) { paint.style=Paint.Style.FILL;paint.color=color;c.drawText("#${d.correlativo} ${d.name} · global",3f,16f+damages.filter{it.geometry=="GLOBAL"}.indexOf(d)*16f,paint);paint.style=Paint.Style.STROKE }
+                    if(labels) { paint.style=Paint.Style.FILL;paint.color=color;c.drawText("#${d.correlativo} ${d.name} · ${if(PavementJointOccurrences.individual(s,d.id))"junta"else"global"}",3f,16f+damages.filter{it.geometry=="GLOBAL"}.indexOf(d)*16f,paint);paint.style=Paint.Style.STROKE }
                 }
             }
             paint.style=Paint.Style.FILL
