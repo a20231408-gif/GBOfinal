@@ -9,6 +9,21 @@ import org.json.JSONObject
 
 /** Reversible local discard. No physical deletion, queue removal or HTTP request. */
 class LocalDraftDiscard(private val db:InventoryDatabase,private val context:Context) {
+    data class Candidate(val kind:String,val id:String,val revision:Long)
+    /** The reviewed set is atomic: a changed or protected record rolls back the whole set. */
+    suspend fun changeMany(candidates:List<Candidate>,userId:String?)=db.withTransaction {
+        require(candidates.isNotEmpty()) {"Selecciona al menos un borrador."}
+        require(candidates.map{it.kind to it.id}.distinct().size==candidates.size) {"La selección contiene duplicados."}
+        for(item in candidates) {
+            val revision=when(item.kind) {
+                "SIC"->db.inventoryDao().recordById(item.id)?.updatedAt
+                "PAVEMENT"->db.pavementDao().sample(item.id)?.updatedAt
+                else->error("Este tipo de borrador no admite descarte local.")
+            }
+            require(revision==item.revision) {"Un borrador cambió después de la selección. Revisa el listado y vuelve a seleccionar."}
+            change(item.kind,item.id,userId=userId)
+        }
+    }
     private suspend fun unsubmitted(kind:String,id:String,route:String) {
         require(db.automaticSyncDao().all().none {it.recordId==id}) { "Existe una entrega pendiente o histórica; este registro no es exclusivamente local." }
         require(DriveInventorySchema.receipt(context,id)==null) { "Existe una identidad Drive reservada o confirmada." }

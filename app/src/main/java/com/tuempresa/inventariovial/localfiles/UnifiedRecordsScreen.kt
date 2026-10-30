@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.tuempresa.inventariovial.RecordDetailScreen
 import com.tuempresa.inventariovial.core.*
+import com.tuempresa.inventariovial.field.*
 import com.tuempresa.inventariovial.data.database.InventoryDatabase
 import com.tuempresa.inventariovial.data.entity.InventoryRecordWithPhotos
 import com.tuempresa.inventariovial.pavement.*
@@ -28,7 +29,7 @@ import java.text.DateFormat
 import java.util.Date
 
 data class LocalInventoryItem(val kind:String,val id:String,val family:String,val name:String,val route:String,val progressive:String,
-    val position:Double?,val roadbed:String,val direction:String,val capture:String,val revision:Long) {
+    val position:Double?,val roadbed:String,val direction:String,val capture:String,val revision:Long,val surveyDate:String="") {
     val key get()="$kind/$id"
 }
 object LocalInventoryIndex {
@@ -38,13 +39,13 @@ object LocalInventoryIndex {
             val r=row.record
             LocalInventoryItem("SIC",r.id,"SIC","${r.sicCode} · ${AssetPresentationCatalog.resolve(row).label}",r.routeCode,
                 if(r.startPrCode.isBlank())"Progresiva pendiente"else "PR ${r.startPrCode} + ${r.startDistanceM} m",
-                r.axisMeasureM?.takeIf{it.isFinite()&&it>=0} ?: ChainageCalculator().calculate(r).chainageM,r.roadbedCode,r.surveyDirection.orEmpty(),r.status,r.updatedAt)
+                r.axisMeasureM?.takeIf{it.isFinite()&&it>=0} ?: ChainageCalculator().calculate(r).chainageM,r.roadbedCode,r.surveyDirection.orEmpty(),r.status,r.updatedAt,r.surveyDate)
         }+bridges.map {b->val r=byId[b.roadRecordId]?.record
             LocalInventoryItem("SCAP",b.id,"SCAP / Puentes",b.bridgeName.ifBlank{"Puente SCAP"},r?.routeCode.orEmpty(),
                 if(r==null||r.startPrCode.isBlank())"Progresiva pendiente"else "PR ${r.startPrCode} + ${r.startDistanceM} m",
-                r?.axisMeasureM?.takeIf{it.isFinite()&&it>=0} ?: r?.let{ChainageCalculator().calculate(it).chainageM},r?.roadbedCode.orEmpty(),r?.surveyDirection.orEmpty(),b.status,b.updatedAt)
+                r?.axisMeasureM?.takeIf{it.isFinite()&&it>=0} ?: r?.let{ChainageCalculator().calculate(it).chainageM},r?.roadbedCode.orEmpty(),r?.surveyDirection.orEmpty(),b.status,b.updatedAt,r?.surveyDate.orEmpty())
         }+samples.map {s->LocalInventoryItem("PAVEMENT",s.id,"Pavimentos · ${PavementSurface.valueOf(s.surface).label}","Muestra ${s.muestra} · ${s.tramo}",s.ruta,s.prInicial.ifBlank{"Progresiva pendiente"},
-            runCatching{PavementChainage.parse(s.prInicial)}.getOrNull(),s.calzada,s.carril,s.status,s.updatedAt)}
+            runCatching{PavementChainage.parse(s.prInicial)}.getOrNull(),s.calzada,s.carril,s.status,s.updatedAt,s.fecha)}
         return items.distinctBy{it.key}.sortedWith(compareBy({it.route},{it.roadbed},{it.direction},{it.position ?: Double.MAX_VALUE},{it.key}))
     }
     fun localState(item:LocalInventoryItem,job:LocalExportJob?):String=when {
@@ -67,6 +68,16 @@ object LocalInventoryIndex {
     var search by rememberSaveable{mutableStateOf("")};var route by rememberSaveable{mutableStateOf("")}
     var pr by rememberSaveable{mutableStateOf("")};var state by rememberSaveable{mutableStateOf("")};var family by rememberSaveable{mutableStateOf("Todas")}
     var historical by rememberSaveable{mutableStateOf(false)}
+    var year by rememberSaveable{mutableStateOf<Int?>(null)}
+    var month by rememberSaveable{mutableStateOf<Int?>(null)}
+    var day by rememberSaveable{mutableStateOf<Int?>(null)}
+    var captureFilter by rememberSaveable{mutableStateOf("Todos")}
+    val dateFilter=RecordDateSelection(year,month,day)
+    var selected by remember {mutableStateOf(emptySet<String>())}
+    var discardReview by remember {mutableStateOf<List<LocalDraftDiscard.Candidate>?>(null)}
+    var discardBusy by remember {mutableStateOf(false)}
+    var discardMessage by remember {mutableStateOf<String?>(null)}
+    val scope=rememberCoroutineScope()
     val all=remember(records,bridges,samples){LocalInventoryIndex.project(records,bridges,samples)}
     detail?.let {key->val id=key.substringAfter('/');when(key.substringBefore('/')) {
         "SIC"->RecordDetailScreen(vm,id){detail=null}
@@ -79,9 +90,32 @@ object LocalInventoryIndex {
     val latest=remember(jobs){jobs.filter{it.scope.startsWith("FULL")&&it.state!="SUPERSEDED"}.groupBy{it.recordKey}.mapValues{(_,v)->v.maxWith(compareBy({it.revision},{it.createdAt}))}}
     val shown=all.filter {r->val d=drive.find{it.key==r.key};val j=latest[r.key]
         (historical||r.capture !in setOf("DISCARDED_LOCAL","ANNULLED")) && (family=="Todas"||r.family.startsWith(family)) &&
+        dateFilter.matches(parseRecordDate(r.surveyDate)) && when(captureFilter) {
+            "Borradores"->r.capture=="DRAFT"
+            "Enviados"->d!=null && DriveDeliveryPresentation.confirmed(d,r.revision)
+            "Sin confirmar"->d==null || !DriveDeliveryPresentation.confirmed(d,r.revision)
+            else->true
+        } &&
         "${r.name} ${r.id} ${r.route}".contains(search,true)&&r.route.contains(route,true)&&r.progressive.contains(pr,true)&&
         "${r.capture} ${d?.state.orEmpty()} ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)} ${LocalInventoryIndex.localState(r,j)} ${j?.state.orEmpty()}".contains(state,true)
     }
+    val selectable=shown.filter{it.capture=="DRAFT" && it.kind in setOf("SIC","PAVEMENT")}
+    fun reviewDiscard(rows:List<LocalInventoryItem>) {
+        discardReview=rows.map{LocalDraftDiscard.Candidate(it.kind,it.id,it.revision)}
+        discardMessage=null
+    }
+    discardReview?.let {review->AlertDialog(onDismissRequest={if(!discardBusy)discardReview=null},
+        title={Text("Descartar ${review.size} borradores locales")},
+        text={Text("Se ocultarán del listado activo y se conservarán fichas, fotos y archivos. Puedes recuperarlos desde Mostrar descartados. Si alguno cambió o tiene una entrega pendiente o histórica, se cancelará todo el grupo. Puentes SCAP no admite este descarte.")},
+        confirmButton={TextButton(enabled=!discardBusy,onClick={discardBusy=true;scope.launch {
+            try {
+                val user=com.tuempresa.inventariovial.auth.AuthGraph.get(c).sessions.current.value?.id
+                LocalDraftDiscard(db,c).changeMany(review,user)
+                selected=emptySet();discardMessage="${review.size} borradores descartados; originales conservados."
+            }catch(e:Exception){discardMessage=e.message ?: "No se pudo descartar el grupo."}
+            finally{discardBusy=false;discardReview=null}
+        }}){Text("Confirmar descarte reversible")}},
+        dismissButton={TextButton(enabled=!discardBusy,onClick={discardReview=null}){Text("Cancelar")}})}
     LazyColumn(Modifier.testTag("mis-registros").fillMaxSize().padding(horizontal=16.dp),contentPadding=PaddingValues(vertical=16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             TextButton(onClick=onBack){Text("Volver")};Text("Mis registros",style=MaterialTheme.typography.headlineMedium)
@@ -93,15 +127,33 @@ object LocalInventoryIndex {
             OutlinedTextField(route,{route=it},label={Text("Carretera")},modifier=Modifier.fillMaxWidth())
             OutlinedTextField(pr,{pr=it},label={Text("Progresiva")},modifier=Modifier.fillMaxWidth())
             OutlinedTextField(state,{state=it},label={Text("Estado de captura / Drive / copia local")},modifier=Modifier.fillMaxWidth())
+            RecordDateFilter(dateFilter,all.mapNotNull{parseRecordDate(it.surveyDate)}){year=it.year;month=it.month;day=it.day}
+            Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
+                listOf("Todos","Borradores","Enviados","Sin confirmar").forEach {f->FilterChip(captureFilter==f,{captureFilter=f},label={Text(f)})}
+            }
             Row{Checkbox(historical,{historical=it});Text("Mostrar descartados y anulados")}
             Text("Copias automáticas ${if(LocalCopySettings.enabled(c))"activadas"else"desactivadas"}. Descargas ocupa espacio y puede ser visible para otras aplicaciones. Configura en Herramientas y ajustes → Copias locales.",style=MaterialTheme.typography.bodySmall)
             Text("${shown.size} registros")
+            Row(Modifier.horizontalScroll(rememberScrollState())) {
+                TextButton(enabled=selectable.isNotEmpty(),onClick={selected=selectable.map{it.key}.toSet()}){Text("Seleccionar borradores visibles")}
+                TextButton(enabled=selected.isNotEmpty(),onClick={selected=emptySet()}){Text("Limpiar selección")}
+            }
+            Row(Modifier.horizontalScroll(rememberScrollState())) {
+                TextButton(enabled=selectable.any{it.key in selected}&&!discardBusy,onClick={reviewDiscard(selectable.filter{it.key in selected})}){Text("Descartar seleccionados")}
+                TextButton(enabled=selectable.isNotEmpty()&&!discardBusy,onClick={reviewDiscard(selectable)}){Text("Descartar todos los borradores visibles")}
+            }
+            discardMessage?.let{Text(it)}
         }
         items(shown,key={it.key}){r->
             val d=drive.find{it.key==r.key};val job=latest[r.key]
             Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
+                if(r in selectable)Row {
+                    Checkbox(r.key in selected,{checked->selected=if(checked)selected+r.key else selected-r.key})
+                    Text("Seleccionar borrador")
+                }
                 Text(r.name,style=MaterialTheme.typography.titleMedium);Text("${r.family} · ${r.route.ifBlank{"Ruta pendiente"}} · ${r.progressive}")
                 Text("UUID: ${r.id}",style=MaterialTheme.typography.bodySmall)
+                Text("Fecha de registro: ${r.surveyDate.ifBlank{"Sin fecha registrada"}}",style=MaterialTheme.typography.bodySmall)
                 Text("Captura: ${r.capture} · revisión ${r.revision} · ${DateFormat.getDateTimeInstance().format(Date(r.revision))}",style=MaterialTheme.typography.bodySmall)
                 Text("Drive de la ficha: ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)}${if(d?.syncedRevision!=null&&d.syncedRevision>0)" · ACK R${d.syncedRevision}"else" · sin ACK"}")
                 Text(LocalInventoryIndex.localState(r,job))

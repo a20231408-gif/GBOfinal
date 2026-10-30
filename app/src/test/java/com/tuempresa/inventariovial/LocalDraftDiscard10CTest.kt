@@ -23,6 +23,25 @@ class LocalDraftDiscard10CTest {
     @org.junit.Before fun tabletIdentity() {android.provider.Settings.Secure.putString(context.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"synthetic-tablet-10c")}
     private fun db()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
     private fun record(id:String="draft",status:String="DRAFT")=InventoryRecordEntity(id,"SIC-18","ALCANTARILLA","R10C","UC","0000",10.0,null,null,null,null,null,null,null,"2026-10-12",null,status,"PENDING","PENDING",1,1)
+    @Test fun bulkDiscardRollsBackEarlierRowsWhenLaterRowChanged()=runBlocking {db().use {d->
+        d.inventoryDao().insertRecord(record("first"));d.inventoryDao().insertRecord(record("second").copy(updatedAt=2))
+        val result=runCatching {LocalDraftDiscard(d,context).changeMany(listOf(
+            LocalDraftDiscard.Candidate("SIC","first",1),LocalDraftDiscard.Candidate("SIC","second",1)),"operator")}
+        assertTrue(result.isFailure)
+        assertEquals("DRAFT",d.inventoryDao().recordById("first")!!.status)
+        assertEquals("DRAFT",d.inventoryDao().recordById("second")!!.status)
+    }}
+    @Test fun bulkDiscardPreservesRecordsAndCanRestoreEachIndependently()=runBlocking {db().use {d->
+        for(id in listOf("first","second"))d.inventoryDao().insertRecord(record(id))
+        val operation=LocalDraftDiscard(d,context)
+        operation.changeMany(listOf("first","second").map{LocalDraftDiscard.Candidate("SIC",it,1)},"operator")
+        assertEquals("DISCARDED_LOCAL",d.inventoryDao().recordById("first")!!.status)
+        assertEquals("DISCARDED_LOCAL",d.inventoryDao().recordById("second")!!.status)
+        operation.change("SIC","first",restore=true,userId="operator")
+        assertEquals("DRAFT",d.inventoryDao().recordById("first")!!.status)
+        assertEquals("DISCARDED_LOCAL",d.inventoryDao().recordById("second")!!.status)
+        assertTrue(d.automaticSyncDao().all().isEmpty())
+    }}
     @Test fun localDiscardAndRestorePreserveUuidPhotosAndNeverEnterLegacyOrDriveQueues()=runBlocking {db().use {d->
         val file=File(context.cacheDir,"draft-original10c.jpg").apply {writeText("synthetic preserved bytes")}
         try {
