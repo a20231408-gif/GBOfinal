@@ -19,6 +19,8 @@ interface SharedDocumentStore {
     fun publish(slot:Slot,file:LocalSharedFile):Uri
     /** Journaled rename of verified bytes only; also resolves a lost result without overwriting a target. */
     fun renameOwned(slot:Slot,from:LocalSharedFile,to:LocalSharedFile):Slot = error("El proveedor no permite sustituir el consolidado de forma recuperable.")
+    /** Only a frozen, hash-verified GBO copy. False means an interrupted cleanup already removed it. */
+    fun removeOwned(file:LocalSharedFile):Boolean = error("El proveedor no permite limpiar copias de forma segura.")
 }
 
 fun streamDigest(input:InputStream):Pair<Long,String> = input.use { stream->
@@ -34,6 +36,26 @@ class AndroidSharedDocumentStore(private val context:Context):SharedDocumentStor
     private val prefs=context.getSharedPreferences("gbo_local_copies",Context.MODE_PRIVATE)
     private val media get()=Build.VERSION.SDK_INT>=29
     private val collection get()=MediaStore.Downloads.EXTERNAL_CONTENT_URI
+    override fun removeOwned(file:LocalSharedFile):Boolean {
+        val uri=Uri.parse(requireNotNull(file.uri))
+        if(media){
+            require(uri.authority=="media"){"Solo se limpian copias de Descargas creadas por GBO."}
+            val exists=mediaQuery(uri,arrayOf(MediaStore.MediaColumns.OWNER_PACKAGE_NAME,MediaStore.MediaColumns.RELATIVE_PATH,MediaStore.MediaColumns.DISPLAY_NAME))?.use{c->
+                if(!c.moveToFirst())false else {require(c.getString(0)==context.packageName&&c.getString(1)==file.relativePath&&c.getString(2)==file.name){"La copia cambió de propietario o ubicación."};true}
+            } ?: false
+            if(!exists)return false
+            require(digest(uri)==(file.size to file.sha256)){"La copia cambió fuera de GBO; no se limpió."}
+            check(resolver.delete(uri,null,null)==1){"Android no confirmó la limpieza."};return true
+        }
+        val saved=prefs.getString("legacyTree",null) ?: error("Vuelve a autorizar la carpeta local.")
+        val tree=Uri.parse(saved)
+        require(uri.authority==tree.authority&&DocumentsContract.isChildDocument(resolver,
+            DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getTreeDocumentId(tree)),uri)){"La copia no pertenece a la carpeta autorizada."}
+        val exists=resolver.query(uri,arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME),null,null,null)?.use{c->if(c.moveToFirst()){require(c.getString(0)==file.name);true}else false} ?: false
+        if(!exists)return false
+        require(digest(uri)==(file.size to file.sha256)){"La copia cambió fuera de GBO; no se limpió."}
+        check(DocumentsContract.deleteDocument(resolver,uri));return true
+    }
     private fun findMedia(file:LocalSharedFile):SharedDocumentStore.Slot? {
         val result=mutableListOf<SharedDocumentStore.Slot>()
         val projection=arrayOf(MediaStore.MediaColumns._ID,MediaStore.MediaColumns.IS_PENDING,MediaStore.MediaColumns.OWNER_PACKAGE_NAME)

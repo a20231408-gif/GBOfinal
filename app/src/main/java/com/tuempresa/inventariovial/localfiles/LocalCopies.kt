@@ -44,7 +44,9 @@ object LocalCopies {
     }
     suspend fun requestCurrent(c:Context,db:InventoryDatabase,kind:String,id:String,scope:String="FULL",automatic:Boolean=false){
         if(kind=="SIC" && db.inventoryDao().recordById(id)?.sicCode=="SCAP")return
+        if(automatic&&kind=="PAVEMENT"&&db.pavementDao().sample(id)?.status!="CLOSED")return
         val revision=requireNotNull(DeliveryDestination.revision(db,kind,id)){"Guarda primero la ficha dentro de GBO."}
+        if(automatic&&ConfirmedLocalCleanup.archived(listOfNotNull(db.localFilesDao().choice(ConfirmedLocalCleanup.PREFIX+"$kind/$id")),"$kind/$id",revision))return
         // Provisional local documents deliberately do not require closure, PR, Internet or ACK.
         db.withTransaction{request(c,db,kind,id,revision,scope,automatic=automatic)}
     }
@@ -123,6 +125,9 @@ object LocalCopyDrain {
         prepare:suspend (Context,InventoryDatabase,LocalExportJob)->LocalPlan=LocalExportBuilder::build)=withContext(Dispatchers.IO){mutex.withLock {
         val dao=db.localFilesDao();val pending=db.withTransaction {dao.pending(limit)}
         for(start in pending){var job=start
+            if(job.automatic&&job.kind=="PAVEMENT"&&db.pavementDao().sample(job.recordId)?.status!="CLOSED"){
+                dao.saveJob(job.copy(state="SUPERSEDED",message="El borrador se conserva en GBO; el paquete se publica al finalizar la unidad."));continue
+            }
             if(job.automatic && System.currentTimeMillis()-job.createdAt<AutomaticLocalDocuments.QUIET_MS)continue
             if(job.automatic && job.manifestJson==null && DeliveryDestination.revision(db,job.kind,job.recordId)!=job.revision){dao.saveJob(job.copy(state="SUPERSEDED",message="Agrupada en la revisión actual"));continue}
             try {

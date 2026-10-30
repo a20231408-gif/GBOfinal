@@ -12,9 +12,11 @@ object AutomaticLocalDocuments {
     const val QUIET_MS=5000L
     fun install(sql:SupportSQLiteDatabase,enabled:Boolean) {
         sql.execSQL("INSERT OR REPLACE INTO device_delivery_choices (`key`,destination,selectedBy,selectedAt) VALUES ('LOCAL_AUTOMATIC',?,'DEVICE_SETTING',0)",arrayOf(if(enabled)"ON"else"OFF"))
-        for((table,kind,eligible) in listOf(Triple("inventory_records","SIC","NEW.sicCode!='SCAP' AND NEW.status IN ('DRAFT','ACTIVE') AND NOT EXISTS (SELECT 1 FROM scap_inspections WHERE roadRecordId=NEW.id)"),Triple("scap_inspections","SCAP","NEW.status IN ('DRAFT','IN_PROGRESS','COMPLETE')"),Triple("pavement_samples","PAVEMENT","NEW.status IN ('DRAFT','CLOSED')"))) {
+        for((table,kind,eligible) in listOf(Triple("inventory_records","SIC","NEW.sicCode!='SCAP' AND NEW.status IN ('DRAFT','ACTIVE') AND NOT EXISTS (SELECT 1 FROM scap_inspections WHERE roadRecordId=NEW.id)"),Triple("scap_inspections","SCAP","NEW.status IN ('DRAFT','IN_PROGRESS','COMPLETE')"),Triple("pavement_samples","PAVEMENT","NEW.status='CLOSED'"))) {
             for(event in listOf("INSERT","UPDATE OF updatedAt")) {
                 val name="gbo_local_${table}_${event.substringBefore(' ').lowercase()}"
+                // Replace only our two documentary triggers on upgrade; captured rows stay intact.
+                if(kind=="PAVEMENT")sql.execSQL("DROP TRIGGER IF EXISTS $name")
                 sql.execSQL("""CREATE TRIGGER IF NOT EXISTS $name AFTER $event ON $table
                     WHEN $eligible AND (SELECT destination FROM device_delivery_choices WHERE `key`='LOCAL_AUTOMATIC')='ON'
                     ${if(event.startsWith("UPDATE"))"AND NEW.updatedAt!=OLD.updatedAt"else""}

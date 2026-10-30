@@ -2,6 +2,8 @@ package com.tuempresa.inventariovial.localfiles
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.*
@@ -67,6 +69,7 @@ object LocalInventoryIndex {
     val samples by db.pavementDao().observeSamples().collectAsState(emptyList())
     val jobs by db.localFilesDao().observeJobs().collectAsState(emptyList())
     val drive by db.automaticSyncDao().observe().collectAsState(emptyList())
+    val choices by db.localFilesDao().choices().collectAsState(emptyList())
     var detail by rememberSaveable{mutableStateOf<String?>(null)}
     var search by rememberSaveable{mutableStateOf("")};var route by rememberSaveable{mutableStateOf("")}
     var pr by rememberSaveable{mutableStateOf("")};var state by rememberSaveable{mutableStateOf("")};var family by rememberSaveable{mutableStateOf("Todas")}
@@ -83,6 +86,21 @@ object LocalInventoryIndex {
     var discardBusy by remember {mutableStateOf(false)}
     var discardMessage by remember {mutableStateOf<String?>(null)}
     val scope=rememberCoroutineScope()
+    var cleanupBackup by remember{mutableStateOf<ConfirmedLocalCleanup.Backup?>(null)}
+    var cleanupBusy by remember{mutableStateOf(false)}
+    val backupPicker=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")){uri->
+        val backup=cleanupBackup
+        if(uri!=null&&backup!=null){cleanupBusy=true;scope.launch{
+            discardMessage=runCatching{
+                withContext(Dispatchers.IO){requireNotNull(c.contentResolver.openOutputStream(uri,"wt")).use{out->backup.zip.inputStream().use{it.copyTo(out)}}}
+                runCatching{c.contentResolver.takePersistableUriPermission(uri,android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION)}
+                val user=com.tuempresa.inventariovial.auth.AuthGraph.get(c).sessions.requireUser()
+                val removed=ConfirmedLocalCleanup.clean(c,db,backup,uri,user.id)
+                selected=emptySet();"${backup.candidates.size} registros archivados; $removed copias públicas retiradas. Respaldo verificado, originales e historial conservados."
+            }.getOrElse{it.message ?: "Limpieza detenida; respaldo y originales conservados."}
+            cleanupBusy=false;cleanupBackup=null
+        }}
+    }
     val all=remember(records,bridges,samples){LocalInventoryIndex.project(records,bridges,samples)}
     detail?.let {key->val id=key.substringAfter('/');when(key.substringBefore('/')) {
         "SIC"->RecordDetailScreen(vm,id){detail=null}
@@ -94,10 +112,12 @@ object LocalInventoryIndex {
     val configured=com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null
     val latest=remember(jobs){jobs.filter{it.scope.startsWith("FULL")&&it.state!="SUPERSEDED"}.groupBy{it.recordKey}.mapValues{(_,v)->v.maxWith(compareBy({it.revision},{it.createdAt}))}}
     val shown=all.filter {r->val d=drive.find{it.key==r.key};val j=latest[r.key]
-        (historical||r.capture !in setOf("DISCARDED_LOCAL","ANNULLED")) && (family=="Todas"||r.family.startsWith(family)) &&
+        (historical||r.capture !in setOf("DISCARDED_LOCAL","ANNULLED")) &&
+        (historical||captureFilter=="Archivados"||!ConfirmedLocalCleanup.archived(choices,r.key,r.revision)) && (family=="Todas"||r.family.startsWith(family)) &&
         dateFilter.matches(parseRecordDate(r.surveyDate)) && when(captureFilter) {
             "Borradores"->r.capture=="DRAFT"
             "Enviados"->d!=null && DriveDeliveryPresentation.confirmed(d,r.revision)
+            "Archivados"->ConfirmedLocalCleanup.archived(choices,r.key,r.revision)
             "Pendientes","Sin confirmar"->r.capture!="DRAFT" && (d==null || !DriveDeliveryPresentation.confirmed(d,r.revision))
             else->true
         } &&
@@ -105,6 +125,11 @@ object LocalInventoryIndex {
         "${r.capture} ${d?.state.orEmpty()} ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)} ${LocalInventoryIndex.localState(r,j)} ${j?.state.orEmpty()}".contains(state,true)
     }.let {if(newestFirst)LocalInventoryIndex.chronological(it)else it}
     val selectable=shown.filter{it.capture=="DRAFT" && it.kind in setOf("SIC","PAVEMENT")}
+    val cleanable=shown.filter{!ConfirmedLocalCleanup.archived(choices,it.key,it.revision)&&LocalInventoryIndex.cleanupCandidate(it,drive.find{d->d.key==it.key},latest[it.key])}
+    cleanupBackup?.let{backup->AlertDialog(onDismissRequest={if(!cleanupBusy)cleanupBackup=null},title={Text("Respaldar y limpiar ${backup.candidates.size} registros")},
+        text={Text("El ZIP contiene documentos y medios verificados. Elige dónde guardar el respaldo; se volverá a leer antes de retirar ${backup.files.count{it.state=="READY"}} copias públicas y archivar las fichas del listado activo. Se conservan Room, originales privados, UUID, ACK y vínculos SCAP/SIC. Las revisiones pendientes no se limpian. Puedes restaurar el listado y regenerar copias.")},
+        confirmButton={TextButton(enabled=!cleanupBusy,onClick={backupPicker.launch("GBO_RESPALDO_LIMPIEZA_${System.currentTimeMillis()}.zip")}){Text("Guardar respaldo y limpiar")}},
+        dismissButton={TextButton(enabled=!cleanupBusy,onClick={cleanupBackup=null}){Text("Cancelar")}})}
     cleanupReview?.let{review->AlertDialog(onDismissRequest={cleanupReview=null},title={Text("Revisión de limpieza")},
         text={Text(review)},confirmButton={TextButton(onClick={cleanupReview=null}){Text("Conservar y volver")}})}
     fun reviewDiscard(rows:List<LocalInventoryItem>) {
@@ -136,10 +161,10 @@ object LocalInventoryIndex {
             OutlinedTextField(state,{state=it},label={Text("Estado de captura / Drive / copia local")},modifier=Modifier.fillMaxWidth())
             RecordDateFilter(dateFilter,all.mapNotNull{parseRecordDate(it.surveyDate)}){year=it.year;month=it.month;day=it.day}
             Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-                listOf("Todos","Borradores","Pendientes","Enviados").forEach {f->FilterChip(captureFilter==f,{captureFilter=f},label={Text(f)})}
+                listOf("Todos","Borradores","Pendientes","Enviados","Archivados").forEach {f->FilterChip(captureFilter==f,{captureFilter=f},label={Text(f)})}
             }
             FilterChip(newestFirst,{newestFirst=!newestFirst},label={Text(if(newestFirst)"Fecha de registro: más recientes"else"Orden vial")})
-            Row{Checkbox(historical,{historical=it});Text("Mostrar descartados y anulados")}
+            Row{Checkbox(historical,{historical=it});Text("Mostrar descartados, archivados y anulados")}
             Text("Copias automáticas ${if(LocalCopySettings.enabled(c))"activadas"else"desactivadas"}. Descargas ocupa espacio y puede ser visible para otras aplicaciones. Configura en Herramientas y ajustes → Copias locales.",style=MaterialTheme.typography.bodySmall)
             Text("${shown.size} registros")
             TextButton(enabled=shown.isNotEmpty(),onClick={
@@ -148,8 +173,14 @@ object LocalInventoryIndex {
             }){Text("Preparar limpieza de registros visibles")}
             Row(Modifier.horizontalScroll(rememberScrollState())) {
                 TextButton(enabled=selectable.isNotEmpty(),onClick={selected=selectable.map{it.key}.toSet()}){Text("Seleccionar borradores visibles")}
+                TextButton(enabled=cleanable.isNotEmpty(),onClick={selected=cleanable.map{it.key}.toSet()}){Text("Seleccionar entregados visibles")}
                 TextButton(enabled=selected.isNotEmpty(),onClick={selected=emptySet()}){Text("Limpiar selección")}
             }
+            TextButton(enabled=!cleanupBusy&&cleanable.any{it.key in selected},onClick={cleanupBusy=true;scope.launch{
+                runCatching{ConfirmedLocalCleanup.prepare(c,db,cleanable.filter{it.key in selected}.map{ConfirmedLocalCleanup.Candidate(it.key,it.revision)})}
+                    .onSuccess{cleanupBackup=it}.onFailure{discardMessage=it.message ?: "No se pudo verificar el respaldo."};cleanupBusy=false
+            }}){Text(if(cleanupBusy)"Verificando respaldo…"else"Respaldar y limpiar entregados seleccionados")}
+            TextButton(onClick={selected=emptySet();search="";route="";pr="";state="";family="Todas";year=null;month=null;day=null;captureFilter="Todos";historical=false;discardMessage="Listado preparado para un nuevo tramo. Se conservaron los registros pendientes y el historial; configura la ruta del nuevo tramo en la sesión de campo."}){Text("Preparar nuevo tramo")}
             Row(Modifier.horizontalScroll(rememberScrollState())) {
                 TextButton(enabled=selectable.any{it.key in selected}&&!discardBusy,onClick={reviewDiscard(selectable.filter{it.key in selected})}){Text("Descartar seleccionados")}
                 TextButton(enabled=selectable.isNotEmpty()&&!discardBusy,onClick={reviewDiscard(selectable)}){Text("Descartar todos los borradores visibles")}
@@ -159,9 +190,9 @@ object LocalInventoryIndex {
         items(shown,key={it.key}){r->
             val d=drive.find{it.key==r.key};val job=latest[r.key]
             Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
-                if(r in selectable)Row {
+                if(r in selectable||r in cleanable)Row {
                     Checkbox(r.key in selected,{checked->selected=if(checked)selected+r.key else selected-r.key})
-                    Text("Seleccionar borrador")
+                    Text(if(r in selectable)"Seleccionar borrador"else"Seleccionar entregado para respaldo")
                 }
                 Text(r.name,style=MaterialTheme.typography.titleMedium);Text("${r.family} · ${r.route.ifBlank{"Ruta pendiente"}} · ${r.progressive}")
                 var technical by remember(r.key){mutableStateOf(false)}
@@ -173,6 +204,7 @@ object LocalInventoryIndex {
                 Text(LocalInventoryIndex.localState(r,job))
                 d?.receiptJson?.let{runCatching{JSONObject(it)}.getOrNull()}?.takeIf{it.optBoolean("ok")&&it.optString("key")==r.key&&it.optLong("revision")==d.syncedRevision}?.optString("logicalPath")?.takeIf{it.isNotBlank()}?.let{Text("Drive confirmado: $it",style=MaterialTheme.typography.bodySmall)}
                 OutlinedButton(onClick={detail=r.key}){Text("Ver detalle")}
+                if(ConfirmedLocalCleanup.archived(choices,r.key,r.revision))TextButton(onClick={scope.launch{ConfirmedLocalCleanup.restore(db,r.key);discardMessage="Registro restaurado al listado; puedes regenerar sus copias desde los originales."}}){Text("Restaurar registro archivado")}
                 DirectLocalDocuments(r,job)
                 if(r.capture in setOf("DRAFT","DISCARDED_LOCAL"))LocalDraftDiscardButton(r.kind,r.id,r.capture=="DISCARDED_LOCAL")
             }}
@@ -200,7 +232,7 @@ object LocalInventoryIndex {
         TextButton(enabled=documents.isNotEmpty(),onClick={open(true)}){Text("Compartir")}
     }
     documents.firstOrNull()?.let{Text("Local: ${it.relativePath}",style=MaterialTheme.typography.bodySmall)}
-    if(job==null||job.state in setOf("FAILED","PARTIAL"))TextButton(onClick={scope.launch{message=runCatching{withContext(Dispatchers.IO){LocalCopies.requestCurrent(c,db,item.kind,item.id)};"Actualizando archivos locales…"}.getOrElse{"No se pudo solicitar la copia; los originales siguen guardados."}}}){Text(if(job==null)"Incorporar histórico a copias locales"else"Reintentar copia local")}
+    if(job==null||job.state in setOf("FAILED","PARTIAL","CLEANED"))TextButton(onClick={scope.launch{message=runCatching{withContext(Dispatchers.IO){LocalCopies.requestCurrent(c,db,item.kind,item.id)};"Actualizando archivos locales…"}.getOrElse{"No se pudo solicitar la copia; los originales siguen guardados."}}}){Text(if(job==null)"Incorporar histórico a copias locales"else if(job.state=="CLEANED")"Regenerar copias conservadas"else"Reintentar copia local")}
     if(selector)AlertDialog(onDismissRequest={selector=false},title={Text("Documentos disponibles")},text={
         LazyColumn{items(documents,key={it.id}){file->Text("R${revisions[file.jobId]?.revision ?: "?"}${if(file.name.contains("PROVISIONAL")||file.name.contains("BORRADOR"))" · provisional"else""}");SavedFileActions(file)}}
     },confirmButton={TextButton(onClick={selector=false}){Text("Cerrar")}})
