@@ -982,7 +982,9 @@ fun SignalizationFormScreen(
                 SignalizationType.SAFETY -> {
 
                     if(com.tuempresa.inventariovial.validation.TechnicalElementRules.linear(SicFormDetail.Sic21(sic21State)))
-                        com.tuempresa.inventariovial.field.TechnicalLengthField(signalLength)
+                        com.tuempresa.inventariovial.field.TechnicalLengthField(signalLength,
+                            kilometreStart=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
+                            kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=direction)
 
                     Sic21Fields(
                         state = sic21State,
@@ -2230,7 +2232,9 @@ private fun AssetFormContent(
         locationError?.let {error->item {ErrorText(error)}}
         if(assetType in setOf(RoadAssetType.WALL,RoadAssetType.DITCH,RoadAssetType.FORD)) item {
             com.tuempresa.inventariovial.field.TechnicalLengthField(assetLength,
-                if(assetType==RoadAssetType.WALL) {{metres:Double->wallManual=false;sic20State=sic20State.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO")}} else null)
+                if(assetType==RoadAssetType.WALL) {{metres:Double->wallManual=false;sic20State=sic20State.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO")}} else null,
+                kilometreStart=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
+                kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=direction)
         }
 
         item {

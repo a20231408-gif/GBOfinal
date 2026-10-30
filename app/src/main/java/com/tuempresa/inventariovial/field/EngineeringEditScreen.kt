@@ -50,7 +50,9 @@ fun EngineeringEditScreen(id:String,onBack:()->Unit) {
             val wall=(detail as? SicFormDetail.Sic20)?.state?.classCode=="14"
             if(snapshot?.record?.assetType in setOf("WALL","DITCH","FORD") ||
                 detail?.let {com.tuempresa.inventariovial.validation.TechnicalElementRules.linear(it)}==true)
-                TechnicalLengthField(length,if(wall) {{metres:Double->val d=detail as? SicFormDetail.Sic20;if(d!=null)detail=SicFormDetail.Sic20(d.state.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO"))}} else null)
+                TechnicalLengthField(length,if(wall) {{metres:Double->val d=detail as? SicFormDetail.Sic20;if(d!=null)detail=SicFormDetail.Sic20(d.state.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO"))}} else null,
+                    kilometreStart=com.tuempresa.inventariovial.validation.LengthEndpoint(c.route,c.roadbed,c.startPr,c.startDistance),
+                    kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(c.route,c.roadbed,c.endPr,c.endDistance),direction=c.direction)
         }
         when(val d=detail) {
             is SicFormDetail.Sic17 -> Sic17Fields(d.state) {detail=SicFormDetail.Sic17(it)}

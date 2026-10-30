@@ -25,6 +25,20 @@ data class TechnicalLength(val metres:Double?=null,val source:String="UNRESOLVED
 
 /** PR is an identifier. Only scoped catalog chainage (or offsets of the same PR) proves a distance. */
 object ContractualLength {
+    /** Explicit kilometre coordinates; never use this as a fallback for contractual PR identifiers. */
+    fun kilometres(start:LengthEndpoint,end:LengthEndpoint,direction:String):TechnicalLength {
+        if(listOf(start,end).any {ContractualLocationInput.prError(it.pr)!=null})
+            return TechnicalLength(warning="Completa los kilómetros inicial y final.")
+        if(listOf(start,end).any {it.route.isBlank() || it.bed.isBlank() || ContractualLocationInput.distanceError(it.distance)!=null})
+            return TechnicalLength(warning="Completa ruta, calzada y distancias de ambos extremos.")
+        if(normalizedRoadCode(start.route)!=normalizedRoadCode(end.route) || normalizedRoadCode(start.bed)!=normalizedRoadCode(end.bed))
+            return TechnicalLength(warning="Los extremos deben corresponder a la misma ruta y calzada.")
+        val delta=(end.pr.toDouble()-start.pr.toDouble())*1000 + end.distance.replace(',','.').toDouble()-start.distance.replace(',','.').toDouble()
+        if(direction !in setOf("INCREASING","DECREASING"))return TechnicalLength(warning="Selecciona el sentido del recorrido.")
+        if(direction=="INCREASING" && delta<0 || direction=="DECREASING" && delta>0)
+            return TechnicalLength(warning="La progresiva final contradice el sentido del recorrido.")
+        return TechnicalLength(kotlin.math.abs(delta),"EXPLICIT_KILOMETRES")
+    }
     fun calculate(start:LengthEndpoint,end:LengthEndpoint,prs:List<RoadPr>,direction:String):TechnicalLength {
         fun unresolved(message:String)=TechnicalLength(warning=message)
         if(start.route.isBlank() || start.bed.isBlank() || end.route.isBlank() || end.bed.isBlank())

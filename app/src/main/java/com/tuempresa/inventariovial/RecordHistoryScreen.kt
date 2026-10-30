@@ -224,7 +224,9 @@ internal fun HistoryRecordCard(
                 if(com.tuempresa.inventariovial.export.TechnicalLengthExport.applies(item)) {
                     com.tuempresa.inventariovial.field.TechnicalLengthField(com.tuempresa.inventariovial.validation.ContractualLength.calculate(
                         com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
-                        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),reference.prs,record.surveyDirection ?: "INCREASING"))
+                        com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),reference.prs,record.surveyDirection ?: "INCREASING"),
+                        kilometreStart=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
+                        kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=record.surveyDirection ?: "INCREASING")
                 }
                 if(item.sic20?.classCode in setOf("13","14")) {
                     Text("Lado")

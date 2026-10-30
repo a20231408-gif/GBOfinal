@@ -29,6 +29,18 @@ class ContractualLength111Test {
     private val a=LengthEndpoint("PE-28H","CD","0010","10")
     private val b=LengthEndpoint("PE-28H","CD","0011","180")
     private fun pr(code:String,at:Double)=RoadPr("PE-28H","CD",code,-12.0,-75.0,at)
+    @Test fun explicitKilometresCrossBoundariesWithoutChangingContractualPrRules() {
+        val start=LengthEndpoint("PE-28H","CD","42","995")
+        val end=start.copy(pr="43",distance="5")
+        assertEquals(10.0,ContractualLength.kilometres(start,end,"INCREASING").metres!!,0.0)
+        assertEquals("EXPLICIT_KILOMETRES",ContractualLength.kilometres(start,end,"INCREASING").source)
+        assertEquals(10.0,ContractualLength.kilometres(end,start,"DECREASING").metres!!,0.0)
+        assertNull(ContractualLength.kilometres(end,start,"INCREASING").metres)
+        assertNull(ContractualLength.kilometres(start,end.copy(bed="CI"),"INCREASING").metres)
+        assertNull(ContractualLength.kilometres(start,end.copy(distance="1000"),"INCREASING").metres)
+        assertEquals(10.25,ContractualLength.kilometres(start.copy(distance="994,75"),end,"INCREASING").metres!!,0.0)
+        assertNull(ContractualLength.calculate(start,end,emptyList(),"INCREASING").metres)
+    }
     @Test fun bundledCatalogHasNoContractualEndpointsForReportedRoute()=runBlocking {
         val reference=RoadReferenceRepository(c).loadFromAssets()
         assertTrue(reference.prs.isEmpty())
