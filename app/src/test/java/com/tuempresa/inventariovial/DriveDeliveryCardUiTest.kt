@@ -30,6 +30,16 @@ import java.io.File
 class DriveDeliveryCardUiTest {
     @get:Rule val ui=createAndroidComposeRule<androidx.activity.ComponentActivity>()
     @Before fun setup(){initializeIdleUiWorkers()}
+    @Test fun stagingProgressIsVisibleBeforeOpeningTechnicalDetailsAndNeverClaimsFinalAck() {
+        val i=deliveryFixture().copy(state="UPLOADING",syncedRevision=0)
+        val id=DriveDeliveryIdentity("Puente ficticio","Ruta ficticia",2,true)
+        val p=SyncProgress(2,"CONFIRMING",16,16,1)
+        val view=DriveDeliveryPresentation.view(i,id,true,true,true,progress=p)
+        ui.setContent{InventarioVialTheme{DriveDeliveryCard(i,id,view,p){}}}
+        ui.onNodeWithText("16 / 16",substring=true).assertIsDisplayed()
+        ui.onNodeWithText("Verificando entrega",substring=true).assertIsDisplayed()
+        ui.onNodeWithText("Archivos confirmados: 16 de 16").assertDoesNotExist()
+    }
     private fun capture(name:String) {
         ui.runOnIdle {
             val v=ui.activity.window.decorView

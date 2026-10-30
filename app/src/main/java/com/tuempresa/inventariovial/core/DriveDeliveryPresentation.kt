@@ -12,10 +12,10 @@ data class DriveDeliveryIdentity(val title:String,val location:String,val curren
     val issue:String?=null,val target:ScapFieldRoute?=null,val provisional:Boolean=false,val onlyDevice:Boolean=false)
 enum class DriveDeliveryStatus(val label:String,val symbol:String,val priority:Int) {
     ATTENTION("Necesita atención","!",0), VERIFYING("Verificando entrega","◌",1),
-    UPLOADING("Subiendo","↑",2), PENDING("Pendiente de subir","…",3), COMPLETE("Subido correctamente","✓",4)
+    PREPARING("Preparando entrega","…",2), UPLOADING("Subiendo","↑",2), PENDING("Pendiente de subir","…",3), COMPLETE("Subido correctamente","✓",4)
 }
 data class DriveDeliveryView(val status:DriveDeliveryStatus,val message:String,val files:String,val confirmed:Boolean,
-    val review:Boolean=false,val retryAllowed:Boolean=true)
+    val review:Boolean=false,val retryAllowed:Boolean=true,val progressText:String?=null)
 
 /** Read-only presentation. Never reserves folders, prepares exports or mutates an outbox. */
 object DriveDeliveryPresentation {
@@ -68,6 +68,8 @@ object DriveDeliveryPresentation {
         val complete=identity.validated&&confirmed(i,identity.currentRevision)
         val busy=i.error?.contains("(BUSY)")==true
         val error=i.error.orEmpty()
+        val localNaming=error.contains("panel oficial SCAP requiere nombres",true)
+        val authorization=error.contains("UNAUTHORIZED",true)||error.contains("FORBIDDEN",true)||error.contains("(HTTP_401)")||error.contains("(HTTP_403)")
         val incompatible=error.contains("compatibilidad",true)||error.contains("panel fotográfico SCAP",true)||
             error.contains("readablePhotoNamingVersion")||error.contains("backend",true)&&i.state=="UNCONFIGURED"
         val preparation=error.startsWith("No se pudieron preparar")
@@ -79,19 +81,24 @@ object DriveDeliveryPresentation {
             !configured || i.state=="UNCONFIGURED"->DriveDeliveryStatus.ATTENTION
             !current->DriveDeliveryStatus.PENDING
             running && progress?.revision==i.revision && progress.phase=="CONFIRMING"->DriveDeliveryStatus.VERIFYING
+            running && progress?.revision==i.revision && progress.phase=="PREPARING"->DriveDeliveryStatus.PREPARING
             running->DriveDeliveryStatus.UPLOADING
             busy || retrying || i.error?.contains("Esperando para reintentar")==true->DriveDeliveryStatus.PENDING
-            i.state in setOf("UPLOADING","SYNCED","ERROR")->DriveDeliveryStatus.VERIFYING
+            i.state=="ERROR"->DriveDeliveryStatus.ATTENTION
+            i.state in setOf("UPLOADING","SYNCED")->DriveDeliveryStatus.VERIFYING
             else->DriveDeliveryStatus.PENDING
         }
         val message=when(status) {
             DriveDeliveryStatus.COMPLETE->if(identity.provisional)"Respaldo con datos pendientes confirmado por el servidor. No acredita finalización contractual."else"Revisión actual confirmada por el servidor."
+            DriveDeliveryStatus.PREPARING->"Preparando archivos"
             DriveDeliveryStatus.UPLOADING->progress?.takeIf{it.revision==i.revision}?.let{SyncProgressPresentation.phase(it)} ?: "Envío en curso."
             DriveDeliveryStatus.VERIFYING->"Falta confirmar la entrega completa. La copia local se conserva."
             DriveDeliveryStatus.ATTENTION->when {
                 i.state=="CONFLICT"->"Revisa el conflicto de edición antes de reenviar."
                 identity.currentRevision==null->"No se pudo consultar la ficha local. Conserva los datos y solicita soporte."
                 identity.onlyDevice->"Destino Solo dispositivo. La ficha está guardada localmente; no se programó una nueva entrega Drive."
+                localNaming->"Esta instalación no tiene habilitados los nombres fotográficos V2 requeridos por SCAP. Solicita verificar la versión y configuración legítima de la app; la ficha y sus fotos se conservan."
+                authorization->"El servicio rechazó la autorización de esta entrega. Solicita revisar el acceso y la configuración con soporte; no borres la ficha ni las fotografías."
                 incompatible->"La última consulta indicó incompatibilidad del servidor. Reintentar ahora volverá a consultar sus capacidades; la ficha y la preparación se conservan."
                 identity.issue!=null->identity.issue
                 !identity.validated->"La ficha puede guardarse, pero faltan datos o confirmar el cierre de esta revisión para entregarla."
@@ -105,6 +112,7 @@ object DriveDeliveryPresentation {
                 }
                 !configured || i.state=="UNCONFIGURED"->"Revisa la configuración de Drive."
                 error.contains("(NOT_JPEG)")->"Una fotografía fue rechazada por su formato JPEG. Original conservado; revisa la evidencia y reintenta."
+                i.state=="ERROR"->"El último intento falló y no hay una entrega confirmada. Reintenta o solicita asistencia; la ficha y sus archivos se conservan."
                 else->"El servidor o la preparación bloquearon esta entrega. Consulta el motivo en Detalles técnicos. La ficha se conserva."
             }
             DriveDeliveryStatus.PENDING->when {
@@ -120,6 +128,7 @@ object DriveDeliveryPresentation {
         val review=identity.currentRevision!=null && !identity.onlyDevice && (identity.issue!=null || !identity.validated ||
             i.state=="PENDING_VALIDATION"&&!incompatible)
         return DriveDeliveryView(status,message,files,complete,review,
-            !complete && identity.validated && identity.issue==null && !identity.onlyDevice && i.state!="CONFLICT")
+            !complete && identity.validated && identity.issue==null && !identity.onlyDevice && i.state!="CONFLICT",
+            progress?.takeIf{running && current && it.revision==i.revision && it.phase in setOf("PHOTOS","DOCUMENTS","CONFIRMING") && it.total>0}?.let{SyncProgressPresentation.files(it)})
     }
 }

@@ -74,6 +74,38 @@ class DriveDeliveryPresentationTest {
             assertEquals(DriveDeliveryStatus.ATTENTION,view(deliveryFixture().copy(state=state,syncedRevision=0)).status)
         assertEquals(DriveDeliveryStatus.ATTENTION,DriveDeliveryPresentation.view(deliveryFixture(),identity.copy(validated=false),false,true,true).status)
     }
+    @Test fun preparationAndLiveStagingAreVisibleWithoutInventingDeliveryConfirmation() {
+        val i=deliveryFixture().copy(state="UPLOADING",syncedRevision=0)
+        val preparing=view(i,running=true,p=SyncProgress(2,"PREPARING",0,0,1))
+        assertEquals(DriveDeliveryStatus.PREPARING,preparing.status)
+        assertNull(preparing.progressText);assertFalse(preparing.confirmed)
+        val transfer=view(i,running=true,p=SyncProgress(2,"PHOTOS",7,16,1))
+        assertTrue(transfer.progressText!!.contains("7 / 16"));assertFalse(transfer.confirmed)
+        val finalizing=view(i,running=true,p=SyncProgress(2,"CONFIRMING",16,16,1))
+        assertEquals(DriveDeliveryStatus.VERIFYING,finalizing.status)
+        assertFalse(finalizing.confirmed);assertTrue(finalizing.progressText!!.contains("staging"))
+        assertNull(view(i,p=SyncProgress(2,"PHOTOS",7,16,1)).progressText)
+        assertNull(view(i,running=true,p=SyncProgress(1,"PHOTOS",7,16,1)).progressText)
+    }
+    @Test fun inactiveFailureAndAuthorizationAreActionableRatherThanPretendingToVerify() {
+        val i=deliveryFixture().copy(state="ERROR",syncedRevision=0,error="No se confirmó la entrega.")
+        assertEquals(DriveDeliveryStatus.ATTENTION,view(i).status)
+        assertTrue(view(i).message.contains("último intento falló"));assertTrue(view(i).retryAllowed)
+        for(code in listOf("UNAUTHORIZED","FORBIDDEN","HTTP_401","HTTP_403")) {
+            val rejected=view(i.copy(state="BLOCKED",error="El servidor rechazó la revisión ($code)."))
+            assertFalse(rejected.confirmed);assertTrue(code,rejected.message.contains("autorización"))
+        }
+    }
+    @Test fun twoSimulatedInstallationsCanDifferWithoutAttributingItToServerPermissions() {
+        val acknowledged=deliveryFixture()
+        val unconfigured=acknowledged.copy(state="PENDING_VALIDATION",syncedRevision=0,
+            error="El panel oficial SCAP requiere nombres fotográficos V2. Evidencia conservada.")
+        val local=view(unconfigured)
+        assertEquals(DriveDeliveryStatus.ATTENTION,local.status)
+        assertTrue(local.message.contains("Esta instalación"));assertFalse(local.confirmed)
+        assertTrue(view(acknowledged).confirmed)
+        assertFalse(view(acknowledged.copy(revision=3)).confirmed)
+    }
     @Test fun fileListWithoutConsolidatedExcelReceiptCannotConfirm() {
         val i=deliveryFixture();val p=JSONObject(i.preparedJson!!)
         p.getJSONArray("sicRows").put(JSONObject().put("format","SIC-17").put("recordId",i.recordId))

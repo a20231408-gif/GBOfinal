@@ -29,6 +29,12 @@ import java.util.Date
                 Text("${view.status.symbol} ${view.status.label}",style=MaterialTheme.typography.titleMedium,
                     color=if(view.status==DriveDeliveryStatus.ATTENTION)MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
                 Text(view.message)
+                view.progressText?.let {Text(it,style=MaterialTheme.typography.bodyMedium)}
+                if(!view.confirmed && identity.currentRevision!=null)Text("Guardado en tablet",style=MaterialTheme.typography.bodySmall)
+                DriveDeliveryPresentation.json(i.preparedJson)?.takeIf {it.optLong("revision")==identity.currentRevision}
+                    ?.optJSONArray("pendingSic")?.takeIf{it.length()>0}?.let {
+                        Text("Hay ${it.length()} aportes SIC pendientes. El respaldo de la ficha no acredita un consolidado SIC completo.",color=MaterialTheme.colorScheme.error)
+                    }
                 Text(view.files,style=MaterialTheme.typography.bodyMedium)
                 if(view.review && onReview!=null)OutlinedButton(onClick=onReview,modifier=Modifier.testTag("drive-review-fields")){Text("REVISAR CAMPOS")}
                 DeliveryDetail("Destino confirmado") {

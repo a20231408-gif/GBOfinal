@@ -55,6 +55,7 @@ object SyncIntentPresentation {
     val intents by remember(db){db.automaticSyncDao().observe()}.collectAsState(emptyList())
     val work=observedDriveWork()
     Text("Drive · SIC, SCAP y pavimentos")
+    Text("Resumen de la cola registrada; el detalle de entregas comprueba además los archivos y la revisión local vigente.",style=MaterialTheme.typography.bodySmall)
     Text("Fichas pendientes: ${intents.count {it.state!="DRAFT" && !SyncIntentPresentation.confirmed(it)}} · Subiendo: ${intents.count {SyncProgressPresentation.running(it,work)}} · Confirmadas: ${intents.count {SyncIntentPresentation.confirmed(it)}}")
     Text("Con destino Drive, el cierre programa el envío. Solo dispositivo conserva la copia local y no crea una entrega Drive.",style=MaterialTheme.typography.bodySmall)
     SyncQueueOverview()
@@ -116,6 +117,7 @@ object SyncIntentPresentation {
         if(intent?.preparedJson?.let{runCatching{JSONObject(it).optJSONArray("pendingSic")?.length() ?: 0}.getOrDefault(0)}?.let{it>0}==true)
             Text("Respaldo y consolidado SIC son distintos: hay aportes SIC pendientes. Revisa el detalle; no se acredita finalización contractual.")
         else if(!onlyDevice && validated && intent!=null)Text(when(scapView?.status){
+            DriveDeliveryStatus.PREPARING->"Guardado en tablet. Preparando entrega localmente."
             DriveDeliveryStatus.VERIFYING->"Guardado en tablet. Esperando la confirmación final de Drive (commit/ACK)."
             DriveDeliveryStatus.UPLOADING->"Guardado en tablet. Envío en curso."
             DriveDeliveryStatus.ATTENTION->"Guardado en tablet. Requiere revisar el motivo indicado."

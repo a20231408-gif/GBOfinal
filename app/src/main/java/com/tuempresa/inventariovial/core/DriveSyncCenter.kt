@@ -79,6 +79,7 @@ fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
         Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             Text("${views.values.count{it.confirmed}} confirmadas · ${views.values.count{!it.confirmed}} pendientes")
             Text("Guardar en la tablet no confirma una entrega en Drive.",style=MaterialTheme.typography.bodySmall)
+            Text("Este detalle incluye borradores de la cola y exige ACK completo de la revisión local vigente; su total puede diferir del resumen principal.",style=MaterialTheme.typography.bodySmall)
             Button(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,false)} registros programados."}.getOrElse {it.message}}}) {Text("Sincronizar ahora")}
             OutlinedButton(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,true)} reintentos programados."}.getOrElse {it.message}}}) {Text("Reintentar errores")}
             val rows=intents.map{i->DriveDeliveryEntry(i,identities[i.key] ?: DriveDeliveryIdentity("Consultando ficha…","",null,false),views.getValue(i.key),progress[i.key])}

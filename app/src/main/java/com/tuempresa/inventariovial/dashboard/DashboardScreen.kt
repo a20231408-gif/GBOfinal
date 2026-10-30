@@ -69,6 +69,7 @@ private val Map=glyph("Mapa","M3,5L9,3L15,5L21,3V19L15,21L9,19L3,21Z M9,5V17 M15
                     Text("Pendientes: ${counts.pending} · Actualizaciones pendientes: ${counts.updates}",color=PendingAmber)
                     Text("Errores: ${counts.errors}",color=if(counts.errors>0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
                     Text("Son entregas programadas, no archivos. Los borradores sin finalizar se muestran por separado.",style=MaterialTheme.typography.bodySmall)
+                    Text("Este resumen cuenta recibos registrados en la cola. Abre Entregas Drive para verificar los archivos y la revisión local vigente.",style=MaterialTheme.typography.bodySmall)
                 }
             }
         }
