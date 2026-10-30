@@ -43,10 +43,14 @@ class AutomaticDriveHttp internal constructor(
         runCatching{performanceObserver(phase,com.tuempresa.inventariovial.diagnostics.SyncPerformance.now()-start,bytes,outcome)}
     }
     override fun progress(observer:(DeliveryProgress)->Unit) {this.observer=observer}
+    private fun requireHttpSuccess(response:Response) {
+        if(response.code in setOf(401,403))throw SyncRejection("HTTP_${response.code}",false)
+        if(!response.isSuccessful)throw java.io.IOException("HTTP ${response.code}")
+    }
     private val capabilities:JSONObject by lazy {
         val start=com.tuempresa.inventariovial.diagnostics.SyncPerformance.now();var outcome="HTTP_ERROR"
         try {client.newCall(Request.Builder().url(endpoint).get().build()).execute().use {
-            if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
+            requireHttpSuccess(it)
             JSONObject(it.body?.string() ?: "{}").also{outcome="OK"}
         }} catch(e:java.io.IOException) {throw SyncCommunicationFailure(e)} finally {metric("CAPABILITIES",start,outcome=outcome)}
     }
@@ -90,7 +94,7 @@ class AutomaticDriveHttp internal constructor(
             }
         }
         return try {client.newCall(Request.Builder().url(endpoint).post(tracked).build()).execute().use {
-        if(!it.isSuccessful)throw java.io.IOException("HTTP ${it.code}")
+        requireHttpSuccess(it)
         JSONObject(it.body?.string() ?: "{}").also {ack->outcome=when {ack.optBoolean("ok")->"OK";ack.optString("code")=="BUSY"->"BUSY";else->"REJECTED"}}
         }} catch(e:java.io.IOException) {throw SyncCommunicationFailure(e)} finally {
             metric(operation+"_WAIT_ACK",writtenAt ?: start,outcome=outcome)
