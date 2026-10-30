@@ -37,7 +37,7 @@ class AutomaticDocuments149Test {
     private val examples get()=File(System.getProperty("gbo.p0.evidence", "../tmp/automatic-documents149"),"ejemplos-ficticios").apply{mkdirs()}
     @Before fun space(){ShadowStatFs.registerStats(c.filesDir.path,1_000_000,900_000,900_000)}
     private fun db(auto:Boolean=true)=Room.inMemoryDatabaseBuilder(c,InventoryDatabase::class.java).addCallback(object:RoomDatabase.Callback(){override fun onOpen(db:SupportSQLiteDatabase){AutomaticLocalDocuments.install(db,auto)}}).build()
-    private fun sample(id:String="TEST_PAV_149",rev:Long=1)=PavementSampleEntity(id,"TEST_TRAMO","PE-3N",1,"Derecho","CD","00+000","00+020",10.0,20.0,"RIGID","2026-10-16","TEST_USER","FICTICIO",updatedAt=rev,slabRows=4,slabColumns=2)
+    private fun sample(id:String="TEST_PAV_149",rev:Long=1)=PavementSampleEntity(id,"TEST_TRAMO","PE-3N",1,"Derecho","CD","00+000","00+020",10.0,20.0,"RIGID","2026-10-16","TEST_USER","FICTICIO",updatedAt=rev,status="CLOSED",slabRows=4,slabColumns=2)
     private fun image()=File(c.filesDir,"TEST_${java.util.UUID.randomUUID()}.jpg").apply{val b=Bitmap.createBitmap(24,18,Bitmap.Config.ARGB_8888);outputStream().use{b.compress(Bitmap.CompressFormat.JPEG,95,it)};b.recycle()}
     private suspend fun bridge(d:InventoryDatabase):String {val r=ScapRepository(d,ScapCatalog.load(c));val id=r.create("TEST_OPERATOR","TEST_DEVICE",null,ScapBridgeType.MODULAR)
         r.setField(id,"inspection","route","PE-3N");r.setField(id,"inspection","singularityName","TEST_LOCAL_149")
@@ -48,7 +48,7 @@ class AutomaticDocuments149Test {
         c.getSharedPreferences("gbo_local_copies",0).edit().clear().commit();assertTrue(LocalCopySettings.enabled(c))
         c.getSharedPreferences("gbo_local_copies",0).edit().putBoolean("automatic",false).commit();assertFalse(LocalCopySettings.enabled(c))
     }
-    @Test fun rollbackCannotCreateRequestAndCommittedDraftDoes()=runBlocking{db().use{d->
+    @Test fun rollbackCannotCreateRequestAndCommittedClosureDoes()=runBlocking{db().use{d->
         assertTrue(runCatching{d.withTransaction{d.pavementDao().saveSample(sample());error("TEST_ROLLBACK")}}.isFailure)
         assertNull(d.pavementDao().sample(sample().id));assertTrue(d.localFilesDao().jobs().isEmpty())
         d.pavementDao().saveSample(sample());val job=d.localFilesDao().jobs().single();assertEquals("QUEUED",job.state);assertEquals(1,job.revision);assertTrue(d.automaticSyncDao().all().isEmpty())
@@ -102,7 +102,7 @@ class AutomaticDocuments149Test {
         assertEquals(s,d.inventoryDao().snapshot(record.id));assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
     @Test fun draftPavementDocumentsPreservePciGeometryAndNoRemoteWork()=runBlocking{db().use{d->
-        val s=sample();d.pavementDao().saveSample(s);val before=PavementCalculator(c).calculate(s,emptyList());val job=d.localFilesDao().jobs().single()
+        val s=sample().copy(status="DRAFT");d.pavementDao().saveSample(s);assertTrue(d.localFilesDao().jobs().isEmpty());val before=PavementCalculator(c).calculate(s,emptyList());LocalCopies.requestCurrent(c,d,"PAVEMENT",s.id);val job=d.localFilesDao().jobs().single()
         val plan=LocalExportBuilder.build(c,d,job);assertTrue(plan.problems.joinToString(),plan.problems.isEmpty());assertTrue(plan.files.any{it.name=="Inspeccion_BORRADOR.pdf"});assertTrue(plan.files.any{it.name=="Datos.xlsx"});assertTrue(plan.files.any{it.name=="Muestra.json"})
         assertEquals(before,PavementCalculator(c).calculate(d.pavementDao().sample(s.id)!!,emptyList()));assertEquals(s,d.pavementDao().sample(s.id));assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
@@ -158,7 +158,7 @@ class AutomaticDocuments149Test {
     }}
     @Test fun newlyCreatedPavementWithoutDimensionsStillCreatesReadableDraftDocuments()=runBlocking{db().use{d->
         val s=PavementHeader.newSample("TEST_EMPTY_149",PavementSurface.RIGID,"TEST_USER","FICTICIO",emptyList())
-        d.pavementDao().saveSample(s);val plan=LocalExportBuilder.build(c,d,d.localFilesDao().jobs().single())
+        d.pavementDao().saveSample(s);assertTrue(d.localFilesDao().jobs().isEmpty());LocalCopies.requestCurrent(c,d,"PAVEMENT",s.id);val plan=LocalExportBuilder.build(c,d,d.localFilesDao().jobs().single())
         assertTrue(plan.problems.joinToString(),plan.problems.isEmpty());assertTrue(plan.files.any{it.name=="Inspeccion_BORRADOR.pdf"});assertTrue(plan.files.any{it.name=="Datos.xlsx"})
         val json=JSONObject(File(plan.files.single{it.name=="Muestra.json"}.source).readText());assertTrue(json.toString().contains("Dimensiones"))
     }}

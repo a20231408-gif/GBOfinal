@@ -25,13 +25,13 @@ import java.util.UUID
 class FieldCleanupAndConsolidationTest {
  private val c get()=ApplicationProvider.getApplicationContext<Context>()
  private fun db()=Room.inMemoryDatabaseBuilder(c,InventoryDatabase::class.java).build()
- private class Store:SharedDocumentStore {
+ private open class Store:SharedDocumentStore {
   val files=mutableMapOf<String,ByteArray>();var deletes=0
   override fun reserve(file:LocalSharedFile,knownUri:Uri?)=error("unused")
   override fun write(uri:Uri,source:File)=error("unused")
   override fun publish(slot:SharedDocumentStore.Slot,file:LocalSharedFile)=error("unused")
   override fun digest(uri:Uri)=files.getValue(uri.toString()).let{it.size.toLong() to com.tuempresa.inventariovial.delivery.sha256(it)}
-  override fun removeOwned(file:LocalSharedFile):Boolean{val uri=Uri.parse(file.uri);if(!files.containsKey(uri.toString()))return false;require(digest(uri)==(file.size to file.sha256));files.remove(uri.toString());deletes++;return true}
+  override open fun removeOwned(file:LocalSharedFile):Boolean{val uri=Uri.parse(file.uri);if(!files.containsKey(uri.toString()))return false;require(digest(uri)==(file.size to file.sha256));files.remove(uri.toString());deletes++;return true}
  }
  private suspend fun seed(d:InventoryDatabase,s:Store):ConfirmedLocalCleanup.Candidate {
   val original=File(c.filesDir,"cleanup-${UUID.randomUUID()}.json").apply{writeText("{\"fictitious\":true}")};val hash=fileDigest(original)
@@ -74,5 +74,50 @@ class FieldCleanupAndConsolidationTest {
   d.pavementDao().saveSample(s.copy(status="CLOSED",updatedAt=11));assertEquals(1,d.localFilesDao().jobs().size);assertEquals(11L,d.localFilesDao().jobs().single().revision)
   d.pavementDao().saveSample(s.copy(updatedAt=12));d.localFilesDao().saveJob(LocalExportJob("OLD_DRAFT","PAVEMENT/${s.id}","PAVEMENT",s.id,12,automatic=true,createdAt=0))
   LocalCopyDrain.run(c,d,Store());assertEquals("SUPERSEDED",d.localFilesDao().job("OLD_DRAFT")!!.state);assertEquals(12L,d.pavementDao().sample(s.id)!!.updatedAt)
+ }}
+ @Test fun deletionWithLostResponseIsRecoveredFromDurableJournalAndVerifiedBackup()=runBlocking{db().use{d->
+  val s=object:Store(){var fail=true;override fun removeOwned(file:LocalSharedFile):Boolean{val deleted=super.removeOwned(file);if(fail){fail=false;throw java.io.IOException("FICTITIOUS_LOST_DELETE_RESPONSE")};return deleted}}
+  val item=seed(d,s);val b=ConfirmedLocalCleanup.prepare(c,d,listOf(item),s);val uri=destination(b)
+  assertTrue(runCatching{ConfirmedLocalCleanup.clean(c,d,b,uri,"FICTITIOUS",s)}.isFailure)
+  assertEquals("CLEANING",JSONObject(d.localFilesDao().choice(ConfirmedLocalCleanup.PREFIX+item.key)!!.destination).getString("state"))
+  assertEquals("READY",d.localFilesDao().files("FICTITIOUS_JOB").single().state);assertTrue(s.files.isEmpty())
+  val resumed=ConfirmedLocalCleanup.prepare(c,d,listOf(item),s)
+  assertEquals(0,ConfirmedLocalCleanup.clean(c,d,resumed,destination(resumed),"FICTITIOUS",s));assertEquals(1,s.deletes)
+  assertEquals("CLEANED",d.localFilesDao().files("FICTITIOUS_JOB").single().state)
+  ConfirmedLocalCleanup.restore(d,item.key);assertTrue(File(d.localFilesDao().files("FICTITIOUS_JOB").single().source).isFile)
+ }}
+ @Test fun unknownMissingPublicFileAndUnconfirmedRecordAreProtected()=runBlocking{db().use{d->
+  val s=Store();val item=seed(d,s);s.files.clear()
+  assertTrue(runCatching{ConfirmedLocalCleanup.prepare(c,d,listOf(item),s)}.isFailure)
+  val file=d.localFilesDao().files("FICTITIOUS_JOB").single();s.files[file.uri!!]=File(file.source).readBytes()
+  val intent=d.automaticSyncDao().get(item.key)!!;d.automaticSyncDao().put(intent.copy(state="PENDING_VALIDATION"))
+  assertTrue(runCatching{ConfirmedLocalCleanup.prepare(c,d,listOf(item),s)}.isFailure);assertEquals(0,s.deletes)
+ }}
+ @Test fun backupZipBytesAndRetainedOriginalsAreVerifiedBeforeRestore()=runBlocking{db().use{d->
+  val s=Store();val item=seed(d,s);val b=ConfirmedLocalCleanup.prepare(c,d,listOf(item),s)
+  java.util.zip.ZipFile(b.zip).use{z->val entries=z.entries().asSequence().toList();assertEquals(2,entries.size)
+   val doc=entries.single{it.name!="RESPALDO.json"};val bytes=z.getInputStream(doc).use{it.readBytes()};assertEquals(fileDigest(File(d.localFilesDao().files("FICTITIOUS_JOB").single().source)).second,com.tuempresa.inventariovial.delivery.sha256(bytes))
+   assertEquals(item.key,JSONObject(z.getInputStream(z.getEntry("RESPALDO.json")).reader().readText()).getJSONArray("records").getJSONObject(0).getString("key"))}
+  ConfirmedLocalCleanup.clean(c,d,b,destination(b),"FICTITIOUS",s)
+  File(d.localFilesDao().files("FICTITIOUS_JOB").single().source).writeText("FICTITIOUS_CHANGED")
+  assertTrue(runCatching{ConfirmedLocalCleanup.restore(d,item.key)}.isFailure)
+  assertTrue(ConfirmedLocalCleanup.archived(listOf(d.localFilesDao().choice(ConfirmedLocalCleanup.PREFIX+item.key)!!),item.key,item.revision))
+ }}
+ @Test fun successiveJointSeveritiesAreSavedClosedReopenedAndQueuedOnlyAtClosure()=runBlocking{db().use{d->
+  val sessions=com.tuempresa.inventariovial.auth.AuthSessionManager().apply{login(com.tuempresa.inventariovial.auth.UserCacheEntity("test","test","FICTICIO","OPERATOR",true,"",0,0,0))}
+  val repo=com.tuempresa.inventariovial.pavement.PavementRepository(d,sessions)
+  val sample=visualSample();AutomaticLocalDocuments.install(d.openHelper.writableDatabase,true);d.pavementDao().saveSample(sample)
+  for((index,severity)in listOf("L","M","H").withIndex()){
+   val damage=visualDamage(26,index+1,0.0,0.0,0.0,0.0,1).copy(severity=severity,geometry="GLOBAL",x1=null,y1=null,x2=null,y2=null,slabs="")
+   repo.saveDamageWithJointMarks(damage,setOf(com.tuempresa.inventariovial.pavement.PavementJointAnnotations.Mark("V",index,1)))
+  }
+  assertEquals(setOf("L","M","H"),d.pavementDao().damages(sample.id).map{it.severity}.toSet());assertTrue(d.localFilesDao().jobs().isEmpty())
+  val calculator=com.tuempresa.inventariovial.pavement.PavementCalculator(c);val before=calculator.calculate(d.pavementDao().sample(sample.id)!!,d.pavementDao().damages(sample.id))
+  repo.closeSample(sample.id,calculator);val first=d.pavementDao().sample(sample.id)!!;assertEquals("CLOSED",first.status)
+  assertEquals(1,d.localFilesDao().jobs().size);assertEquals(first.updatedAt,d.automaticSyncDao().get("PAVEMENT/${sample.id}")!!.revision)
+  repo.reopenSample(sample.id);assertEquals("DRAFT",d.pavementDao().sample(sample.id)!!.status)
+  assertEquals(before,calculator.calculate(d.pavementDao().sample(sample.id)!!,d.pavementDao().damages(sample.id)))
+  assertEquals(3,d.pavementDao().damages(sample.id).size);assertEquals(1,d.localFilesDao().jobs().size)
+  repo.closeSample(sample.id,calculator);assertEquals(2,d.localFilesDao().jobs().size);assertTrue(d.pavementDao().sample(sample.id)!!.updatedAt>first.updatedAt)
  }}
 }

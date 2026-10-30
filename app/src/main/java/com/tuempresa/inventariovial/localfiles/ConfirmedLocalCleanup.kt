@@ -90,6 +90,13 @@ object ConfirmedLocalCleanup {
         removed
     }
     suspend fun restore(db:InventoryDatabase,key:String)=db.withTransaction{
-        val old=requireNotNull(db.localFilesDao().choice(PREFIX+key));db.localFilesDao().saveChoice(old.copy(destination=JSONObject(old.destination).put("state","RESTORED").toString(),selectedAt=System.currentTimeMillis()))
+        val old=requireNotNull(db.localFilesDao().choice(PREFIX+key));val journal=JSONObject(old.destination)
+        require(journal.getString("state") in setOf("ARCHIVED","CLEANING")){"El registro no está archivado ni tiene una limpieza interrumpida."}
+        // Restore from our retained originals, never trust a user-selected ZIP to overwrite Room or media.
+        val jobs=db.localFilesDao().jobs().filter{it.recordKey==key&&it.revision==journal.getLong("revision")&&it.manifestJson!=null}
+        require(jobs.isNotEmpty()){"No se encontró el historial documental; conserva el ZIP y solicita recuperación asistida."}
+        for(file in jobs.flatMap{LocalPlan.parse(requireNotNull(it.manifestJson)).files}.distinctBy{it.source})
+            require(fileDigest(File(file.source))==(file.size to file.sha256)){"Un original no se verificó; conserva el respaldo externo y no continúes."}
+        db.localFilesDao().saveChoice(old.copy(destination=journal.put("state","RESTORED").toString(),selectedAt=System.currentTimeMillis()))
     }
 }

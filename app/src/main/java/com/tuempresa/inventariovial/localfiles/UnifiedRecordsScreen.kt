@@ -57,6 +57,7 @@ object LocalInventoryIndex {
         job==null->"Sin copia documental · incorporación histórica disponible"
         job.revision!=item.revision->"Actualizando archivos locales… · copia anterior disponible"
         job.state=="READY"->"Archivos locales actualizados"
+        job.state=="CLEANED"->"Copias públicas retiradas con respaldo; originales conservados"
         job.state in setOf("QUEUED","RUNNING")->"Actualizando archivos locales…"
         else->"No se pudo actualizar la copia local. Los datos originales siguen guardados en GBO"
     }
@@ -204,7 +205,9 @@ object LocalInventoryIndex {
                 Text(LocalInventoryIndex.localState(r,job))
                 d?.receiptJson?.let{runCatching{JSONObject(it)}.getOrNull()}?.takeIf{it.optBoolean("ok")&&it.optString("key")==r.key&&it.optLong("revision")==d.syncedRevision}?.optString("logicalPath")?.takeIf{it.isNotBlank()}?.let{Text("Drive confirmado: $it",style=MaterialTheme.typography.bodySmall)}
                 OutlinedButton(onClick={detail=r.key}){Text("Ver detalle")}
-                if(ConfirmedLocalCleanup.archived(choices,r.key,r.revision))TextButton(onClick={scope.launch{ConfirmedLocalCleanup.restore(db,r.key);discardMessage="Registro restaurado al listado; puedes regenerar sus copias desde los originales."}}){Text("Restaurar registro archivado")}
+                val cleaning=choices.firstOrNull{it.key==ConfirmedLocalCleanup.PREFIX+r.key}?.destination?.let{runCatching{JSONObject(it).optString("state")=="CLEANING"}.getOrDefault(false)}==true
+                if(cleaning)Text("Limpieza interrumpida: conserva el ZIP y vuelve a seleccionar esta ficha para reanudar, o restaura sus copias desde los originales.")
+                if(cleaning||ConfirmedLocalCleanup.archived(choices,r.key,r.revision))TextButton(onClick={scope.launch{discardMessage=runCatching{withContext(Dispatchers.IO){ConfirmedLocalCleanup.restore(db,r.key)};"Registro restaurado al listado; puedes regenerar sus copias desde los originales verificados."}.getOrElse{it.message ?: "No se pudo restaurar; conserva el respaldo."}}}){Text("Restaurar registro archivado")}
                 DirectLocalDocuments(r,job)
                 if(r.capture in setOf("DRAFT","DISCARDED_LOCAL"))LocalDraftDiscardButton(r.kind,r.id,r.capture=="DISCARDED_LOCAL")
             }}
