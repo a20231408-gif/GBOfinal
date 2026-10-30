@@ -60,6 +60,36 @@ class SyncRecovery10DTest {
         override fun reservePhotoNames(payload:JSONObject)=ReleasePhotoV2Fixture.reservation(payload,"stable-folder")
         override fun post(payload:JSONObject)=post(payload)
     }
+    @Test fun continuationV1BeyondWorkerAttemptBudgetPreservesSnapshotUntilStrictFinalAck()=runBlocking(Dispatchers.IO) {database().use {d->
+        save(d,"continuation-v1-drain");var calls=0;var first:String?=null
+        val server=transport {p->
+            val raw=p.toString();if(first==null)first=raw else assertEquals(first,raw)
+            if(++calls<=6)JSONObject().put("ok",false).put("code","COMMIT_IN_PROGRESS").put("retryable",true).put("commitContinuationVersion",1)
+            else receipt(p)
+        }
+        repeat(6){AutomaticSyncDrain.run(context,d,{server},null)
+            val pending=d.automaticSyncDao().all().single();assertEquals("ERROR",pending.state);assertEquals(0L,pending.syncedRevision)
+            assertNotNull(pending.preparedJson);assertEquals(first,JSONObject(pending.preparedJson!!).toString());assertFalse(SyncIntentPresentation.confirmed(pending))}
+        AutomaticSyncDrain.run(context,d,{server},null)
+        val confirmed=d.automaticSyncDao().all().single();assertTrue(confirmed.error,SyncIntentPresentation.confirmed(confirmed));assertEquals(7,calls)
+        assertEquals(first,JSONObject(confirmed.preparedJson!!).toString())
+    }}
+    @Test fun continuationHttpRepliesNeverRestageOrMutatePreparedIdentity()=runBlocking(Dispatchers.IO) {database().use {d->
+        save(d,"continuation-v1-http");val intent=d.automaticSyncDao().all().single()
+        val prepared=AutomaticDelivery.prepare(context,d,intent);val before=prepared.toString();var stages=0;var commits=0
+        val client=OkHttpClient.Builder().addInterceptor {chain->
+            val request=chain.request()
+            val body=if(request.method=="GET")JSONObject().put("ok",true).put("syncProtocol",3).put("pathVersion",4).put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("photoNamingVersion",1).put("readablePhotoNamingVersion",2).put("commitContinuationVersion",1)
+            else {val buffer=Buffer();request.body!!.writeTo(buffer);val p=JSONObject(buffer.readUtf8())
+                if(p.getString("action")=="stageRecordV3"){stages++;val f=p.getJSONObject("file");JSONObject().put("ok",true).put("key",p.getString("key")).put("revision",p.getLong("revision")).put("fileKey",f.getString("key")).put("sha256",f.getString("sha256")).put("stageFileId","stage-${f.getString("key")}")}
+                else if(++commits<=3)JSONObject().put("ok",false).put("code","COMMIT_IN_PROGRESS").put("retryable",true).put("commitContinuationVersion",1) else receipt(p)}
+            Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(200).message("OK").body(body.toString().toResponseBody("application/json".toMediaType())).build()
+        }.build()
+        repeat(3){val response=AutomaticDriveHttp(client,"https://example.invalid/continuation","synthetic-token").post(prepared)
+            assertFalse(AutomaticDelivery.validAck(prepared,response));assertEquals("COMMIT_IN_PROGRESS",response.getString("code"));assertEquals(before,prepared.toString());assertEquals(0L,d.automaticSyncDao().get(intent.key)!!.syncedRevision)}
+        val ack=AutomaticDriveHttp(client,"https://example.invalid/continuation","synthetic-token").post(prepared)
+        assertTrue(AutomaticDelivery.validAck(prepared,ack));assertEquals(4,commits);assertEquals(prepared.getJSONArray("files").length(),stages);assertEquals(before,prepared.toString())
+    }}
     @Test fun lostFinalHttpAckReplaysCommitAndNeverRestagesVerifiedFiles()=runBlocking(Dispatchers.IO) {database().use {d->
         save(d,"lost-final-10d");val intent=d.automaticSyncDao().all().single()
         val prepared=AutomaticDelivery.prepare(context,d,intent);val before=prepared.toString()
