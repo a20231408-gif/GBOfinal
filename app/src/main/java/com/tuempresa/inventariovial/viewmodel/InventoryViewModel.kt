@@ -679,6 +679,7 @@ class InventoryViewModel(
                         java.io.File(captured.stampedPath!!), java.io.File(captured.originalPath), captured) }
                     captured
                 }
+                database.withTransaction {
                 when (
                     val detail =
                         request.detail
@@ -1177,6 +1178,9 @@ class InventoryViewModel(
                     }
                 }
 
+
+                com.tuempresa.inventariovial.repository.TechnicalLengthStore.rememberReference(database,record,request.lengthReference,true)
+                }
 
                 // =================================================
                 // ROOM YA SE GUARDÓ CORRECTAMENTE.

@@ -87,5 +87,6 @@ data class InventorySaveRequest(
     val routeSource: String = "MANUAL",
     val startSuggestion: com.tuempresa.inventariovial.road.LocationSuggestion? = null,
     val endSuggestion: com.tuempresa.inventariovial.road.LocationSuggestion? = null,
-    val photoCaptures: Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap()
+    val photoCaptures: Map<String, com.tuempresa.inventariovial.camera.PhotoCaptureMetadata> = emptyMap(),
+    val lengthReference:String?=null
 )

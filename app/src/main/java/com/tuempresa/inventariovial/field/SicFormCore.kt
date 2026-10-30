@@ -12,7 +12,7 @@ import com.tuempresa.inventariovial.core.ValidationIssue
 
 enum class SicFormMode { CREATE, EDIT }
 data class SicCoreDraft(val route:String,val roadbed:String,val startPr:String,val startDistance:String,
-    val endPr:String="",val endDistance:String="",val side:String="D",val segment:String="",val direction:String="INCREASING") : java.io.Serializable {
+    val endPr:String="",val endDistance:String="",val side:String="D",val segment:String="",val direction:String="INCREASING",val lengthReference:String?=null) : java.io.Serializable {
     fun applyTo(r:InventoryRecordEntity,hasEnds:Boolean,hasSide:Boolean)=r.copy(routeCode=route,roadbedCode=roadbed,
         startPrCode=startPr,startDistanceM=startDistance.replace(',','.').toDouble(),
         endPrCode=if(hasEnds)endPr.ifBlank {null} else r.endPrCode,

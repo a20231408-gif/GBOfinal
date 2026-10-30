@@ -89,6 +89,7 @@ object EngineeringEdits {
             InventoryPhotoEdits.save(db,id,paths,categories,captures,maxOf(System.currentTimeMillis(),r.updatedAt+1))
             dao.refreshRecordPhotoStatus(id)
         }
+        TechnicalLengthStore.rememberReference(db,requireNotNull(dao.recordById(id)),core?.lengthReference,finalize)
         val revision=maxOf(System.currentTimeMillis(),r.updatedAt+1)
         if(observations!=null || coordinateEdit) {
             coordinate?.let{require(com.tuempresa.inventariovial.road.GeoMath.validCoordinate(it.latitude,it.longitude)){"Coordenadas inválidas"}}

@@ -13,7 +13,11 @@ object TechnicalLengthExport {
     fun applies(item:InventoryRecordForExport) = item.sic19!=null || item.sic20?.classCode in setOf("12","14") ||
         item.sic21?.let {it.classCode=="20" || it.classCode=="19" && it.typeCode=="1"}==true
     fun metadata(item:InventoryRecordForExport,prs:List<RoadPr>):JSONObject {
-        val calculation=ContractualLength.calculate(item.record,prs)
+        val r=item.record
+        val calculation=if(item.sicExtension?.values()?.get(com.tuempresa.inventariovial.repository.TechnicalLengthStore.REFERENCE)=="EXPLICIT_KILOMETRES")
+            ContractualLength.kilometres(LengthEndpoint(r.routeCode,r.roadbedCode,r.startPrCode,r.startDistanceM.toString()),
+                LengthEndpoint(r.routeCode,r.roadbedCode,r.endPrCode.orEmpty(),r.endDistanceM?.toString().orEmpty()),r.surveyDirection ?: "INCREASING")
+            else ContractualLength.calculate(r,prs)
         val measured=item.sic20?.takeIf {it.classCode=="14"}?.wallLengthMeters
         val auto=item.sicExtension?.values()?.get("_lengthMode")=="AUTO"
         return JSONObject().put("calculatedM",calculation.metres ?: JSONObject.NULL).put("calculationSource",calculation.source)

@@ -578,6 +578,9 @@ fun SignalizationFormScreen(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
+    var lengthReference by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(draftRecord?.id) { if(lengthReference==null && draftRecord!=null)lengthReference=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).inventoryDao().sicExtension(draftRecord.id)?.values()?.get(com.tuempresa.inventariovial.repository.TechnicalLengthStore.REFERENCE) }
+
     var location by rememberSaveable { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
         GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
     }) }
@@ -873,7 +876,7 @@ fun SignalizationFormScreen(
         }
 
 
-    fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(
+    fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(lengthReference=lengthReference,
         sicCode=signalizationType.sicCode,assetType=signalizationType.name,routeCode=route,roadbedCode=roadbed,
         startPrCode=startPr,startDistanceM=startDistance,endPrCode=endPr,endDistanceM=endDistance,
         sideCode=codeFromOption(side),latitude=latitude ?: Double.NaN,longitude=longitude ?: Double.NaN,
@@ -891,6 +894,7 @@ fun SignalizationFormScreen(
         draftLoaded=true
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
         if(raw!=null) {
+            lengthReference=raw.optString("lengthReference").takeIf{it in setOf("EXPLICIT_KILOMETRES","CONTRACTUAL_PR")} ?: lengthReference
             startDistance=raw.getString("startDistanceM")
             endDistance=if(raw.isNull("endDistanceM")) "" else raw.getString("endDistanceM")
             observations=draftRecord?.observations.orEmpty()
@@ -984,7 +988,7 @@ fun SignalizationFormScreen(
                     if(com.tuempresa.inventariovial.validation.TechnicalElementRules.linear(SicFormDetail.Sic21(sic21State)))
                         com.tuempresa.inventariovial.field.TechnicalLengthField(signalLength,
                             kilometreStart=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
-                            kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=direction)
+                            kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=direction,lengthReference=lengthReference,onReferenceChange={lengthReference=it})
 
                     Sic21Fields(
                         state = sic21State,
@@ -1198,7 +1202,7 @@ fun SignalizationFormScreen(
                                 inventoryViewModel.saveRecord(
 
                                     request =
-                                        InventorySaveRequest(
+                                        InventorySaveRequest(lengthReference=lengthReference,
 
                                             sicCode =
                                                 if (
@@ -1503,6 +1507,9 @@ private fun AssetFormContent(
     var direction by rememberSaveable { mutableStateOf(initialLocation.direction) }
 
     var draftId by rememberSaveable { mutableStateOf(draftRecord?.id) }
+    var lengthReference by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(draftRecord?.id) { if(lengthReference==null && draftRecord!=null)lengthReference=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context).inventoryDao().sicExtension(draftRecord.id)?.values()?.get(com.tuempresa.inventariovial.repository.TechnicalLengthStore.REFERENCE) }
+
     var destinationDialog by remember {mutableStateOf(false)}
     var location by rememberSaveable { mutableStateOf(draftRecord?.takeIf {it.latitude!=null && it.longitude!=null}?.let {
         GeoLocation(requireNotNull(it.latitude),requireNotNull(it.longitude),it.gpsAccuracyM?.toFloat() ?: Float.POSITIVE_INFINITY,it.altitudeM,source=it.locationSource,timestamp=it.gpsTimestamp ?: 0)
@@ -2047,7 +2054,7 @@ private fun AssetFormContent(
                                 inventoryViewModel.saveRecord(
 
                                     request =
-                                        InventorySaveRequest(
+                                        InventorySaveRequest(lengthReference=lengthReference,
 
                                             sicCode =
                                                 assetType.sicCode,
@@ -2132,7 +2139,7 @@ private fun AssetFormContent(
                     }
     }
 
-    fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(
+    fun currentDraftRequest():InventorySaveRequest { return InventorySaveRequest(lengthReference=lengthReference,
         sicCode=assetType.sicCode,assetType=when(assetType) { RoadAssetType.BRIDGE->"PUENTE";RoadAssetType.CULVERT->"ALCANTARILLA";RoadAssetType.DITCH->"DRENAJE";RoadAssetType.RIGHT_OF_WAY->sic23State.assetName;RoadAssetType.WALL,RoadAssetType.FORD,RoadAssetType.TUNNEL->com.tuempresa.inventariovial.model.form.Sic20Identity.contractualAsset(requireNotNull(com.tuempresa.inventariovial.model.form.Sic20Identity.classOf(assetType.name)));else->assetType.name },routeCode=route,roadbedCode=roadbed,
         startPrCode=startPr,startDistanceM=startDistance,endPrCode=endPr,endDistanceM=endDistance,
         sideCode=codeFromOption(side),latitude=latitude ?: Double.NaN,longitude=longitude ?: Double.NaN,
@@ -2150,6 +2157,7 @@ private fun AssetFormContent(
         draftLoaded=true
         val raw=com.tuempresa.inventariovial.core.InventoryDraftStore.read(context,draftRecord?.id)
         if(raw!=null) {
+            lengthReference=raw.optString("lengthReference").takeIf{it in setOf("EXPLICIT_KILOMETRES","CONTRACTUAL_PR")} ?: lengthReference
             startDistance=raw.getString("startDistanceM")
             endDistance=if(raw.isNull("endDistanceM")) "" else raw.getString("endDistanceM")
             observations=draftRecord?.observations.orEmpty()
@@ -2234,7 +2242,7 @@ private fun AssetFormContent(
             com.tuempresa.inventariovial.field.TechnicalLengthField(assetLength,
                 if(assetType==RoadAssetType.WALL) {{metres:Double->wallManual=false;sic20State=sic20State.copy(wallLengthMeters=metres.toString(),lengthMode="AUTO")}} else null,
                 kilometreStart=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,startPr,startDistance),
-                kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=direction)
+                kilometreEnd=com.tuempresa.inventariovial.validation.LengthEndpoint(route,roadbed,endPr,endDistance),direction=direction,lengthReference=lengthReference,onReferenceChange={lengthReference=it})
         }
 
         item {

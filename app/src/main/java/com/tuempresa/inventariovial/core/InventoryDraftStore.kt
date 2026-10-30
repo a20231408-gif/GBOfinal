@@ -94,6 +94,7 @@ object InventoryDraftStore {
             f.isAccessible=true;val value=f.get(detail);fields.put(f.name,if(value is Enum<*>)value.name else value?:JSONObject.NULL)
         }
         val json=JSONObject().put("schema",1).put("owner",user.id).put("id",id)
+            .put("lengthReference",r.lengthReference ?: JSONObject.NULL)
             .put("startDistanceM",r.startDistanceM).put("endDistanceM",r.endDistanceM?:JSONObject.NULL)
             .put("detail",JSONObject().put("type",detail.javaClass.simpleName).put("fields",fields))
             .put("location",fixJson(r.location)).put("endLocation",fixJson(r.endLocation)).put("sideSource",r.sideSource)
@@ -119,6 +120,7 @@ object InventoryDraftStore {
             check(AuthGraph.get(context).sessions.requireUser().id==user.id)
             check(db.inventoryDao().recordById(id)?.status.let { it==null || it=="DRAFT" }) { "La ficha ya está finalizada" }
             db.inventoryDao().insertOrCompleteDraft(record)
+            com.tuempresa.inventariovial.repository.TechnicalLengthStore.rememberReference(db,record,r.lengthReference)
         }
         if(r.sicCode=="SIC-20") (r.detail as? SicFormDetail.Sic20)?.state?.let {
             com.tuempresa.inventariovial.diagnostics.Sic20DraftDiagnostics.record(context,"DRAFT_SAVED",r.assetType,it.classCode,it.typeCode)
