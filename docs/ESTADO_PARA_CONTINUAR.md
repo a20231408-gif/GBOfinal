@@ -1,5 +1,7 @@
 # GBO — Estado para continuar, 30/10/2026
 
+> Actualización posterior: el usuario autorizó retomar el cierre funcional y preparar la Release original. Consultar **`GBO_CIERRE_FINAL_CAMPO.md`**, que sustituye el estado operativo de este documento histórico: candidata 1.4.20 (34), código `2bad57c`, selección Android 77/77 y backend local 14/14 + 3/3; producción sigue en V21 y no se distribuyó APK. Persisten el permiso de escritura de GBO sobre la raíz actual, el preflight completo de journals y las autorizaciones de corte/piloto. No retomar ensayos masivos ni asumir que Flavio quedó validado.
+
 ## Cierre y publicación bloqueada
 
 Desarrollo detenido por solicitud del usuario. No iniciar funcionalidades, HTTP, Google ni compilaciones adicionales en esta intervención.

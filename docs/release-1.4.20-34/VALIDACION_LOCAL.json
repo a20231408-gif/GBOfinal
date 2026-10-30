@@ -1,0 +1,222 @@
+{
+  "codeCommit": "2bad57c9d7666dfe7673129bee41363bcb8eb48f",
+  "apk": [
+    {
+      "filename": "GBO_1.4.20_34_CANDIDATA_NO_DISTRIBUIR.apk",
+      "path": "C:\\GBO\\tmp\\cierre-final-20261030\\release-1.4.20-34\\GBO_1.4.20_34_CANDIDATA_NO_DISTRIBUIR.apk",
+      "package": "com.tuempresa.inventariovial",
+      "versionCode": 34,
+      "versionName": "1.4.20",
+      "minSdk": "26",
+      "targetSdk": "37",
+      "certificateSha256": [
+        "0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315"
+      ],
+      "signatureSchemes": {
+        "v3": true,
+        "v1": false,
+        "v3.1": false,
+        "v2": true,
+        "v4": false
+      },
+      "verified": true,
+      "zipAligned": true,
+      "pageAligned16KiB": true,
+      "isSplit": false,
+      "isTest": false,
+      "debuggable": false,
+      "bytes": 26503349,
+      "apkSha256": "5c7a2346ec0f8d11eabee85178b147cba323e5479c859375b64731a7bfa20298",
+      "deviceGroupKnown": "UNKNOWN"
+    }
+  ],
+  "binaryConfigVerification": {
+    "productionEndpointPresent": true,
+    "productionTokenPresent": true,
+    "testEndpointAbsent": true,
+    "testTokenAbsent": true,
+    "originalPackage": true,
+    "roomSchemaUnchanged": true,
+    "installedOnTablet": false,
+    "distributed": false,
+    "apkSha256": "5c7a2346ec0f8d11eabee85178b147cba323e5479c859375b64731a7bfa20298"
+  },
+  "android": {
+    "classes": [
+      {
+        "name": "com.tuempresa.inventariovial.AutomaticDocuments149Test",
+        "tests": "17",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:47.472Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "7.904"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.FieldCleanupAndConsolidationTest",
+        "tests": "8",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:55.386Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "2.943"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.LinearLengthDeliveryTest",
+        "tests": "3",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:58.331Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.559"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.LocalDraftDiscard10CTest",
+        "tests": "7",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:58.896Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.326"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.LocalFiles148MigrationTest",
+        "tests": "1",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:59.227Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.081"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementFinalIntegrityTest",
+        "tests": "5",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:59.311Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.156"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementJointFlow20261019Test",
+        "tests": "1",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:59.472Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.028"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementMigration21Test",
+        "tests": "1",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:59.501Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.069"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PavementP0AdditionalTest",
+        "tests": "5",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:27:59.574Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.533"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PhotoTransport10Test",
+        "tests": "6",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:28:00.113Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.847"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.PublicDeliveryNamesTest",
+        "tests": "5",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:28:00.965Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.14"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.ReadablePhotoNames10Test",
+        "tests": "4",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:28:01.111Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.068"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.RecordDateFilterTest",
+        "tests": "2",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:28:01.181Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "0.002"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.ScapHumanDeliveryTest",
+        "tests": "3",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:28:01.185Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "3.517"
+      },
+      {
+        "name": "com.tuempresa.inventariovial.SyncRecovery10DTest",
+        "tests": "9",
+        "skipped": "0",
+        "failures": "0",
+        "errors": "0",
+        "timestamp": "2026-10-30T22:28:04.713Z",
+        "hostname": "LAPTOP-G18O8CKK",
+        "time": "6.55"
+      }
+    ],
+    "counts": {
+      "tests": 77,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "seconds": 109.97
+  },
+  "backend": {
+    "continuation": {
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    "originalPackageMock": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    "deployed": false
+  },
+  "tabletValidation": false,
+  "productionCutAuthorized": false
+}
