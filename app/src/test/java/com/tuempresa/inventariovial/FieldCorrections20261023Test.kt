@@ -68,10 +68,11 @@ class FieldCorrections20261023Test {
     }
     @Test fun provisionalOfflineIdentityIsStableAndNoAckOrSequenceIsInvented()=runBlocking {db().use{d->
         val j=LocalExportJob("LOCAL","SIC/FICTICIO_UUID","SIC","FICTICIO_UUID",1)
+        d.inventoryDao().insertRecord(testRecord("FICTICIO_UUID",sic="SIC-18",route="PE-28H"))
         val a=LocalDocumentLocation.resolve(d,j,"PE-28H","ALCANTARILLAS","ALCANTARILLA")
-        assertEquals(DriveMirrorPlan.ROOT+"_PROVISIONALES/PE-28H/ALCANTARILLAS/FICTICIO_UUID/",a.base)
+        assertTrue(a.base.startsWith(DriveMirrorPlan.ROOT+"_PROVISIONALES/PE-28H/ALCANTARILLAS/"));assertFalse(a.base.contains("FICTICIO_UUID"))
         assertNull(a.remotePath);assertEquals(a,LocalDocumentLocation.resolve(d,j,"PE-28H","ALCANTARILLAS","OTRO NOMBRE"))
-        assertEquals(3,a.json().getInt("publicFolderNamingVersion"))
+        assertEquals(4,a.json().getInt("publicFolderNamingVersion"))
         assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
     @Test fun videoPublicNameRequiresItsOwnConfirmedIdentityNotOnlyParentAck() {
@@ -133,7 +134,7 @@ class FieldCorrections20261023Test {
         assertEquals(listOf("0000","0000","0002","0011","0012"),(14..18).map{w.cell(1,"C$it").textContent})
         val dest=File("../docs/campo-20261023/ejemplos/SIC-19-ORDENADO-FICTICIO.xlsx").apply{parentFile!!.mkdirs()};f.copyTo(dest,true)
     }
-    @Test fun pavementSic15AlsoOrdersActualRowsByTheirOwnPrRatherThanDamageCreationOrder() {
+    @Test fun pavementSic15OrdersByRegistrationWithoutReinterpretingPrAsChronology() {
         val damages=listOf(visualDamage(22,1,.2,.2,1.0,1.0,1),visualDamage(22,2,1.2,.2,2.0,1.0,2))
         var sample=visualSample()
         for((n,d)in damages.withIndex())sample=sample.copy(sicDataJson=PavementSic.update(sample,PavementSicFormat.SIC15,d.id,
@@ -141,7 +142,7 @@ class FieldCorrections20261023Test {
         val before=sample.sicDataJson;val out=ByteArrayOutputStream();PavementSic.write(out,sample,damages,PavementSicFormat.SIC15)
         val w=TemplateWorkbook(out.toByteArray().inputStream())
         val prs=w.sheet(1).nodes("row").filter{it.getAttribute("r").toInt()>=3}.map{it.children().filter{cell->cell.localName=="c"}[3].textContent}
-        assertEquals(listOf("0000","0012"),prs);assertEquals(before,sample.sicDataJson)
+        assertEquals(listOf("0012","0000"),prs);assertEquals(before,sample.sicDataJson)
         File("../docs/campo-20261023/ejemplos/SIC-15-ORDENADO-FICTICIO.xlsx").apply{parentFile!!.mkdirs();writeBytes(out.toByteArray())}
     }
     @Test fun moreThan32PhotosExportLocalCompanionAndAllOriginalsWithoutRelaxingRemoteTemplate()=runBlocking {db().use{d->

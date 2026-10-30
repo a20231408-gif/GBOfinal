@@ -87,8 +87,9 @@ class FieldCorrectionsUi20261023Test {
         ui.onNodeWithText("EXPORTAR SIC").assertIsDisplayed();ui.onNodeWithText("EXPORTAR SCAP").assertIsDisplayed()
         capture("03-telefono-fuente-grande-compose")
     }
-    @Test fun visibleExportRequestGeneratesRealScapWorkbookAndOpensAndroidSavePicker()=runBlocking {
+    @Test fun visibleExportRequestQueuesDurablePackageContainingRealWorkbookWithoutClaimingPublication()=runBlocking {
         val context=ui.activity
+        org.robolectric.shadows.ShadowStatFs.registerStats(context.filesDir.path,1_000_000,900_000,900_000)
         Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build().use{db->
             val repo=ScapRepository(db,ScapCatalog.load(context));val id=repo.create("FICTICIO","FICTICIO",null,ScapBridgeType.MODULAR)
             repo.setField(id,"inspection","route","PE-28H")
@@ -99,12 +100,19 @@ class FieldCorrectionsUi20261023Test {
                 ScapExportPanel(s,true,controller,requestedAction="SCAP:FICTICIO",onStatus={_,m->status=m})
             }}}}
             ui.onNodeWithText("Preparar copia local").performClick()
-            ui.waitUntil(30_000){status=="Elige dónde guardar SCAP."}
-            val intent=org.robolectric.Shadows.shadowOf(context).nextStartedActivity
-            assertEquals(android.content.Intent.ACTION_CREATE_DOCUMENT,intent.action)
-            assertEquals(com.tuempresa.inventariovial.export.SicExcelWriter.XLSX_MIME,intent.type)
-            val file=File(context.filesDir,"scap_exports/"+intent.getStringExtra(android.content.Intent.EXTRA_TITLE))
-            assertTrue(file.isFile);ZipFile(file).use{assertNotNull(it.getEntry("xl/workbook.xml"))}
+            ui.waitUntil(30_000){runBlocking{db.localFilesDao().jobs().any{it.recordId==id&&it.scope=="ZIP"}}}
+            val job=db.localFilesDao().jobs().single{it.recordId==id&&it.scope=="ZIP"}
+            assertEquals(s.inspection.updatedAt,job.revision);assertEquals("QUEUED",job.state)
+            val plan=com.tuempresa.inventariovial.localfiles.LocalExportBuilder.build(context,db,job)
+            val file=File(plan.files.single{it.mimeType=="application/zip"}.source)
+            assertTrue(file.isFile);ZipFile(file).use {archive->
+                val workbook=archive.entries().asSequence().single{it.name.endsWith("SCAP_PROVISIONAL.xlsx")||it.name.endsWith("SCAP.xlsx")}
+                java.util.zip.ZipInputStream(archive.getInputStream(workbook)).use{excel->
+                    var found=false
+                    while(true){val e=excel.nextEntry ?: break;if(e.name=="xl/workbook.xml")found=true}
+                    assertTrue(found)
+                }
+            }
             assertTrue(status?.contains("guardado",ignoreCase=true)!=true) // Picker launch is not verified publication.
             assertTrue(repo.dao.snapshot(id)!!.photos.isEmpty());assertTrue(db.automaticSyncDao().all().isEmpty())
             scope.cancel()

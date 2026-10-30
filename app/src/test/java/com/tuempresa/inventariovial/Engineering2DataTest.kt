@@ -58,7 +58,10 @@ class Engineering2DataTest {
             assertEquals((1..7).map {"Suelo distinto $it"},s.substructures.filter {it.kind=="PIER"}.sortedBy {it.elementIndex}.map {it.soil})
             assertEquals(11,s.substructures.size);assertEquals(3,s.supports.size);assertEquals(3,s.joints.size)
             assertEquals(15,ScapPresentation.visibleElements(s).size);assertEquals(2,s.elements.size)
-            assertEquals("Sin completar",ScapPresentation.presence(s,"112"));assertNull(s.elements.single {it.element.elementCode=="112"}.condition)
+            assertEquals("Sin completar",ScapPresentation.presence(s,"112"))
+            // New inspections explicitly seed zeros; they do not assert presence or a rating.
+            val seeded=s.elements.single {it.element.elementCode=="112"}.condition!!
+            assertEquals(listOf(0.0,0.0,0.0,0.0,0.0,0.0),com.tuempresa.inventariovial.scap.calculator.ScapPercentages.values(seeded))
             assertEquals(100.0,s.elements.single {it.element.elementCode=="104"}.condition!!.percent2!!,0.0)
             assertEquals("Fisura longitudinal",s.defects.single {it.id==observation.id}.description)
             assertEquals("Aguas abajo",s.defects.single {it.id==observation.id}.locationDescription)
@@ -129,7 +132,10 @@ class Engineering2DataTest {
             val repo=ScapRepository(db,ScapCatalog.load(context));val id=repo.create("I","D",null)
             repo.selectElement(id,"104",true)
             val element=repo.dao.snapshot(id)!!.elements.single().element
-            repo.dao.putCondition(ScapElementConditionEntity("legacy",element.id,0.0,80.0,20.0,0.0,0.0,0.0))
+            // Reconstruct a legacy record without field rows, not a new seeded record.
+            repo.dao.deleteValues(id,element.id)
+            val conditionId=repo.dao.snapshot(id)!!.elements.single().condition!!.id
+            repo.dao.putCondition(ScapElementConditionEntity(conditionId,element.id,0.0,80.0,20.0,0.0,0.0,0.0))
             repo.setField(id,element.id,"percent0","5")
             val c=repo.dao.snapshot(id)!!.elements.single().condition!!
             assertEquals(5.0,c.percent0!!,0.0);assertEquals(80.0,c.percent1!!,0.0);assertEquals(20.0,c.percent2!!,0.0)

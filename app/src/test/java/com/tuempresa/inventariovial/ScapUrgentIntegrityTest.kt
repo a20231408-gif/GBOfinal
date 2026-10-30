@@ -127,7 +127,7 @@ class ScapUrgentIntegrityTest {
                 if(busy){busy=false;return JSONObject().put("ok",false).put("code","BUSY")}
                 val files=p.getJSONArray("files");val photos=(0 until files.length()).map{files.getJSONObject(it)}.filter{it.getString("key").startsWith("photo/")}
                 return JSONObject().put("ok",true).put("photoNamingVersion",2).put("key",p.getString("key")).put("revision",p.getLong("revision"))
-                    .put("identityId",p.getString("identityId")).put("folderId","TEST_FIXED_FOLDER").put("logicalPath",prefix(p)).put("photos",org.json.JSONArray(photos.mapIndexed{n,f->JSONObject().put("id",f.getString("key").substringAfter("photo/")).put("category",f.getString("photoCategory")).put("name","%03d_PUE1_GEN.jpg".format(n+1)).put("historical",false)}))
+                    .put("identityId",p.getString("identityId")).put("folderId","TEST_FIXED_FOLDER").put("logicalPath",prefix(p)).put("photos",org.json.JSONArray(photos.mapIndexed{n,f->JSONObject().put("id",f.getString("key").substringAfter("photo/")).put("category",f.getString("photoCategory")).put("name",ScapPhotoPanel.forCode(f.getString("photoCategory"))?.fileName(n+1,element=1) ?: "%03d_PUE1_GEN.jpg".format(n+1)).put("historical",false)}))
             }
             override fun post(p:JSONObject):JSONObject {
                 calls++;accepted?.let{assertEquals(it.getString("contentHash"),p.getString("contentHash"))};accepted=JSONObject(p.toString())

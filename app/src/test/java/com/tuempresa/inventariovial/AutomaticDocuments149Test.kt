@@ -88,7 +88,7 @@ class AutomaticDocuments149Test {
         assertTrue(plan.problems.joinToString(),plan.problems.isEmpty());assertEquals(5,plan.files.count{it.relativePath.contains("CROQUIS")})
         assertEquals(3,plan.files.count{it.name.startsWith("SIC-")&&it.name.endsWith("PROVISIONAL.xlsx")});assertTrue(plan.files.any{it.name=="SCAP_PROVISIONAL.xlsx"})
         for(sk in s.sketches)assertTrue(plan.files.any{it.sha256==fileDigest(File(sk.localUri)).second})
-        assertTrue(plan.files.all{it.relativePath.startsWith("Download/GBO_Ruta_Clara/PE-3N/PUENTES/")})
+        assertTrue(plan.files.all{it.relativePath.startsWith(DriveMirrorPlan.ROOT+"_PROVISIONALES/PE-3N/PUENTES/")})
         val manifest=JSONObject(File(plan.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText());assertFalse(manifest.getBoolean("roomRestorable"));assertEquals("PROVISIONAL_UUID",manifest.getJSONObject("location").getString("identityStatus"))
     }}
     @Test fun incompleteLegacySicKeepsBlankPrAndCapturedObservations()=runBlocking{db().use{d->
@@ -114,7 +114,9 @@ class AutomaticDocuments149Test {
         d.pavementDao().saveSample(s.copy(updatedAt=2));val next=d.localFilesDao().jobs().single{it.revision==2L};val after=LocalExportBuilder.build(c,d,next)
         fun location(p:LocalPlan)=JSONObject(File(p.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText()).getJSONObject("location")
         assertEquals(location(before).getString("localBase"),location(after).getString("localBase"))
-        assertEquals(path,location(after).getString("remoteLogicalPath"));assertTrue(before.files.all{File(it.source).exists()})
+        // A sparse old receipt cannot accredit files or the newly edited revision.
+        assertTrue(location(after).isNull("remoteLogicalPath"));assertTrue(location(after).isNull("confirmedRemoteRevision"))
+        assertEquals(path,JSONObject(d.automaticSyncDao().get(job.recordKey)!!.receiptJson!!).getString("logicalPath"));assertTrue(before.files.all{File(it.source).exists()})
         assertFalse(before.files.any{it.relativePath.contains("UUID")});assertFalse(after.files.any{it.relativePath.contains("MUESTRA_42")})
     }}
     @Test fun inventoryUnifiesAndDeduplicatesBridgeParentAndSortsAbdc()=runBlocking{db(false).use{d->
@@ -134,10 +136,17 @@ class AutomaticDocuments149Test {
         val id=bridge(d);val job=d.localFilesDao().jobs().single{it.recordId==id&&it.state=="QUEUED"};d.localFilesDao().saveJob(job.copy(createdAt=0));val store=Store()
         d.automaticSyncDao().put(DriveSyncIntent(job.recordKey,"SCAP",id,job.revision,state="ERROR",error="BUSY"))
         store.stop=true;assertTrue(runCatching{LocalCopyDrain.run(c,d,store,100)}.isFailure);LocalCopyDrain.run(c,d,store,100)
-        assertEquals("READY",d.localFilesDao().job(job.id)!!.state);val files=d.localFilesDao().files(job.id);assertEquals(files.size,store.entries.size)
+        // The publication is complete; incomplete SIC consolidates remain explicitly pending.
+        val resumed=d.localFilesDao().job(job.id)!!
+        assertEquals("PARTIAL",resumed.state);assertEquals(resumed.total,resumed.completed)
+        assertTrue(resumed.message!!.contains("SIC-17"))
+        val files=d.localFilesDao().files(job.id);assertEquals(files.size,store.entries.size)
+        assertTrue(files.all {it.state=="READY" && store.digest(Uri.parse(it.uri!!))==(it.size to it.sha256)})
         val writes=store.writes;val repo=ScapRepository(d,ScapCatalog.load(c));repo.setField(id,"G2","observations","TEST_NEXT")
         val next=d.localFilesDao().jobs().single{it.recordId==id&&it.state=="QUEUED"};d.localFilesDao().saveJob(next.copy(createdAt=0));LocalCopyDrain.run(c,d,store,100)
-        assertEquals("READY",d.localFilesDao().job(next.id)!!.state);val media=store.entries.keys.count{it.contains("FOTOGRAFIAS")||it.contains("CROQUIS")};assertEquals(6,media)
+        val updated=d.localFilesDao().job(next.id)!!;assertEquals("PARTIAL",updated.state);assertEquals(updated.total,updated.completed)
+        val media=d.localFilesDao().files(next.id).filter{it.mimeType.startsWith("image/")};assertEquals(6,media.size)
+        assertTrue(media.all{it.state=="READY" && store.digest(Uri.parse(it.uri!!))==(it.size to it.sha256)})
         assertEquals("ERROR",d.automaticSyncDao().get(job.recordKey)!!.state);assertTrue(store.writes>writes)
     }}
     @Test fun validPrAllowsDrivePreparationWithCabinetPendingWithoutProvisionalRows()=runBlocking{db(false).use{d->
