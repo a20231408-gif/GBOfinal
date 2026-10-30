@@ -13,6 +13,9 @@ import com.tuempresa.inventariovial.delivery.sha256
 import com.tuempresa.inventariovial.sic.*
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
+import org.json.JSONArray
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,7 +73,34 @@ class PhotoTransport10Test {
             val original=image("historic10.png",Bitmap.CompressFormat.PNG);val originalBytes=original.readBytes()
             db.inventoryDao().insertPhoto(PhotoEntity("photo-recovery10",id,1,original.path,true,null,null,null,"PENDING",1,photoCategory="GENERAL"))
             val intent=db.automaticSyncDao().get("SIC/$id")!!
+            assertTrue("This regression must exercise the ordinary V2 profile",BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED)
+            val preview=AutomaticDelivery.namingPreview(context,db,intent)
+            assertEquals("FAJA",preview.getString("family"))
+            var reservations=0
+            val client=okhttp3.OkHttpClient.Builder().addInterceptor {chain->
+                val response=if(chain.request().method=="GET")JSONObject().put("ok",true).put("syncProtocol",3)
+                    .put("pathVersion",4).put("stableFamilyNumbering",true).put("photoCategoryVersion",1).put("readablePhotoNamingVersion",2)
+                else {
+                    val buffer=okio.Buffer();chain.request().body!!.writeTo(buffer)
+                    val request=JSONObject(buffer.readUtf8());assertEquals("reservePhotoNamesV2",request.getString("action"));reservations++
+                    val photos=request.getJSONArray("photos")
+                    JSONObject().put("ok",true).put("photoNamingVersion",2).put("key",request.getString("key"))
+                        .put("revision",request.getLong("revision")).put("identityId",request.optString("identityId",request.getString("recordId")))
+                        .put("folderId","FICTITIOUS_JPEG_FOLDER")
+                        .put("logicalPath","${request.getString("routeCode")}/${request.getString("familyPath")}/${request.getString("family")} 1")
+                        .put("photos",JSONArray((0 until photos.length()).map {n->val photo=photos.getJSONObject(n)
+                            JSONObject().put("id",photo.getString("id")).put("category",photo.getString("category"))
+                                .put("name","001_FAJ1_GEN.jpg").put("historical",false)}))
+                }
+                okhttp3.Response.Builder().request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("SYNTHETIC")
+                    .body(response.toString().toResponseBody("application/json".toMediaType())).build()
+            }.build()
+            val transport=AutomaticDriveHttp(client,"https://example.invalid/jpeg-recovery","FICTITIOUS_ONLY")
+            ReadablePhotoNames.remember(context,preview,transport.reservePhotoNames(preview))
+            val reserved=ReadablePhotoNames.name(context,"photo-recovery10","GENERAL")
+            assertEquals(1,reservations)
             val prepared=AutomaticDelivery.prepare(context,db,intent)
+            assertEquals(AutomaticDelivery.contentHash(prepared),prepared.getString("contentHash"))
             val file=prepared.getJSONArray("files").let {a->(0 until a.length()).map {a.getJSONObject(it)}.single {it.getString("key").startsWith("photo/")}}
             File(file.getString("localFile")).writeBytes(originalBytes);file.put("sha256",sha256(originalBytes))
             prepared.put("contentHash",AutomaticDelivery.contentHash(prepared))
@@ -78,13 +108,23 @@ class PhotoTransport10Test {
             File(dir,"prepared-path4.json").writeText(prepared.toString());db.automaticSyncDao().prepared(intent.key,intent.revision,prepared.toString())
             db.automaticSyncDao().state(intent.key,intent.revision,"BLOCKED","El servidor rechazó la revisión (NOT_JPEG). La evidencia local se conserva.")
             assertEquals(1,AutomaticSync.recoverJpegBlocked(context,db));val recovered=db.automaticSyncDao().get(intent.key)!!
+            assertEquals(intent.key,recovered.key);assertEquals(intent.recordId,recovered.recordId)
             assertEquals(intent.revision,recovered.revision);assertEquals(intent.syncedRevision,recovered.syncedRevision);assertFalse(SyncIntentPresentation.confirmed(recovered))
             val next=AutomaticDelivery.prepare(context,db,recovered)
             val repaired=next.getJSONArray("files").let {a->(0 until a.length()).map {a.getJSONObject(it)}.single {it.getString("key")==file.getString("key")}}
             assertTrue(JpegEnvelope.valid(File(repaired.getString("localFile")).readBytes()));assertEquals(file.getString("path"),repaired.getString("path"))
+            assertEquals(reserved,repaired.getString("path").substringAfterLast('/'))
+            assertEquals(reserved,ReadablePhotoNames.name(context,"photo-recovery10","GENERAL"))
+            assertEquals(sha256(File(repaired.getString("localFile")).readBytes()),repaired.getString("sha256"))
+            assertEquals(AutomaticDelivery.contentHash(next),next.getString("contentHash"))
             assertArrayEquals(originalBytes,original.readBytes());assertEquals(1,db.inventoryDao().snapshot(id)!!.photos.size)
             assertTrue(dir.parentFile!!.listFiles()!!.any {it.name.contains("NOT_JPEG") && File(it,"prepared-path4.json").isFile})
+            val rejected=dir.parentFile!!.listFiles()!!.single {it.name.contains("NOT_JPEG")}
+            val rejectedManifest=JSONObject(File(rejected,"prepared-path4.json").readText())
+            assertEquals(prepared.toString(),rejectedManifest.toString())
+            assertArrayEquals(originalBytes,File(rejected,File(file.getString("localFile")).name).readBytes())
             assertEquals(next.toString(),AutomaticDelivery.prepare(context,db,recovered).toString());assertEquals(0,AutomaticSync.recoverJpegBlocked(context,db))
+            assertEquals(1,reservations)
         }
     }
     @Test fun unknownAckAndConflictsAreNeverRebuilt()=runBlocking {
