@@ -28,6 +28,7 @@ interface AutomaticDriveTransport {
 
     fun supportsFamilyPaths():Boolean = false
     fun supportsReadablePhotoNames():Boolean = false
+    fun supportsPublicNames():Boolean = false
     fun reservePhotoNames(payload:JSONObject):JSONObject = throw SyncPending("El servicio no admite reservas fotográficas V2.")
     fun post(payload:JSONObject):JSONObject
 }
@@ -58,6 +59,7 @@ class AutomaticDriveHttp internal constructor(
     override fun supportsV3()=capabilities.optBoolean("ok") && capabilities.optInt("syncProtocol")==3
     override fun supportsFamilyPaths()=supportsV3() && capabilities.optInt("pathVersion")==4 && capabilities.optBoolean("stableFamilyNumbering") && capabilities.optInt("photoCategoryVersion")==1
     override fun supportsReadablePhotoNames()=supportsFamilyPaths() && capabilities.optInt("readablePhotoNamingVersion")==2
+    override fun supportsPublicNames()=supportsReadablePhotoNames() && capabilities.optInt("publicNamingVersion")==1
     private fun requireScapPanel(payload:JSONObject) {
         val files=payload.optJSONArray("files") ?: return
         val official=(0 until files.length()).any {com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(files.getJSONObject(it).optString("photoCategory"))!=null}
@@ -69,9 +71,10 @@ class AutomaticDriveHttp internal constructor(
         capabilities.optInt("photoNamingVersion"), capabilities.optInt("syncProtocol"))
     override fun reservePhotoNames(payload:JSONObject):JSONObject {
         if(!supportsReadablePhotoNames())throw SyncPending("El backend aún no anuncia readablePhotoNamingVersion=2. Cola conservada.")
+        if(payload.optInt("publicNamingVersion")==1&&!supportsPublicNames())throw SyncPending("El servidor no admite todavía los nombres descriptivos; se conserva la reserva.")
         requireScapPanel(payload)
         val request=JSONObject().put("action","reservePhotoNamesV2").put("photoNamingVersion",2)
-        for(key in listOf("pathVersion","kind","key","recordId","revision","baseRevision","identityId","routeCode","familyPath","family","tramo","surface"))if(payload.has(key))request.put(key,payload.get(key))
+        for(key in listOf("pathVersion","kind","key","recordId","revision","baseRevision","identityId","routeCode","familyPath","family","tramo","surface","publicNamingVersion","publicDisplayLabel"))if(payload.has(key))request.put(key,payload.get(key))
         val files=payload.getJSONArray("files");request.put("photos",JSONArray((0 until files.length()).map {files.getJSONObject(it)}.filter {it.getString("key").startsWith("photo/")}.map {JSONObject().put("id",it.getString("key").substringAfter("photo/")).put("category",it.optString("photoCategory","GENERAL"))}))
         return send(request)
     }
@@ -102,6 +105,7 @@ class AutomaticDriveHttp internal constructor(
         }
     }
     override fun post(payload:JSONObject):JSONObject {
+        if(payload.optInt("publicNamingVersion")==1&&!supportsPublicNames())throw SyncPending("El servidor no anuncia nombres descriptivos; entrega preparada y archivos conservados.")
         requireScapPanel(payload)
         if(payload.optInt("pavementSicChronologicalVersion")==1 && !supportsPavementChronologicalSic())throw SyncPending("El servidor no admite todavía el consolidado cronológico de Pavimentos. Preparación conservada; no se sustituyó por PR ficticios.")
         val officialFiles=payload.getJSONArray("files")
@@ -446,6 +450,7 @@ object AutomaticDelivery {
         RemoteRevisionBudget.check((0 until files.length()).map{File(files.getJSONObject(it).getString("localFile")).length()},rowBytes)
         p.put("sourceHash",sha256(source(db,i).toByteArray()))
         if(!readable && i.kind in setOf("SIC","SCAP") && (BuildConfig.GBO_PHOTO_NUMBERS_ENABLED || (0 until files.length()).any {files.getJSONObject(it).optString("path").substringAfterLast('/').matches(Regex("[0-9]{3,10}_F_[a-f0-9]{16}\\.jpg"))})) p.put("photoNamingVersion",1)
+        if(readable)PublicDeliveryNames.apply(c,p)
         val content=contentHash(p)
         p.put("contentHash",content)
         if(!persist)return p
@@ -464,7 +469,8 @@ object AutomaticDelivery {
             "\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","orderAxis","orderSource")) else ""
         return sha256((header+"\n"+lines(p.getJSONArray("files"),listOf("key","path","mimeType","sha256"))+"\n"+
             lines(p.getJSONArray("sicRows"),listOf("recordId","format","sha256"))+technical+"\npathVersion=4\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","roadbedCode","direction","startPrNumber","startDistanceM"))+photos+(if(p.has("photoNamingVersion")) "\nphotoNamingVersion=${p.getInt("photoNamingVersion")}" else "")+
-            (if(p.optInt("pavementSicChronologicalVersion")==1)"\npavementSicChronologicalVersion=1\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","registeredDate","registeredAt"))else "")).toByteArray())
+            (if(p.optInt("pavementSicChronologicalVersion")==1)"\npavementSicChronologicalVersion=1\n"+lines(p.getJSONArray("sicRows"),listOf("recordId","format","registeredDate","registeredAt"))else "")+
+            (if(p.optInt("publicNamingVersion")==1)"\npublicNamingVersion=1\n"+p.getString("publicDisplayLabel")+"\t"+p.getString("publicElementFolder")else "")).toByteArray())
     }
     fun validAck(p:JSONObject,a:JSONObject,previous:JSONObject?=null):Boolean {
         if(previous?.optInt("pathVersion")==4) {
@@ -490,8 +496,13 @@ object AutomaticDelivery {
                 a.optString("georeferencingStatus")!=p.getJSONObject("georeferencing").getString("status") ||
                 a.optString("externalGeoreferencingStatus")!="PENDING"))return false
         val expectedPrefix=if(p.getString("kind")=="PAVEMENT") "${p.getString("routeCode")}/EVALUACION_SUPERFICIAL/${p.getString("tramo")}/${p.getString("surface")}" else "${p.getString("routeCode")}/${p.getString("familyPath")}/"
-        if(if(p.getString("kind")=="PAVEMENT") !a.optString("logicalPath").matches(Regex(Regex.escape(expectedPrefix)+"/MUESTRA [1-9][0-9]*")) else !a.optString("logicalPath").startsWith(expectedPrefix))return false
-        if(p.getString("kind")!="PAVEMENT" && !a.optString("logicalPath").matches(Regex(Regex.escape(expectedPrefix+p.getString("family"))+" [1-9][0-9]*")))return false
+        if(p.optInt("publicNamingVersion")==1){
+            val folder=p.optString("publicElementFolder")
+            if(!PublicDeliveryNames.validFolder(p.getString("family"),folder)||a.optString("logicalPath")!=expectedPrefix+(if(p.getString("kind")=="PAVEMENT")"/"else"")+folder)return false
+        }else {
+            if(if(p.getString("kind")=="PAVEMENT") !a.optString("logicalPath").matches(Regex(Regex.escape(expectedPrefix)+"/MUESTRA [1-9][0-9]*")) else !a.optString("logicalPath").startsWith(expectedPrefix))return false
+            if(p.getString("kind")!="PAVEMENT" && !a.optString("logicalPath").matches(Regex(Regex.escape(expectedPrefix+p.getString("family"))+" [1-9][0-9]*")))return false
+        }
         val files=a.optJSONArray("files") ?: return false;val expected=p.getJSONArray("files")
         val ack=(0 until files.length()).map {files.optJSONObject(it) ?: return false}
         if(ack.map {it.optString("key")}.toSet().size!=ack.size || ack.size!=expected.length())return false

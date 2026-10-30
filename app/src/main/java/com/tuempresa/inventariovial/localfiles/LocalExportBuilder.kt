@@ -60,7 +60,7 @@ object LocalExportBuilder {
         }
         suspend fun attempt(label:String,block:suspend ()->Unit){try{block()}catch(e:CancellationException){throw e}catch(e:Exception){problems+="$label: ${e.message?.take(180) ?: "no se pudo generar"}"}}
         fun document(name:String,mime:String,write:(OutputStream)->Unit){val f=File(dir,name);atomic(f,write);add(f,name,mime)}
-        fun original(id:String,path:String,category:String="GENERAL",panelPath:((String)->String)?=null) {
+        suspend fun original(id:String,path:String,category:String="GENERAL",panelPath:(suspend (String)->String)?=null) {
             val f=File(path);if(!f.isFile){problems+="Falta fotografía $id";return}
             val header=f.inputStream().use{val b=ByteArray(16);val n=it.read(b);b.take(maxOf(0,n)).toByteArray()}
             val (ext,mime)=when {
@@ -70,7 +70,8 @@ object LocalExportBuilder {
                 header.size>=12&&String(header,4,4)=="ftyp"->"heic" to "image/heic"
                 else->f.extension.lowercase().ifBlank{"bin"} to "application/octet-stream"
             }
-            add(f,panelPath?.invoke(ext) ?: "FOTOGRAFIAS/${LocalExportNames.safe(category)}/${LocalExportNames.safe(id)}.$ext",mime,panelPath!=null)
+            val name=if(ext=="jpg")runCatching{com.tuempresa.inventariovial.core.ReadablePhotoNames.name(context,id,category)}.getOrNull()else null
+            add(f,panelPath?.invoke(ext) ?: "FOTOGRAFIAS/${LocalExportNames.safe(category)}/${name ?: com.tuempresa.inventariovial.core.PublicDeliveryNames.localPhoto(db,job,id,category,ext.takeIf{it in setOf("jpg","png","webp","heic")} ?: "bin")}",mime,panelPath!=null)
         }
         when(job.kind){
             "SIC"->{
@@ -161,7 +162,7 @@ object LocalExportBuilder {
                     original(p.id,p.originalPath.ifBlank{p.localPath},p.photoCategory ?: "GENERAL"){ext->
                         val projected=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.photoPath(s,p,ext,"FOTOGRAFIAS")
                         val remoteName=if(ext=="jpg")runCatching{com.tuempresa.inventariovial.core.ReadablePhotoNames.name(context,p)}.getOrNull()else null
-                        if(remoteName!=null)projected.substringBeforeLast('/')+"/"+remoteName else projected
+                        projected.substringBeforeLast('/')+"/"+(remoteName ?: com.tuempresa.inventariovial.core.PublicDeliveryNames.localPhoto(db,job,p.id,p.photoCategory ?: "GENERAL",ext.takeIf{it in setOf("jpg","png","webp","heic")} ?: "bin"))
                     }
                 }
                 document("datos_fotografias.json","application/json"){it.write(JSONObject().put("inspectionId",s.inspection.id).put("revision",job.revision).put("photos",JSONArray(s.photos.map{p->JSONObject().put("id",p.id).put("category",p.photoCategory).put("description",p.description).put("capturedAt",p.capturedAt).put("latitude",p.photoLatitude).put("longitude",p.photoLongitude).put("accuracyM",p.photoGpsAccuracyM)})).toString(2).toByteArray())}

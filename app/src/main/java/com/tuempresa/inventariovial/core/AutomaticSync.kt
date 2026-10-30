@@ -249,10 +249,12 @@ object AutomaticSyncDrain {
                 if(com.tuempresa.inventariovial.BuildConfig.GBO_PHOTO_NAMES_V2_ENABLED && intent.preparedJson==null && !cached.isFile) {
                     if(!transport.supportsReadablePhotoNames())throw SyncPending("Nombres representativos pendientes de activar readablePhotoNamingVersion=2 en Apps Script.")
                     val preview=measured("PREPARE"){AutomaticDelivery.namingPreview(context,db,intent)}
+                    if(transport.supportsPublicNames())preview.put("publicNamingVersion",1).put("publicDisplayLabel",PublicDeliveryNames.binding(context,intent.key)?.optString("publicDisplayLabel") ?: PublicDeliveryNames.label(db,intent.kind,intent.recordId))
                     val reservation=measured("RESERVE"){
                         transport.reservePhotoNames(preview).also {ack->if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))}
                     }
                     ReadablePhotoNames.remember(context,preview,reservation)
+                    PublicDeliveryNames.remember(context,preview,reservation)
                 }
                 val prepared=measured("PREPARE"){AutomaticDelivery.prepare(context,db,intent,pavementChronological=intent.kind=="PAVEMENT" && transport.supportsPavementChronologicalSic())}
                 dao.prepared(intent.key,intent.revision,prepared.toString())

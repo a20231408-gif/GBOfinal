@@ -10,7 +10,11 @@ object ReadablePhotoNames {
         require(ack.optBoolean("ok") && ack.optInt("photoNamingVersion")==2 && ack.optString("key")==p.getString("key") && ack.optLong("revision")==p.getLong("revision"))
         require(ack.optString("identityId")==p.optString("identityId",p.getString("recordId")) && ack.optString("folderId").isNotBlank())
         val prefix=if(p.getString("kind")=="PAVEMENT") "${p.getString("routeCode")}/EVALUACION_SUPERFICIAL/${p.getString("tramo")}/${p.getString("surface")}/MUESTRA " else "${p.getString("routeCode")}/${p.getString("familyPath")}/${p.getString("family")} "
-        require(ack.optString("logicalPath").matches(Regex(Regex.escape(prefix)+"[1-9][0-9]*")))
+        val folder=ack.optString("publicElementFolder")
+        if(ack.optInt("publicNamingVersion")==1){
+            require(p.optInt("publicNamingVersion")==1&&PublicDeliveryNames.validFolder(p.getString("family"),folder))
+            require(ack.optString("logicalPath")==prefix.substringBeforeLast('/')+"/"+folder)
+        }else require(ack.optString("logicalPath").matches(Regex(Regex.escape(prefix)+"[1-9][0-9]*")))
         val old=DriveInventorySchema.receipt(context,ack.getString("identityId"))
         if(old!=null)require(old.optString("folderId")==ack.optString("folderId") && old.optString("logicalPath")==ack.optString("logicalPath"))
         val files=p.getJSONArray("files");val expected=(0 until files.length()).map {files.getJSONObject(it)}.filter {it.getString("key").startsWith("photo/")}
@@ -21,7 +25,9 @@ object ReadablePhotoNames {
             val source=expected.single {it.getString("key")=="photo/$id"};require(f.getString("category")==source.optString("photoCategory","GENERAL"))
             val name=f.getString("name")
             if(f.optBoolean("historical"))require(name==source.getString("path").substringAfterLast('/'))
-            else if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(f.getString("category"))!=null) {
+            else if(f.optInt("publicNamingVersion")==1){
+                require(ack.optInt("publicNamingVersion")==1&&name==PublicDeliveryNames.photoName(ack.getString("publicDisplayLabel"),f.getString("category"),f.getInt("number"),"jpg"))
+            }else if(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(f.getString("category"))!=null) {
                 val cat=requireNotNull(com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.forCode(f.getString("category")))
                 require(p.getString("kind")=="SCAP")
                 val match=requireNotNull(Regex("${cat.number}_PUE([1-9][0-9]*)_${cat.abbreviation}_([0-9]{3})\\.jpg").matchEntire(name))
