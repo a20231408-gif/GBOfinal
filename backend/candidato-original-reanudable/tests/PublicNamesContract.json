@@ -1,0 +1,104 @@
+{
+  "prepared": {
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC/FICTITIOUS_PUBLIC_NAMES",
+    "kind": "SIC",
+    "recordId": "FICTITIOUS_PUBLIC_NAMES",
+    "revision": 1793155836748,
+    "baseRevision": 0,
+    "origin": "AUTOMATIC",
+    "warningsConfirmed": true,
+    "files": [
+      {
+        "key": "photo/FICTITIOUS_PHOTO",
+        "path": "PANORAMICA/ALCANTARILLA - PE-28H - PR 40+200 - PANORAMICA - Foto 1.jpg",
+        "mimeType": "image/jpeg",
+        "sha256": "2f43d994a1ca0adcb03c3fef007d30771d4e92d5f9074b7e0818469c489f36d5",
+        "aggregate": false,
+        "photoCategory": "CULVERT_PANORAMIC",
+        "stageFileId": "file_73"
+      }
+    ],
+    "sicRows": [],
+    "removeMissingOwnedFiles": true,
+    "photoNamingVersion": 2,
+    "photoCategoryVersion": 1,
+    "photoHasEnds": false,
+    "photoClassCode": "",
+    "photoTypeCode": "",
+    "identityId": "FICTITIOUS_PUBLIC_NAMES",
+    "bridgeCode": "TEST_P0",
+    "routeCode": "PE-22A",
+    "familyPath": "ALCANTARILLAS",
+    "family": "ALCANTARILLA",
+    "orderAxis": 16618,
+    "orderSource": "CONTRACTUAL_PR",
+    "georeferencing": {
+      "status": "PENDING_EXTERNAL",
+      "externalSubmetricStatus": "PENDING",
+      "captureSource": "SIC_CONFIRMED"
+    },
+    "technicalDeliveryWithoutGps": true,
+    "pendingSic": [],
+    "technicalDeliveryVersion": 1,
+    "roadbedCode": "CD",
+    "direction": "",
+    "startPrNumber": 16,
+    "startDistanceM": 618,
+    "sourceHash": "7215dbba954fdfad70b1b77dae0577e6528208947a4f2e4101d6b5de7c780909",
+    "publicNamingVersion": 1,
+    "publicDisplayLabel": "ALCANTARILLA - PE-28H - PR 40+200",
+    "publicElementFolder": "ALCANTARILLA 1 - ALCANTARILLA - PE-28H - PR 40+200",
+    "contentHash": "b17806301b64b0c1b2fcfe78d6b03560936ea4ef88ef1a91291fb4decbb1edd7"
+  },
+  "ack": {
+    "ok": true,
+    "syncProtocol": 3,
+    "pathVersion": 4,
+    "key": "SIC/FICTITIOUS_PUBLIC_NAMES",
+    "revision": 1793155836748,
+    "contentHash": "b17806301b64b0c1b2fcfe78d6b03560936ea4ef88ef1a91291fb4decbb1edd7",
+    "folderId": "folder_70",
+    "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1 - ALCANTARILLA - PE-28H - PR 40+200",
+    "files": [
+      {
+        "key": "photo/FICTITIOUS_PHOTO",
+        "sha256": "2f43d994a1ca0adcb03c3fef007d30771d4e92d5f9074b7e0818469c489f36d5",
+        "fileId": "preallocated_1",
+        "folderId": "folder_78",
+        "requestedPath": "PANORAMICA/ALCANTARILLA - PE-28H - PR 40+200 - PANORAMICA - Foto 1.jpg",
+        "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1 - ALCANTARILLA - PE-28H - PR 40+200/PANORAMICA/ALCANTARILLA - PE-28H - PR 40+200 - PANORAMICA - Foto 1.jpg"
+      }
+    ],
+    "sicFiles": [],
+    "retainedSicFormats": [],
+    "alreadyExists": false,
+    "technicalDeliveryStatus": "DELIVERED",
+    "georeferencingStatus": "PENDING_EXTERNAL",
+    "externalGeoreferencingStatus": "PENDING",
+    "orderSource": "CONTRACTUAL_PR"
+  },
+  "reservation": {
+    "publicNamingVersion": 1,
+    "publicDisplayLabel": "ALCANTARILLA - PE-28H - PR 40+200",
+    "publicElementFolder": "ALCANTARILLA 1 - ALCANTARILLA - PE-28H - PR 40+200",
+    "ok": true,
+    "photoNamingVersion": 2,
+    "key": "SIC/FICTITIOUS_PUBLIC_NAMES",
+    "revision": 1793155836748,
+    "identityId": "FICTITIOUS_PUBLIC_NAMES",
+    "folderId": "folder_70",
+    "logicalPath": "PE-22A/ALCANTARILLAS/ALCANTARILLA 1 - ALCANTARILLA - PE-28H - PR 40+200",
+    "photos": [
+      {
+        "id": "FICTITIOUS_PHOTO",
+        "category": "CULVERT_PANORAMIC",
+        "name": "ALCANTARILLA - PE-28H - PR 40+200 - PANORAMICA - Foto 1.jpg",
+        "number": 1,
+        "publicNamingVersion": 1,
+        "historical": false
+      }
+    ]
+  }
+}
