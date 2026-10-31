@@ -1,5 +1,61 @@
 # GBO — Estado completo para continuar
 
+## Actualización vigente — incidencia de destino Drive (30/10/2026)
+
+Esta actualización sustituye las instrucciones antiguas de pausa o de mantener indefinidamente
+la raíz previa. La tarea autorizada actual es auditar el destino y preparar guardas **locales**;
+no activar producción, cambiar raíz, migrar históricos, crear servidores ni otra APK.
+
+Base publicada al comenzar: `80626e07323028b686f27c29588c82395f25eeca`, rama
+`codex/observaciones-campo-asus-20261030`. Las modificaciones de esta incidencia quedan
+locales; consultar `git log -1` para su commit, sin confundirlo con el remoto.
+Corrección y pruebas preservadas en commit local `91d6188` (sin push).
+
+Se localizó por navegación real en GBO la ruta `Mi unidad / 05 V CAMPO / 1.- ARCHIVOS CAMPO APK`.
+Los detalles indican propietario GBO y acceso privado. El usuario entregó después el enlace
+de otra carpeta descartada en el encargo y **confirmó expresamente usar ese enlace aunque
+es otra carpeta**: el destino elegido pasa a ser `1.- ARCHIVOS CAMPO`, sin APK. No renombrar
+ni usar automáticamente la carpeta APK observada. Los IDs,
+inventario y evidencias están en `C:\GBO\GBO_CORRECCION_DESTINO_Y_LIMPIEZA.md`, **privado/ignorado**.
+El conector Drive usa otra cuenta y no ve la carpeta privada; no interpretar su 404 como ausencia.
+
+Cambio preparado: `AuthorizedRootGuard.gs`, adaptación de `SyncV3.gs` y empaquetador local
+de Código.gs/VideoV1.gs. Exige ID aprobado, padre exacto, nombres confirmatorios, cadena a
+Mi unidad y permisos de escritura antes de crear; rechaza fallback y bloquea todas las rutas
+autenticadas sin identidad válida. El paquete privado conserva por ahora ROOT/URL/token
+originales; no se establecieron las propiedades de autorización ni se cambió el servidor.
+Resultado final tras adaptar la cadena anidada del destino elegido: **27/27 PASS**
+(8 guarda, 5 paquete, 14 continuidad), 0 fallos/omitidas, 39,199 s;
+solo mocks, sin HTTP. Android y APK 1.4.20(34) intactos; no se repitieron pruebas Android.
+
+Dos carpetas de pruebas y la copia Script se observaron de propiedad GBO y restringidas.
+Se originaron en `DriveApp.createFolder` del preparador aislado, directamente en Mi unidad.
+Primera raíz: evidencia previa de journal COMPLETE 67/67, 62 hashes y ACK/replay verificados.
+Segunda: staging/reservas conservados, sin commit/ACK; registro observado sin journal de commit.
+No borrar ninguna: contienen evidencias/recuperación ficticia. El traslado a archivo técnico
+se prepara, pero no se ha ejecutado ni se ha creado carpeta de archivo. No se verificó
+todavía un destino de archivo existente ni se cerraron los despliegues de prueba.
+
+Un token exclusivamente de pruebas se imprimió accidentalmente durante una lectura local
+de propiedades en esta intervención. No se reproduce aquí ni se incorporó a Git. Debe
+invalidarse/cerrarse el endpoint de pruebas mediante el flujo legítimo después de revisar
+sus dependencias; no se cambió credencial alguna ni se expuso el token productivo.
+
+Producción: último estado acreditado V21, URL/autenticación/raíz anteriores conservadas.
+Inventario operativo aún limitado a 100 entradas y una muestra COMPLETE; el auditor
+paginado del editor sigue sin ejecución real por consentimiento OAuth. No existe total
+operativo fiable ni certeza de cero PENDING. **NO-GO para cambio de raíz/corte/piloto**.
+Se verificó además que el destino elegido está bajo `Mi unidad / ARCHIVOS DE CAMPO / 05 V CAMPO`,
+con GBO propietario y **edición pública por enlace** existente. No se cambiaron permisos.
+Antes de solicitar corte: resolver esa exposición, completar inventario estable y conciliar colas
+de las tablets con sus reservas/revisiones/ACK. Mantener Usuarios separado. No mover datos
+reales ni instalar/distribuir la APK sin autorización. El informe privado detalla rollback
+con valores previos y tratamiento separado de pendientes; no repetir ensayos masivos.
+
+---
+
+## Antecedentes del cierre anterior (estado histórico, subordinado a la actualización)
+
 Fecha de cierre: **30/10/2026, America/Lima**. **DESARROLLO PAUSADO por orden del usuario.** Este documento sustituye los estados anteriores de continuidad; los informes históricos conservan su fecha y no deben interpretarse como estado actual.
 
 ## A. Estado general y Git
