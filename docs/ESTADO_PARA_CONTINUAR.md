@@ -3,7 +3,8 @@
 ## Actualización vigente — incidencia de destino Drive (30/10/2026)
 
 Esta actualización sustituye las instrucciones antiguas de pausa o de mantener indefinidamente
-la raíz previa. La tarea autorizada actual es auditar el destino y preparar guardas **locales**;
+la raíz previa. La tarea autorizada actual es auditar el destino, preparar guardas **locales**
+y cerrar/archivar exclusivamente los ensayos autorizados por el usuario;
 no activar producción, cambiar raíz, migrar históricos, crear servidores ni otra APK.
 
 Base publicada al comenzar: `80626e07323028b686f27c29588c82395f25eeca`, rama
@@ -32,14 +33,22 @@ Dos carpetas de pruebas y la copia Script se observaron de propiedad GBO y restr
 Se originaron en `DriveApp.createFolder` del preparador aislado, directamente en Mi unidad.
 Primera raíz: evidencia previa de journal COMPLETE 67/67, 62 hashes y ACK/replay verificados.
 Segunda: staging/reservas conservados, sin commit/ACK; registro observado sin journal de commit.
-No borrar ninguna: contienen evidencias/recuperación ficticia. El traslado a archivo técnico
-se prepara, pero no se ha ejecutado ni se ha creado carpeta de archivo. No se verificó
-todavía un destino de archivo existente ni se cerraron los despliegues de prueba.
+No borrar ninguna: contienen evidencias/recuperación ficticia. **Cierre autorizado y ejecutado**:
+las tres implementaciones de la copia (V4 HTTP, V2 y V1) están archivadas; después de recargar
+Apps Script se verificó «No hay implementaciones activas» y cuatro archivadas, incluida la
+HTTP archivada anteriormente. Se creó un único `ARCHIVO_TECNICO_GBO` privado en Mi unidad,
+propietario GBO, y se trasladaron allí las dos raíces y la copia Script. Readback: exactamente
+los tres IDs originales conservados, ya ausentes directamente de Mi unidad. No se borró
+contenido ni se modificaron los permisos existentes. Antes del traslado se verificaron
+los 45 archivos del respaldo previo contra su manifiesto, sin discrepancias, y el bundle.
+Evidencias nuevas en `tmp/entrega-20261030/backend-privado/incidencia-destino-20261030/cierre-autorizado/`.
 
 Un token exclusivamente de pruebas se imprimió accidentalmente durante una lectura local
 de propiedades en esta intervención. No se reproduce aquí ni se incorporó a Git. Debe
-invalidarse/cerrarse el endpoint de pruebas mediante el flujo legítimo después de revisar
-sus dependencias; no se cambió credencial alguna ni se expuso el token productivo.
+mantenerse inactivo: los despliegues de ensayo ya se archivaron con autorización. Antes de
+cualquier reapertura se debe invalidar el token mediante el flujo legítimo; no se cambió
+credencial alguna ni se expuso el token productivo. No se hicieron nuevas peticiones HTTP,
+compilaciones o pruebas durante el cierre autorizado. V21, sus datos y la APK siguen intactos.
 
 Producción: último estado acreditado V21, URL/autenticación/raíz anteriores conservadas.
 Inventario operativo aún limitado a 100 entradas y una muestra COMPLETE; el auditor
