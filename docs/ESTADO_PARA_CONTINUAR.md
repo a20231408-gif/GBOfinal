@@ -1,5 +1,184 @@
 # GBO — Estado completo para continuar
 
+## CHECKPOINT DE TRANSFERENCIA — 31/10/2026, America/Lima (vigente)
+
+**DESARROLLO PAUSADO. Esta sección prevalece sobre todos los estados históricos inferiores.**
+Encargo: preservar, documentar, respaldar y publicar fuente segura; no ejecutar compilaciones,
+pruebas Android/HTTP, cambios Google, instalaciones ni nuevas funciones durante este cierre.
+El checkpoint adjunto nombrado por el usuario no estuvo disponible como archivo; se ejecutaron
+sus siete instrucciones explícitas en el chat y su confirmación posterior «preservacion».
+
+### Estado Git y código que se transfiere
+
+- Repositorio autorizado: `https://github.com/a20231408-gif/GBOfinal`.
+- Rama exclusiva: `codex/observaciones-campo-asus-20261030`. Publicar solo esta referencia,
+  sin main, tags, force push, merge a main ni la rama de respaldo privado.
+- HEAD ASUS inicial: `e13ad2ca6536903f6be1141b68dfc9a6563d5a84` (árbol limpio).
+- Al consultar GitHub se encontraron tres commits adicionales de la otra laptop:
+  `7559623` (exclusiones privadas), `d833927` (nuevo tramo) y `fbf5a13` (continuidad/diálogo).
+  Se preservaron junto con los ocho commits ASUS mediante merge sin conflictos,
+  **`9817cc2d016df5e00eb297f53b037e27c89ec6cb`**; no se reescribió ningún commit.
+- El cambio remoto de nuevo tramo utiliza `SessionDialog(requireRoute=true)` y
+  `FieldController.startSession`; exige ruta y restablece filtros tras éxito. Sus fuentes
+  están integradas, **pero la integración no está compilada ni probada**. La otra laptop
+  documentó un fallo JVM de loopback antes de poder compilar. Es WIP de validación.
+- Fuentes actuales: **GBO 1.4.21 (35)**, package original `com.tuempresa.inventariovial`.
+  Kotlin/Compose, Room 21, WorkManager y documentos locales; servidores Usuarios y Drive
+  separados. No se cambiaron esquema Room, dependencias, endpoints ni firma durante el cierre.
+- La continuidad se guarda en un commit documental posterior al merge. Para obtener el SHA
+  final: `git rev-parse HEAD`; compararlo con `git ls-remote origin
+  refs/heads/codex/observaciones-campo-asus-20261030`. La evidencia privada y la respuesta
+  final registran ambos SHA y el resultado real del push, evitando un SHA autorreferente.
+- GitHub público está expresamente autorizado para fuente/documentación revisadas; quedan
+  excluidos privados y binarios. No volver a solicitar permiso únicamente por visibilidad.
+
+### Correcciones conservadas y grado de validación
+
+Las rutas Android siguientes parten de `app/src/main/java/com/tuempresa/inventariovial/`.
+**IMPLEMENTADO no significa validado físicamente.** Todas las pruebas manuales formales
+de la candidata siguen pendientes.
+
+| Observación | Estado al transferir | Fuente / evidencia local existente |
+|---|---|---|
+| Filtros por fecha, estados y orden | IMPLEMENTADO | `field/RecordDateFilter.kt`, `localfiles/UnifiedRecordsScreen.kt`; `RecordDateFilterTest`, `LocalDraftDiscard10CTest`. |
+| Selección y limpieza segura | IMPLEMENTADO para copias confirmadas; PARCIAL para eliminación total | `ConfirmedLocalCleanup.kt`, `SharedDocumentStore.kt`, `core/LocalDraftDiscard.kt`; respaldo externo releído/hash, ACK vigente y protección de pendientes. `FieldCleanupAndConsolidationTest`. No borrar base ni originales. |
+| Descarte/restauración | IMPLEMENTADO | Descarte reversible y restauración de originales retenidos; no es importación universal de Room desde ZIP. Pruebas de limpieza/descarte. |
+| Nuevo tramo | PARCIAL / integración WIP | `field/FieldUi.kt`, `UnifiedRecordsScreen.kt`; commits remotos preservados. Ahora inicia sesión con ruta; no compilado ni probado tras el merge. |
+| Longitud persistida y exportada | IMPLEMENTADO | `repository/TechnicalLengthStore.kt`, `export/TechnicalLengthExport.kt`; `LinearLengthDeliveryTest` (42+995 a 43+005 = 10 m). |
+| Nombres y carpetas | PARCIAL | `PublicDeliveryNames.kt`, `PublicLocalFolderNames.kt`, `ReadablePhotoNames.kt`. Local moderno legible; remoto depende de capacidades que V21 no anuncia. No renombrar históricos. |
+| Copias locales modernas e historial | IMPLEMENTADO | `LocalCopyPresentation.kt`, `LocalFilesUi.kt`, `UnifiedRecordsScreen.kt`; commits `6344fca`, `d6002fa`. Copias anteriores accesibles, no borradas; copia válida anterior protegida si regeneración falla. |
+| Regeneración local sin reenviar | IMPLEMENTADO | `LocalCopies.kt`: solicitud manual/espejo no programa Drive; publicación automática conserva su circuito. `LocalFiles148Test`. |
+| SCAP / identidad histórica | PARCIAL | `AutomaticSync.kt`, `DeliveryRejectionPolicy.kt`, `DriveDeliveryPresentation.kt`; `BridgeIdentityConflictTest`. Conflicto permanente conserva UUID, revisión, preparación y ACK; sin reintento ciego. La colisión remota concreta no se ha conciliado. |
+| SIC y flags opcionales | IMPLEMENTADO en cliente | `SicContributionPolicy.kt`, `AutomaticDelivery.kt`, `ScapExportPanel.kt`; `SicContributionPolicyTest`, `DriveDeliveryCardUiTest`. Flags actuales: 17A=false, 17B=false, V2=true. No exigir opcionales ni reescribir paquetes congelados. SIC-17 requerido si corresponde. |
+| Pavimentos, daño 26 y PCI | IMPLEMENTADO; físico PENDIENTE | `pavement/`, `AutomaticLocalDocuments.kt`, `LocalCopies.kt`; `PavementFinalIntegrityTest`, `PavementJointFlow20261019Test`, `PavementP0AdditionalTest`. L/M/H independientes, autoguardado; motor PCI conservado. |
+| Consolidación al cerrar unidad | IMPLEMENTADO | Publicación automática solo CLOSED, trabajos borrador SUPERSEDED, manual provisional disponible; `AutomaticDocuments149Test`, `FieldCleanupAndConsolidationTest`. |
+| Progreso y apertura de documentos | IMPLEMENTADO | `DriveDeliveryCard.kt`, `AutomaticSyncPanel.kt`, `LocalFilesUi.kt`; motivo legible, técnicos plegables, revisión segura, sin reintentar conflicto permanente. |
+| Backend reanudable y recuperación | PARCIAL | `backend/aislado-commit-resumible/`, `backend/candidato-original-reanudable/`; fuentes y rollback preservados, no activados en original. |
+| Migración Google / destino definitivo | PENDIENTE | Guarda local `AuthorizedRootGuard.gs`, auditor `PreflightReadonly.gs`; no resuelven por sí solos coexistencia entre raíces ni autorizan el corte. |
+
+### Pruebas acreditadas; ninguna ejecutada de nuevo en este cierre
+
+- Históricas de cierre: **Android 77/77 PASS**, backend reanudable **14/14 PASS** y
+  paquete original **3/3 PASS con mocks**. No representan toda la suite histórica.
+- Guarda/paquete anterior **27/27**; auditor ampliado **7/7** y propuesta **13/13**,
+  solamente mocks. La variante anterior del auditor tuvo 3 casos: no sumarlos como otra
+  selección nueva ni confundirlos con los 3 del paquete original.
+- Último SCAP: **63 casos Android distintos acreditados PASS** por clase/método, no una
+  ejecución única de 63 ni suite completa. Intento inicial 61/62 (normalización incrementaba
+  intentos), implementación corregida, repetición 25/25 y final 26/26 con ACK vigente.
+  XML separados y mapa `tmp/scap-conflicto-20261031/resultados-android.json`.
+- Identidad backend: **10/10 PASS**, sobre V21 y candidato con mocks. No se modificó el
+  servidor. Dos textos SIC finales cambiaron después de esos tests; ambas APK finales
+  compilaron. No afirmar que se repitieron tests después de esos dos textos.
+- Evidencia HTTP antigua **solo del ensayo archivado**: recuperación de 59 archivos,
+  62/62 hashes/propietarios/rutas, journal COMPLETE 67/67, ACK, replay y BUSY.
+  Segunda raíz ficticia solo staging 59/59, sin commit/ACK. No acredita producción.
+- **Las 17 pruebas manuales formales TODAVÍA NO SE REALIZARON: 0/17 acreditadas** para
+  la candidata 1.4.21 (35). La apertura de sesión/archivo y los conteos reportados por el
+  usuario corresponden al Debug 1.4.20 instalado; no equivalen a aprobar ese checklist,
+  una actualización física ni la Release. El adjunto que enumeraría los 17 casos no fue
+  accesible: recuperar su lista exacta antes de ejecutar/firmar resultados, sin inventarla.
+- **No hay compilación ni pruebas del merge `9817cc2`**. No extender resultados previos
+  al inicio de nuevo tramo integrado desde la otra laptop.
+
+### APK preservadas: fuentes compiladas anteriores al merge
+
+No hay nueva compilación, instalación ni distribución en este checkpoint. Las dos finales
+1.4.21 provienen de `4b284629a1d93014c08b8f55c4779a69c9fbe185`; **no contienen el nuevo
+tramo incorporado desde GitHub**. Si se reanuda desarrollo sobre el merge, preparar y validar
+otra candidata con versión superior antes de distribuir; no reemplazar artefactos en silencio.
+
+Directorio privado: `C:\GBO\tmp\scap-conflicto-20261031\candidata-final-1.4.21-35\`.
+
+| Artefacto original | SHA-256 | Firma y uso |
+|---|---|---|
+| `GBO_1.4.21_35_DEBUG_ORIGINAL_PILOTO_LOCAL.apk` | `9d7e4d19d6850bf164fb779d7ececdada7f5cd93e36550f0398b7c33612da8b2` | Debug Huawei/ASUS; coincide con Debug instalado; solo candidato offline tras respaldo y autorización. |
+| `GBO_1.4.21_35_RELEASE_HISTORICA_NO_DISTRIBUIR.apk` | `2bc49613fc293404882d9cddce6a971c294aea1f7fb42e9f092094bcd2967356` | Release histórica; NO actualiza directamente el Debug instalado de distinta firma. NO DISTRIBUIR. |
+
+Paquete original, versión/código, alineación 16 KiB y firma acreditados en validación privada.
+Certificados SHA-256: Debug `d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872`;
+Release `0da8a2cbcf6bce5554526c80de08878d077af1542e488292b3869cdd8ee17315`.
+Room 21 sin cambio de esquemas; esto no acredita actualización física con datos reales.
+DEX conserva endpoints/tokens legítimos originales y excluye ensayo comprobado; valores
+no publicados. APK/BuildConfig también son privados. No usar las APK intermedias de la carpeta
+sin «final». La 1.4.20 Release histórica sigue íntegra en el respaldo descrito más abajo.
+
+### Backend, Google y conflicto: bloqueos que deben conservarse
+
+Último estado acreditado: **original V21**, mismo proyecto/deployment/URL, raíz anterior y
+autenticación; Usuarios independiente intacto. No se volvió a verificar Google en este cierre.
+La copia de ensayos está archivada, sin implementaciones activas; **no volver a usarla**.
+El nuevo destino elegido no está activado y tiene edición pública preexistente pendiente de
+tratamiento autorizado. No cambiar permisos, raíz o despliegue al restaurar esta laptop.
+
+`PreflightReadonly.gs` está en HEAD del editor original, no en V21, pero OAuth/segundo factor
+legítimo sigue pendiente. **Totales reales COMPLETE/PENDING/ilegibles desconocidos**; lectura
+antigua limitada a 100. No considerar los journals de mocks inventario operativo. El candidato
+es de una sola raíz: cambiar ROOT puede perder revisión/binding/ACK previo o duplicar una
+primera entrega. Requiere conciliación y estrategia verificable, no solo guarda de destino.
+Rollback del mismo despliegue a V21 está preparado, no ejecutado; no elimina transacciones.
+
+BRIDGE_IDENTITY_CONFLICT compara bridgeCode global contra identityId distinto. Android
+envía identidad padre roadRecordId estable y SCAP/UUID-inspección; sesión/nombre/ruta no
+sustituyen UUID. También bloquea un histórico sin identityId. **Fila remota concreta no leída**:
+necesita posterior comparación autorizada de key/recordId/identityId/bridgeCode/routeCode/
+revisión/pathVersion. No adoptar, cambiar identidad, duplicar ficha ni reintentar para eludirlo.
+La ficha con conflicto conserva nueve preparados sin ACK final; eso no prueba nueve subidas.
+
+### Respaldo y traslado seguro
+
+Nuevo respaldo independiente fuera del repositorio:
+`C:\Users\ASUS\GBO_CHECKPOINT_TRANSFERENCIA_20261031_1_4_21\`.
+Contiene bundle previo de ambas puntas, bundle final de la rama, continuidad, evidencia de
+seguridad/push, XML/logs y APK privados, configuración legítima y firma en subcarpeta separada.
+Los bundles se verifican y los archivos se inventarían por SHA-256. ACL usuario/SYSTEM no es
+cifrado: transportar el material privado por canal cifrado y no incorporarlo a GitHub.
+
+Privados necesarios para otra laptop, **sin publicar valores**:
+`server.local.properties`, `drive.local.properties`, `keystore.properties`, keystore Release
+referenciado y `.private-signing/huawei-debug.keystore`; para reproducir Debug, keystore
+estándar ASUS de igual certificado. `local.properties` se conserva como referencia, pero
+recrear exclusivamente sdk.dir para el SDK destino. No copiar credenciales OAuth de navegador
+o Git Credential Manager: autenticar por el flujo oficial. Fuente configurada de Apps Script,
+IDs/propiedades, reportes con datos y journals van separados, nunca al repositorio público.
+El ZIP técnico o el pull de la APK instalada **no son respaldo restaurable de Room/fotos**.
+
+Restauración de fuente (PowerShell; usar una carpeta nueva, no sobrescribir trabajo existente):
+
+```powershell
+git clone --branch codex/observaciones-campo-asus-20261030 --single-branch https://github.com/a20231408-gif/GBOfinal.git C:\GBO
+Set-Location C:\GBO
+git status
+git rev-parse HEAD
+git ls-remote origin refs/heads/codex/observaciones-campo-asus-20261030
+# Alternativa offline: verificar el bundle y clonarlo en una carpeta nueva.
+git bundle verify C:\RESPALDO_PRIVADO\rama-final.bundle
+```
+
+Usar JDK/SDK locales y versiones del wrapper/proyecto; recuperar privados por canal seguro,
+verificar hashes y mantener exclusiones portables. No compilar, enviar ni instalar automáticamente.
+La rama `codex/respaldo-privado-prepublicacion-20261030` y sus bundles nunca se publican.
+
+### Prompt vigente para la siguiente sesión
+
+> Retoma GBO desde la rama publicada codex/observaciones-campo-asus-20261030. Lee primero
+> esta sección CHECKPOINT DE TRANSFERENCIA y compara HEAD/remoto con la evidencia del cierre.
+> Conserva todos los commits, incluidos los tres de la otra laptop integrados en 9817cc2.
+> Fuentes 1.4.21 (35); APK finales privadas de 4b284629 anteriores al merge. Inicio de nuevo
+> tramo integrado sigue sin compilar/probar. Las 17 pruebas manuales NO se realizaron (0/17);
+> recupera su checklist exacto. No repetir ensayos HTTP grandes ni auditar otra vez la migración.
+> Existe Debug 1.4.20 en la tablet personal: firma distinta de Release, sin respaldo restaurable
+> acreditado; no instalar/desinstalar/limpiar sin autorización. Conflicto SCAP conserva identidad,
+> nueve preparados y ausencia de ACK, sin reintento; falta conciliación remota real autorizada.
+> V21 original sigue operativo, candidato reanudable no activado y copia de pruebas archivada.
+> OAuth y journals completos pendientes; cambio de raíz no es seguro sin reconciliación.
+> Usuarios intacto. Recupera los archivos privados por canal cifrado sin subirlos ni mostrarlos.
+> Esta lectura no autoriza desarrollo, Google, instalación o corte: pide el siguiente objetivo
+> al usuario y respeta las autorizaciones específicas; no solicites nuevamente permiso por
+> visibilidad pública del código seguro. NO-GO para sincronización/corte/distribución general.
+
+---
+
 ## Último cierre — conflicto SCAP y candidata 1.4.21 (35), 31/10/2026
 
 Este cierre sustituye las notas anteriores que dejaban pendiente incrementar versión.
