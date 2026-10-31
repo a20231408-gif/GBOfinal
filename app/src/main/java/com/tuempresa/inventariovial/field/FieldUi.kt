@@ -65,7 +65,7 @@ fun FieldSecondaryTools(viewModel:InventoryViewModel) {
 
 @Composable
 fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?=null,
-    today:()->LocalDate={LocalDate.now()}) {
+    today:()->LocalDate={LocalDate.now()},requireRoute:Boolean=false,onStarted:()->Unit=onClose) {
     var project by rememberSaveable(initial?.sessionId) { mutableStateOf(initial?.project ?: defaultSessionProjectName(today())) }
     val currentUser by field.auth.sessions.current.collectAsState()
     val operator = initial?.operator ?: currentUser?.displayName.orEmpty()
@@ -74,9 +74,10 @@ fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?
     var decreasing by rememberSaveable(initial?.sessionId) { mutableStateOf(initial?.direction=="DECREASING") }
     var error by remember { mutableStateOf<String?>(null) }
     AlertDialog(onDismissRequest=onClose,title={Text(if(initial==null) "Nueva sesión" else "Configurar sesión")},text={ Column(Modifier.verticalScroll(rememberScrollState())) {
+        if(requireRoute) Text("Elige la ruta del nuevo tramo. Al iniciar, la sesión anterior se cierra; sus fichas, historial y entregas pendientes se conservan.")
         OutlinedTextField(project,{project=it},label={Text("Proyecto")})
         OutlinedTextField(operator,{},readOnly=true,label={Text("Operador autenticado")})
-        Text("Ruta (opcional)")
+        Text(if(requireRoute) "Ruta del nuevo tramo" else "Ruta (opcional)")
         ChoiceSelector(listOf("Sin ruta")+field.projectRoutes.routeCodes,road.ifBlank {"Sin ruta"}) {road=if(it=="Sin ruta") "" else it}
         ProjectRouteFields(road)
         Text("Calzada")
@@ -84,8 +85,10 @@ fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?
         Row { Checkbox(decreasing,{decreasing=it});Text("Recorrido decreciente") }
         error?.let { ErrorText(it) }
     } },confirmButton={TextButton(onClick={
-        if(project.isBlank() || operator.isBlank()) error="Completa proyecto y operador." else {
-            if(initial==null) field.startSession(project,road,field.projectRoutes.segment(road),roadbed,if(decreasing) "DECREASING" else "INCREASING",onClose) {error=it}
+        if(project.isBlank() || operator.isBlank()) error="Completa proyecto y operador."
+        else if(requireRoute && road.isBlank()) error="Selecciona la ruta del nuevo tramo."
+        else {
+            if(initial==null) field.startSession(project,road,field.projectRoutes.segment(road),roadbed,if(decreasing) "DECREASING" else "INCREASING",onStarted) {error=it}
             else field.configureSession(initial.sessionId,project,road,roadbed,if(decreasing) "DECREASING" else "INCREASING",onClose) {error=it}
         }
     }) {Text(if(initial==null) "Iniciar" else "Guardar configuración")} },dismissButton={TextButton(onClick=onClose){Text("Cancelar")}})

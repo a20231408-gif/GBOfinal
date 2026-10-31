@@ -26,6 +26,9 @@ output/
 # Historical production signing stays local
 /keystore.properties
 /gbo-inventario-vial-release
+/gradle/keystore.properties
+/gradle/gradle.properties
+/gradle/*.bundle
 *.jks
 *.keystore
 *.p12
