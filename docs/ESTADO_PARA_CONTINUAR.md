@@ -5,8 +5,89 @@
 **DESARROLLO PAUSADO. Esta sección prevalece sobre todos los estados históricos inferiores.**
 Encargo: preservar, documentar, respaldar y publicar fuente segura; no ejecutar compilaciones,
 pruebas Android/HTTP, cambios Google, instalaciones ni nuevas funciones durante este cierre.
-El checkpoint adjunto nombrado por el usuario no estuvo disponible como archivo; se ejecutaron
-sus siete instrucciones explícitas en el chat y su confirmación posterior «preservacion».
+Primer checkpoint publicado y verificado: **`3c028ac1c589f0bdc8f88fb92da6944da07a6da6`**.
+Después estuvieron disponibles el prompt de checkpoint y el manual privado del 31/10/2026:
+se leyeron y se completa aquí su alcance documental, sin retomar desarrollo. Ambos archivos
+se mantienen fuera de GitHub; el manual privado no constituye evidencia de ejecución.
+
+### Complemento de transferencia: checklist exacto y acceso mínimo
+
+La siguiente lista resume P01–P17 del manual privado recibido, sanitizada para publicar.
+**Todos los casos están SIN EJECUTAR (0/17), no PASS.** No se realizaron en este cierre.
+Su ejecución futura requiere respaldo restaurable, versión/firma comprobadas y autorización
+de instalación si corresponde. Mantener modo avión; no modificar fichas históricas ni generar
+entregas ficticias contra producción. Si una acción programa Drive, marcar BLOCKED hasta
+disponer de un escenario local seguro autorizado. No crear otra app o servidor de ensayo.
+
+| Caso | Comprobación prevista | Estado |
+|---|---|---|
+| P01 | Actualización Debug 1.4.20 a candidata compatible, sin desinstalar; datos/fotos/conteos conservados | SIN EJECUTAR |
+| P02 | Ficha SCAP con conflicto: Requiere atención, sin reintento, nueve preparados y sin ACK inventado | SIN EJECUTAR |
+| P03 | SIC-17 requerido cuando corresponda; 17A/B deshabilitados según flags, snapshot intacto | SIN EJECUTAR |
+| P04 | Copias modernas primero e historial accesible, sin borrar carpetas | SIN EJECUTAR |
+| P05 | Filtros día/mes/año, fecha sin resultados y recuperación del listado | SIN EJECUTAR |
+| P06 | Estados y orden cronológico sin desapariciones ni duplicados | SIN EJECUTAR |
+| P07 | Borrador ficticio estrictamente local: guardar, cerrar y reabrir | SIN EJECUTAR |
+| P08 | Longitud 42+995 a 43+005 = 10 m, persistencia y exportación local segura | SIN EJECUTAR |
+| P09 | Descartar y restaurar solo el borrador ficticio | SIN EJECUTAR |
+| P10 | Selección individual/visibles y cancelar, sin confirmar borrado masivo | SIN EJECUTAR |
+| P11 | Pavimentos: autoguardar varios daños, reabrir, sin publicar por cada cambio | SIN EJECUTAR |
+| P12 | Daño 26 por losa/junta: severidades L/M/H independientes y PCI coherente | SIN EJECUTAR |
+| P13 | Cierre de muestra: un paquete consolidado, solo si no genera outbox productivo | SIN EJECUTAR |
+| P14 | Dos imágenes ficticias/croquis locales: persistencia/categorías, sin inventar GPS | SIN EJECUTAR |
+| P15 | Nombres legibles, copia nueva y antigua diferenciadas; no acredita homología Drive | SIN EJECUTAR |
+| P16 | Previsualización de limpieza: exige ACK vigente, ZIP validado y confirmación; no ejecutar borrado | SIN EJECUTAR |
+| P17 | Abrir/compartir/ubicación y errores comprensibles, detalles técnicos plegables | SIN EJECUTAR |
+
+El manual sintetiza cinco observaciones formales del PDF, **sin que en este cierre se haya
+inspeccionado nuevamente ese PDF**: O01 filtros/fechas (IMPLEMENTADO), O02 carpetas legibles
+(PARCIAL), O03 fotografías descriptivas (PARCIAL), O04 sello de juntas por losa/severidad
+(IMPLEMENTADO), O05 eliminación manual segura (PARCIAL). Ninguna está absuelta físicamente
+por este checkpoint. La matriz de abajo conserva código/pruebas y ampliaciones; O08 nuevo
+tramo del manual queda actualizado por el merge: diálogo real integrado, validación WIP.
+O15 sincronización de Flavio permanece sin verificar; no solicitar su tablet para el trabajo local.
+
+**Orden al reanudar con encargo nuevo:** recuperar fuente/entorno → P01–P17 con respaldo y
+autorizaciones, corrigiendo solo FAIL reproducidos → OAuth/lectura paginada y conflicto SCAP
+→ proteger permisos del destino con autorización → resolver identidad/revisión entre raíces
+→ corte autorizado del mismo Apps Script original → ACK/piloto real → Release/distribución.
+La indisponibilidad de OAuth no bloquea trabajo local autorizado. No ejecutar este plan al
+leer el checkpoint: el desarrollo sigue pausado.
+
+**Entrega mínima al compañero:** fuente/bundle seguro, esta continuidad, manual privado por
+canal restringido y requisitos de aceptación. No necesita de entrada tokens de producción,
+keystore Release, datos reales ni acceso Google. Configuración Usuarios/Drive: solo si la tarea
+o el perfil original la requiere, cifrada y con acceso autorizado. Firma Release: únicamente
+responsable de publicación. Debug Huawei/ASUS: solo si hay necesidad justificada de actualizar
+la tablet personal. Snapshot/propiedades/journals: solo operador autorizado de sincronización.
+No distribuir indiscriminadamente todo el respaldo privado a cada desarrollador.
+
+Preparación en la siguiente laptop (instrucciones futuras, no ejecutadas en este cierre):
+
+1. Instalar Git for Windows y Android Studio con JBR compatible, SDK/Platform Tools/Build Tools
+   exigidos por el proyecto. Inspeccionar wrapper y archivos Gradle existentes, sin cambiar
+   versiones para sortear errores; Node solo para pruebas backend locales.
+2. Clonar en carpeta nueva, comparar SHA publicado, leer continuidad/manual y crear rama propia:
+   `git switch -c codex/continuacion-companero-20261031` (usar nombre nuevo si ya existe).
+3. Recrear `local.properties` con sdk.dir del equipo. En PowerShell establecer por terminal
+   `$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'`, comprobar
+   `.\gradlew.bat --version` y, cuando se autorice reanudar validación local,
+   `.\gradlew.bat :app:assembleDebug`. No instalar esa compilación automáticamente.
+4. Si el perfil exige configuración privada, solicitar únicamente la indispensable; no inventar
+   endpoints ni copiar tokens de ensayo. Reconfirmar flags V2/17A/17B. No pedir firma Release
+   para tareas de UI y pruebas. Compilar sin configuración productiva no demuestra integración real.
+5. Alternativa sin GitHub: `git bundle verify` y
+   `git clone -b codex/observaciones-campo-asus-20261030 C:\RESPALDO_PRIVADO\rama-final.bundle C:\GBO`;
+   establecer origin al repositorio autorizado y crear rama propia. Comparar hash del bundle
+   con el manifiesto transferido por canal seguro antes de usarlo.
+
+**Complemento privado más reciente:**
+`C:\Users\ASUS\GBO_CHECKPOINT_COMPLEMENTO_PRIVADO_20261031\`.
+Preserva ambos adjuntos íntegros, continuidad sanitizada, bundle final, manifiesto y verificación
+de publicación. Es adicional al respaldo completo de 657 archivos; no lo reemplaza ni sobrescribe.
+Para transferir código usar el bundle más reciente; para evidencias/configuración usar el respaldo
+completo anterior y este complemento según el acceso mínimo necesario. Ninguno es respaldo
+restaurable de la tablet.
 
 ### Estado Git y código que se transfiere
 
@@ -76,8 +157,8 @@ de la candidata siguen pendientes.
 - **Las 17 pruebas manuales formales TODAVÍA NO SE REALIZARON: 0/17 acreditadas** para
   la candidata 1.4.21 (35). La apertura de sesión/archivo y los conteos reportados por el
   usuario corresponden al Debug 1.4.20 instalado; no equivalen a aprobar ese checklist,
-  una actualización física ni la Release. El adjunto que enumeraría los 17 casos no fue
-  accesible: recuperar su lista exacta antes de ejecutar/firmar resultados, sin inventarla.
+  una actualización física ni la Release. El manual recibido posteriormente ya proporciona
+  su lista exacta: resumen sanitizado arriba y detalle privado, todavía sin ejecución.
 - **No hay compilación ni pruebas del merge `9817cc2`**. No extender resultados previos
   al inicio de nuevo tramo integrado desde la otra laptop.
 
@@ -163,10 +244,13 @@ La rama `codex/respaldo-privado-prepublicacion-20261030` y sus bundles nunca se 
 
 > Retoma GBO desde la rama publicada codex/observaciones-campo-asus-20261030. Lee primero
 > esta sección CHECKPOINT DE TRANSFERENCIA y compara HEAD/remoto con la evidencia del cierre.
+> Lee el manual privado transferido por el propietario y trabaja en una rama propia codex/.
 > Conserva todos los commits, incluidos los tres de la otra laptop integrados en 9817cc2.
 > Fuentes 1.4.21 (35); APK finales privadas de 4b284629 anteriores al merge. Inicio de nuevo
 > tramo integrado sigue sin compilar/probar. Las 17 pruebas manuales NO se realizaron (0/17);
-> recupera su checklist exacto. No repetir ensayos HTTP grandes ni auditar otra vez la migración.
+> usa el checklist sanitizado de esta sección y el detalle del manual. No repetir ensayos HTTP
+> grandes ni auditar otra vez la migración. Tras nuevo encargo, comprobar Debug local y pedir
+> únicamente configuración privada indispensable; no dar por válida una compilación de la integración.
 > Existe Debug 1.4.20 en la tablet personal: firma distinta de Release, sin respaldo restaurable
 > acreditado; no instalar/desinstalar/limpiar sin autorización. Conflicto SCAP conserva identidad,
 > nueve preparados y ausencia de ACK, sin reintento; falta conciliación remota real autorizada.
