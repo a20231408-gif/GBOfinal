@@ -86,6 +86,7 @@ object LocalInventoryIndex {
     var discardReview by remember {mutableStateOf<List<LocalDraftDiscard.Candidate>?>(null)}
     var discardBusy by remember {mutableStateOf(false)}
     var discardMessage by remember {mutableStateOf<String?>(null)}
+    var prepareSegment by rememberSaveable {mutableStateOf(false)}
     val scope=rememberCoroutineScope()
     var cleanupBackup by remember{mutableStateOf<ConfirmedLocalCleanup.Backup?>(null)}
     var cleanupBusy by remember{mutableStateOf(false)}
@@ -149,6 +150,11 @@ object LocalInventoryIndex {
             finally{discardBusy=false;discardReview=null}
         }}){Text("Confirmar descarte reversible")}},
         dismissButton={TextButton(enabled=!discardBusy,onClick={discardReview=null}){Text("Cancelar")}})}
+    if(prepareSegment) SessionDialog(vm.field,onClose={prepareSegment=false},requireRoute=true,onStarted={
+        prepareSegment=false;selected=emptySet();search="";route="";pr="";state="";family="Todas"
+        year=null;month=null;day=null;captureFilter="Todos";historical=false;newestFirst=true
+        discardMessage="Nuevo tramo iniciado. Las fichas, el historial y las entregas pendientes se conservaron."
+    })
     LazyColumn(Modifier.testTag("mis-registros").fillMaxSize().padding(horizontal=16.dp),contentPadding=PaddingValues(vertical=16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             TextButton(onClick=onBack){Text("Volver")};Text("Mis registros",style=MaterialTheme.typography.headlineMedium)
@@ -181,7 +187,7 @@ object LocalInventoryIndex {
                 runCatching{ConfirmedLocalCleanup.prepare(c,db,cleanable.filter{it.key in selected}.map{ConfirmedLocalCleanup.Candidate(it.key,it.revision)})}
                     .onSuccess{cleanupBackup=it}.onFailure{discardMessage=it.message ?: "No se pudo verificar el respaldo."};cleanupBusy=false
             }}){Text(if(cleanupBusy)"Verificando respaldo…"else"Respaldar y limpiar entregados seleccionados")}
-            TextButton(onClick={selected=emptySet();search="";route="";pr="";state="";family="Todas";year=null;month=null;day=null;captureFilter="Todos";historical=false;discardMessage="Listado preparado para un nuevo tramo. Se conservaron los registros pendientes y el historial; configura la ruta del nuevo tramo en la sesión de campo."}){Text("Preparar nuevo tramo")}
+            TextButton(onClick={prepareSegment=true}){Text("Preparar nuevo tramo")}
             Row(Modifier.horizontalScroll(rememberScrollState())) {
                 TextButton(enabled=selectable.any{it.key in selected}&&!discardBusy,onClick={reviewDiscard(selectable.filter{it.key in selected})}){Text("Descartar seleccionados")}
                 TextButton(enabled=selectable.isNotEmpty()&&!discardBusy,onClick={reviewDiscard(selectable)}){Text("Descartar todos los borradores visibles")}
