@@ -1,5 +1,77 @@
 # GBO — Estado completo para continuar
 
+## Último cierre — conflicto SCAP y candidata 1.4.21 (35), 31/10/2026
+
+Este cierre sustituye las notas anteriores que dejaban pendiente incrementar versión.
+Código principal `d6002fae9eef2eb46e159edfcd69a986bcaf8526`; ajuste final de dos avisos SIC
+`4b284629a1d93014c08b8f55c4779a69c9fbe185`. Se conservaron todos los commits anteriores.
+No hubo acceso a Drive/Apps Script, HTTP real, instalación ni modificación de datos de tablet.
+
+Conflicto: V21 y el candidato rechazan un bridgeCode ya registrado con identityId distinto
+del UUID padre enviado. Comparación global exacta: no depende del nombre, ruta o progresiva.
+Un registro histórico sin identityId también puede bloquear; no se adopta automáticamente.
+Android usa key SCAP/UUID-inspección e identityId=roadRecordId, no la sesión activa. Las reservas
+V2 se vinculan a ese UUID padre; números/nombres son etiquetas y nunca sustituyen identidad.
+Se probaron identidad compartida SIC/SCAP, replay y sesión ajena sin alterar fichas históricas.
+**La fila remota concreta que colisiona sigue sin conocerse**: requiere lectura autorizada de
+key/recordId/identityId/bridgeCode/routeCode/revisión/pathVersion y comparación con la preparación.
+No crear otra ficha, cambiar UUID/código para eludir el validador ni limpiar los archivos preparados.
+
+Correcciones: BRIDGE_IDENTITY_CONFLICT es permanente aunque el servidor diga retryable;
+normaliza marcadores antiguos ERROR/BLOCKED a CONFLICT sin incrementar intentos ni alterar
+preparación/ACK/revisiones. Bloquea reintento manual/automático y conserva el bloqueo al editar.
+ACK completo vigente prevalece sobre etiquetas de error obsoletas. Mensaje principal comprensible,
+«Requiere atención», revisión de ficha como acción segura, datos técnicos en sección plegable.
+No se implementó una liberación automática del conflicto ni se relajó el validador del backend.
+
+Flags comprobados en la APK Debug instalada guardada y configuración legítima actual:
+SIC17A=false, SIC17B=false, nombres V2=true. Nuevas preparaciones filtran aportes deshabilitados;
+SIC-17 sigue requerido cuando faltan datos. Una preparación ya congelada no se reescribe:
+pendientes opcionales antiguos se explican como deshabilitados en el detalle técnico.
+No se inventan datos, consolidaciones completas, revisiones o ACK.
+
+Archivos: también el selector rápido prioriza copias modernas, permite abrir anteriores y
+conserva la única copia válida si la nueva no terminó. Exportación/regeneración manual y
+reconciliación local no programan Drive; publicación automática conserva su circuito original.
+Sin borrado, renombrado histórico ni migración de directorios. Room 21 y sus esquemas intactos.
+
+Validación: **63 casos Android distintos** acreditados en selección acumulada, 0 pendientes
+de aprobación en esa selección, no suite histórica completa. Primer intento 61/62; corrigió
+contador de intentos de la normalización. Repetición relacionada 25/25 y final 26/26 incluyendo
+un caso nuevo de ACK vigente. XML separados y mapa por clase/método en
+`tmp/scap-conflicto-20261031/resultados-android.json`. Backend local: **10/10 PASS**, sobre fuente
+V21 y candidato, sin HTTP ni mutaciones. No se cambió código servidor. Dos textos finales de
+avisos SIC se ajustaron después de esas pruebas; las dos variantes finales compilaron y se
+verificaron, sin repetir pruebas funcionales no afectadas por ese texto.
+
+**Candidatas finales originales, ninguna instalada/distribuida:** package
+`com.tuempresa.inventariovial`, 1.4.21 (35), origen de fuentes `4b284629`.
+Directorio privado `C:\GBO\tmp\scap-conflicto-20261031\candidata-final-1.4.21-35\`:
+
+- `GBO_1.4.21_35_DEBUG_ORIGINAL_PILOTO_LOCAL.apk`, SHA256
+  `9d7e4d19d6850bf164fb779d7ececdada7f5cd93e36550f0398b7c33612da8b2`.
+  Firma Debug Huawei/ASUS, coincide con la tablet personal; candidata para revisión offline
+  solo tras respaldo y autorización expresa de actualización.
+- `GBO_1.4.21_35_RELEASE_HISTORICA_NO_DISTRIBUIR.apk`, SHA256
+  `2bc49613fc293404882d9cddce6a971c294aea1f7fb42e9f092094bcd2967356`.
+  Firma Release histórica, distinta de Debug; no intentar instalarla sobre el Debug existente.
+
+Firma/versión/paquete/alineación 16 KiB verificados. DEX acredita endpoint/token originales
+de Drive y Usuarios y ausencia del endpoint V4/token de ensayo comprobados, sin mostrarlos.
+La configuración no se cambió para habilitar la raíz nueva. La carpeta `candidata-1.4.21-35`
+sin «final» es una compilación intermedia preservada: usar solo la final y su hash.
+Las APK contienen configuración privada: no agregarlas a Git ni distribuirlas.
+
+Prueba manual propuesta (no ejecutada): después de autorizar respaldo/actualización **Debug**,
+mantener modo avión, comprobar registros/fotos conservados, abrir la ficha con conflicto:
+nombre/ruta visibles, «Requiere atención», sin Reintentar, preparación intacta sin ACK inventado.
+SIC-17A/B deben figurar como deshabilitados solo en detalle; SIC-17 sigue pendiente si corresponde.
+Abrir documento ya confirmado y alternar historial local sin borrar ni reenviar. No sincronizar
+para comprobar el conflicto. Resultado físico pendiente; corte/sincronización siguen NO-GO.
+Resumen privado actualizado: `GBO_CIERRE_OPERATIVO_Y_TABLET_20261031.md`.
+
+---
+
 ## Actualización vigente — servidor original y tablet personal (31/10/2026)
 
 Última respuesta del usuario: Google exige segundo factor del teléfono de un ingeniero que
