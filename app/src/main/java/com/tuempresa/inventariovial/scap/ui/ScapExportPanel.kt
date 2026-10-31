@@ -62,13 +62,13 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                     if(!com.tuempresa.inventariovial.export.LocalBridgeDocument.located(saved)) {
                         savedDocumentUri=com.tuempresa.inventariovial.export.LocalBridgeDocument.provisional(context,controller.localDatabase,saved,format).toString()
                         savedSicRoute=null;savedSicFormat=null
-                        message="ARCHIVO GUARDADO · $format PROVISIONAL. Ubicación pendiente; separado del consolidado de ruta. ${preview.missingRequired.joinToString()}"
+                        message="ARCHIVO GUARDADO · $format PROVISIONAL. Ubicación pendiente; separado del consolidado de ruta."
                     } else {
                         val result=com.tuempresa.inventariovial.export.LocalSicConsolidates.update(context,controller.localDatabase,route,format,selectedInspection=saved.inspection.id)
                         savedDocumentUri=result.uri.toString();savedSicRoute=route;savedSicFormat=format;message="ARCHIVO GUARDADO · "+result.message
                     }
                     missingSicFormat=format.takeIf{preview.missingRequired.isNotEmpty()}
-                    if(preview.missingRequired.isNotEmpty())message=message.orEmpty()+" · Pendientes: "+preview.missingRequired.joinToString()
+                    if(preview.missingRequired.isNotEmpty())message=message.orEmpty()+" · ${preview.missingRequired.size} datos por completar. Consulta Diagnóstico técnico SIC."
                     // Explicit document export is local; the original-record outbox owns Drive.
                     return@launch
                 }
