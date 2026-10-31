@@ -288,3 +288,4 @@ docs/manual-10i/capturas-reales/*
 !docs/manual-10i/capturas-reales/.gitignore
 # Incident inventory includes private Drive IDs and deployment configuration.
 /GBO_CORRECCION_DESTINO_Y_LIMPIEZA.md
+/GBO_CIERRE_OPERATIVO_Y_TABLET_20261031.md

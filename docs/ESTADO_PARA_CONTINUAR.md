@@ -1,5 +1,49 @@
 # GBO — Estado completo para continuar
 
+## Actualización vigente — servidor original y tablet personal (31/10/2026)
+
+La instrucción vigente permite inventario de lectura del original, propuesta local de corte
+y comprobación ADB de la tablet personal. No autoriza cambiar permisos/ROOT/despliegue,
+instalar/desinstalar ni borrar datos. No reutilizar la copia archivada de ensayos.
+Resumen privado único: `C:\GBO\GBO_CIERRE_OPERATIVO_Y_TABLET_20261031.md` (ignorado).
+
+ADB detectó una tablet personal Xiaomi con el package original **1.4.20 (34) Debug/TEST_ONLY**.
+El certificado instalado coincide con el Debug Huawei recuperado y el Debug ASUS actual;
+la firma Release histórica es otra. **La Release preparada no puede actualizar directamente
+ese Debug**. No intentar instalarla, desinstalar ni limpiar datos para sortearlo. El keystore
+Huawei está ignorado y no rastreado; Debug actual usa el keystore estándar de ASUS con el
+mismo certificado. SigningReport y validateReleaseConfiguration PASS. La revisión DEX del
+instalado encontró la configuración productiva actual, sin mostrar valores; no acredita su
+commit exacto y no se extrajeron fichas/fotos/Room. No se recompiló ninguna APK.
+
+Discrepancia corregida: al abrir el editor original, `PreflightReadonly.gs` no aparecía,
+aunque el documento anterior lo daba por guardado. Se añadió a HEAD y se comprobó su fuente
+por portapapeles. Se usa Drive.About con el ámbito Drive existente; no se alteró el manifest.
+El auditor paginado ahora emite journals, revisiones/ACK y bindings y detecta inconsistencias
+sin doble conteo. Añade sonda de lectura del destino/cadena/capacidades/ACL. Solo la copia
+privada del auditor contiene IDs configurados. El intento de ejecución solicitó consentimiento
+oficial; se abrió Revisar permisos y se pidió al usuario completarlo como GBO. **No hay aún
+totales reales ni sonda de destino ejecutada**, salvo que el resumen privado se actualice con
+evidencia posterior. No interpretar mocks ni el viejo límite de 100 como inventario completo.
+
+Pruebas nuevas focalizadas: auditor 7/7 y guarda/paquete 13/13, total **20/20 PASS**;
+sin repetir Android ni continuidad masiva. Propuesta privada con ROOT elegido en
+`tmp/piloto-operativo-20261031/PROPUESTA_ORIGINAL_NO_ACTIVAR/`; no se copiaron módulos
+operativos al editor ni se creó/activó versión. V21, URL, Usuarios y ROOT real siguen intactos.
+Lectura de metadatos confirma anyone:writer en destino y los dos ancestros: todavía debe
+atribuirse la herencia y prepararse la restricción sin perder accesos legítimos, con autorización.
+
+**Bloqueo adicional del cambio de ROOT:** el candidato sigue siendo de una sola raíz.
+Los registros/bindings/recibos antiguos no pasan a la nueva por conservar URL/UUID. Una
+edición con baseRevision previa puede fallar y una repetición de primera revisión puede
+duplicarse entre raíces. La guarda no resuelve enrutamiento de identidades antiguas.
+Completar conciliación y una estrategia verificable antes de autorizar corte; no aplicar
+simplemente el literal ROOT nuevo del paquete preparado. No se han aprobado observaciones
+manuales: se solicitó al usuario revisión inicial en modo avión, atribuible al Debug instalado.
+El reporte privado contiene el checklist breve y las autorizaciones pendientes.
+
+---
+
 ## Actualización vigente — incidencia de destino Drive (30/10/2026)
 
 Esta actualización sustituye las instrucciones antiguas de pausa o de mantener indefinidamente
