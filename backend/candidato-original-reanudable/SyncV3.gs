@@ -25,7 +25,7 @@ function stageRecordV3(p) {
     if(!f || !SyncV3.component(f.key.replace(/\//g,'_')) || !/^[a-f0-9]{64}$/.test(f.sha256))SyncV3.reject('INVALID_STAGE');
     const bytes=s.decode(f.base64);if(!bytes.length || bytes.length>24*1024*1024 || s.hash(bytes)!==f.sha256)SyncV3.reject('HASH_OR_FILE_SIZE');
     if(f.mimeType==='image/jpeg'&&!s.isJpeg(bytes))SyncV3.reject('NOT_JPEG');
-    const folder=getOrCreateFolder(getOrCreateFolder(getOrCreateFolder(DriveApp.getFolderById(ROOT_FOLDER_ID),'._GBO_SYNC_V3'),'STAGING'),s.hash(p.key)+'_'+p.revision);
+    const folder=getOrCreateFolder(getOrCreateFolder(getOrCreateFolder(gboAuthorizedRoot(),'._GBO_SYNC_V3'),'STAGING'),s.hash(p.key)+'_'+p.revision);
     const name=s.hash(f.key)+'_'+f.sha256+'.bin';const existing=folder.getFilesByName(name);
     let file;
     if(existing.hasNext()){file=existing.next();if(existing.hasNext())SyncV3.reject('DUPLICATE_STAGE');}
@@ -43,7 +43,7 @@ function v3Store(request) {
   if(request?.publicNamingVersion===1&&PropertiesService.getScriptProperties().getProperty('GBO_PUBLIC_NAMES_ENABLED')!=='true')SyncV3.reject('PUBLIC_NAMES_DISABLED');
   const deadline=Date.now()+85000;
   const checkpoint=()=>{if(Date.now()>deadline)v3Yield();};
-  const root=DriveApp.getFolderById(ROOT_FOLDER_ID);
+  const root=gboAuthorizedRoot();
   const registry=getOrCreateFolder(root,'._GBO_SYNC_V3');
   const hash=bytes=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,bytes).map(x=>(x&255).toString(16).padStart(2,'0')).join('');
   const decode=s=>Utilities.base64Decode(s);

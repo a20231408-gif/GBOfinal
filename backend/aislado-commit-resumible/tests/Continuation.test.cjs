@@ -8,6 +8,7 @@ function setup(){
  const e=env('INTEGRADO');e.props.GBO_ISOLATED_ROOT_ID=ROOT;e.props.GBO_RESUMABLE_ROOT_ID=ROOT;e.props.GBO_PUBLIC_NAMES_ENABLED='true';
  e.context.Session={getEffectiveUser:()=>({getEmail:()=>'reconocimientoinventariovial@gmail.com'})};
  e.context.DriveApp.Access={PRIVATE:'PRIVATE'};e.root.name='GBO_PRUEBAS_PRIVADAS_20261030_MOCK';e.root.getSharingAccess=()=> 'PRIVATE';e.root.getOwner=()=>({getEmail:()=>'reconocimientoinventariovial@gmail.com'});
+ if(operational)require('../../candidato-original-reanudable/tests/RootGuardMock.cjs').rootGuardMock(e);
  let tick=0,createCost=0,metadataCost=0,afterCreate=null,afterUpdate=null,allocation=0;
  const originalGet=e.context.Drive.Files.get;e.context.Drive.Files.get=(...args)=>{tick+=metadataCost;return originalGet(...args);};
  e.context.Drive.Files.generateIds=({count=1}={})=>({ids:Array.from({length:count},()=> 'preallocated_'+(++allocation))});
@@ -24,7 +25,7 @@ function setup(){
  const reservation=plain(e.context.reservePhotoNamesV2({...p,photos:p.files.filter(x=>x.key.startsWith('photo/')).map(x=>({id:x.key.slice(6),category:x.photoCategory}))}));assert.equal(reservation.ok,true);
  const stages={};for(const f of p.files){const ack=plain(e.context.stageRecordV3({...p,file:f}));assert.equal(ack.ok,true);stages[f.key]=ack.stageFileId;}
  const q=clone(p);for(const f of q.files){f.stageFileId=stages[f.key];delete f.base64;}
- function load(){for(const name of (operational?['PublicDeliveryNames','PhotoNamesV2Core','SyncV3Core','SyncV3']:['SyncV3Core','SyncV3']))vm.runInContext(fs.readFileSync(path.join(source,name+'.gs'),'utf8'),e.context,{filename:name+'.gs'});}
+ function load(){for(const name of (operational?['AuthorizedRootGuard','PublicDeliveryNames','PhotoNamesV2Core','SyncV3Core','SyncV3']:['SyncV3Core','SyncV3']))vm.runInContext(fs.readFileSync(path.join(source,name+'.gs'),'utf8'),e.context,{filename:name+'.gs'});}
  function send(x=q){return plain(e.context.commitRecordV3(clone(x)));}
  function journal(){const f=[...e.objects.values()].find(x=>x.name==='journal_'+sha(q.key)+'.json');return f&&JSON.parse(f.getBlob().getDataAsString());}
  function complete(x=q){let a;for(let n=0;n<50;n++){a=send(x);if(a.ok)return {ack:a,calls:n+1};assert.equal(a.code,'COMMIT_IN_PROGRESS',JSON.stringify(a));assert.equal(a.retryable,true);assert.equal(journal()?.status==='COMPLETE',false);}throw Error('Continuation stalled');}

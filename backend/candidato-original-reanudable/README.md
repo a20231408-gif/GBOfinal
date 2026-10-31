@@ -1,5 +1,49 @@
 # Candidato local para GBO_Inventario original — NO DESPLEGADO
 
+## Actualización prioritaria: incidencia de destino, 30 de octubre
+
+`AuthorizedRootGuard.gs` exige cinco propiedades privadas: `GBO_AUTHORIZED_ROOT_ID`,
+`GBO_AUTHORIZED_ROOT_PARENT_ID`, `GBO_AUTHORIZED_ROOT_NAME`, `GBO_AUTHORIZED_ROOT_PARENT_NAME`
+y `GBO_AUTHORIZED_ROOT_ANCESTOR_IDS` (array JSON desde padre directo hasta contenedor superior,
+excluyendo Mi unidad; sin duplicados, máximo 16 niveles).
+El ID aprobado debe coincidir con `ROOT_FOLDER_ID`. Antes de escribir comprueba con Drive
+el ID, tipo carpeta, papelera, nombre, padre exacto, todos los enlaces de ancestros
+hasta Mi unidad de la cuenta ejecutora y capacidades `canEdit`/`canAddChildren`.
+Rechaza el alias `root`, la raíz real de Mi unidad y cualquier sustitución o identidad
+incompleta. No busca carpetas por nombre, no crea destino alternativo ni archivo de prueba.
+Un error de lectura es reintentable; una identidad o permiso incorrectos bloquean.
+
+El empaquetador añade la guarda al router después de autenticar, cubre también rutas
+legacy y cachés, reemplaza las entradas de raíz de Código.gs y VideoV1.gs y conserva
+manifest, autenticación y raíz literal original. `SyncV3.gs` la usa además directamente
+antes de crear el registro/staging. GET anuncia `rootGuardVersion` y `rootGuardReady`;
+solo anuncia continuidad/nombres públicos si la guarda está satisfecha.
+El núcleo de transacciones no se cambió. **Nada de esto está desplegado.**
+
+La ruta solicitada es `Mi unidad / 05 V CAMPO / 1.- ARCHIVOS CAMPO APK`.
+Se observó su ID real mediante navegación desde la cuenta GBO, pero el usuario confirmó
+después **usar el enlace que envió aunque corresponde a otra carpeta**. El destino elegido
+es ahora `1.- ARCHIVOS CAMPO`, sin APK; esta elección sustituye la ruta inicial.
+No configurar un ID por parecido ni cambiar de raíz ahora: falta conciliar pendientes.
+La incidencia completa con IDs permanece exclusivamente en el informe privado local
+`GBO_CORRECCION_DESTINO_Y_LIMPIEZA.md`, excluido de Git.
+
+Las instrucciones antiguas siguientes describen la base del candidato, no autorizan un
+cambio de raíz. Previamente al corte se necesita inventario operativo completo y estable,
+conciliación de entregas preparadas/reservas/revisiones/ACK de la raíz anterior, confirmación
+del destino y autorización expresa. La misma URL no hace intercambiables dos raíces:
+no se pueden copiar ACK ni adoptar históricos automáticamente. El rollback de código a
+V21 tampoco revierte por sí solo el destino ni resuelve transacciones nuevas pendientes.
+
+Prueba focalizada inicial: **26/26 PASS, 0 fallos, 0 omitidas, 39,986 s**:
+7 guardas, 5 paquete original y 14 continuidad del candidato original, exclusivamente
+en memoria/mocks con fixtures ficticios. No acredita HTTP productivo, permisos efectivos
+del runtime original ni piloto Android. Log privado en el directorio de la incidencia.
+Se añadió después comprobación de cadena anidada al confirmar el enlace distinto:
+**27/27 PASS**, 0 fallos/omitidas, 39,199 s (8 guarda, 5 paquete y 14 continuidad).
+No usar el paquete inicial de cuatro
+propiedades como candidato final.
+
 Este directorio es fuente para el proyecto original, no otro servidor ni otra copia de Apps Script. Mantener la URL del despliegue versionado original, su ejecutor, token legítimo y `ROOT_FOLDER_ID` actuales. No usar módulos de ensayo, Ensayo.gs, Auditoria.gs ni propiedades/tokens ficticios.
 
 Reemplazos preparados: `SyncV3.gs`, `SyncV3Core.gs`, `PhotoNamesV2Core.gs`; añadir `PublicDeliveryNames.gs`. Conservar el resto de módulos y el manifest original. Las guardas de la copia aislada se sustituyeron por `GBO_RESUMABLE_ROOT_ID`, que debe coincidir exactamente con la raíz operativa existente. La inyección de fallos de ensayo queda inerte. Una propiedad ausente o distinta bloquea antes de escribir.
