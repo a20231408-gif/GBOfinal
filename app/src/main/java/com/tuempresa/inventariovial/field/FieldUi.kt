@@ -77,7 +77,7 @@ fun SessionDialog(field: FieldController,onClose: ()->Unit,initial:FieldSession?
         if(requireRoute) Text("Elige la ruta del nuevo tramo. Al iniciar, la sesión anterior se cierra; sus fichas, historial y entregas pendientes se conservan.")
         OutlinedTextField(project,{project=it},label={Text("Proyecto")})
         OutlinedTextField(operator,{},readOnly=true,label={Text("Operador autenticado")})
-        Text("Ruta (opcional)")
+        Text(if(requireRoute) "Ruta del nuevo tramo" else "Ruta (opcional)")
         ChoiceSelector(listOf("Sin ruta")+field.projectRoutes.routeCodes,road.ifBlank {"Sin ruta"}) {road=if(it=="Sin ruta") "" else it}
         ProjectRouteFields(road)
         Text("Calzada")

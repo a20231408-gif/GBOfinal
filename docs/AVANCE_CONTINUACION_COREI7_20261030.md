@@ -12,7 +12,9 @@ Este cambio requiere compilación y validación en tablet antes de considerarse 
 
 - La conexión de Drive disponible pertenece a una cuenta personal con acceso a elementos GBO; no expone el proyecto Apps Script original ni sustituye el consentimiento de ejecución pendiente. No se ejecutó `gboPilotInventoryReadonly` ni se obtuvo inventario real de journals.
 - ADB está instalado, pero no detecta ninguna tablet conectada. No hubo respaldo, instalación ni lectura de datos de campo.
-- Los respaldos privados y la APK candidata descritos en rutas `C:\GBO` y `C:\Users\ASUS` no están presentes en esta computadora. Los archivos públicos recibidos no reemplazan esos materiales.
+- El ZIP `GBO.zip` permitió recuperar en esta carpeta, fuera de Git, 172 archivos del respaldo privado anterior y `keystore.properties`. Sus 42 entradas con SHA-256 en el manifiesto privado coinciden. Los archivos locales de configuración de Usuarios y Drive y el keystore ya presentes coincidían byte a byte con los del ZIP. `local.properties` se recreó con el SDK de esta computadora.
+- De los 1 430 archivos de fuente/documentación revisados en el ZIP, solo faltaban dos ejemplos ficticios de Excel; se copiaron localmente en una ruta excluida de Git. La fuente actual de la rama se conservó: el ZIP corresponde a una etapa anterior y no contiene la APK 1.4.20 (34), el snapshot final del original ni el inventario operativo completo.
+- El navegador de esta sesión no tiene acceso autenticado al editor Apps Script original. El ZIP contiene referencias privadas antiguas, pero no permite acreditar el estado actual del proyecto o ejecutar el auditor allí.
 - El despliegue V21, la raíz operativa, el Servicio de Usuarios y los permisos de Drive no se modificaron en esta continuación.
 
 La secuencia pendiente sigue siendo: obtener acceso verificable al proyecto original y al respaldo privado; resolver el consentimiento del auditor y completar su inventario paginado; revisar cualquier journal PENDING o ilegible; preparar y revisar el cambio del mismo despliegue; validar un ACK controlado; respaldar y probar una tablet; solo entonces decidir la distribución.
