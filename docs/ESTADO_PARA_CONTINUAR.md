@@ -2,6 +2,23 @@
 
 ## Actualización vigente — servidor original y tablet personal (31/10/2026)
 
+Última respuesta del usuario: Google exige segundo factor del teléfono de un ingeniero que
+no está disponible hasta la mañana. No reintentar ni eludirlo; continuar con la app local.
+Prueba manual Debug recibida: sesión correcta, 15 sincronizados, 0 pendientes y **1 error**;
+puede abrir archivo/ubicación del SCAP «prueba 3». No son ACK verificados remotamente.
+Pendiente texto del error y ejemplos de carpetas antiguas; no asumir que ese SCAP es el fallido.
+
+Corrección Android posterior a la APK 1.4.20: el listado local agrupa la regeneración V4 con
+su categoría histórica y permite ver/ocultar historial incluso con solo dos intentos.
+Pruebas focalizadas **6/6 PASS**, 4 clases, 0 fallos/errores/omitidas; 8,594 s XML, Gradle 55 s.
+Compilación Kotlin ordinaria posterior PASS (20 s). Fallos previos de compilación incremental
+y argumento de terminal conservados en logs; no se acreditan como pruebas ejecutadas.
+No se duplicó la regeneración existente ni se tocaron originales/Room/ACK/Drive; no se limpiaron
+carpetas de la tablet. La limpieza física sigue pendiente de inventario y respaldo, no basta
+ocultar historial. Cambio aún no instalado. **La próxima APK que incluya esta corrección debe
+usar versión superior a 34**: no recompilar silenciosamente 1.4.20; las fuentes aún la conservan.
+La APK Release guardada sigue siendo el artefacto original e intacto, no contiene esta corrección.
+
 La instrucción vigente permite inventario de lectura del original, propuesta local de corte
 y comprobación ADB de la tablet personal. No autoriza cambiar permisos/ROOT/despliegue,
 instalar/desinstalar ni borrar datos. No reutilizar la copia archivada de ensayos.

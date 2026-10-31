@@ -76,13 +76,14 @@ import java.io.File
     var visible by remember(key){mutableIntStateOf(8)}
     val filtered=jobs.filter{kind==null||it.kind==kind}.sortedWith(compareByDescending<LocalExportJob>{it.revision}.thenByDescending{it.createdAt}.thenBy{it.id})
     var history by remember(key){mutableStateOf(false)}
-    val latest=filtered.distinctBy{it.recordKey to it.scope}
+    val latest=LocalCopyPresentation.latest(filtered)
+    val latestIds=latest.map{it.id}.toSet()
     (if(history)filtered else latest).take(if(history)filtered.size else 6).forEach{j->
-        Text(LocalCopyPresentation.context(j,if(key!=null)currentRevision else null,filtered.firstOrNull{it.recordKey==j.recordKey&&it.scope==j.scope}?.id==j.id),style=MaterialTheme.typography.bodySmall)
+        Text(LocalCopyPresentation.context(j,if(key!=null)currentRevision else null,j.id in latestIds),style=MaterialTheme.typography.bodySmall)
         Text(LocalCopyPresentation.result(j),style=MaterialTheme.typography.titleSmall)
         if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
-    if(filtered.size>6)TextButton(onClick={history=!history}){Text(if(history)"Resumir intentos"else"Ver todos los intentos locales (${filtered.size}; fallidos/parciales: ${filtered.count{it.state in setOf("FAILED","PARTIAL")}})")}
+    if(filtered.size>latest.size||latest.size>6)TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
     val visibleJobs=if(history)filtered.map{it.id}.toSet()else latest.map{it.id}.toSet()
     val items=files.filter{it.state=="READY"&&it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
     items.take(visible).forEach{SavedFileActions(it)}

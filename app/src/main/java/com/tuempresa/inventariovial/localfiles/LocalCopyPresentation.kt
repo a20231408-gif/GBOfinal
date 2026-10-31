@@ -2,9 +2,14 @@ package com.tuempresa.inventariovial.localfiles
 
 /** One result per persisted job. Historical results are never advertised as the current revision. */
 object LocalCopyPresentation {
+    fun scope(scope:String)=scope.removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")
+    /** Layout regeneration is another generation of the same copy, not another document category. */
+    fun latest(jobs:List<LocalExportJob>)=jobs.sortedWith(compareByDescending<LocalExportJob>{it.revision}
+        .thenByDescending{it.createdAt}.thenByDescending{when{it.scope.endsWith("_LAYOUT_V4")->4;it.scope.endsWith("_LAYOUT_V3")->3;it.scope.endsWith("_READABLE_V2")->2;else->1}}
+        .thenBy{it.id}).distinctBy{it.recordKey to scope(it.scope)}
     fun context(job:LocalExportJob,current:Long?,latest:Boolean):String {
         val revision=when {current==null->"Revisión guardada ${job.revision}";job.revision==current->"Revisión actual ${job.revision}";else->"Revisión anterior ${job.revision}; la ficha actual es $current"}
-        val scope=when(job.scope.removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";"ZIP"->"Paquete ZIP";DriveMirrorPlan.SCOPE->"Copia del Drive confirmado";else->"Documento"}
+        val scope=when(scope(job.scope)){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";"ZIP"->"Paquete ZIP";DriveMirrorPlan.SCOPE->"Copia del Drive confirmado";else->"Documento"}
         return "$revision · $scope"+if(!latest)" · intento anterior"else""
     }
     fun result(job:LocalExportJob):String = when(job.state) {
