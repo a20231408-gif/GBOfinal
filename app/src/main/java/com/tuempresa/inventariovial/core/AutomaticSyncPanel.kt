@@ -114,8 +114,8 @@ object SyncIntentPresentation {
         Text(if(onlyDevice) "Drive: no programado · Solo dispositivo" else "Drive: ${scapView?.status?.label ?: SyncIntentPresentation.label(intent,validated,connected,DriveUploadPolicy.configurationError()==null,active,retrying)}")
         scapView?.let{Text(it.message)}
         if(confirmed)Text("Entregado correctamente a Drive")
-        if(intent?.preparedJson?.let{runCatching{JSONObject(it).optJSONArray("pendingSic")?.length() ?: 0}.getOrDefault(0)}?.let{it>0}==true)
-            Text("Respaldo y consolidado SIC son distintos: hay aportes SIC pendientes. Revisa el detalle; no se acredita finalización contractual.")
+        if(SicContributionPolicy.pending(DriveDeliveryPresentation.json(intent?.preparedJson)).isNotEmpty())
+            Text("Aportes SIC habilitados por completar. Consulta Detalles técnicos.")
         else if(!onlyDevice && validated && intent!=null)Text(when(scapView?.status){
             DriveDeliveryStatus.PREPARING->"Guardado en tablet. Preparando entrega localmente."
             DriveDeliveryStatus.VERIFYING->"Guardado en tablet. Esperando la confirmación final de Drive (commit/ACK)."
@@ -134,6 +134,7 @@ object SyncIntentPresentation {
         }
         if(!compact) com.tuempresa.inventariovial.localfiles.LocalRecordFiles(kind,id,validated)
         if(!compact) {
+            DeliveryDetail("Detalles técnicos") {
             intent?.let {
                 Text("Origen: ${if(it.origin=="AUTOMATIC") "Automática" else "Manual desde la app"}")
                 Text("Revisión local: ${it.revision} · confirmada: ${it.syncedRevision}")
@@ -145,9 +146,11 @@ object SyncIntentPresentation {
                 Text("Archivos preparados: ${prepared?.optJSONArray("files")?.length() ?: 0} · confirmados para esta revisión: ${if(confirmed)receipt?.optJSONArray("files")?.length() ?: 0 else 0}")
                 receipt?.optString("logicalPath")?.takeIf {it.isNotBlank()&&confirmed}?.let {path->Text("Destino confirmado: $path")}
                 receipt?.optString("folderId")?.takeIf {it.isNotBlank()}?.let {folder->Text("https://drive.google.com/drive/folders/$folder")}
-                prepared?.optJSONArray("pendingSic")?.let {pending->for(n in 0 until pending.length())Text("SIC pendiente: ${pending.getString(n)}")}
+                SicContributionPolicy.pending(prepared).forEach{Text("SIC pendiente: $it")}
+                SicContributionPolicy.disabledPending(prepared).forEach{Text("Aporte deshabilitado en esta instalación; no exigido: $it")}
                 receipt?.optJSONArray("retainedSicFormats")?.let {prior->for(n in 0 until prior.length())Text("SIC conserva revisión anterior: ${prior.getString(n)}")}
                 it.error?.let {error->Text(error,color=MaterialTheme.colorScheme.error)}
+            }
             }
             if(!onlyDevice && validated && intent?.state!="CONFLICT" && scapView?.retryAllowed!=false)TextButton(onClick={scope.launch {
                 runCatching {AutomaticSync.manual(context,kind,id)}.onSuccess {message="Trabajo programado. Android lo ejecutará cuando haya conexión y recursos."}.onFailure {message=it.message}

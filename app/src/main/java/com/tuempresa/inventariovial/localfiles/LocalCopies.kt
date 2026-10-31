@@ -162,7 +162,7 @@ object LocalCopyDrain {
                     message=if(failures.isEmpty())"Copia local completada: $done archivos verificados en Descargas."else "Copia local parcial ($done/${plan.files.size}). "+failures.distinct().joinToString(" · ")))
                 // Publication is local. Its success does not acknowledge Drive or upload the
                 // generated route workbook: the durable original-record outbox owns that work.
-                runCatching{LocalDeliveryScheduling.afterExport(c,db,job.kind,job.recordId)}
+                if(job.automatic&&job.scope!=DriveMirrorPlan.SCOPE)runCatching{LocalDeliveryScheduling.afterExport(c,db,job.kind,job.recordId)}
             }catch(e:CancellationException){throw e}catch(e:Exception){dao.saveJob(job.copy(state="FAILED",message="Copia local fallida: ${publicError(e)}. La ficha y los originales se conservan; puedes reintentar."))}
         }
         dao.pendingCount()>0

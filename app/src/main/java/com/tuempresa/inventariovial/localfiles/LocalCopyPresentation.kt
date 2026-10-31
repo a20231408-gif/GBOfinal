@@ -7,6 +7,12 @@ object LocalCopyPresentation {
     fun latest(jobs:List<LocalExportJob>)=jobs.sortedWith(compareByDescending<LocalExportJob>{it.revision}
         .thenByDescending{it.createdAt}.thenByDescending{when{it.scope.endsWith("_LAYOUT_V4")->4;it.scope.endsWith("_LAYOUT_V3")->3;it.scope.endsWith("_READABLE_V2")->2;else->1}}
         .thenBy{it.id}).distinctBy{it.recordKey to scope(it.scope)}
+    fun currentFiles(jobs:List<LocalExportJob>,files:List<LocalSharedFile>,history:Boolean=false):List<LocalSharedFile>{
+        val ready=files.filter{it.state=="READY"}
+        if(history)return ready
+        val ids=latest(jobs.filter{job->ready.any{it.jobId==job.id}}).map{it.id}.toSet()
+        return ready.filter{it.jobId in ids}
+    }
     fun context(job:LocalExportJob,current:Long?,latest:Boolean):String {
         val revision=when {current==null->"Revisión guardada ${job.revision}";job.revision==current->"Revisión actual ${job.revision}";else->"Revisión anterior ${job.revision}; la ficha actual es $current"}
         val scope=when(scope(job.scope)){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";"ZIP"->"Paquete ZIP";DriveMirrorPlan.SCOPE->"Copia del Drive confirmado";else->"Documento"}

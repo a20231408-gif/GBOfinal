@@ -50,6 +50,16 @@ class LocalFiles148Test {
         assertEquals("READY",d.localFilesDao().job(j.id)!!.state);assertArrayEquals(before,s.entries.values.single().bytes);assertArrayEquals(before,f.readBytes());assertTrue(s.entries.values.single().published)
         LocalCopies.retry(c,d,j.id);LocalCopyDrain.run(c,d,s);assertEquals(1,s.entries.size);assertEquals(1,s.writes)
     }}
+    @Test fun explicitHistoricalDocumentNeverCreatesARemoteQueueOrChangesTheRecord()=runBlocking{db().use{d->
+        val record=testRecord("TEST_RECORD").copy(status="ACTIVE",updatedAt=100);d.inventoryDao().insertRecord(record)
+        val j=job(d);val store=FakeStorage();LocalCopyDrain.run(c,d,store)
+        assertEquals("READY",d.localFilesDao().job(j.id)!!.state);assertTrue(d.automaticSyncDao().all().isEmpty());assertEquals(record,d.inventoryDao().recordById(record.id))
+    }}
+    @Test fun automaticPublicationStillSchedulesItsOriginalClosedRecord()=runBlocking{db().use{d->
+        val record=testRecord("TEST_RECORD").copy(status="ACTIVE",updatedAt=100);d.inventoryDao().insertRecord(record)
+        val j=job(d).copy(automatic=true,createdAt=0);d.localFilesDao().saveJob(j);LocalCopyDrain.run(c,d,FakeStorage())
+        assertEquals("READY",d.localFilesDao().job(j.id)!!.state);assertEquals("SIC/TEST_RECORD",d.automaticSyncDao().all().single().key);assertEquals(record,d.inventoryDao().recordById(record.id))
+    }}
     @Test fun shortWriteCannotBeMarkedReadyAndRetryReusesPendingSlot()=runBlocking{db().use{d->
         val j=job(d);val s=FakeStorage().apply{shortWrite=true};LocalCopyDrain.run(c,d,s)
         assertEquals("PARTIAL",d.localFilesDao().job(j.id)!!.state);assertFalse(s.entries.values.single().published);assertTrue(d.localFilesDao().files(j.id).none{it.state=="READY"})

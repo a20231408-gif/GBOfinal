@@ -14,6 +14,13 @@ import com.tuempresa.inventariovial.diagnostics.SyncPerformance
 
 object AutomaticSync {
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
+    /** Upgrade legacy ERROR/BLOCKED markers only; retain UUID, revisions, staging and every ACK byte. */
+    suspend fun recoverIdentityConflicts(db:InventoryDatabase):Int=db.withTransaction {
+        var count=0
+        for(i in db.automaticSyncDao().all())if(i.state !in setOf("SYNCED","CONFLICT")&&DeliveryRejectionPolicy.bridgeIdentityConflict(i)){
+            db.automaticSyncDao().put(i.copy(state="CONFLICT"));count++
+        };count
+    }
     /** This describes the last failed negotiation, not a permanent verdict about the server. */
     fun compatibilityPending(i:DriveSyncIntent):Boolean = i.state in setOf("PENDING_VALIDATION","UNCONFIGURED") &&
         i.error.orEmpty().let{it.contains("compatibilidad",true)||it.contains("panel fotográfico SCAP",true)||
@@ -39,13 +46,14 @@ object AutomaticSync {
         dao.put(DriveSyncIntent(key,kind,id,next,old?.syncedRevision ?: 0,
             if((old?.syncedRevision ?: 0)>0) "UPDATE_PENDING" else "QUEUED",origin,warnings,
             old?.lastSyncedAt,receiptJson=old?.receiptJson,preparedJson=old?.preparedJson?.takeIf {JSONObject(it).optLong("revision")>old.syncedRevision},
-            error=old?.error?.takeIf {old.state=="CONFLICT"}))
-        if(old?.state=="CONFLICT")dao.state(key,next,"CONFLICT",old.error)
+            error=old?.error?.takeIf {old.state=="CONFLICT"||DeliveryRejectionPolicy.bridgeIdentityConflict(old)}))
+        if(old!=null&&(old.state=="CONFLICT"||DeliveryRejectionPolicy.bridgeIdentityConflict(old)))dao.state(key,next,"CONFLICT",old.error)
         db.syncContext?.let { wake(it) }
     }
     suspend fun draft(db:InventoryDatabase,kind:String,id:String) {
         val old=db.automaticSyncDao().get("$kind/$id") ?: return
-        db.automaticSyncDao().put(old.copy(error=old.error?.takeIf {old.state=="CONFLICT"},state=if(old.state=="CONFLICT") "CONFLICT" else if(old.syncedRevision>0) "UPDATE_PENDING" else "DRAFT"))
+        val conflict=old.state=="CONFLICT"||DeliveryRejectionPolicy.bridgeIdentityConflict(old)
+        db.automaticSyncDao().put(old.copy(error=old.error?.takeIf {conflict},state=if(conflict) "CONFLICT" else if(old.syncedRevision>0) "UPDATE_PENDING" else "DRAFT"))
     }
     /** Repair only the demonstrable stale DRAFT marker of the SAME already-closed SCAP revision. */
     suspend fun recoverClosedScapDrafts(db:InventoryDatabase):Int=db.withTransaction {
@@ -141,6 +149,7 @@ object AutomaticSync {
         val db=InventoryDatabase.getInstance(context)
         db.withTransaction {
             val stored=db.automaticSyncDao().get(key) ?: return@withTransaction
+            require(!DeliveryRejectionPolicy.bridgeIdentityConflict(stored)){DeliveryRejectionPolicy.BRIDGE_MESSAGE}
             val old=restoreScapConsent(db,stored)
             require(old.state!="CONFLICT") {"Conflicto de revisiones: conserva la edición local y concilia con el responsable antes de reenviar."}
             require(old.state!="DRAFT" || AutomaticDelivery.validated(db,old)) {"Valida primero la ficha."}
@@ -202,6 +211,7 @@ object AutomaticSyncDrain {
         AutomaticSync.recoverJpegBlocked(context,db)
         AutomaticSync.recoverClosedScapDrafts(db)
         AutomaticSync.recoverConfirmedReceipts(db)
+        AutomaticSync.recoverIdentityConflicts(db)
         val dao=db.automaticSyncDao()
         var retry=false
         val drainStart=SyncPerformance.now()
@@ -313,10 +323,10 @@ object AutomaticSyncDrain {
             catch(e:SyncRejection){
                 deliveryOutcome=if(e.code=="BUSY")"BUSY" else "REJECTED"
                 val pending=e.code=="ORDERING_REQUIRED"
-                val conflict=e.code in setOf("REVISION_CONFLICT","STALE_REVISION","BASE_REVISION_CONFLICT")
-                val transient=e.retryable || e.code=="BUSY"
+                val conflict=DeliveryRejectionPolicy.conflict(e.code)
+                val transient=!conflict&&(e.retryable || e.code=="BUSY")
                 val state=if(conflict) "CONFLICT" else if(pending)"PENDING_VALIDATION" else if(transient)"ERROR" else "BLOCKED"
-                val message=if(conflict) "Conflicto de revisiones (${e.code}; base ${intent.syncedRevision}; remota ${e.remoteRevision ?: "no informada"}). Edición local conservada; no se sobrescribió el servidor. Requiere conciliación antes de reenviar." else if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else if(e.code=="BUSY")"Servidor ocupado (BUSY). Esperando para reintentar; la ficha y sus fotografías se conservan." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva."
+                val message=if(e.code==DeliveryRejectionPolicy.BRIDGE_IDENTITY_CONFLICT)"${DeliveryRejectionPolicy.BRIDGE_MESSAGE} (${e.code})" else if(conflict) "Conflicto de revisiones (${e.code}; base ${intent.syncedRevision}; remota ${e.remoteRevision ?: "no informada"}). Edición local conservada; no se sobrescribió el servidor. Requiere conciliación antes de reenviar." else if(pending)"Pendiente de validación/ordenamiento. Se conservó la entrega anterior." else if(e.code=="BUSY")"Servidor ocupado (BUSY). Esperando para reintentar; la ficha y sus fotografías se conservan." else "El servidor rechazó la revisión (${e.code}). La evidencia local se conserva."
                 if(conflict)db.withTransaction {
                     val latest=dao.get(intent.key)
                     if(latest!=null && latest.syncedRevision==intent.syncedRevision)dao.state(latest.key,latest.revision,state,message)

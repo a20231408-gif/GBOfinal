@@ -221,9 +221,12 @@ object LocalInventoryIndex {
     val files by db.localFilesDao().observeFilesFor(item.key).collectAsState(emptyList())
     val jobs by db.localFilesDao().observeJobsFor(item.key).collectAsState(emptyList())
     var selector by remember{mutableStateOf(false)};var message by remember{mutableStateOf<String?>(null)}
+    var documentHistory by remember(item.key){mutableStateOf(false)}
     val revisions=jobs.associateBy{it.id}
-    val documents=files.filter{it.state=="READY"&&it.mimeType in setOf(com.tuempresa.inventariovial.export.SicExcelWriter.XLSX_MIME,"application/pdf","application/zip")}
+    val allDocuments=files.filter{it.state=="READY"&&it.mimeType in setOf(com.tuempresa.inventariovial.export.SicExcelWriter.XLSX_MIME,"application/pdf","application/zip")}
         .sortedWith(compareByDescending<LocalSharedFile>{revisions[it.jobId]?.revision ?: 0}.thenBy{if(it.name.startsWith("SCAP")||it.mimeType=="application/pdf")0 else 1}.thenBy{it.name}).distinctBy{it.uri}
+    val documents=LocalCopyPresentation.currentFiles(jobs,allDocuments,documentHistory)
+    val hasHistorical=LocalCopyPresentation.currentFiles(jobs,allDocuments).size<allDocuments.size
     fun open(share:Boolean){if(documents.size!=1){selector=true;return};val file=documents.single();scope.launch{
         message=runCatching{withContext(Dispatchers.IO){require(AndroidSharedDocumentStore(c).digest(android.net.Uri.parse(file.uri))==(file.size to file.sha256)){"El archivo ya no está disponible. Reintenta la copia local."}}
             c.startActivity(if(share)SharedFileActions.share(android.net.Uri.parse(file.uri),file.mimeType)else SharedFileActions.view(android.net.Uri.parse(file.uri),file.mimeType).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK));null
@@ -235,6 +238,7 @@ object LocalInventoryIndex {
         TextButton(enabled=documents.isNotEmpty(),onClick={open(true)}){Text("Compartir")}
     }
     documents.firstOrNull()?.let{Text("Local: ${it.relativePath}",style=MaterialTheme.typography.bodySmall)}
+    if(hasHistorical)TextButton(onClick={documentHistory=!documentHistory}){Text(if(documentHistory)"Ocultar archivos anteriores"else"Ver archivos anteriores")}
     if(job==null||job.state in setOf("FAILED","PARTIAL","CLEANED"))TextButton(onClick={scope.launch{message=runCatching{withContext(Dispatchers.IO){LocalCopies.requestCurrent(c,db,item.kind,item.id)};"Actualizando archivos locales…"}.getOrElse{"No se pudo solicitar la copia; los originales siguen guardados."}}}){Text(if(job==null)"Incorporar histórico a copias locales"else if(job.state=="CLEANED")"Regenerar copias conservadas"else"Reintentar copia local")}
     if(selector)AlertDialog(onDismissRequest={selector=false},title={Text("Documentos disponibles")},text={
         LazyColumn{items(documents,key={it.id}){file->Text("R${revisions[file.jobId]?.revision ?: "?"}${if(file.name.contains("PROVISIONAL")||file.name.contains("BORRADOR"))" · provisional"else""}");SavedFileActions(file)}}

@@ -299,6 +299,7 @@ object AutomaticDelivery {
                 if(r.sicCode=="SIC-17") {
                     val pending=JSONArray()
                     for(format in listOf("SIC-17A","SIC-17B")) {
+                        if(!SicContributionPolicy.enabled(format))continue
                         val preview=ScapSicExporter.supplement(s,format)
                         if(preview.missingRequired.isEmpty()) {
                             val bytes=java.io.ByteArrayOutputStream()
@@ -378,13 +379,14 @@ object AutomaticDelivery {
                     val entry=files.getJSONObject(n)
                     if(entry.getString("key").startsWith("photo/")) entry.put("photoCategory",s.photos.single {"photo/${it.id}"==entry.getString("key")}.photoCategory ?: "GENERAL")
                 }
-                ScapSicExporter.previews(s).filter {it.missingRequired.isEmpty()}.forEach {preview->
+                val deliveryPreviews=ScapSicExporter.previews(s).filter{SicContributionPolicy.enabled(it.format)}
+                deliveryPreviews.filter {it.missingRequired.isEmpty()}.forEach {preview->
                     val f=File(directory,"${preview.format}.xlsx")
                     f.outputStream().use {ScapSicExporter.write(it,s,preview.format)}
                     rows.put(JSONObject().put("recordId",r.id).put("bridgeCode",s.inspection.bridgeCode).put("format",preview.format)
                         .put("orderAxis",p.getDouble("orderAxis")).put("orderSource",orderSource).put("base64",Base64.encodeToString(f.readBytes(),Base64.NO_WRAP)).put("sha256",sha256(f.readBytes())))
                 }
-                p.put("pendingSic",JSONArray(ScapSicExporter.previews(s).filter {it.missingRequired.isNotEmpty()}.map {it.format+": "+it.missingRequired.joinToString()}))
+                p.put("pendingSic",JSONArray(deliveryPreviews.filter {it.missingRequired.isNotEmpty()}.map {it.format+": "+it.missingRequired.joinToString()}))
             }
             "PAVEMENT"->{
                 val s=requireNotNull(db.pavementDao().sample(i.recordId));val damages=db.pavementDao().damages(s.id)

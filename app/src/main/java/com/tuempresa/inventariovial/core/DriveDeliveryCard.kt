@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import java.text.DateFormat
 import java.util.Date
 
-@Composable private fun DeliveryDetail(title:String,content:@Composable ()->Unit) {
+@Composable internal fun DeliveryDetail(title:String,content:@Composable ()->Unit) {
     var expanded by rememberSaveable(title){mutableStateOf(false)}
     TextButton(onClick={expanded=!expanded},modifier=Modifier.fillMaxWidth()) {Text("${if(expanded)"−"else"+"} $title")}
     if(expanded)Column(Modifier.fillMaxWidth().padding(horizontal=8.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){content()}
@@ -31,12 +31,10 @@ import java.util.Date
                 Text(view.message)
                 view.progressText?.let {Text(it,style=MaterialTheme.typography.bodyMedium)}
                 if(!view.confirmed && identity.currentRevision!=null)Text("Guardado en tablet",style=MaterialTheme.typography.bodySmall)
-                DriveDeliveryPresentation.json(i.preparedJson)?.takeIf {it.optLong("revision")==identity.currentRevision}
-                    ?.optJSONArray("pendingSic")?.takeIf{it.length()>0}?.let {
-                        Text("Hay ${it.length()} aportes SIC pendientes. El respaldo de la ficha no acredita un consolidado SIC completo.",color=MaterialTheme.colorScheme.error)
-                    }
+                val pendingSic=SicContributionPolicy.pending(DriveDeliveryPresentation.json(i.preparedJson)?.takeIf{it.optLong("revision")==identity.currentRevision})
+                if(pendingSic.isNotEmpty())Text("Aportes SIC habilitados por completar. Consulta Detalles técnicos.",color=MaterialTheme.colorScheme.error)
                 Text(view.files,style=MaterialTheme.typography.bodyMedium)
-                if(view.review && onReview!=null)OutlinedButton(onClick=onReview,modifier=Modifier.testTag("drive-review-fields")){Text("REVISAR CAMPOS")}
+                if(view.review && onReview!=null)OutlinedButton(onClick=onReview,modifier=Modifier.testTag("drive-review-fields")){Text(if(DeliveryRejectionPolicy.bridgeIdentityConflict(i))"REVISAR FICHA"else"REVISAR CAMPOS")}
                 DeliveryDetail("Destino confirmado") {
                     val ack=DriveDeliveryPresentation.json(i.receiptJson)
                     if(view.confirmed&&ack!=null)SelectionContainer{Column {
@@ -67,7 +65,8 @@ import java.util.Date
                             Text("Hash de contenido preparado: ${p.optString("contentHash")}")
                             Text("Archivos preparados: ${p.optJSONArray("files")?.length() ?: 0}")
                             if(p.optJSONObject("georeferencing")?.optString("externalSubmetricStatus")=="PENDING")Text("Georreferenciación submétrica: pendiente")
-                            p.optJSONArray("pendingSic")?.let{a->for(n in 0 until a.length())Text("SIC pendiente: ${a.optString(n)}")}
+                            SicContributionPolicy.pending(p).forEach{Text("SIC pendiente: $it")}
+                            SicContributionPolicy.disabledPending(p).forEach{Text("Aporte deshabilitado en esta instalación; no exigido: $it")}
                         }
                         DriveDeliveryPresentation.json(i.receiptJson)?.let{ack->
                             Text("Destino del último ACK: ${ack.optString("logicalPath")}")

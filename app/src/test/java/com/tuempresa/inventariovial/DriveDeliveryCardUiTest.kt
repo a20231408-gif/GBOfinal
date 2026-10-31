@@ -30,6 +30,17 @@ import java.io.File
 class DriveDeliveryCardUiTest {
     @get:Rule val ui=createAndroidComposeRule<androidx.activity.ComponentActivity>()
     @Before fun setup(){initializeIdleUiWorkers()}
+    @Test @Config(qualifiers="w800dp-h1280dp-mdpi") fun permanentBridgeConflictKeepsIdentityAndMovesPendingFieldDetailsBehindTechnicalSection(){
+        val original=deliveryFixture();val prepared=org.json.JSONObject(original.preparedJson!!).put("pendingSic",org.json.JSONArray(listOf("SIC-17: FICTITIOUS_REQUIRED_DATE","SIC-17A: FICTITIOUS_DISABLED_A","SIC-17B: FICTITIOUS_DISABLED_B")))
+        val i=original.copy(state="ERROR",syncedRevision=0,receiptJson=null,error="BRIDGE_IDENTITY_CONFLICT",preparedJson=prepared.toString());val frozen=i.preparedJson
+        mount(i)
+        ui.onNodeWithText("! Requiere atención").assertIsDisplayed();ui.onNodeWithText("otra identidad",substring=true).assertIsDisplayed()
+        ui.onNodeWithText("Reintentar ahora").assertDoesNotExist();ui.onNodeWithText("SIC pendiente:",substring=true).assertDoesNotExist()
+        ui.onNodeWithText("+ Detalles técnicos").performScrollTo().performClick()
+        ui.onNodeWithText("SIC pendiente: SIC-17: FICTITIOUS_REQUIRED_DATE").performScrollTo().assertExists()
+        if(!BuildConfig.SIC17A_ENABLED)ui.onNodeWithText("Aporte deshabilitado en esta instalación; no exigido: SIC-17A: FICTITIOUS_DISABLED_A").performScrollTo().assertExists()
+        assertEquals(frozen,i.preparedJson);assertNull(i.receiptJson)
+    }
     @Test fun stagingProgressIsVisibleBeforeOpeningTechnicalDetailsAndNeverClaimsFinalAck() {
         val i=deliveryFixture().copy(state="UPLOADING",syncedRevision=0)
         val id=DriveDeliveryIdentity("Puente ficticio","Ruta ficticia",2,true)

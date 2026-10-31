@@ -69,8 +69,7 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                     }
                     missingSicFormat=format.takeIf{preview.missingRequired.isNotEmpty()}
                     if(preview.missingRequired.isNotEmpty())message=message.orEmpty()+" · Pendientes: "+preview.missingRequired.joinToString()
-                    runCatching{com.tuempresa.inventariovial.localfiles.LocalDeliveryScheduling.afterExport(context,controller.localDatabase,"SCAP",saved.inspection.id)}
-                        .onFailure{message=message.orEmpty()+" · Drive pendiente: Android reintentará la programación."}
+                    // Explicit document export is local; the original-record outbox owns Drive.
                     return@launch
                 }
                 controller.localScapPackage(saved.inspection.id).await()
@@ -174,11 +173,14 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         dismissButton={TextButton(onClick={warningAction=null}){Text("Cancelar")}})}
     var sicDiagnostic by remember {mutableStateOf(false)}
     sic.forEach{p->
+        val enabled=com.tuempresa.inventariovial.core.SicContributionPolicy.enabled(p.format)
         Card(Modifier.fillMaxWidth().padding(vertical=4.dp)) {
             Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
                 Text(p.format,style=MaterialTheme.typography.titleMedium)
-                if(p.missingRequired.isNotEmpty()) Text("${p.format}: pendientes: ${p.missingRequired.joinToString()}. El Excel se genera con celdas vacías y se identifica como provisional.",color=MaterialTheme.colorScheme.error)
-                if(p.missingOptional.isNotEmpty()) Text("Se exportan vacíos: ${p.missingOptional.joinToString()}.")
+                if(!enabled)Text("Aporte opcional deshabilitado para la entrega. Los datos existentes se conservan.")
+                else if(p.missingRequired.isNotEmpty())Text("${p.format}: datos por completar. La copia local será provisional; consulta Diagnóstico técnico SIC.",color=MaterialTheme.colorScheme.error)
+                if(sicDiagnostic&&p.missingRequired.isNotEmpty())Text("Campos pendientes de ${p.format}: ${p.missingRequired.joinToString()}")
+                if(sicDiagnostic&&p.missingOptional.isNotEmpty()) Text("Se exportan vacíos: ${p.missingOptional.joinToString()}.")
                 if(sicDiagnostic) p.pending.forEach{Text("• $it",style=MaterialTheme.typography.bodySmall)}
                 Text("Actualiza un único Excel por ruta con las filas locales válidas, conservando la última versión válida de las fichas en corrección. No contiene datos de otras tablets que no se hayan recibido.",style=MaterialTheme.typography.bodySmall)
                 OutlinedButton(enabled=ready && !busy && !packageBusy,onClick={export(p.format)}){Text("Exportar ${p.format}")}

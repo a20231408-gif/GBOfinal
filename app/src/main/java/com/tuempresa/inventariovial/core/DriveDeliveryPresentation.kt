@@ -11,7 +11,7 @@ import com.tuempresa.inventariovial.scap.domain.*
 data class DriveDeliveryIdentity(val title:String,val location:String,val currentRevision:Long?,val validated:Boolean,val format:String="",
     val issue:String?=null,val target:ScapFieldRoute?=null,val provisional:Boolean=false,val onlyDevice:Boolean=false)
 enum class DriveDeliveryStatus(val label:String,val symbol:String,val priority:Int) {
-    ATTENTION("Necesita atención","!",0), VERIFYING("Verificando entrega","◌",1),
+    ATTENTION("Requiere atención","!",0), VERIFYING("Verificando entrega","◌",1),
     PREPARING("Preparando entrega","…",2), UPLOADING("Subiendo","↑",2), PENDING("Pendiente de subir","…",3), COMPLETE("Subido correctamente","✓",4)
 }
 data class DriveDeliveryView(val status:DriveDeliveryStatus,val message:String,val files:String,val confirmed:Boolean,
@@ -68,13 +68,14 @@ object DriveDeliveryPresentation {
         val complete=identity.validated&&confirmed(i,identity.currentRevision)
         val busy=i.error?.contains("(BUSY)")==true
         val error=i.error.orEmpty()
+        val bridgeConflict=!complete&&DeliveryRejectionPolicy.bridgeIdentityConflict(i)
         val localNaming=error.contains("panel oficial SCAP requiere nombres",true)
         val authorization=error.contains("UNAUTHORIZED",true)||error.contains("FORBIDDEN",true)||error.contains("(HTTP_401)")||error.contains("(HTTP_403)")
         val incompatible=error.contains("compatibilidad",true)||error.contains("panel fotográfico SCAP",true)||
             error.contains("readablePhotoNamingVersion")||error.contains("backend",true)&&i.state=="UNCONFIGURED"
         val preparation=error.startsWith("No se pudieron preparar")
         val status=when {
-            i.state=="CONFLICT" || i.state=="BLOCKED"&&!busy->DriveDeliveryStatus.ATTENTION
+            bridgeConflict || i.state=="CONFLICT" || i.state=="BLOCKED"&&!busy->DriveDeliveryStatus.ATTENTION
             !identity.validated || identity.currentRevision==null || i.state in setOf("DRAFT","PENDING_VALIDATION")->DriveDeliveryStatus.ATTENTION
             complete->DriveDeliveryStatus.COMPLETE
             identity.onlyDevice || identity.issue!=null || preparation&&!running->DriveDeliveryStatus.ATTENTION
@@ -94,6 +95,7 @@ object DriveDeliveryPresentation {
             DriveDeliveryStatus.UPLOADING->progress?.takeIf{it.revision==i.revision}?.let{SyncProgressPresentation.phase(it)} ?: "Envío en curso."
             DriveDeliveryStatus.VERIFYING->"Falta confirmar la entrega completa. La copia local se conserva."
             DriveDeliveryStatus.ATTENTION->when {
+                bridgeConflict->DeliveryRejectionPolicy.BRIDGE_MESSAGE
                 i.state=="CONFLICT"->"Revisa el conflicto de edición antes de reenviar."
                 identity.currentRevision==null->"No se pudo consultar la ficha local. Conserva los datos y solicita soporte."
                 identity.onlyDevice->"Destino Solo dispositivo. La ficha está guardada localmente; no se programó una nueva entrega Drive."
@@ -125,10 +127,10 @@ object DriveDeliveryPresentation {
         // Transfer/preparation counts are not final confirmations. Never present them as X/Y ACK.
         val count=if(complete)json(i.receiptJson)?.optJSONArray("files")?.length()else null
         val files=if(count!=null)"Archivos confirmados: $count de $count"else"Confirmación de archivos pendiente."
-        val review=identity.currentRevision!=null && !identity.onlyDevice && (identity.issue!=null || !identity.validated ||
+        val review=identity.currentRevision!=null && !identity.onlyDevice && (bridgeConflict || identity.issue!=null || !identity.validated ||
             i.state=="PENDING_VALIDATION"&&!incompatible)
         return DriveDeliveryView(status,message,files,complete,review,
-            !complete && identity.validated && identity.issue==null && !identity.onlyDevice && i.state!="CONFLICT",
+            !bridgeConflict && !complete && identity.validated && identity.issue==null && !identity.onlyDevice && i.state!="CONFLICT",
             progress?.takeIf{running && current && it.revision==i.revision && it.phase in setOf("PHOTOS","DOCUMENTS","CONFIRMING") && it.total>0}?.let{SyncProgressPresentation.files(it)})
     }
 }

@@ -101,7 +101,7 @@ class DriveDeliveryListsUiTest {
         val i=base.intent.copy(error="Fotografía rechazada (NOT_JPEG). Original conservado.")
         ui.runOnIdle{rows=rows+base.copy(intent=i,view=DriveDeliveryPresentation.view(i,base.identity,false,true,true))}
         ui.onNodeWithTag("drive-history-filter-ATTENTION").performScrollTo().performClick()
-        ui.onNodeWithText("! Necesita atención").assertExists()
+        ui.onNodeWithText("! Requiere atención").assertExists()
         ui.onNodeWithText("+ Detalles técnicos").performScrollTo().performClick()
         ui.onNodeWithText(i.error!!).assertExists()
         section(DriveDeliverySection.QUEUE);ui.onNodeWithTag("delivery-${i.key}").assertExists()

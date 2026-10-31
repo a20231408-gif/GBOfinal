@@ -24,4 +24,12 @@ class LocalCopyPresentationTest {
         val history=listOf(old,failed)
         assertEquals(failed,LocalCopyPresentation.latest(history).single());assertEquals("FICTITIOUS_FAILURE",LocalCopyPresentation.result(failed));assertEquals(old,history.first())
     }
+    @Test fun quickDocumentsPreferModernCopiesAndKeepHistoryAndOnlyAvailableOriginalAccessible(){
+        val old=job("OLD").copy(state="READY");val modern=job("MODERN","FULL_LAYOUT_V4",created=2)
+        val oldFile=LocalSharedFile("OLD_FILE",old.id,old.recordKey,"Download/UUID_FICTITIOUS/","old.pdf","application/pdf",1,"a".repeat(64),"FICTITIOUS",state="READY")
+        val fresh=oldFile.copy(id="MODERN_FILE",jobId=modern.id,relativePath="Download/Puente Ficticio/",name="modern.pdf")
+        assertEquals(listOf(fresh),LocalCopyPresentation.currentFiles(listOf(old,modern),listOf(oldFile,fresh)))
+        assertEquals(listOf(oldFile,fresh),LocalCopyPresentation.currentFiles(listOf(old,modern),listOf(oldFile,fresh),true))
+        assertEquals(listOf(oldFile),LocalCopyPresentation.currentFiles(listOf(old,modern),listOf(oldFile)))
+    }
 }
