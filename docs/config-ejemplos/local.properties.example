@@ -1,0 +1,2 @@
+# Solo referencia: crear local.properties ignorado en la raiz, con el SDK propio.
+sdk.dir=C:/Users/USUARIO/AppData/Local/Android/Sdk

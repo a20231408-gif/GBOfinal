@@ -1,0 +1,2 @@
+# No copiar sobre gradle.properties existente. Preferir -PgboValidationBuild=true.
+gboValidationBuild=true

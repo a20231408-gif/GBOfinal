@@ -1,5 +1,24 @@
 # GBO — Estado completo para continuar
 
+## Incorporación de colaboradores — 01/11/2026
+
+El propietario autorizó publicar la rama revisada y preparar coordinación, sin cambios
+funcionales. Base común funcional exacta: `b3ed30eb19340d26abc909387964a1469b46e7f1`,
+incluye íntegros Android 1.4.22/36 y candidato backend. Consultar ONBOARDING_COLABORADORES.md
+y TAREAS_EQUIPO_GBO.md para ramas propias, límites, pruebas y PR con base en la rama de trabajo.
+El SHA del cierre documental se obtiene de HEAD y debe coincidir con la referencia remota.
+La autorización de push de esta intervención sustituye el «sin push» del avance inferior.
+
+Comprobación nueva: assembleDebug con el perfil existente gboValidationBuild=true y las
+clases LocalCopyPresentationTest/SicContributionPolicyTest PASS; build total 33 s. Routing
+backend 17/17 PASS en memoria. No se modificó código ni configuración funcional. El Debug
+de validación omite endpoints/tokens; sus flags difieren del perfil oficial. No instalarlo.
+Las APK oficiales preservadas fuera de build mantienen su condición NO DISTRIBUIR.
+Ningún colaborador requiere tablet, bases reales, keystore histórico o acceso a Google.
+Los privados y el respaldo de tablet permanecen fuera de Git; no confundirlos con fixtures.
+P01–P17 siguen pendientes. No se hicieron instalaciones ni cambios en Google/main.
+
+
 ## Continuación operativa — 01/11/2026 (vigente sobre el checkpoint inferior)
 
 El usuario reanudó explícitamente el trabajo local; no autorizó push, instalación ni corte.
