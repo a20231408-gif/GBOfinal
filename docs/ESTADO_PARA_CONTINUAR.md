@@ -1,5 +1,78 @@
 # GBO — Estado completo para continuar
 
+## Continuación operativa — 01/11/2026 (vigente sobre el checkpoint inferior)
+
+El usuario reanudó explícitamente el trabajo local; no autorizó push, instalación ni corte.
+Base conservada `0d3e2f50d00de45c1bd2eb9009de7af32b8f7ec4`.
+Android local `eaf2a78d541e1a4c8f0468e5e7735dd447d42edc`, backend local
+`185eef4ef839ee62cc21c136000d6487d5f80414`. La publicación anterior sigue siendo 0d3e2f5;
+no confundir estos commits locales con un nuevo push. Dos documentos ajenos a GBO sin
+seguimiento se conservaron sin incluirlos en commits.
+
+**Versión candidata actual: 1.4.22 (36), package original, Room 21 intacto.** Corrige una
+regeneración/reintento manual de copia antes automática que podía programar Drive: la acción
+manual ahora guarda automatic=false. No modifica preparación, UUID, revisión, ACK ni originales.
+El sobre de staging añade kind/recordId/identityId/bridgeCode/baseRevision del snapshot: permite
+enrutar una preparación histórica conservando el canonical hash. Nuevo tramo ya integrado se
+compiló y probó en UI simulada (ruta requerida, cancelar y transacción). No es validación física.
+
+Selección final **82/82 Android PASS**, once clases; backend **48/48 PASS**, cinco archivos,
+incluye diecisiete casos nuevos de routing. Sin errores/omitidos. Primera selección Android
+24/24, incluida en la ampliada; no sumar repeticiones. XML/logs separados en
+`tmp/avance-20261101/`. No es suite histórica completa ni evidencia HTTP productiva.
+validateReleaseConfiguration, Debug/Release y firmas PASS. **P01–P17 continúan SIN EJECUTAR,
+0/17**, tanto para 1.4.21 como para 1.4.22. No se accedió ni modificó la tablet.
+
+Coexistencia opcional implementada localmente en `DeliveryRootRouting.gs`, cerrada por defecto:
+ROOT literal permanece antiguo; UUID/key/binding/reserva/staging/journal conservan raíz,
+identidades nuevas van al destino elegido solo tras revisar ambas autoridades. Pins mantienen
+asociación key/UUID/raíz para staging antiguo. No mueve/copía ACK ni registros. Detecta identidad
+repartida/bridgeCode global, bloquea ilegibles y legacy PENDING. DRAIN_ONLY completa revisión
+pendiente/replay sin admitir nuevas autoridades. **No activar sin inventario/permiso/corte.**
+Límites reales: legacy/vídeo bloqueados en modo dual; staging SCAP sin identidad ni autoridad
+requiere revisión; consolidación sigue separada por raíz; BUSY puede abarcar toda una raíz.
+La lectura íntegra por petición necesita evaluación con el inventario real. No volver a V21
+a ciegas después de usar el destino nuevo; V21 ignora estas autoridades y marcadores.
+Paquete privado preparado en `tmp/avance-20261101/PROPUESTA_ORIGINAL_FINAL_NO_ACTIVAR/`, sin
+configurar Google ni copiarlo al editor. Detalle de propiedades y rollback en README del candidato.
+
+**2FA sigue pendiente, confirmado por el usuario en esta intervención.** No se hicieron llamadas
+Google/HTTP: V21 es el último estado acreditado, Usuarios intacto, destino sin activar, permisos
+públicos preexistentes sin cambiar. Journals reales y conflicto SCAP concreto siguen sin
+conciliación. No adoptar históricos, reintentar a ciegas, cambiar identidades o reutilizar ensayos.
+
+APK finales privadas: `C:\GBO\tmp\avance-20261101\candidata-final-1.4.22-36\`:
+
+- Debug `GBO_1.4.22_36_DEBUG_ORIGINAL_PILOTO_LOCAL.apk`, SHA256
+  `3d0f482327f764cde41b35dd72c98e079f657d6c7d2a630f4c4077dd65549cf7`.
+- Release `GBO_1.4.22_36_RELEASE_HISTORICA_NO_DISTRIBUIR.apk`, SHA256
+  `5b9186f4fe0d3a0bc4b2abe15a3a60595724c4406bcaccc0f9fdfee75ca2efbd`.
+
+Debug certificado D2E54C… coincide con último Debug de tablet; Release histórica 0DA8A2… es
+distinta, no actualizar Debug con ella. Certificados completos y verificación en el informe.
+DEX acredita endpoints/tokens originales, sin endpoint de ensayo. Flags V2=true, 17A=false,
+17B=false. Las candidatas 1.4.21 previas y 1.4.20 siguen preservadas. Ninguna candidata nueva
+instalada/distribuida; ambas APK incluyen configuración privada y NO van a Git.
+
+Se releyeron hashes de las candidatas anteriores: bytes intactos. El Debug 1.4.21 local
+se encuentra como `GBO_1.4.21.apk`; el nombre largo original permanece en el respaldo privado
+del checkpoint del 31/10. No se renombró ni restauró ningún archivo en esta intervención.
+
+Informe único de avance: `GBO_AVANCE_OPERATIVO_20261101.md`.
+Procedimiento de respaldo y ficha: `docs/PILOTO_LOCAL_RESPALDO_20261101.md`. El respaldo
+restaurable de datos reales sigue sin autorización/ejecución. El propietario navega manualmente;
+no automatizar pantallas ni pedir otras tablets. La apertura de sesión/archivo antigua solo
+acredita Debug 1.4.20 con UI 15 sincronizados/0 pendientes/1 error, no ACK remoto de los quince.
+
+Próximo encargo: respaldar de forma privada y comprobable la tablet solo con autorización;
+después aprobar instalación Debug y P01–P17. Paralelamente, cuando haya 2FA legítimo, inventario
+paginado estable y conciliación del original/destino, permisos con aprobación específica,
+revisión del uso legacy/vídeo, coste de routing y diff del mismo despliegue. Corte requiere
+aprobación expresa; luego ACK/piloto real y aprobación independiente de distribución.
+**NO-GO corte/Release general. No hacer push automático.**
+
+---
+
 ## CHECKPOINT DE TRANSFERENCIA — 31/10/2026, America/Lima (vigente)
 
 **DESARROLLO PAUSADO. Esta sección prevalece sobre todos los estados históricos inferiores.**
