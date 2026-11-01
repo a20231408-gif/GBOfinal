@@ -13,6 +13,17 @@ function gboAuthorizedRoot() {
     !Array.isArray(ancestorIds) || ancestorIds.length<1 || ancestorIds.length>16 || ancestorIds[0]!==parentId ||
     ancestorIds.some(x=>typeof x!=='string'||!x||x==='root'||x===id) || new Set(ancestorIds).size!==ancestorIds.length)
     reject('ROOT_NOT_AUTHORIZED');
+  return gboVerifyRootIdentity({id,parentId,name,parentName,ancestorIds});
+}
+
+/** Used for a second explicitly approved root; never searches by name or falls back. */
+function gboVerifyRootIdentity(spec) {
+  function reject(code,retryable) {const e=Error(code);e.code=code;e.retryable=retryable===true;throw e;}
+  const {id,parentId,name,parentName,ancestorIds}=spec;
+  if(!id||!parentId||!name||!parentName||id==='root'||parentId==='root'||id===parentId||
+    !Array.isArray(ancestorIds)||ancestorIds.length<1||ancestorIds.length>16||ancestorIds[0]!==parentId||
+    ancestorIds.some(x=>typeof x!=='string'||!x||x==='root'||x===id)||new Set(ancestorIds).size!==ancestorIds.length)
+    reject('ROOT_NOT_AUTHORIZED');
   if(typeof Drive==='undefined')reject('ADVANCED_DRIVE_REQUIRED');
   let root,ancestors,myDrive;
   try {

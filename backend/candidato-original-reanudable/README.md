@@ -1,5 +1,66 @@
 # Candidato local para GBO_Inventario original — NO DESPLEGADO
 
+## Propuesta vigente de coexistencia — 01/11/2026, NO ACTIVAR
+
+`DeliveryRootRouting.gs` añade un modo opcional y cerrado por defecto. **No se cambia
+ROOT_FOLDER_ID**: sigue identificando la raíz original, junto con su guarda y
+GBO_RESUMABLE_ROOT_ID. La raíz nueva se declara por identidad exacta en configuración
+privada separada. No mover/copiar registros, bindings, recibos, fotos ni journals.
+
+- Bajo el mismo ScriptLock, lee íntegramente los dos registros mediante iteradores, sin
+  límite de 100 ni creación de carpetas durante la selección. Si no puede leer o resolver
+  identidad, bloquea; nunca interpreta un fallo como ausencia. El presupuesto de lectura
+  es cooperativo, no garantiza duración de una llamada Drive individual.
+- Key existente, UUID padre, binding, reserva, staging o journal mantienen al propietario
+  en su raíz. Una identidad no presente en ninguna usa el destino nuevo. SIC y SCAP del
+  mismo puente permanecen juntos, aunque tengan recordId distintos. bridgeCode se comprueba
+  globalmente; identidad repartida entre raíces se rechaza y requiere revisión.
+- Un pin `root_route_v1_<hash(key)>.json` conserva la asociación key/UUID/raíz para las
+  solicitudes antiguas de staging que solo llevan key/revisión. No contiene ACK ni copia
+  registros. Android nuevo incluye también UUID padre en el sobre de staging, sin cambiar
+  el contenido congelado ni el hash. Un SCAP antiguo sin pin/registro/journal y sin UUID no
+  se adivina: `ROOT_ROUTE_RESERVATION_REQUIRED`; conciliar/actualizar cliente con respaldo.
+- Preparaciones y archivos se validan en la raíz elegida. Cada raíz conserva sus
+  consolidados EXCEL_SIC; **no se presenta una unión ficticia entre raíces**. Los nombres
+  descriptivos siguen requiriendo capacidad/flag explícitos y respetan reservas previas.
+- PENDING reanudable continúa su journal e IDs; un PENDING histórico sin versión no se
+  adopta. Conflictos de bridgeCode, UUID ausente, registro ilegible o doble autoridad se
+  conservan para conciliación. El motor transaccional y canonical hash no se relajaron.
+
+Configuración propuesta, **no establecida en Google**:
+
+- `GBO_ROOT_ROUTING_ENABLED` exactamente `true` solo tras aprobación específica del corte.
+- `GBO_ROOT_ROUTING_CONFIG` JSON: `version:1`, `oldRootId` igual al literal original,
+  `newRoot:{id,parentId,name,parentName,ancestorIds}`, `mode:"OPEN"|"DRAIN_ONLY"`,
+  `inventoryReviewed:true`, `inventorySha256` de 64 hex del inventario privado conciliado.
+  Este marcador exige una revisión humana real; no verifica por sí solo que Google fue auditado.
+  La raíz nueva pasa las mismas comprobaciones de tipo, padres, nombre y escritura. Ninguna
+  raíz puede contener a la otra. No hay valores operativos en esta fuente versionable.
+- En la primera reserva/staging enrutada, `GBO_ROOT_ROUTING_ACTIVATED` conserva la pareja
+  de IDs. Deshabilitar el modo o sustituir raíces después queda bloqueado en este candidato.
+
+**Límites que impiden declarar listo el corte:** modo dual admite únicamente reserva V2,
+staging y commit V3. APIs legacy y vídeo están bloqueadas explícitamente; no están enrutadas
+ni acreditadas. Debe inventariarse su uso/pendientes antes de activar. La guarda no soluciona
+un cliente con preparación SCAP antigua sin UUID/pin. El fencing de PENDING del adaptador
+transaccional sigue abarcando la raíz seleccionada por protección de consolidados: otras
+entregas de esa misma raíz pueden recibir BUSY; no prometer aislamiento por ficha.
+
+**Rollback tras usar ambas raíces:** poner este candidato compatible en `DRAIN_ONLY`
+mediante ventana autorizada; permite replay exacto de ACK y terminar el PENDING reanudable
+de la revisión exacta, bloqueando identidades/revisiones/reservas nuevas. Conservar ambas
+raíces accesibles y todos sus metadatos. **No volver a V21 ni quitar el módulo a ciegas:**
+V21 no conoce la raíz nueva ni respeta el marcador de activación. El procedimiento antiguo
+de volver a V21 solo resulta aplicable antes de crear autoridades nuevas y tras conciliación.
+El marcador no puede impedir que un operador despliegue manualmente código antiguo.
+
+El empaquetador conserva manifest/URL/router/autenticación y añade el control después de
+autenticar. El GET solo anuncia continuidad con configuración preparada válida; readiness
+no sustituye inventario, permisos reales, aprobación, ACK operativo o prueba física.
+
+Los apartados siguientes conservan el historial de la propuesta de una sola raíz y sus
+resultados por fecha; se subordinan a este modo opcional y sus restricciones.
+
 ## Actualización prioritaria: incidencia de destino, 30 de octubre
 
 `AuthorizedRootGuard.gs` exige cinco propiedades privadas: `GBO_AUTHORIZED_ROOT_ID`,

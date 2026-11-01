@@ -21,11 +21,12 @@ function stageRecordV3(p) {
     if(!v3Enabled())return jsonResponse({ok:false,code:'V3_DISABLED',retryable:false});
     if(p.syncProtocol!==3 || !/^(SIC|SCAP|PAVEMENT)\/[A-Za-z0-9_-]{1,80}$/.test(p.key) || !Number.isSafeInteger(p.revision) || p.revision<1)SyncV3.reject('INVALID_STAGE');
     held=lock.tryLock(30000);if(!held)return jsonResponse({ok:false,code:'BUSY',retryable:true});
-    const s=v3Store(p),f=p.file;
+    const s=v3Store(p,'stage'),f=p.file;
     if(!f || !SyncV3.component(f.key.replace(/\//g,'_')) || !/^[a-f0-9]{64}$/.test(f.sha256))SyncV3.reject('INVALID_STAGE');
     const bytes=s.decode(f.base64);if(!bytes.length || bytes.length>24*1024*1024 || s.hash(bytes)!==f.sha256)SyncV3.reject('HASH_OR_FILE_SIZE');
     if(f.mimeType==='image/jpeg'&&!s.isJpeg(bytes))SyncV3.reject('NOT_JPEG');
-    const folder=getOrCreateFolder(getOrCreateFolder(getOrCreateFolder(gboAuthorizedRoot(),'._GBO_SYNC_V3'),'STAGING'),s.hash(p.key)+'_'+p.revision);
+    s.pinRoot(p);
+    const folder=getOrCreateFolder(getOrCreateFolder(getOrCreateFolder(s.root,'._GBO_SYNC_V3'),'STAGING'),s.hash(p.key)+'_'+p.revision);
     const name=s.hash(f.key)+'_'+f.sha256+'.bin';const existing=folder.getFilesByName(name);
     let file;
     if(existing.hasNext()){file=existing.next();if(existing.hasNext())SyncV3.reject('DUPLICATE_STAGE');}
@@ -36,14 +37,16 @@ function stageRecordV3(p) {
   finally {if(held)lock.releaseLock();}
 }
 
-function v3Store(request) {
+function v3Store(request,purpose='commit') {
   // Explicitly bind activation to the current operational root. Never silently relocate journals/ACKs.
   if(PropertiesService.getScriptProperties().getProperty('GBO_RESUMABLE_ROOT_ID')!==ROOT_FOLDER_ID)
     SyncV3.reject('RESUMABLE_ROOT_NOT_APPROVED');
   if(request?.publicNamingVersion===1&&PropertiesService.getScriptProperties().getProperty('GBO_PUBLIC_NAMES_ENABLED')!=='true')SyncV3.reject('PUBLIC_NAMES_DISABLED');
   const deadline=Date.now()+85000;
   const checkpoint=()=>{if(Date.now()>deadline)v3Yield();};
-  const root=gboAuthorizedRoot();
+  if(PropertiesService.getScriptProperties().getProperty('GBO_ROOT_ROUTING_ENABLED')==='true'&&typeof gboDeliveryRoute!=='function')SyncV3.reject('ROOT_ROUTING_MODULE_REQUIRED');
+  const route=typeof gboDeliveryRoute==='function'?gboDeliveryRoute(request,purpose):{root:gboAuthorizedRoot()};
+  const root=route.root;
   const registry=getOrCreateFolder(root,'._GBO_SYNC_V3');
   const hash=bytes=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,bytes).map(x=>(x&255).toString(16).padStart(2,'0')).join('');
   const decode=s=>Utilities.base64Decode(s);
@@ -160,6 +163,7 @@ function v3Store(request) {
     return {info,d};
   }
   return {
+    root,pinRoot:p=>{if(route.dual)gboPinDeliveryRoot(route,p);},
     hash,decode,unpackWorkbook:(...a)=>v3Timed('sicUnpack',()=>unpackWorkbook(...a)),packWorkbook:(...a)=>v3Timed('sicConsolidate',()=>packWorkbook(...a)),
     deferBytes:true,
     validateStage(p,f) {
@@ -179,8 +183,10 @@ function v3Store(request) {
       if(p.kind!=='PAVEMENT' && (!family || p.familyPath!==family[0]) || p.kind==='SCAP' && p.family!=='PUENTE' ||
          p.kind==='SIC' && p.identityId!=null && p.identityId!==p.recordId || p.kind==='SCAP' && !SyncV3.component(p.identityId) ||
          p.kind==='PAVEMENT' && (p.family!=='MUESTRA' || !SyncV3.component(p.tramo) || !['ASFALTICO','RIGIDO','NO_PAVIMENTADO'].includes(p.surface)))SyncV3.reject('INVALID_FAMILY_LOCATION');
-      return PhotoNamesV2.reserve(p,{record:key=>read(filename(key)),element:elementLocation,
+      const reserved=PhotoNamesV2.reserve(p,{record:key=>read(filename(key)),element:elementLocation,
         names:id=>read('photo_names_v2_'+hash(id)+'.json'),saveNames:(id,value)=>jsonFile('photo_names_v2_'+hash(id)+'.json',value)});
+      if(route.dual)gboPinDeliveryRoot(route,p);
+      return reserved;
     },
     fileBytes(p,f) {
       if(!f.stageFileId)return decode(f.base64);
@@ -344,7 +350,7 @@ function reservePhotoNamesV2(p) {
   try {
     if(!v3Enabled() || PropertiesService.getScriptProperties().getProperty('GBO_PHOTO_NAMES_V2_ENABLED')!=='true' || typeof PhotoNamesV2==='undefined')SyncV3.reject('READABLE_NAMES_DISABLED');
     held=lock.tryLock(30000);if(!held)SyncV3.reject('BUSY',true);
-    return jsonResponse(v3Store(p).reserveReadablePhotos(p));
+    return jsonResponse(v3Store(p,'reserve').reserveReadablePhotos(p));
   }catch(e){return jsonResponse({ok:false,code:e.code || 'NAME_RESERVATION_ERROR',retryable:e.retryable===true});}
   finally {if(held)lock.releaseLock();}
 }

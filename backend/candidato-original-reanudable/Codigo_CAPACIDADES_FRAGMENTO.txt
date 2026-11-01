@@ -3,16 +3,19 @@ Conservar URL, router doPost, autenticación y ROOT_FOLDER_ID. No contiene valor
 
 rootGuardVersion: 1,
 rootGuardReady: gboRootReady(),
-commitContinuationVersion: typeof v3Enabled === 'function' && v3Enabled() && gboRootReady() &&
+rootRoutingVersion: typeof gboRootRoutingReady === 'function' && gboRootRoutingReady() ? 1 : 0,
+commitContinuationVersion: typeof v3Enabled === 'function' && v3Enabled() && gboDeliveryBackendReady() &&
   PropertiesService.getScriptProperties().getProperty('GBO_RESUMABLE_ROOT_ID') === ROOT_FOLDER_ID ? 1 : 0,
-publicNamingVersion: typeof v3Enabled === 'function' && v3Enabled() && gboRootReady() &&
+publicNamingVersion: typeof v3Enabled === 'function' && v3Enabled() && gboDeliveryBackendReady() &&
   typeof PublicDeliveryNames !== 'undefined' &&
   PropertiesService.getScriptProperties().getProperty('GBO_RESUMABLE_ROOT_ID') === ROOT_FOLDER_ID &&
   PropertiesService.getScriptProperties().getProperty('GBO_PUBLIC_NAMES_ENABLED') === 'true' ? 1 : 0,
 
 No anunciar capacidades adicionales (en particular SIC cronológico de Pavimentos) que el original no implemente.
 
-Añadir AuthorizedRootGuard.gs y el control del router posterior a autenticar, antes de derivar acciones.
+Añadir AuthorizedRootGuard.gs y DeliveryRootRouting.gs; después de autenticar y antes de
+derivar acciones, ejecutar gboAuthorizedRoot() y gboAssertRootRoutingAction(data).
+El modo dual bloquea legacy/vídeo no enrutados. Consultar README antes de habilitarlo.
 Reemplazar TODOS los accesos DriveApp.getFolderById(ROOT_FOLDER_ID) de Código.gs y VideoV1.gs
 por gboAuthorizedRoot(); el empaquetador local aplica estos cambios sin cambiar la raíz literal.
 Las propiedades GBO_AUTHORIZED_ROOT_ID, GBO_AUTHORIZED_ROOT_PARENT_ID,

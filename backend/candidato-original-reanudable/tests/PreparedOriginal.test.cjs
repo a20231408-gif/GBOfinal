@@ -7,7 +7,7 @@ function prepared(){
  const e=env('INTEGRADO');e.props.GBO_RESUMABLE_ROOT_ID=ROOT;
  require('./RootGuardMock.cjs').rootGuardMock(e);
  const context=vm.createContext({...e.context});
- for(const name of ['Codigo','AuthorizedRootGuard','ScapPhotoPanelV2','SicObservationsV1Core','VideoNamesV2Core','VideoV1Core','VideoV1','PublicDeliveryNames','SyncV3Core','PhotoNamesV2Core','SyncV3']){
+ for(const name of ['Codigo','AuthorizedRootGuard','DeliveryRootRouting','ScapPhotoPanelV2','SicObservationsV1Core','VideoNamesV2Core','VideoV1Core','VideoV1','PublicDeliveryNames','SyncV3Core','PhotoNamesV2Core','SyncV3']){
   let source=fs.readFileSync(path.join(original,name+'.gs'),'utf8');
   if(name==='Codigo'){
    const pattern=/^const ROOT_FOLDER_ID\s*=.*?;/m;assert.ok(pattern.test(source),'Root declaration absent; no private value printed.');
@@ -43,4 +43,15 @@ test('missing approval root cannot advertise continuation or mutate the operatio
  const {e,context,json}=prepared();delete e.props.GBO_RESUMABLE_ROOT_ID;
  assert.equal(json(context.doGet()).commitContinuationVersion,0);const before=e.writes.length;
  assert.equal(json(context.commitRecordV3({})).code,'RESUMABLE_ROOT_NOT_APPROVED');assert.equal(e.writes.length,before);
+});
+
+test('prepared authenticated router refuses unreviewed dual-root and video/legacy paths before writes',()=>{
+ const {e,context,json}=prepared();e.props.GBO_ROOT_ROUTING_ENABLED='true';
+ assert.equal(json(context.doGet()).commitContinuationVersion,0);assert.equal(json(context.doGet()).rootRoutingVersion,0);
+ const before=e.writes.length;
+ for(const action of ['beginVideoV1','finishVideoV1','uploadScap','uploadSicExport','uploadDeliveryFile','uploadPavementFile']){
+  const reply=json(context.doPost({postData:{contents:JSON.stringify({token:e.props.GBO_DRIVE_API_TOKEN,action})}}));
+  assert.equal(reply.code,'ROOT_ROUTE_UNSUPPORTED_ACTION',action);
+ }
+ assert.equal(e.writes.length,before);
 });
