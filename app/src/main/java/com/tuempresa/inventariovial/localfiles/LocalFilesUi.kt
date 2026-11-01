@@ -84,8 +84,10 @@ import java.io.File
         if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
     if(filtered.size>latest.size||latest.size>6)TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
-    val visibleJobs=if(history)filtered.map{it.id}.toSet()else latest.map{it.id}.toSet()
-    val items=files.filter{it.state=="READY"&&it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
+    val visibleJobs=filtered.map{it.id}.toSet()
+    // Keep the last verified copy accessible while a newer attempt is pending or failed.
+    val items=LocalCopyPresentation.currentFiles(filtered,files,history)
+        .filter{it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
     items.take(visible).forEach{SavedFileActions(it)}
     if(items.size>visible)TextButton(onClick={visible+=12}){Text("Ver más archivos (${items.size})")}
 }
