@@ -182,6 +182,9 @@ class SyncRecovery10DTest {
                 val buffer=Buffer();request.body!!.writeTo(buffer);val p=JSONObject(buffer.readUtf8())
                 when(p.getString("action")) {
                     "stageRecordV3"->{val f=p.getJSONObject("file");val key=f.getString("key");stages[key]=(stages[key]?:0)+1
+                        assertEquals(prepared.getString("identityId"),p.getString("identityId"))
+                        assertEquals(prepared.getString("recordId"),p.getString("recordId"))
+                        assertEquals("SCAP",p.getString("kind"));assertEquals(prepared.getLong("baseRevision"),p.getLong("baseRevision"))
                         JSONObject().put("ok",true).put("key",p.getString("key")).put("revision",p.getLong("revision"))
                             .put("fileKey",key).put("sha256",f.getString("sha256")).put("stageFileId","stage-$key")}
                     else->{commits++;if(commits==1)throw IOException("TEST lost ACK after server commit");receipt(p)}

@@ -140,6 +140,9 @@ class AutomaticDriveHttp internal constructor(
             val staged=JSONObject(file.toString()).apply {remove("localFile");put("base64",Base64.encodeToString(bytes,Base64.NO_WRAP))}
             metric(if(file.getString("key").startsWith("photo/"))"PHOTO_PREPARE" else "FILE_PREPARE",fileStart,bytes.size.toLong())
             val ack=send(JSONObject().put("action","stageRecordV3").put("syncProtocol",3).put("key",commit.getString("key"))
+                .put("kind",commit.getString("kind")).put("recordId",commit.getString("recordId"))
+                .put("identityId",commit.optString("identityId",commit.getString("recordId")))
+                .put("bridgeCode",commit.optString("bridgeCode")).put("baseRevision",commit.getLong("baseRevision"))
                 .put("revision",commit.getLong("revision")).put("file",staged))
             if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))
             require(ack.optString("key")==commit.getString("key") && ack.optLong("revision")==commit.getLong("revision") &&

@@ -75,6 +75,29 @@ class FieldSessionFormsTest {
         compose.onAllNodesWithText(bed).onFirst().performScrollTo().assertIsDisplayed()
     }
 
+    @Test fun newSegmentRequiresRouteAndCancelPreservesSessionThenStartsThroughTheExistingTransaction() {
+        val vm=model();var show by mutableStateOf(true);var started=false
+        compose.setContent {MaterialTheme {if(show) com.tuempresa.inventariovial.field.SessionDialog(vm.field,
+            onClose={show=false},requireRoute=true,onStarted={started=true;show=false}) else Text("Listado conservado")}}
+        val old=start(vm,"PE-22A","CD")
+        val db=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(ApplicationProvider.getApplicationContext())
+        val intent=deliveryFixture().copy(key="SCAP/FICTITIOUS_PENDING_SEGMENT",recordId="FICTITIOUS_PENDING_SEGMENT",state="CONFLICT")
+        runBlocking {db.automaticSyncDao().put(intent)}
+        compose.onNodeWithText("Iniciar").performClick()
+        compose.onNodeWithText("Selecciona la ruta del nuevo tramo.").assertExists()
+        assertEquals(old,runBlocking{vm.field.dao.currentSession()})
+        compose.onNodeWithText("Cancelar").performClick();assertFalse(started)
+        assertEquals(old,runBlocking{vm.field.dao.currentSession()});assertEquals(intent,runBlocking{db.automaticSyncDao().get(intent.key)})
+        compose.runOnIdle {show=true}
+        compose.onNodeWithText("Sin ruta").performClick();compose.onNodeWithText("PE-28H").performClick()
+        compose.onNodeWithText("Iniciar").performClick()
+        compose.waitUntil(30_000){compose.waitForIdle();org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();started}
+        val current=runBlocking{vm.field.dao.currentSession()!!}
+        assertNotEquals(old.sessionId,current.sessionId);assertEquals("PE-28H",current.road)
+        assertNotNull(runBlocking{vm.field.dao.sessionById(old.sessionId)}!!.endTime)
+        assertEquals(intent,runBlocking{db.automaticSyncDao().get(intent.key)})
+    }
+
     @Test fun bothSessionChoicesReachSignalsAssetsAndAllStandaloneSicFormsAfterReturningHome() {
         val vm=model()
         var screen by mutableStateOf<String?>(null)

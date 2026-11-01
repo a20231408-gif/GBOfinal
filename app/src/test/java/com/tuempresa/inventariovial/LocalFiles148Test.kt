@@ -60,6 +60,28 @@ class LocalFiles148Test {
         val j=job(d).copy(automatic=true,createdAt=0);d.localFilesDao().saveJob(j);LocalCopyDrain.run(c,d,FakeStorage())
         assertEquals("READY",d.localFilesDao().job(j.id)!!.state);assertEquals("SIC/TEST_RECORD",d.automaticSyncDao().all().single().key);assertEquals(record,d.inventoryDao().recordById(record.id))
     }}
+    @Test fun manualRegenerationOfAnOldAutomaticCopyDoesNotScheduleDriveOrChangeItsFrozenPlan()=runBlocking{db().use{d->
+        val record=testRecord("TEST_RECORD").copy(status="ACTIVE",updatedAt=100);d.inventoryDao().insertRecord(record)
+        val old=job(d).copy(automatic=true,state="READY",createdAt=0);d.localFilesDao().saveJob(old)
+        val bytes=File(LocalPlan.parse(old.manifestJson!!).files.single().source).readBytes()
+        LocalCopies.request(c,d,"SIC",record.id,100,scope="DOCUMENT",automatic=false)
+        assertFalse(d.localFilesDao().job(old.id)!!.automatic)
+        LocalCopyDrain.run(c,d,FakeStorage())
+        val saved=d.localFilesDao().job(old.id)!!
+        assertEquals("READY",saved.state);assertEquals(old.manifestJson,saved.manifestJson)
+        assertTrue(d.automaticSyncDao().all().isEmpty());assertEquals(record,d.inventoryDao().recordById(record.id))
+        assertArrayEquals(bytes,File(LocalPlan.parse(saved.manifestJson!!).files.single().source).readBytes())
+    }}
+    @Test fun manualRetryOfFailedAutomaticCopyPreservesExistingAckAndNeverQueuesANewRemoteRevision()=runBlocking{db().use{d->
+        val record=testRecord("TEST_RECORD").copy(status="ACTIVE",updatedAt=100);d.inventoryDao().insertRecord(record)
+        val prior=DriveSyncIntent("SIC/TEST_RECORD","SIC","TEST_RECORD",100,state="SYNCED",syncedRevision=100,
+            receiptJson="{\"immutableAck\":true}",preparedJson="{\"immutableRevision\":100}")
+        d.automaticSyncDao().put(prior)
+        val old=job(d).copy(automatic=true,state="PARTIAL",createdAt=0);d.localFilesDao().saveJob(old)
+        LocalCopies.retry(c,d,old.id);LocalCopyDrain.run(c,d,FakeStorage())
+        assertEquals("READY",d.localFilesDao().job(old.id)!!.state);assertFalse(d.localFilesDao().job(old.id)!!.automatic)
+        assertEquals(prior,d.automaticSyncDao().get(prior.key));assertEquals(old.manifestJson,d.localFilesDao().job(old.id)!!.manifestJson)
+    }}
     @Test fun shortWriteCannotBeMarkedReadyAndRetryReusesPendingSlot()=runBlocking{db().use{d->
         val j=job(d);val s=FakeStorage().apply{shortWrite=true};LocalCopyDrain.run(c,d,s)
         assertEquals("PARTIAL",d.localFilesDao().job(j.id)!!.state);assertFalse(s.entries.values.single().published);assertTrue(d.localFilesDao().files(j.id).none{it.state=="READY"})

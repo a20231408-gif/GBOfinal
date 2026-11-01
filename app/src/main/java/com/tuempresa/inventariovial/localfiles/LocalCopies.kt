@@ -39,7 +39,7 @@ object LocalCopies {
         }
         val job=old ?: LocalExportJob(jobId,key,kind,id,revision,scope,automatic=automatic)
         if(old==null)dao.saveJob(job)
-        else if(!automatic&&old.state !in setOf("QUEUED","RUNNING"))dao.saveJob(old.copy(state="QUEUED",message="Revisando la copia local…"))
+        else if(!automatic&&old.state !in setOf("QUEUED","RUNNING"))dao.saveJob(old.copy(state="QUEUED",automatic=false,message="Revisando la copia local…"))
         wake(c);job
     }
     suspend fun requestCurrent(c:Context,db:InventoryDatabase,kind:String,id:String,scope:String="FULL",automatic:Boolean=false){
@@ -55,7 +55,7 @@ object LocalCopies {
             if(it.state in setOf("QUEUED","RUNNING"))return@withTransaction
             val current=DeliveryDestination.revision(db,it.kind,it.recordId)
             if(it.manifestJson==null && current!=null && current!=it.revision)request(c,db,it.kind,it.recordId,current,it.scope)
-            else db.localFilesDao().saveJob(it.copy(state="QUEUED",message="Reintentando copia local…"))
+            else db.localFilesDao().saveJob(it.copy(state="QUEUED",automatic=false,message="Reintentando copia local…"))
             wake(c)
         };Unit
     }
