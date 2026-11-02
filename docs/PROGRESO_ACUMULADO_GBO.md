@@ -1,5 +1,59 @@
 # Progreso acumulado — 02/11/2026
 
+## Dictamen de alta NUEVA antes de publicación (vigente)
+
+**NO LISTO PARA PUBLICAR.** Por decisión del propietario, recuperación histórica queda fuera de
+este cierre. La eliminación definitiva tampoco condiciona la aceptación de una ficha nueva.
+APK 1.4.26/40 existente y verificada sigue sin cambios ni instalación: no recompilar por este dictamen.
+
+Con sesión GBO ya abierta en @Browser, inspección de solo lectura confirma V21 y deployment/URL
+original. La misma configuración muestra «Yo (personal)» desde personal y «Yo (GBO)» desde GBO:
+esa etiqueta depende de sesión y NO identifica por sí sola al desplegador/ejecutor efectivo.
+Propietario del proyecto distinto de GBO, rol Editor acreditado. Raíz antigua: GBO Editor explícito,
+propietario de otra cuenta; carpetas técnicas y de rutas visibles pertenecen a personal. Acceso general
+actual de raíz: enlace con Lector, no Editor. No se modificó nada. La cuenta GBO muestra almacenamiento
+contratado, pero eso no prueba a quién se imputan nuevas cargas del endpoint.
+
+Validación adicional PRIVADA contra SyncV3/SyncV3Core V21 exactos: **15/15 PASS** usando harness
+Drive en memoria y ejemplos sintéticos, fuera del repositorio/capturas. Cubre nuevas altas, rutas,
+SCAP, consolidación SIC14/18, archivos y ACK, idempotencia y fallos. Otra prueba **1/1 PASS** ejecuta
+doGet EXTRAÍDO solo en VM local con flags mock y verifica protocolos 3/4, nombres V2, panel SCAP v2
+y las veinte categorías oficiales. Con flags desactivados no anuncia compatibilidad. No se ejecutó
+doGet remoto ni se leyeron valores de propiedades secretas. Evidencia privada:
+validacion-ficha-nueva-v21/server y tests.log en carpeta clasp. No sumar como prueba real ni confundir
+capacidad del código con flags/permisos efectivos. Selecciones ya acreditadas: Android 154/154 y
+backend administrativo/lectores/modelos 65/65; no repetidas sin cambios.
+
+Integrado en rama candidata: presentación sync #5, previsualización bloqueada #6 y módulos #7.
+Solo V21 está publicado; estos PR no fueron fusionados en GitHub. Backend administrativo requiere
+Users/verificador/inspector/backup reales y cableado de guardas; continúa desactivado, sin rutas nuevas.
+El modelo de eliminación sigue simulado. Captura/exportación se realiza Android; V21 recibe, valida,
+publica archivos y consolida SIC con ACK. Fuente V21 soporta alta nueva si las capacidades y permisos
+reales coinciden; no se ha demostrado que un cambio de backend sea indispensable para esa alta.
+
+Bloqueos concretos para publicar nuevas fichas:
+1. Confirmar ejecutor/desplegador y que los archivos NUEVOS pertenezcan a GBO, no inferirlo del visor.
+2. Consultar capacidades efectivas y acreditar una entrega nueva extremo a extremo: reserva, archivos,
+   documentos legibles, hashes/IDs/revisión del ACK y reapertura local. Ni mocks ni sesión Editor bastan.
+3. Aceptación de la APK 40 en dispositivo con respaldo actualizado y autorización de actualización.
+
+Mínima prueba REAL propuesta, NO ejecutada ni autorizada: una entrega SCAP ficticia de revisión 1 y
+UUID nuevo, sin vídeos, con documentos/fotos sintéticos y aporte SIC17 conforme a flags (17A/B apagados),
+utilizando configuración Android original y endpoint V21. Ruta ficticia única aprobada, precomprobada
+ausente tanto pública como técnicamente, para NO sobrescribir consolidados de rutas reales. No basta
+que el puente tenga otro nombre: EXCEL_SIC es compartido por ruta. El selector Android usa catálogo;
+no inventar que admite ruta libre. Si no se dispone de ruta ficticia autorizada en el cliente, primer
+ensayo backend puede usar payload generado por el código Android en fixture local con esa ruta;
+esto NO sustituye prueba de captura física y debe informarse como tal. No usar una ruta real sin
+autorización adicional de actualización de su consolidado.
+
+Antes de la prueba: aprobar expresamente la única carga, sus IDs/raíz/ruta y nuevos archivos/carpetas
+técnicos necesarios; aprobar aparte o en el mismo acto el respaldo/actualización y la captura física
+si se harán en tablet. Registrar capacidad antes, enviar una vez, verificar ACK/hashes/propietario GBO
+y ausencia de modificación de registros preexistentes; un solo replay idempotente si se incluye en la
+autorización. Ante fallo no borrar, migrar, reintentar indiscriminadamente ni cambiar endpoint/ROOT.
+NO necesita desplegar el backend de eliminación, ni cambiar V21, ni recuperar entregas históricas.
+
 ## Candidata integrada local y sesión web (estado más reciente)
 
 Rama codex/candidata-final-local-20261102. Merge LOCAL normal de #5 sobre la fuente que ya incluye
