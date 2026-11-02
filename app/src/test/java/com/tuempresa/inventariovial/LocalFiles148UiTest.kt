@@ -43,6 +43,42 @@ class LocalFiles148UiTest {
         ui.onNodeWithText("ARCHIVO GUARDADO · anterior.pdf").assertDoesNotExist()
         runBlocking{assertEquals(previous,d.localFilesDao().files(old.id).single());assertEquals(old,d.localFilesDao().job(old.id));assertTrue(d.automaticSyncDao().all().none{it.key==key})}
     }
+    @Test fun failedRegenerationKeepsLastReadyCopyVisibleUntilReplacementIsPublished(){
+        val d=InventoryDatabase.getInstance(c);val key="SCAP/TEST_UI_FAILED_REGENERATION"
+        val old=LocalExportJob("UI_READY_BEFORE_FAILURE",key,"SCAP","TEST_UI_FAILED_REGENERATION",1,
+            scope="FULL",state="READY",createdAt=1,completed=1,total=1)
+        val replacement=old.copy(id="UI_FAILED_REGENERATION",scope="FULL_LAYOUT_V4",state="FAILED",
+            createdAt=2,completed=0,total=0,message="No hay espacio para guardar la copia local.")
+        val previous=LocalSharedFile("UI_READY_BEFORE_FAILURE_FILE",old.id,key,"Download/GBO_Ruta_Clara/Puente Ficticio/",
+            "conservado.pdf","application/pdf",1,"a".repeat(64),"FICTITIOUS_ORIGINAL","content://fictitious/retained","READY")
+        runBlocking{d.localFilesDao().saveJob(old);d.localFilesDao().saveJob(replacement);d.localFilesDao().saveFile(previous)}
+        ui.setContent{MaterialTheme{androidx.compose.foundation.layout.Column{LocalFilesList(key)}}}
+        ui.waitUntil(5000){ui.onAllNodesWithText(replacement.message!!).fetchSemanticsNodes().isNotEmpty()}
+        ui.onNodeWithText("Reintentar copia local").assertExists()
+        ui.onNodeWithText("ARCHIVO GUARDADO · conservado.pdf").assertExists()
+        ui.onNodeWithText("Ver historial y todas las copias (2)").performClick()
+        ui.onNodeWithText("ARCHIVO GUARDADO · conservado.pdf").assertExists()
+        ui.onNodeWithText("Ocultar copias anteriores").performClick()
+
+        // A reserved but unverified replacement must not hide the usable document either.
+        val current=previous.copy(id="UI_REPLACEMENT_FILE",jobId=replacement.id,name="regenerado.pdf",
+            uri="content://fictitious/replacement",state="WRITING")
+        runBlocking{d.localFilesDao().saveFile(current);d.localFilesDao().saveJob(replacement.copy(state="RUNNING",total=1))}
+        ui.waitUntil(5000){ui.onAllNodesWithText("Guardando copia local: 0/1 verificados").fetchSemanticsNodes().isNotEmpty()}
+        ui.onNodeWithText("ARCHIVO GUARDADO · conservado.pdf").assertExists()
+        ui.onNodeWithText("ARCHIVO GUARDADO · regenerado.pdf").assertDoesNotExist()
+
+        runBlocking{d.localFilesDao().saveFile(current.copy(state="READY"));d.localFilesDao().saveJob(replacement.copy(state="READY",completed=1,total=1))}
+        ui.waitUntil(5000){ui.onAllNodesWithText("ARCHIVO GUARDADO · regenerado.pdf").fetchSemanticsNodes().isNotEmpty()}
+        ui.onNodeWithText("ARCHIVO GUARDADO · conservado.pdf").assertDoesNotExist()
+        ui.onNodeWithText("Ver historial y todas las copias (2)").performClick()
+        ui.onNodeWithText("ARCHIVO GUARDADO · conservado.pdf").assertExists()
+        ui.onNodeWithText("ARCHIVO GUARDADO · regenerado.pdf").assertExists()
+        runBlocking{
+            assertEquals(old,d.localFilesDao().job(old.id));assertEquals(previous,d.localFilesDao().files(old.id).single())
+            assertTrue(d.automaticSyncDao().all().none{it.key==key})
+        }
+    }
     @Test fun savedFileButtonsAndMissingAccess(){
         val f=LocalSharedFile("TEST","JOB","SIC/TEST","Download/GBO_Ruta_Clara/SIC/","test.pdf","application/pdf",1,"a".repeat(64),"TEST_SOURCE","content://missing.document/test","READY")
         ui.setContent{MaterialTheme{SavedFileActions(f)}}
