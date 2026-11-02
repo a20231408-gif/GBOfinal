@@ -1,5 +1,32 @@
 # Progreso acumulado — 02/11/2026
 
+## Acta única de prueba integral autorizada 1.4.26 — DETENIDA ANTES DE ESCRIBIR
+
+**NO-GO.** La autorización de una sola ficha se recibió; sus condiciones de aislamiento no pudieron
+acreditarse. No se instaló, respaldó, creó, descartó/restauró ni envió ninguna ficha en esta intervención.
+No se modificó red, tablet, permisos, configuración, V21 o Drive.
+
+| Comprobación | Resultado |
+|---|---|
+| APK autorizada 1.4.26/40 | SHA256 recalculado coincide: 47492403eee0c9615742094ca5c646c5aae410591a443c1c3dbdb1e5ea34ef32. |
+| Capacidades reales V21 | GET del endpoint original mediante @Browser, sin POST: ok=true, syncProtocol=3, pathVersion=4, readablePhotoNamingVersion=2, scapPhotoPanelVersion=2, technicalDeliveryWithoutGps=true; inventoryLifecycleVersion=0. |
+| Identidad efectiva del endpoint | NO VERIFICADA: la respuesta no identifica al ejecutor y el selector Yo cambia con la sesión. Las comprobaciones previas de sesión/Editor no sustituyen esa evidencia. |
+| ADB Xiaomi | NO DETECTADA: lista sin dispositivos. No se puede comprobar instalación, modo avión, Wi-Fi ni estado actual de colas/datos. |
+| Aislamiento de envío | NO GARANTIZADO. AutomaticSync.manual/retry programa el drain global. AutomaticSyncWorker.drain recupera estados y selecciona dao.all() con estados elegibles, sin filtro de UUID de piloto. Puede enviar otras entregas previas al conectar. |
+| Ruta ficticia | NO APROBADA COMO SEGURA: catálogo Android cerrado, ausencia remota no comprobada. No se creó ni escogió ruta real para evitar sobrescribir consolidado. |
+| Respaldo nuevo / instalación | NO EJECUTADOS; cuatro respaldos previos preservados. |
+| Filtros, borradores y restauración físicos | NO EJECUTADOS en 1.4.26. No atribuir a esta versión los PASS de 1.4.25. |
+| Nueva ficha / archivos / hashes / ACK / propietario | NO EJECUTADOS, no existe entrega real de este ensayo. Sin ACK ni propietario nuevos que acreditar. |
+
+Bloqueos que deben resolverse antes de reanudar la misma prueba autorizada: Xiaomi disponible por USB,
+estado actual respaldado/verificado, demostrar aislamiento de todas las rutas de envío automático y
+manual (no basta pulsar la ficha), identidad efectiva institucional y destino ficticio seguro sin modificar
+consolidados existentes. No mover estados de outbox ni borrar pendientes para fabricar aislamiento.
+Un transporte externo acotado probaría backend, pero NO sustituye la prueba integral física solicitada.
+No cambiar silenciosamente la APK autorizada ni introducir otra versión bajo el mismo nombre/hash.
+La autorización recibida no permite saltarse estas condiciones; detener el ensayo es su cumplimiento.
+
+
 ## Dictamen de alta NUEVA antes de publicación (vigente)
 
 **NO LISTO PARA PUBLICAR.** Por decisión del propietario, recuperación histórica queda fuera de
