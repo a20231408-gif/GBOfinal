@@ -1,5 +1,22 @@
 # GBO — Estado completo para continuar
 
+## Auditoría operativa iniciada — 01/11/2026
+
+El usuario recuperó acceso legítimo a GBO y autorizó solo lecturas del backend original.
+Sesión GBO confirmada en el editor; `PreflightReadonly.gs` leído íntegro sin editar fuente.
+La ejecución de `gboPilotInventoryReadonly` mostró «Se requiere autorización»; el último
+registro observado no tiene salida. Consentimiento oficial delegado al usuario. No hay
+totales reales ni estabilidad/conciliación acreditados todavía. No confundir este bloqueo
+OAuth con el antiguo bloqueo de segundo factor ni con una ejecución aprobada.
+
+El conector Drive devuelve anyone:writer en destino y sus dos ancestros; no acredita
+herencia, padres ni capacidades del ejecutor GBO. No se cambiaron permisos. El auditor
+actual solo inventaría la raíz antigua y requiere complemento para staging, reservas,
+legacy/vídeo y bridgeCode del conflicto concreto. Informe de avance y acciones exactas:
+`docs/AUDITORIA_BACKEND_OPERATIVA_20261101.md`. NO-GO; ninguna activación/publicación/entrega.
+El respaldo privado de tablet sí fue verificado después del informe histórico inferior;
+no se instaló la candidata y P01–P17 siguen **0/17**. Android continúa 1.4.22 (36).
+
 ## Incorporación de colaboradores — 01/11/2026
 
 El propietario autorizó publicar la rama revisada y preparar coordinación, sin cambios
