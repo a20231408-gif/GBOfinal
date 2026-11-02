@@ -86,6 +86,7 @@ object LocalInventoryIndex {
     val drive by db.automaticSyncDao().observe().collectAsState(emptyList())
     val choices by db.localFilesDao().choices().collectAsState(emptyList())
     var detail by rememberSaveable{mutableStateOf<String?>(null)}
+    var removalPreview by remember{mutableStateOf<List<RemovalPreview.Row>?>(null)}
     var search by rememberSaveable{mutableStateOf("")};var route by rememberSaveable{mutableStateOf("")}
     var pr by rememberSaveable{mutableStateOf("")};var state by rememberSaveable{mutableStateOf("")};var family by rememberSaveable{mutableStateOf("Todas")}
     var historical by rememberSaveable{mutableStateOf(false)}
@@ -118,6 +119,7 @@ object LocalInventoryIndex {
         }}
     }
     val all=remember(records,bridges,samples){LocalInventoryIndex.project(records,bridges,samples)}
+    removalPreview?.let { rows->RemovalPreviewDialog(rows){removalPreview=null} }
     detail?.let {key->val id=key.substringAfter('/');when(key.substringBefore('/')) {
         "SIC"->RecordDetailScreen(vm,id){detail=null}
         "SCAP"->com.tuempresa.inventariovial.scap.ui.ScapWorkspace(vm,id){detail=null}
@@ -206,6 +208,10 @@ object LocalInventoryIndex {
                     .onSuccess{cleanupBackup=it}.onFailure{discardMessage=it.message ?: "No se pudo verificar el respaldo."};cleanupBusy=false
             }}){Text(if(cleanupBusy)"Verificando respaldo…"else"Respaldar y limpiar entregados seleccionados")}
             TextButton(onClick={prepareSegment=true}){Text("Preparar nuevo tramo")}
+            TextButton(enabled=shown.any{it.key in selected},onClick={scope.launch {
+                runCatching{RemovalPreview.inspect(db,shown.filter{it.key in selected})}
+                    .onSuccess{removalPreview=it}.onFailure{discardMessage="No se pudo inventariar la selección; no se modificó ningún registro."}
+            }}){Text("Revisar eliminación de seleccionados (no habilitada)")}
             Row(Modifier.horizontalScroll(rememberScrollState())) {
                 TextButton(enabled=selectable.any{it.key in selected}&&!discardBusy,onClick={reviewDiscard(selectable.filter{it.key in selected})}){Text("Descartar seleccionados")}
                 TextButton(enabled=selectable.isNotEmpty()&&!discardBusy,onClick={reviewDiscard(selectable)}){Text("Descartar todos los borradores visibles")}
@@ -220,6 +226,10 @@ object LocalInventoryIndex {
                     Text(if(r in selectable)"Seleccionar borrador"else"Seleccionar entregado para respaldo")
                 }
                 Text(r.name,style=MaterialTheme.typography.titleMedium);Text("${r.family} · ${r.route.ifBlank{"Ruta pendiente"}} · ${r.progressive}")
+                TextButton(onClick={scope.launch {
+                    runCatching{RemovalPreview.inspect(db,listOf(r))}.onSuccess{removalPreview=it}
+                        .onFailure{discardMessage="No se pudo inventariar la ficha; se conserva sin cambios."}
+                }}){Text("Revisar eliminación completa (no habilitada)")}
                 Text("Captura: ${when(r.capture){"DISCARDED_LOCAL"->"Descartado · datos conservados";"DRAFT"->"Borrador";"ANNULLED"->"Anulado";else->"Ficha activa"}}")
                 var technical by remember(r.key){mutableStateOf(false)}
                 Text("Fecha de registro: ${recordDateLabel(r.surveyDate)}",style=MaterialTheme.typography.bodySmall)

@@ -24,6 +24,14 @@ import org.robolectric.annotation.*
 class UnifiedRecords149UiTest {
     @get:Rule val ui=createComposeRule()
     private val app get()=ApplicationProvider.getApplicationContext<Application>()
+    @Test fun typingRemovalConfirmationStillCannotExecuteDeletion() {
+        initializeIdleUiWorkers()
+        val item=LocalInventoryItem("SIC","FICTITIOUS_REMOVAL_UI","SIC-19","Ficha ficticia","FICTITIOUS_ROAD","0010",null,"CD","INCREASING","DRAFT",1,"2026-11-02")
+        ui.setContent{MaterialTheme{RemovalPreviewDialog(listOf(RemovalPreview.Row(item,0,null,"Sin outbox",false,false,false))) {}}}
+        ui.onNodeWithText("Eliminar definitivamente (no habilitado)").assertIsNotEnabled()
+        ui.onNodeWithText("Escribe exactamente ELIMINAR").performTextInput("ELIMINAR")
+        ui.onNodeWithText("Eliminar definitivamente (no habilitado)").assertIsNotEnabled()
+    }
     @Test fun allVisibleDraftsRespectCombinedFilters()=discardFilteredDrafts(all=true)
     @Test fun selectedVisibleDraftsRespectCombinedFilters()=discardFilteredDrafts(all=false)
     private fun discardFilteredDrafts(all:Boolean) {
@@ -33,6 +41,9 @@ class UnifiedRecords149UiTest {
         android.provider.Settings.Secure.putString(app.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"FICTITIOUS_SCOPE_39")
         val graph=AuthGraph.get(app);graph.sessions.logout();graph.sessions.login(UserCacheEntity("TEST_SCOPE_39","test","FICTICIO","ENGINEER",true,"",0,0,0))
         val db=InventoryDatabase.getInstance(app)
+        // Other integration fixtures may retain a SCAP conflict in this singleton.
+        // Assert exact preservation of the entire outbox, including historical entries.
+        val outboxBefore=runBlocking{db.automaticSyncDao().all().sortedBy{it.key}}
         runBlocking {
             LocalCopySettings.enabled(app,false)
             for(id in listOf("first","second","other_route","other_pr","other_date","excluded_search")) {
@@ -58,7 +69,9 @@ class UnifiedRecords149UiTest {
             for(id in listOf("first","second"))org.junit.Assert.assertEquals("DISCARDED_LOCAL",db.inventoryDao().recordById(prefix+id)!!.status)
             for(id in listOf("other_route","other_pr","other_date"))org.junit.Assert.assertEquals("DRAFT",db.inventoryDao().recordById(prefix+id)!!.status)
             org.junit.Assert.assertEquals("DRAFT",db.inventoryDao().recordById(road+"excluded_search")!!.status)
-            org.junit.Assert.assertTrue(db.automaticSyncDao().all().isEmpty())
+            val remaining=db.automaticSyncDao().all()
+            org.junit.Assert.assertEquals(outboxBefore,remaining.sortedBy{it.key})
+            org.junit.Assert.assertTrue(remaining.none{it.recordId.startsWith(prefix)})
         }
     }
     @Test fun discardedViewExposesIndividualRestoreAndNeverEnqueuesDrive() {
