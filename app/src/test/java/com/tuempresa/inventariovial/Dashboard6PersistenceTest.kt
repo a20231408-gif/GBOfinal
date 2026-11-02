@@ -18,6 +18,7 @@ import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 
 @RunWith(RobolectricTestRunner::class) @Config(sdk=[28],application=Application::class)
 class Dashboard6PersistenceTest {
@@ -26,23 +27,33 @@ class Dashboard6PersistenceTest {
         val auth=AuthGraph.get(context).sessions
         auth.login(UserCacheEntity("test-owner","test-owner","Operador ficticio","OPERATOR",true,"",1,1,1))
         Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).allowMainThreadQueries().build().use {db->
-            val record=testRecord("historical-draft",created=1770000000000,status="DRAFT",sic="SIC-22").copy(sessionId=null,observations="Observación original")
+            val record=testRecord("historical-draft",created=1770000000000,status="DRAFT",sic="SIC-22")
+                .copy(assetType="VERTICAL",sessionId=null,observations="Observación original")
             db.inventoryDao().insertRecord(record)
+            val photo=File(context.filesDir,"historical-draft-photo.jpg").apply { writeBytes(byteArrayOf(1,2,3,4)) }
             val form=Sic22FormState(signalDescription="Texto incompleto conservado")
             val request=InventorySaveRequest("SIC-22","VERTICAL","R","CD","0030","12,",null,null,null,
-                Double.NaN,Double.NaN,null,"11/10/2026","Observación editada","photo-original.jpg",SicFormDetail.Sic22(form),
-                recordId=record.id,photoPaths=listOf("photo-original.jpg"),photoCategories=mapOf("photo-original.jpg" to "PANORAMICA"),sessionId="today-session")
+                Double.NaN,Double.NaN,null,"11/10/2026","Observación editada",photo.path,SicFormDetail.Sic22(form),
+                recordId=record.id,photoPaths=listOf(photo.path),photoCategories=mapOf(photo.path to "PANORAMICA"),sessionId="today-session")
             try {
+                val conflict=runCatching { InventoryDraftStore.save(context,db,request.copy(assetType="DRENAJE")) }
+                assertTrue(conflict.exceptionOrNull() is IllegalArgumentException)
+                assertTrue(conflict.exceptionOrNull()?.message?.contains("UUID pertenece a otro tipo") == true)
+                assertEquals(record,db.inventoryDao().recordById(record.id))
+                assertNull(InventoryDraftStore.read(context,record.id))
                 assertEquals(record.id,InventoryDraftStore.save(context,db,request))
                 val saved=db.inventoryDao().recordById(record.id)!!
+                assertEquals(record.id,saved.id);assertEquals("SIC-22",saved.sicCode);assertEquals("VERTICAL",saved.assetType)
                 assertNull(saved.sessionId);assertEquals(record.createdAt,saved.createdAt)
                 assertEquals("Observación editada",saved.observations)
                 val raw=InventoryDraftStore.read(context,saved.id)!!
-                assertEquals("photo-original.jpg",raw.getJSONArray("photoPaths").getString(0))
-                assertEquals("PANORAMICA",raw.getJSONObject("photoCategories").getString("photo-original.jpg"))
+                assertEquals(record.id,raw.getString("id"))
+                assertEquals(photo.path,raw.getJSONArray("photoPaths").getString(0))
+                assertEquals("PANORAMICA",raw.getJSONObject("photoCategories").getString(photo.path))
+                assertArrayEquals(byteArrayOf(1,2,3,4),photo.readBytes())
                 assertEquals(form,InventoryDraftStore.restore(raw,Sic22FormState()))
                 assertEquals("12,",raw.getString("startDistanceM"))
-            } finally {auth.logout()}
+            } finally {InventoryDraftStore.completed(context,record.id);photo.delete();auth.logout()}
         }
     }
     @Test fun fieldFormatDraftPreservesNullHistoricalSessionEvenWhenNewSessionSupplied()=runBlocking {
