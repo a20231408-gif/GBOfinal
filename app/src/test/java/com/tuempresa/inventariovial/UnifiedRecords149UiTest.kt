@@ -24,6 +24,43 @@ import org.robolectric.annotation.*
 class UnifiedRecords149UiTest {
     @get:Rule val ui=createComposeRule()
     private val app get()=ApplicationProvider.getApplicationContext<Application>()
+    @Test fun allVisibleDraftsRespectCombinedFilters()=discardFilteredDrafts(all=true)
+    @Test fun selectedVisibleDraftsRespectCombinedFilters()=discardFilteredDrafts(all=false)
+    private fun discardFilteredDrafts(all:Boolean) {
+        val prefix=if(all)"ALL_SCOPE_"else"SELECTED_SCOPE_"
+        val road=if(all)"PE-ALL"else"PE-SELECTED"
+        initializeIdleUiWorkers()
+        android.provider.Settings.Secure.putString(app.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"FICTITIOUS_SCOPE_39")
+        val graph=AuthGraph.get(app);graph.sessions.logout();graph.sessions.login(UserCacheEntity("TEST_SCOPE_39","test","FICTICIO","ENGINEER",true,"",0,0,0))
+        val db=InventoryDatabase.getInstance(app)
+        runBlocking {
+            LocalCopySettings.enabled(app,false)
+            for(id in listOf("first","second","other_route","other_pr","other_date","excluded_search")) {
+                db.inventoryDao().insertRecord(testRecord(if(id=="excluded_search")road+id else prefix+id,status="DRAFT",route=if(id=="other_route")"OTHER"else road,pr=if(id=="other_pr")"0020"else"0010").copy(surveyDate=if(id=="other_date")"2025-09-23"else"2026-09-23"))
+            }
+        }
+        lateinit var vm:InventoryViewModel
+        ui.runOnUiThread{vm=InventoryViewModel(app)}
+        ui.setContent{MaterialTheme{UnifiedRecordsScreen(vm){}}}
+        fun click(text:String)=ui.onNodeWithText(text).performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.OnClick){it()}
+        ui.onNodeWithText("Buscar elemento o UUID").performTextInput(prefix)
+        click("SIC")
+        ui.onNodeWithText("Carretera").performTextInput(road)
+        ui.onNodeWithText("Progresiva").performTextInput("0010")
+        click("Año: Todos");click("2026");click("Borradores")
+        ui.onNodeWithText("2 registros").assertExists()
+        if(!all)click("Seleccionar borradores visibles")
+        click(if(all)"Descartar todos los borradores visibles"else"Descartar seleccionados")
+        ui.onNodeWithText("Descartar 2 borradores locales").assertExists()
+        click("Confirmar descarte reversible")
+        ui.waitUntil(5000){runBlocking{db.inventoryDao().recordById(prefix+"first")!!.status=="DISCARDED_LOCAL"}}
+        runBlocking {
+            for(id in listOf("first","second"))org.junit.Assert.assertEquals("DISCARDED_LOCAL",db.inventoryDao().recordById(prefix+id)!!.status)
+            for(id in listOf("other_route","other_pr","other_date"))org.junit.Assert.assertEquals("DRAFT",db.inventoryDao().recordById(prefix+id)!!.status)
+            org.junit.Assert.assertEquals("DRAFT",db.inventoryDao().recordById(road+"excluded_search")!!.status)
+            org.junit.Assert.assertTrue(db.automaticSyncDao().all().isEmpty())
+        }
+    }
     @Test fun discardedViewExposesIndividualRestoreAndNeverEnqueuesDrive() {
         initializeIdleUiWorkers()
         android.provider.Settings.Secure.putString(app.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"FICTITIOUS_RESTORE_UI_37")

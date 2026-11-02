@@ -32,6 +32,11 @@ object ConfirmedLocalCleanup {
         require(jobs.none{it.state in setOf("QUEUED","RUNNING")}){"Hay una publicación local en curso; espera antes de limpiar."}
         val full=requireNotNull(jobs.filter{it.revision==item.revision&&it.scope.startsWith("FULL")&&it.state in setOf("READY","CLEANED")&&it.manifestJson!=null}.maxByOrNull{it.createdAt}){"Genera primero una copia documental completa de la revisión actual."}
         require(LocalPlan.parse(requireNotNull(full.manifestJson)).problems.isEmpty()){"La copia local está incompleta; registro protegido."}
+        for(file in db.localFilesDao().filesForRecord(item.key).filter{it.state=="READY"&&it.uri!=null}) {
+            require(db.localFilesDao().otherFileReferences(item.key,requireNotNull(file.uri),file.relativePath,file.name)==0){
+                "Esta copia está referenciada por otra ficha; se conserva el archivo compartido."
+            }
+        }
         if(kind=="SCAP")require(VideoDatabase.get(c).videos().all().filter{it.parentKey==item.key&&!it.retired}.all{VideoNames.confirmedRelativePath(c,it)!=null}){"Hay videos sin confirmación propia; registro protegido."}
         return ack to full
     }

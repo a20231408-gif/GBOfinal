@@ -31,6 +31,25 @@ data class LocalSharedFile(@PrimaryKey val id:String,val jobId:String,val record
     @Upsert suspend fun saveJob(job:LocalExportJob)
     @Query("SELECT * FROM local_shared_files WHERE jobId=:id ORDER BY name,id") suspend fun files(id:String):List<LocalSharedFile>
     @Query("SELECT * FROM local_shared_files WHERE recordKey=:key") suspend fun filesForRecord(key:String):List<LocalSharedFile>
+    @Query("SELECT COUNT(*) FROM local_shared_files WHERE recordKey!=:key AND state!='CLEANED' AND (uri=:uri OR (relativePath=:path AND name=:name))")
+    suspend fun otherFileReferences(key:String,uri:String,path:String,name:String):Int
+    @Query("""SELECT COUNT(*) FROM local_shared_files a JOIN local_shared_files b
+        ON a.recordKey!=b.recordKey AND (
+            (a.source!='' AND a.source=b.source) OR
+            (a.state!='CLEANED' AND b.state!='CLEANED' AND (
+                (a.uri IS NOT NULL AND a.uri=b.uri) OR
+                (a.relativePath=b.relativePath AND a.name=b.name))))
+        WHERE a.recordKey=:key""")
+    suspend fun sharedDraftReferences(key:String):Int
+    @Query("""WITH refs AS (
+        SELECT 'SIC/'||recordId AS owner,localPath AS path FROM photos
+        UNION SELECT 'SIC/'||recordId,originalPath FROM photos
+        UNION SELECT 'SIC/'||recordId,stampedPath FROM photos
+        UNION SELECT 'PAVEMENT/'||d.sampleId,p.localPath FROM pavement_damage_photos p
+            JOIN pavement_damages d ON p.damageId=d.id)
+        SELECT COUNT(*) FROM refs a JOIN refs b ON a.path=b.path AND a.owner!=b.owner
+        WHERE a.owner=:key AND a.path IS NOT NULL AND a.path!=''""")
+    suspend fun sharedDraftPhotoReferences(key:String):Int
     @Query("SELECT * FROM local_shared_files ORDER BY rowid DESC") fun observeFiles():Flow<List<LocalSharedFile>>
     @Query("SELECT * FROM local_shared_files WHERE (:key IS NULL OR recordKey=:key) ORDER BY rowid DESC LIMIT 200") fun observeFilesFor(key:String?):Flow<List<LocalSharedFile>>
     @Upsert suspend fun saveFile(file:LocalSharedFile)
