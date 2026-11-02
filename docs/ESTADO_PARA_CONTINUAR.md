@@ -1,5 +1,34 @@
 # GBO — Estado completo para continuar
 
+## Propuesta de eliminación controlada — 02/11/2026 (rama separada, NO integrada)
+
+Rama `codex/eliminacion-controlada-20261102` desde `0071ddcb9489a06f0c33309a00c77d0b6efe7ccf`.
+PR #5 sincronización continúa abierto (SHA observado 65d0c794729bdbca73803eb29af1508c5ee7f002),
+sin fusionar. PR #1–#4 ya integrados. Esta propuesta debe permanecer en borrador hasta revisión.
+La Xiaomi ya fue actualizada y verificada en la intervención anterior a **1.4.25 (39)** Debug,
+con cuarto respaldo privado verificado. No confundir con la fuente de esta rama, sin APK nueva.
+No se tocó la tablet, respaldos ni Google en esta intervención; aceptación física A–E no acreditada.
+
+Se conserva descarte/restauración y limpieza de duplicados con sus guardas. Se agregó previsualización
+de eliminación individual/selección filtrada (metadata, UUID/revisión, copias indexadas, IDs de ACK
+válido y referencias conocidas). ELIMINAR exacto y segunda confirmación del lote no autorizan por sí
+solos: botón de eliminación SIEMPRE deshabilitado por falta de inventario/identidad administrativa
+servidor. No modifica datos/outbox/ACK ni crea operaciones reales. Sin borrado remoto ni físico nuevo.
+
+`backend/admin-removal-proposal/` contiene un modelo ejecutable exclusivamente simulado: 20/20
+pruebas PASS, sin adaptador Apps Script/Drive, HTTP, credenciales o autenticación productiva.
+Modela cerca/tombstone, estados, preflight de lote, papelera, verificación, fallo parcial y replay;
+restauración conserva cerca hasta conciliación. NO acredita coordinación real entre tablets ni
+persistencia/locks distribuidos. Contrato y estado explícito A/B PARCIAL, C pendiente, D bloqueada:
+`docs/ELIMINACION_CONTROLADA_20261102.md`. Fuente V21 solo leída localmente, no modificada/desplegada.
+Mantener **NO-GO borrado remoto/definitivo**, sin merge automático ni APK de versión 39 con estos cambios.
+Una candidata futura exige revisión/integración deliberada y versión superior a 39.
+Selección Android final 142/142 PASS, 25 clases, cero fallos/errores/omitidos, 53 segundos;
+137 anteriores más cinco nuevos, no suite completa. XML y resultados nuevos en
+tmp/eliminacion-controlada-20261102/verificado/. Se corrigió una premisa de aislamiento en tests:
+outbox preexistente de otro fixture SCAP debe conservarse íntegro, no asumirse vacío; comparación
+exacta previa/posterior y cero intenciones nuevas. Sin cambios productivos para forzar resultados.
+
 ## Cierre prioritario: candidata offline 1.4.25 (39) — 02/11/2026 (vigente)
 
 Base de integración verificada `3e631e8cf6c9a14da4b5f63e324624c24d5f6e10`; PR #1/#2/#3 ya integrados.
