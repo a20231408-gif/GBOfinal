@@ -16,8 +16,9 @@ NO INSTALAR. Ruta/hash/evidencia/archivos y alcance en SCAP_DOCUMENTOS_P04_P17_2
 La tablet sigue en 1.4.23/37: el propietario reportó **P09, P06 y P08 PASS**; P04/P17 parcial
 en esa versión. Esto supera los estados físicos antiguos inferiores, sin acreditar todavía
 la pantalla nueva. No se accedió a tablet ni respaldos en esta intervención. P11–P15 y
-conciliación del backend siguen pendientes; **NO-GO productivo**. PR hacia integración,
-merge solo tras seguridad/regresiones; SHA final se verifica con HEAD y origin.
+conciliación del backend siguen pendientes; **NO-GO productivo**. PR #3 fusionado tras
+seguridad/regresiones: merge `7840526da106ebb3bf580f7dcb3b0f777878b126`. Main intacto;
+el cierre documental posterior se verifica con HEAD y origin.
 
 ## Integración final B y candidatas originales — 02/11/2026 (vigente)
 

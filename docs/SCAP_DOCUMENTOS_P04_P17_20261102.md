@@ -2,6 +2,8 @@
 
 Base limpia local/remota `6d946320d0c8f955add9b341de332d6da0442c1d`.
 Rama `codex/scap-navegacion-archivos-20261102`. A y B ya integrados: no se volvieron a fusionar.
+PR [#3](https://github.com/a20231408-gif/GBOfinal/pull/3) fusionado por merge normal
+`7840526da106ebb3bf580f7dcb3b0f777878b126`, con el mismo árbol probado. Main intacto.
 
 ## Causa y solución
 
