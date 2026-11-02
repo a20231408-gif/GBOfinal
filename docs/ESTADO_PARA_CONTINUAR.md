@@ -1,5 +1,46 @@
 # GBO — Estado completo para continuar
 
+## Cierre prioritario: candidata offline 1.4.25 (39) — 02/11/2026 (vigente)
+
+Base de integración verificada `3e631e8cf6c9a14da4b5f63e324624c24d5f6e10`; PR #1/#2/#3 ya integrados.
+Se preserva `16b21b3d650c3d403294f78161e0cd1164895384` en la rama de corrección
+`codex/cierre-campo-proteccion-20261102`: guarda de limpieza de copias compartidas y dos tests.
+Corrección mínima adicional `daad19e`: impedir descarte de SIC origen/aporte relacionado y de
+documentos/fotos originales compartidos entre fichas SIC/Pavimentos. Comparación conservadora de
+referencias registradas; no elimina originales ni cambia ACK/UUID/relaciones. Restauración mantiene
+las mismas guardas. Los botones seleccionados/todos visibles ya existían: se conservan, con rechazo
+atómico del lote completo si contiene protegidos, sin omitirlos silenciosamente. Filtros intactos.
+
+**137/137 casos únicos PASS**, 24 clases, cero fallos/errores/omitidos, 1m20s. Selección integrada,
+no suite histórica ni validación física. Incluye seis regresiones nuevas y las dos de 16b21b3.
+Mocks V2 con gboValidationBuild=true; XML/logs nuevos `tmp/cierre-prioritario-20261102/final/`.
+Los dos fallos funcionales iniciales se reprodujeron y corrigieron; una colisión de IDs de fixtures
+UI intermedia se aisló. No repetir ensayos grandes ni atribuir estos resultados a producción.
+
+Fuente candidata `cc9d9b4373d8766b937be7d91aceeaf478da62b1`, Android **1.4.25 (39)**;
+Debug original compilada sin mocks ni gboValidationBuild=true. SHA256
+`b07e424d5411750aa69136b2c6de772406893feae5f4b0196f423333ebb4bc0c`.
+Ruta privada `C:\Users\ASUS\GBO_CANDIDATA_PRIVADA_20261102_1_4_25_39\GBO_1.4.25_39_DEBUG_ORIGINAL_PILOTO_OFFLINE_NO_INSTALAR.apk`.
+Package original, firma Debug histórica D2E54C…, configuración original contrastada offline,
+Room 21 sin cambio; identidad de actualización compatible con APK 1.4.24. No Release nueva.
+**No instalada ni distribuida**. Según instalación acreditada previa y contexto del propietario,
+la Xiaomi ya tiene 1.4.24 (38); esto actualiza las secciones históricas inferiores. No se usó ADB
+ni se leyeron/modificaron datos reales ni respaldos en este cierre.
+
+**GO técnico limitado a piloto offline sujeto a autorización de actualización y aceptación física;
+NO-GO productivo/online.** Mantener avión/Wi-Fi apagado, Solo dispositivo explícito antes de cerrar
+cada ficha nueva. Descartar/restaurar no programa envíos; las colas previas no se cancelan y pueden
+reanudarse al recuperar Internet. No usar limpieza de confirmados en el piloto: falta aceptación
+física SAF/proveedor; no hay borrado definitivo general ni remoto. No alterar nomenclaturas/backend.
+No asumir que la firma Debug actualiza Release histórica.
+
+P04/P17 aceptación parcial; P11–P15 siguen pendientes. V21 intacto; pendiente inventario paginado
+estable real, OAuth efectivo, conciliación de journals/raíces/ACK, conflicto SCAP, permisos y coste
+legacy/vídeo antes de corte original explícitamente autorizado. Coexistencia no activada.
+Decisión, aceptación manual corta, APK y límites en `docs/CIERRE_PRIORITARIO_1_4_25_20261102.md`.
+El SHA final publicado se contrasta con origin al cerrar; el SHA fuente Android anterior identifica
+los bytes compilados y no se debe confundir con el posterior commit documental/merge.
+
 ## P04/P17 — documentos internos del puente, 02/11/2026 (vigente)
 
 Rama de intervención codex/scap-navegacion-archivos-20261102 desde 6d94632 verificado remoto.
