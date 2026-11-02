@@ -25,6 +25,8 @@ class LocalDraftDiscard(private val db:InventoryDatabase,private val context:Con
         }
     }
     private suspend fun unsubmitted(kind:String,id:String,route:String) {
+        require(db.localFilesDao().sharedDraftReferences("$kind/$id")==0) { "Hay archivos compartidos con otra ficha; el grupo se conserva sin cambios." }
+        require(db.localFilesDao().sharedDraftPhotoReferences("$kind/$id")==0) { "Hay fotografías compartidas con otra ficha; el grupo se conserva sin cambios." }
         require(db.automaticSyncDao().all().none {it.recordId==id}) { "Existe una entrega pendiente o histórica; este registro no es exclusivamente local." }
         require(DriveInventorySchema.receipt(context,id)==null) { "Existe una identidad Drive reservada o confirmada." }
         val prefs=context.getSharedPreferences("drive_receipts_v2",Context.MODE_PRIVATE)
@@ -52,6 +54,7 @@ class LocalDraftDiscard(private val db:InventoryDatabase,private val context:Con
                 val dao=db.inventoryDao();val snapshot=requireNotNull(dao.snapshot(id))
                 val record=snapshot.record
                 require(record.status==expected && record.sicCode!="SCAP" && db.scapDao().forRoadRecord(id)==null) { "Solo se descartan borradores locales SIC sin inspección SCAP vinculada." }
+                require(dao.criticalSicLinks(id)==0) { "La ficha tiene un origen o aporte SIC vinculado; el grupo se conserva sin cambios." }
                 require(record.serverSyncStatus=="PENDING" && record.excelSyncStatus=="PENDING") { "Existe una sincronización anterior." }
                 require(snapshot.photos.all {it.syncStatus=="PENDING" && it.driveFileId==null && it.driveFolderId==null}) { "Existe evidencia enviada o en proceso." }
                 require(com.tuempresa.inventariovial.tracking.TrackCaptureService.activeRecordId.value!=id) { "Finaliza el recorrido antes de descartar." }

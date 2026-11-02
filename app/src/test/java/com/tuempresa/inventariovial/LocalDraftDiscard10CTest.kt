@@ -23,6 +23,50 @@ class LocalDraftDiscard10CTest {
     @org.junit.Before fun tabletIdentity() {android.provider.Settings.Secure.putString(context.contentResolver,android.provider.Settings.Secure.ANDROID_ID,"synthetic-tablet-10c")}
     private fun db()=Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build()
     private fun record(id:String="draft",status:String="DRAFT")=InventoryRecordEntity(id,"SIC-18","ALCANTARILLA","R10C","UC","0000",10.0,null,null,null,null,null,null,null,"2026-10-12",null,status,"PENDING","PENDING",1,1)
+    @Test fun linkedSicSourceAndDerivedDraftAreBothProtected()=runBlocking {db().use {d->
+        for(id in listOf("source","derived"))d.inventoryDao().insertRecord(record(id))
+        val link=SicExtensionEntity("derived","SIC-18A","{}","source","operator","DRAFT")
+        d.inventoryDao().saveSicExtension(link)
+        for(id in listOf("source","derived")) {
+            assertTrue(id,runCatching{LocalDraftDiscard(d,context).change("SIC",id,userId="operator")}.isFailure)
+            assertEquals("DRAFT",d.inventoryDao().recordById(id)!!.status)
+        }
+        assertEquals(link,d.inventoryDao().sicExtension("derived"));assertTrue(d.auditDao().recent().isEmpty())
+    }}
+    @Test fun sharedDocumentSourceBlocksDraftEvenWithoutPublishedUri()=runBlocking {db().use {d->
+        for(id in listOf("draft","other"))d.inventoryDao().insertRecord(record(id))
+        val file=com.tuempresa.inventariovial.localfiles.LocalSharedFile("file","job","SIC/draft","Download/fictitious/","a.pdf","application/pdf",1,"hash","/fictitious/shared.pdf")
+        d.localFilesDao().saveFile(file)
+        d.localFilesDao().saveFile(file.copy(id="other-file",jobId="other-job",recordKey="SIC/other",relativePath="Download/other/",name="b.pdf"))
+        assertTrue(runCatching{LocalDraftDiscard(d,context).change("SIC","draft",userId="operator")}.isFailure)
+        assertEquals("DRAFT",d.inventoryDao().recordById("draft")!!.status)
+        assertEquals(file,d.localFilesDao().files("job").single());assertTrue(d.automaticSyncDao().all().isEmpty())
+        d.localFilesDao().saveFile(file.copy(state="CLEANED"))
+        assertTrue("Archived public copies still retain their shared private originals",runCatching{LocalDraftDiscard(d,context).change("SIC","draft",userId="operator")}.isFailure)
+    }}
+    @Test fun sharedPhotoOriginalProtectsSicAndPavementWithoutChangingRelations()=runBlocking {db().use {d->
+        d.inventoryDao().insertRecord(record())
+        val original=PhotoEntity("photo","draft",1,"/fictitious/shared.jpg",true,null,null,null,"PENDING",1)
+        d.inventoryDao().insertPhoto(original)
+        val sample=PavementSampleEntity("pv","T","R10C",1,"Derecho","UC","00+000","00+040",5.0,40.0,"ASPHALT","2026-10-12","owner","Inspector")
+        d.pavementDao().saveSample(sample)
+        val damage=PavementDamageEntity("damage","pv",1,"ASPHALT",1,"Fictitious","L","POINT",null,null,null,null,null,null,null,null,null,null,null)
+        d.pavementDao().saveDamage(damage)
+        val photo=PavementDamagePhotoEntity("pv-photo","damage",original.localPath)
+        d.pavementDao().savePhoto(photo)
+        for((kind,id) in listOf("SIC" to "draft","PAVEMENT" to "pv"))assertTrue(runCatching{LocalDraftDiscard(d,context).change(kind,id,userId="owner")}.isFailure)
+        assertEquals(record(),d.inventoryDao().recordById("draft"));assertEquals(sample,d.pavementDao().sample("pv"))
+        assertEquals(original,d.inventoryDao().snapshot("draft")!!.photos.single());assertEquals(photo,d.pavementDao().photos("damage").single())
+        assertTrue(d.auditDao().recent().isEmpty());assertTrue(d.automaticSyncDao().all().isEmpty())
+    }}
+    @Test fun protectedLaterDraftRollsBackWholeBatchAndPreservesAckAndAudit()=runBlocking {db().use {d->
+        for(id in listOf("first","protected","untouched"))d.inventoryDao().insertRecord(record(id))
+        val intent=DriveSyncIntent("SIC/protected","SIC","protected",1,syncedRevision=1,state="SYNCED",receiptJson="{\"fictitiousAck\":true}")
+        d.automaticSyncDao().put(intent)
+        assertTrue(runCatching{LocalDraftDiscard(d,context).changeMany(listOf("first","protected").map{LocalDraftDiscard.Candidate("SIC",it,1)},"operator")}.isFailure)
+        for(id in listOf("first","protected","untouched"))assertEquals(record(id),d.inventoryDao().recordById(id))
+        assertEquals(listOf(intent),d.automaticSyncDao().all());assertTrue(d.auditDao().recent().isEmpty())
+    }}
     @Test fun bulkDiscardRollsBackEarlierRowsWhenLaterRowChanged()=runBlocking {db().use {d->
         d.inventoryDao().insertRecord(record("first"));d.inventoryDao().insertRecord(record("second").copy(updatedAt=2))
         val result=runCatching {LocalDraftDiscard(d,context).changeMany(listOf(

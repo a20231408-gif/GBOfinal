@@ -30,6 +30,8 @@ interface InventoryDao {
     @Query("SELECT * FROM photo_history WHERE recordId=:id ORDER BY revision,id") suspend fun photoHistory(id:String):List<PhotoHistoryEntity>
     @Upsert suspend fun saveSicExtension(detail:SicExtensionEntity)
     @Query("SELECT * FROM sic_extension_details WHERE recordId=:id") suspend fun sicExtension(id:String):SicExtensionEntity?
+    @Query("SELECT COUNT(*) FROM sic_extension_details WHERE sourceRecordId=:id OR (recordId=:id AND sourceRecordId IS NOT NULL)")
+    suspend fun criticalSicLinks(id:String):Int
     @Query("SELECT * FROM sic_extension_details") fun observeSicExtensions():Flow<List<SicExtensionEntity>>
 
     @Query("SELECT * FROM delivery_batches WHERE routeCode = :route ORDER BY createdAt DESC") fun observeDeliveries(route: String): Flow<List<DeliveryBatchEntity>>
