@@ -1,31 +1,34 @@
 # Progreso acumulado — 02/11/2026
 
-## Acta única de prueba integral autorizada 1.4.26 — DETENIDA ANTES DE ESCRIBIR
+## Acta única de prueba integral 1.4.26 — reanudación USB, cierre NO-GO
 
-**NO-GO.** La autorización de una sola ficha se recibió; sus condiciones de aislamiento no pudieron
-acreditarse. No se instaló, respaldó, creó, descartó/restauró ni envió ninguna ficha en esta intervención.
-No se modificó red, tablet, permisos, configuración, V21 o Drive.
+La Xiaomi se conectó y se verificó 1.4.25 (39) Debug, package original y firma histórica D2E54C…;
+APK instalada SHA b07e424d5411750aa69136b2c6de772406893feae5f4b0196f423333ebb4bc0c.
+Modo avión/Wi-Fi apagado y sin proceso GBO; force-stop autorizado para copia coherente.
+**Quinto respaldo privado VERIFICADO**: 826 archivos, TAR SHA256
+4e3ca0855d2ddf55970abc937efc0eeab54b1cab748b75e55c45a5a6724812a7;
+3 SQLite integrity_check=ok/foreign_key_check=0, 486 referencias internas cubiertas, 380 copias públicas
+verificadas y 2 SAF limitadas con fuente interna exacta. Origen inalterado al cierre, cuarto TAR previo
+sin cambios; los cuatro anteriores no se sobrescribieron. Restauración no ensayada/Keystore no exportable.
 
-| Comprobación | Resultado |
-|---|---|
-| APK autorizada 1.4.26/40 | SHA256 recalculado coincide: 47492403eee0c9615742094ca5c646c5aae410591a443c1c3dbdb1e5ea34ef32. |
-| Capacidades reales V21 | GET del endpoint original mediante @Browser, sin POST: ok=true, syncProtocol=3, pathVersion=4, readablePhotoNamingVersion=2, scapPhotoPanelVersion=2, technicalDeliveryWithoutGps=true; inventoryLifecycleVersion=0. |
-| Identidad efectiva del endpoint | NO VERIFICADA: la respuesta no identifica al ejecutor y el selector Yo cambia con la sesión. Las comprobaciones previas de sesión/Editor no sustituyen esa evidencia. |
-| ADB Xiaomi | NO DETECTADA: lista sin dispositivos. No se puede comprobar instalación, modo avión, Wi-Fi ni estado actual de colas/datos. |
-| Aislamiento de envío | NO GARANTIZADO. AutomaticSync.manual/retry programa el drain global. AutomaticSyncWorker.drain recupera estados y selecciona dao.all() con estados elegibles, sin filtro de UUID de piloto. Puede enviar otras entregas previas al conectar. |
-| Ruta ficticia | NO APROBADA COMO SEGURA: catálogo Android cerrado, ausencia remota no comprobada. No se creó ni escogió ruta real para evitar sobrescribir consolidado. |
-| Respaldo nuevo / instalación | NO EJECUTADOS; cuatro respaldos previos preservados. |
-| Filtros, borradores y restauración físicos | NO EJECUTADOS en 1.4.26. No atribuir a esta versión los PASS de 1.4.25. |
-| Nueva ficha / archivos / hashes / ACK / propietario | NO EJECUTADOS, no existe entrega real de este ensayo. Sin ACK ni propietario nuevos que acreditar. |
+Copia offline revela outbox ERROR=1, QUEUED=1, SYNCED=14, BLOCKED=1. Dos SIC anteriores cumplen
+estado elegible y ficha ACTIVE; ninguno lleva marcador BRIDGE_IDENTITY_CONFLICT. El worker actual
+recupera estados y procesa toda la cola; no tiene filtro exclusivo de ficha. **No garantiza aislamiento**.
+Por condición explícita del propietario, se detuvo antes de instalar, crear/restaurar/descartar fichas,
+activar red o enviar POST. Ningún pendiente fue cambiado/cancelado para fabricar una prueba segura.
+APK 1.4.26 sigue privada, sin instalar; tablet permanece 1.4.25 y GBO detenido sin red.
 
-Bloqueos que deben resolverse antes de reanudar la misma prueba autorizada: Xiaomi disponible por USB,
-estado actual respaldado/verificado, demostrar aislamiento de todas las rutas de envío automático y
-manual (no basta pulsar la ficha), identidad efectiva institucional y destino ficticio seguro sin modificar
-consolidados existentes. No mover estados de outbox ni borrar pendientes para fabricar aislamiento.
-Un transporte externo acotado probaría backend, pero NO sustituye la prueba integral física solicitada.
-No cambiar silenciosamente la APK autorizada ni introducir otra versión bajo el mismo nombre/hash.
-La autorización recibida no permite saltarse estas condiciones; detener el ensayo es su cumplimiento.
+Resultado de capacidad GET V21: PASS (3/4, nombres V2/panel2); identidad efectiva aún no acreditada.
+Resultado físico 1.4.26: NO EJECUTADO. Resultado de carga/ACK/propietario de prueba: NO EJECUTADO.
+Ruta ficticia segura aún no acreditada. V21 además puede recuperar journals PENDING globalmente al
+construir v3Store: cualquier prueba futura debe evitar esos efectos sobre otras entregas; no se reabrió
+el incidente histórico ni se ejecutó recuperación para este cierre.
 
+Acta única y evidencia real exclusivamente privadas en
+C:\Users\ASUS\GBO_QUINTO_RESPALDO_PRIVADO_20261102T232523887Z\ACTA_UNICA_PRUEBA_1_4_26.md.
+**NO-GO prueba online/publicación**. Reanudar requiere aislamiento verificable sin borrar ni cancelar
+pendientes, ejecutor acreditado y destino ficticio seguro. No sustituir por una prueba HTTP externa
+presentándola como aceptación física. No nueva APK, despliegue, ROOT, permisos ni Google modificado.
 
 ## Dictamen de alta NUEVA antes de publicación (vigente)
 
