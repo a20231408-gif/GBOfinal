@@ -108,6 +108,15 @@ internal fun statusLabel(status:String)=when(status){"COMPLETE"->"Cerrada localm
 
 @Composable
 internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCatalog,vm:InventoryViewModel,saved:String,pending:Int,error:String?) {
+    var documents by rememberSaveable(s.inspection.id){mutableStateOf(false)}
+    var closeRequested by rememberSaveable(s.inspection.id){mutableStateOf(false)}
+    LaunchedEffect(closeRequested,s.inspection.status,pending,error) {
+        if(closeRequested && pending==0) {
+            if(error!=null)closeRequested=false
+            else if(s.inspection.status=="COMPLETE"){documents=true;closeRequested=false}
+        }
+    }
+    if(documents){BridgeDocumentsScreen(s,c){documents=false};return}
     var section by rememberSaveable(s.inspection.id){mutableStateOf(if(s.inspection.status=="COMPLETE") "REVIEW" else "A")}
     var photoElement by rememberSaveable(s.inspection.id){mutableStateOf<String?>(null)}
     val destination by c.destination.collectAsState()
@@ -140,6 +149,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             }
         }
         LazyRow(contentPadding=PaddingValues(horizontal=12.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+            item {OutlinedButton(onClick={documents=true}){Text("DOCUMENTOS DEL PUENTE")}}
             item {OutlinedButton(onClick={section="A"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FICHA")}}
             item {OutlinedButton(onClick={photoElement=null;section="F2"},modifier=Modifier.heightIn(min=48.dp)) {Text("VER FOTOGRAFÍAS (${s.photos.size})")}}
         }
@@ -207,7 +217,7 @@ internal fun ScapEditor(s:ScapInspectionSnapshot,c:ScapController,catalog:ScapCa
             Text("Datos pendientes: ${review.pending.size}")
             review.pending.forEach{Text("• $it")}
             completeness.pending.forEach {field->TextButton(onClick={c.navigate(field.route);confirm=false}) {Text("${field.section} · ${field.field}")}}
-        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && completeness.pending.none{it.severity==ScapIssueSeverity.BLOCKING} && pending==0 && error==null,onClick={c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar con el destino elegido" else "Confirmar cierre con pendientes")}},
+        }},confirmButton={TextButton(enabled=review.errors.isEmpty() && completeness.pending.none{it.severity==ScapIssueSeverity.BLOCKING} && pending==0 && error==null,onClick={closeRequested=true;c.submit {it.complete(s.inspection.id,warningsConfirmed=true)};confirm=false}){Text(if(completeness.pending.isEmpty()) "Finalizar con el destino elegido" else "Confirmar cierre con pendientes")}},
         dismissButton={TextButton(onClick={confirm=false}){Text("Volver a la ficha")}})
     if(showPending) AlertDialog(onDismissRequest={showPending=false},title={Text("SCAP · Pendientes ${completeness.pending.size}")},
         text={Column(Modifier.heightIn(max=420.dp).verticalScroll(rememberScrollState())) {
