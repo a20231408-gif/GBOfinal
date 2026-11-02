@@ -5,6 +5,9 @@
 Base de integración verificada `3e631e8cf6c9a14da4b5f63e324624c24d5f6e10`; PR #1/#2/#3 ya integrados.
 Se preserva `16b21b3d650c3d403294f78161e0cd1164895384` en la rama de corrección
 `codex/cierre-campo-proteccion-20261102`: guarda de limpieza de copias compartidas y dos tests.
+PR #4 revisado por el integrador y fusionado mediante merge normal
+`f6f7cdb3d0d312065ff00a64e678b60c0a5d3285` en la rama de integración; once archivos conciliados,
+fuente Android idéntica a la compilada. Seguridad sin hallazgos ni binarios salientes; main intacto.
 Corrección mínima adicional `daad19e`: impedir descarte de SIC origen/aporte relacionado y de
 documentos/fotos originales compartidos entre fichas SIC/Pavimentos. Comparación conservadora de
 referencias registradas; no elimina originales ni cambia ACK/UUID/relaciones. Restauración mantiene

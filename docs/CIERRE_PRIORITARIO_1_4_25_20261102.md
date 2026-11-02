@@ -22,6 +22,12 @@ Comparación por referencias almacenadas; no acredita consumidores externos o al
 El descarte conserva bytes y relaciones, nunca borra ni reenvía. No se rediseñaron filtros,
 nombres, backend ni interfaz. Se preservó íntegro el commit `16b21b3`.
 
+PR [#4](https://github.com/a20231408-gif/GBOfinal/pull/4) revisado por el integrador y fusionado
+mediante merge normal `f6f7cdb3d0d312065ff00a64e678b60c0a5d3285` en
+`codex/observaciones-campo-asus-20261030`. Base remota sin cambios inesperados, once archivos
+del PR conciliados y fuente Android idéntica a la compilada. Main intacto; revisión de publicación
+sin hallazgos ni binarios salientes. No equivale a aprobación independiente o autorización de despliegue.
+
 Pruebas: **137/137 casos únicos PASS**, 24 clases, cero fallos/errores/omitidos, 1m20s.
 Selección integrada anterior de 131 más seis casos: origen/aporte SIC, documento compartido,
 foto original SIC/Pavimentos compartida, rollback con ACK y ambos botones con filtros combinados.
