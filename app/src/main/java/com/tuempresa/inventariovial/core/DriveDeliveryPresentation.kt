@@ -11,8 +11,9 @@ import com.tuempresa.inventariovial.scap.domain.*
 data class DriveDeliveryIdentity(val title:String,val location:String,val currentRevision:Long?,val validated:Boolean,val format:String="",
     val issue:String?=null,val target:ScapFieldRoute?=null,val provisional:Boolean=false,val onlyDevice:Boolean=false)
 enum class DriveDeliveryStatus(val label:String,val symbol:String,val priority:Int) {
-    ATTENTION("Requiere atención","!",0), VERIFYING("Verificando entrega","◌",1),
-    PREPARING("Preparando entrega","…",2), UPLOADING("Subiendo","↑",2), PENDING("Pendiente de subir","…",3), COMPLETE("Subido correctamente","✓",4)
+    ATTENTION("Requiere atención","!",0), VERIFYING("Confirmando archivos","◌",1),
+    PREPARING("Preparando entrega","…",2), UPLOADING("Enviando","↑",2),
+    WAITING_CONNECTION("Esperando conexión","…",3), PENDING("Pendiente de envío","…",3), COMPLETE("Entregado con ACK","✓",4)
 }
 data class DriveDeliveryView(val status:DriveDeliveryStatus,val message:String,val files:String,val confirmed:Boolean,
     val review:Boolean=false,val retryAllowed:Boolean=true,val progressText:String?=null)
@@ -84,6 +85,7 @@ object DriveDeliveryPresentation {
             running && progress?.revision==i.revision && progress.phase=="CONFIRMING"->DriveDeliveryStatus.VERIFYING
             running && progress?.revision==i.revision && progress.phase=="PREPARING"->DriveDeliveryStatus.PREPARING
             running->DriveDeliveryStatus.UPLOADING
+            !connected && (i.state!="ERROR" || busy || retrying || error.contains("Esperando para reintentar"))->DriveDeliveryStatus.WAITING_CONNECTION
             busy || retrying || i.error?.contains("Esperando para reintentar")==true->DriveDeliveryStatus.PENDING
             i.state=="ERROR"->DriveDeliveryStatus.ATTENTION
             i.state in setOf("UPLOADING","SYNCED")->DriveDeliveryStatus.VERIFYING
@@ -94,6 +96,7 @@ object DriveDeliveryPresentation {
             DriveDeliveryStatus.PREPARING->"Preparando archivos"
             DriveDeliveryStatus.UPLOADING->progress?.takeIf{it.revision==i.revision}?.let{SyncProgressPresentation.phase(it)} ?: "Envío en curso."
             DriveDeliveryStatus.VERIFYING->"Falta confirmar la entrega completa. La copia local se conserva."
+            DriveDeliveryStatus.WAITING_CONNECTION->"Guardado en la tablet. Esperando conexión a Internet y ejecución de Android."
             DriveDeliveryStatus.ATTENTION->when {
                 bridgeConflict->DeliveryRejectionPolicy.BRIDGE_MESSAGE
                 i.state=="CONFLICT"->"Revisa el conflicto de edición antes de reenviar."
@@ -131,6 +134,7 @@ object DriveDeliveryPresentation {
             i.state=="PENDING_VALIDATION"&&!incompatible)
         return DriveDeliveryView(status,message,files,complete,review,
             !bridgeConflict && !complete && identity.validated && identity.issue==null && !identity.onlyDevice && i.state!="CONFLICT",
-            progress?.takeIf{running && current && it.revision==i.revision && it.phase in setOf("PHOTOS","DOCUMENTS","CONFIRMING") && it.total>0}?.let{SyncProgressPresentation.files(it)})
+            progress?.takeIf{!complete && status in setOf(DriveDeliveryStatus.UPLOADING,DriveDeliveryStatus.VERIFYING) &&
+                running && current && it.revision==i.revision && it.phase in setOf("PHOTOS","DOCUMENTS","CONFIRMING") && SyncProgressPresentation.measured(it)}?.let{SyncProgressPresentation.files(it)})
     }
 }
