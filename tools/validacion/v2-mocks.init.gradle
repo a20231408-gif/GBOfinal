@@ -1,0 +1,12 @@
+// Explicit mock-only profile: normal validation still omits every endpoint and token.
+// Never usable for an ordinary/private-config build or an official field APK.
+allprojects {
+    plugins.withId('com.android.application') {
+        if (providers.gradleProperty('gboValidationBuild').orNull != 'true') {
+            throw new GradleException('V2 mocks requires -PgboValidationBuild=true; no official APK.')
+        }
+        extensions.getByName('androidComponents').finalizeDsl { dsl ->
+            dsl.defaultConfig.buildConfigField('boolean', 'GBO_PHOTO_NAMES_V2_ENABLED', 'true')
+        }
+    }
+}
