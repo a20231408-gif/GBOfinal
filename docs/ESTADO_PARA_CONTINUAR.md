@@ -1,5 +1,54 @@
 # GBO — Estado completo para continuar
 
+## Integración final B y candidatas originales — 02/11/2026 (vigente)
+
+PR #1 verificado abierto/Ready for review, SHA exacto
+`99cc388b5118b264cb618697892fef3c738727a3`; sin cambios inesperados (cinco archivos).
+Merge normal `5123f48e0c03894cc3a1e9ed90b411af55bc5ff8`, conserva autoría, ACK estricto,
+fixture Dashboard y pruebas de B. PR #2 sigue integrado en `bc1e307`. Se resolvió el bloqueo
+de borrador descrito en las secciones históricas inferiores; no hubo cambios funcionales
+adicionales del integrador ni cambios en main/backend/Google/tablet.
+
+Regresión ejecutada: **113/113 casos únicos PASS**, 21 clases, 0 fallos/errores/omitidos,
+1m32s. Son la selección vigente de 103 más Dashboard (4), ACK Pavimentos (4) e integración
+PDF Pavimentos (2); no sumar repeticiones ni los 27 previos de B. Perfil explícito
+gboValidationBuild=true + tools/validacion/v2-mocks.init.gradle solo para estas pruebas.
+XML/resultados/logs separados en `tmp/integracion-final-b-20261102/regresiones/`.
+No es suite histórica completa ni validación física o HTTP.
+
+Desde el código integrado se compiló **con gboValidationBuild=false, sin init-script de
+mocks**, validateReleaseConfiguration, assembleDebug, assembleRelease y signingReport:
+PASS, 16m29s. Candidatas originales privadas, **1.4.23 (37)**, package original y Room 21
+sin migración nueva, en `C:\Users\ASUS\GBO_CANDIDATAS_PRIVADAS_20261102_1_4_23_37\`
+(fuera de Git y ACL propietario/SYSTEM):
+
+- Debug `GBO_1.4.23_37_DEBUG_ORIGINAL_PILOTO_NO_INSTALAR.apk`, SHA256
+  `7e680ba7d971b6848fa10131d9efbdd6049de976b36e12d93c0ef42e91ce23c5`;
+  certificado histórico Debug D2E54C… compatible con la última instalación verificada.
+- Release `GBO_1.4.23_37_RELEASE_HISTORICA_NO_DISTRIBUIR.apk`, SHA256
+  `24f02b0ae00270534d70818cd5bef697afd6b9fe1c3472f7442fcfe20dc9f988`;
+  certificado histórico Release 0DA8A2…, distinto de Debug: no actualiza esa variante.
+
+Manifest, firma, versión y alineación 16 KiB PASS. Comparación DEX offline contra configuración
+legítima y APK 1.4.22 de hash acreditado: endpoints originales Drive/Usuarios y token original
+presentes, cero endpoints Apps Script ajenos, token de ensayo conocido ausente. Sin valores
+privados en documentos. Flags V2=true, 17A=false, 17B=false. VALIDACION_PRIVADA.json y auditorías
+de identidad junto a APK, fuera de Git. Fuente de ambas: merge 5123f48. El SHA documental final
+se obtiene de HEAD y se contrasta con origin; no confundirlo con el SHA fuente de los binarios.
+
+**NO INSTALADO / NO DISTRIBUIDO / NO-GO PRODUCTIVO.** Ya no usar el Debug anterior de validación
+sin credenciales como candidata. No se accedió a la tablet; sus datos posteriores al primer
+respaldo siguen intactos. Procedimiento revisable: `docs/SEGUNDO_RESPALDO_TABLET_20261102.md`.
+Pedir autorización independiente para segundo respaldo privado actual, sin sobrescribir el
+primero. Después verificarlo y solicitar instalación aparte. No extraer ni instalar por leer
+el procedimiento. P01–P10/P17 afectados necesitan repetición; P16 solo inspección salvo otra
+autorización; **P11–P15 siguen pendientes**. Matriz física de 1.4.22 no cambia por aprobar mocks.
+
+V21 es el último backend productivo acreditado; sin despliegues ni llamadas HTTP en este bloque.
+OAuth/inventario real estable/journals/colisión SCAP/permisos/raíces/legacy/vídeo y coste de
+coexistencia siguen sin conciliar. No se habilitó el modo dual ni cambió ROOT. Resumen vigente:
+`GBO_INTEGRACION_EQUIPO_Y_OBSERVACIONES.md`. Push autorizado solo de commits fuente/docs seguros.
+
 ## Integración A y observaciones físicas — 01/11/2026 (estado vigente)
 
 Base de entrada dda0e239. Merge normal de PR #2/A en `bc1e307`, conserva el commit

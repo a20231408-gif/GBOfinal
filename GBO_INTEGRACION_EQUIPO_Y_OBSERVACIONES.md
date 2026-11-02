@@ -1,56 +1,62 @@
-# Integración de equipo y observaciones — 01/11/2026
+# Integración final A+B y candidata original — 02/11/2026
 
-**NO-GO productivo. Correcciones Android verificadas localmente; candidata oficial aplazada.**
+**Candidatas originales preparadas; NO INSTALAR / NO DISTRIBUIR. NO-GO productivo.**
 
-- **PR #2/A integrado** mediante merge normal `bc1e307`; preserva autoría y commit
-  `a9d066f44cb15ffedbb212692fbe7697b408afe0`. Regresión ASUS previa 29/29 PASS.
-- **PR #1/B no integrado:** continúa abierto en borrador en
-  `282b8df50a9a695ecc93c64f6ed0cb460511990f`. Revisión aislada 27/27 PASS con V2=true,
-  sin credenciales, incluida recuperación 9/9. Falta que el autor lo deje listo y revisión
-  final sobre integración actualizada. No se marca listo ni fusiona en contra de esa condición.
-- **Código consolidado:** `c44befa4f0f6c41af8c177b2fdcade806c00246c`, versión fuente
-  **1.4.23 (37)**. `f14095c`: captura descartada separada de Pendientes, vista Descartados y
-  restauración individual visible; fechas/meses y ubicación descriptiva. `6e0f174`: longitud
-  kilométrica acreditada inmediata/diferencia auxiliar explícita. `7608ede`: GLOBAL sin falsa
-  cantidad cero en tablas PDF, mensajes SCAP/ubicación/antigüedad. No cambia Room, PCI ni backend.
+- PR #2/A integrado por merge `bc1e307`, conserva autoría.
+- PR #1/B verificado Ready for review en `99cc388b5118b264cb618697892fef3c738727a3`.
+  Solo cinco archivos esperados; sin cambios nuevos inesperados. Merge normal
+  **`5123f48e0c03894cc3a1e9ed90b411af55bc5ff8`**, fuente exacta de las APK.
+  Conserva autoría, rechazo estricto de ACK con ruta incorrecta, nombres V1/V2 y fixture
+  Dashboard sin relajar la guarda de UUID. El bloqueo anterior de borrador está resuelto.
+- No se cambiaron funcionalidades adicionales, Room 21, PCI, backend, main ni datos reales.
 
-## Resultados exactos
+## Pruebas efectivamente ejecutadas
 
-Selección final **103/103 PASS**, 18 clases, 0 fallos/errores/omitidos; Debug de validación y
-signingReport PASS, Gradle 1m1s. Incluye descarte/restauración persistente, selección masiva,
-conteos 30/34 y 7/7, UUID/ACK protegidos, archivos/historial, SIC, conflictos, longitudes,
-exportación, PCI y recuperación. No es suite histórica completa ni prueba HTTP. El fixture
-Dashboard de B todavía no está en integración. No sumar repeticiones de A/B al total final.
+**113/113 casos únicos PASS**, 21 clases, cero fallos, errores u omitidos; Gradle 1m32s.
+Selección anterior de 103 más Dashboard (4), ACK Pavimentos (4) e integración PDF Pavimentos (2).
+V2 habilitado con perfil explícito de mocks sin credenciales. Incluye rutas/renombrado V1/V2,
+ACK inválido y replay del mismo snapshot, revisión/hash/UUID/fotos conservados, recuperación,
+descarte/restauración persistente, filtros/fechas/búsqueda, longitud, copias/historial, SIC/SCAP
+y GLOBAL/PCI. No sumar los 27 previos de B ni repeticiones. No es suite histórica completa,
+HTTP productivo o validación física. Logs/XML: `tmp/integracion-final-b-20261102/regresiones/`.
 
-Primer intento integración: 94/96 PASS, dos fallos UI (etiqueta antigua/gesto fuera de viewport).
-Segunda selección: 9/11 PASS (gesto UI y directorio de evidencia ausente en test histórico SIC).
-Tercera: 12/13 PASS (faltaba identidad Android ficticia en fixture de restauración). Se corrigió
-la interacción de accesibilidad, etiqueta y fixtures, sin relajar las guardas ni aserciones.
-Repetición focalizada restauración 1/1 PASS; selección final 103/103. B tuvo primero seis fallos
-de inicialización por temporal inexistente: no ejecutó sus condiciones; repetición 27/27 PASS.
-XML/logs separados en `tmp/integracion-equipo-20261101/`.
+Compilación posterior **original**, con `gboValidationBuild=false` y sin init-script de mocks:
+validateReleaseConfiguration, assembleDebug, assembleRelease y signingReport **PASS**, 16m29s.
+Package `com.tuempresa.inventariovial`, versión **1.4.23 (37)**. Manifest, firma histórica y
+alineación 16 KiB verificados. Configuración DEX contrastada offline con propiedades legítimas
+y APK 1.4.22 de hash acreditado: endpoints originales Drive/Usuarios, sin endpoint de ensayo;
+V2=true, 17A=false, 17B=false. No se imprimieron valores privados ni se hizo HTTP.
 
-## APK y pendientes concretos
+## APK privadas
 
-Solo se compiló **Debug de validación sin credenciales, NO INSTALAR**:
-`C:\GBO\tmp\integracion-equipo-20261101\final\GBO_1.4.23_37_VALIDACION_SIN_CREDENCIALES_NO_INSTALAR.apk`.
-SHA256 `18bf3a9c4c9e2f625d0c7b812380194c3b01b2fdec94912f7f3afb33c81c62fe`.
-Identidad y firma Debug histórica verificadas, alineado; no es APK de campo ni Release.
-Ningún artefacto binario se publica. Candidatas privadas anteriores conservadas.
+Directorio fuera de Git, ACL propietario/SYSTEM:
+`C:\Users\ASUS\GBO_CANDIDATAS_PRIVADAS_20261102_1_4_23_37\`
 
-Pendiente Android: integrar B cuando deje de ser borrador y repetir regresión afectada;
-después preparar candidata oficial limpia con firmas legítimas. P08 sigue parcial para
-procedencia desconocida: PR numérico no prueba kilómetro real; no se inventó equivalencia.
-P03 necesita conciliación real de ubicación, P11–P15 validación completa y P04/P17 visores/SAF
-reales. Las correcciones nuevas no tienen aceptación física. Matriz reportada P01–P17:
-`docs/VALIDACION_MANUAL_GBO_20261101.md`; los antiguos «0/17» ya no son el estado vigente.
+| Variante | Archivo | SHA-256 |
+|---|---|---|
+| Debug original, NO INSTALAR | GBO_1.4.23_37_DEBUG_ORIGINAL_PILOTO_NO_INSTALAR.apk | `7e680ba7d971b6848fa10131d9efbdd6049de976b36e12d93c0ef42e91ce23c5` |
+| Release histórica, NO DISTRIBUIR | GBO_1.4.23_37_RELEASE_HISTORICA_NO_DISTRIBUIR.apk | `24f02b0ae00270534d70818cd5bef697afd6b9fe1c3472f7442fcfe20dc9f988` |
 
-Pendiente backend: OAuth/inventario estable/colisión histórica, permisos públicos de edición,
-coste de lectura, legacy/vídeo y conciliación de ambas raíces antes de cualquier corte.
-V21, ROOT, usuarios, Drive y coexistencia desactivada siguen intactos. No se hizo HTTP.
+Debug certificado D2E54C… compatible con la última instalación verificada; Release 0DA8A2…
+es distinto y no sustituye Debug. Revalidar la instalación actual antes de actualizar.
+Auditorías completas y VALIDACION_PRIVADA.json junto a APK, sin credenciales impresas.
+Los binarios no se publican. El Debug previo de validación sin credenciales no es esta candidata.
+El SHA documental publicado se verifica con HEAD y origin; difiere del SHA fuente de APK.
 
-Próxima acción: el autor de B entrega PR listo; integrador revisa SHA y repite los contratos.
-Antes de tocar datos de tablet, pedir autorización independiente para segundo respaldo actual.
-Luego instalación autorizada y comprobación offline de Descartados/restauración, longitud,
-fechas/documentos y PDF GLOBAL; continuar P11–P15. No restaurar la base vieja ni limpiar datos.
-No hay autorización de distribución, sincronización ficticia, instalación ni corte productivo.
+## Tablet y bloqueos restantes
+
+No se conectó, extrajo, instaló, desinstaló ni limpió la tablet. Tiene datos posteriores al
+primer respaldo, que permanece intacto. Procedimiento listo en
+`docs/SEGUNDO_RESPALDO_TABLET_20261102.md`: pedir autorización independiente para segundo
+respaldo privado, confirmar guardado/modo avión/Wi-Fi apagado, run-as/TAR binario, SHA y SQLite
+offline, cobertura de originales y limitaciones Keystore/SAF. Si es insuficiente, detenerse.
+No restaurar la base vieja ni instalar por autorizar un respaldo. Instalación requiere otro permiso.
+
+Matriz física vigente: `docs/VALIDACION_MANUAL_GBO_20261101.md`. P01–P10/P17 afectados deben
+repetirse tras actualización autorizada; P16 solo inspección salvo permiso de limpieza;
+**P11–P15 todavía pendientes**. Los parciales de 1.4.22 no se convierten en PASS.
+
+V21 sin modificar, sin despliegue, cambio ROOT, Drive ni activación de coexistencia.
+OAuth, inventario paginado estable/journals, ACK y colisión SCAP reales, permisos públicos,
+raíces, coste y legacy/vídeo siguen pendientes. No hay autorización de sincronización ficticia,
+distribución general ni corte. **NO-GO productivo; próxima acción: segundo respaldo autorizado.**

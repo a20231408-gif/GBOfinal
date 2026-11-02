@@ -1,5 +1,26 @@
 # Validación manual reportada e integración — 01/11/2026
 
+## Actualización de integración — 02/11/2026
+
+Ambos PR integrados conservando autoría: A `bc1e307`, B merge normal
+`5123f48e0c03894cc3a1e9ed90b411af55bc5ff8` desde el SHA Ready for review
+`99cc388b5118b264cb618697892fef3c738727a3`. El anterior bloqueo de borrador queda superado.
+Selección vigente completa más casos de B: **113/113 PASS**, 21 clases, 0 fallos/errores/
+omitidos; V2 mocks sin credenciales. No sumar ejecuciones anteriores al total único.
+XML y log: `tmp/integracion-final-b-20261102/regresiones/`, Gradle 1m32s.
+
+Después se compilaron Debug original y Release histórica **1.4.23 (37)** sin perfil de
+validación ni init-script V2; firmas/configuración verificadas offline. Rutas y SHA en el
+resumen ejecutivo vigente. No instaladas ni distribuidas. La matriz siguiente conserva los
+resultados reportados de **1.4.22**, no se convierte en PASS por pruebas automatizadas.
+**P11–P15 pendientes**, demás parciales y límites sin cambiar. Antes de extracción de datos
+actuales, autorización independiente para segundo respaldo según SEGUNDO_RESPALDO_TABLET_20261102.md;
+la instalación requiere autorización posterior distinta. Primer respaldo intacto.
+Repetir en futura actualización P01–P10/P17 afectados y P16 solo inspección, sin envíos reales
+ni limpieza autorizados aquí. No hay GO productivo: V21/OAuth/journals/raíces siguen pendientes.
+
+## Evidencia manual reportada e historial del 01/11 (estado físico sin cambios)
+
 Resultados comunicados por el propietario para GBO **1.4.22 (36) Debug** en su Xiaomi.
 No son observaciones nuevas de ADB ni una verificación del SHA instalado. Sustituyen el
 estado anterior «0/17» como estado vigente; no convierten los parciales en PASS.
