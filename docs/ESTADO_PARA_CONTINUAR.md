@@ -1,5 +1,16 @@
 # GBO — Estado completo para continuar
 
+## Trabajo autónomo y bloqueo OAuth — 02/11/2026 (vigente)
+
+Registro acumulativo: docs/PROGRESO_ACUMULADO_GBO.md. GET-only real enumeró 889 entradas técnicas
+de la raíz antigua; contenido JSON bloqueado con 403 appNotAuthorizedToFile. Evidencia parcial privada,
+lector detenido sin escrituras. NO hay totales válidos por estado ni ACK conciliados. Falta consentimiento
+OAuth de lectura de contenido; tener edición del Script en navegador no acredita ese permiso de la app.
+Backend local endurecido con preflight completo, rechazo de replay TRASH tras restaurar, autoridad
+individual revocable y hook de cerca servidor, sin activar rutas ni cablear V21. 65/65 Node PASS
+(35 núcleo/adaptadores, 10 lectura/conciliación, 20 modelo). Candidato V21 privado preserva baseline
+byte por byte y panel SCAP; sin APK ni despliegue. PR #5/#6 sin fusionar. Mantener NO-GO productivo.
+
 ## Propuesta de eliminación controlada — 02/11/2026 (rama separada, NO integrada)
 
 Rama `codex/eliminacion-controlada-20261102` desde `0071ddcb9489a06f0c33309a00c77d0b6efe7ccf`.
