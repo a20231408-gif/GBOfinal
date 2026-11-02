@@ -1,5 +1,24 @@
 # GBO — Estado completo para continuar
 
+## P04/P17 — documentos internos del puente, 02/11/2026 (vigente)
+
+Rama de intervención codex/scap-navegacion-archivos-20261102 desde 6d94632 verificado remoto.
+Fuente candidata `afae07245bdd8ba24d79fd40c5ce4d51837449d0`, Android **1.4.24 (38)**.
+Documentos del puente se consulta desde SCAP y tras cierre local persistido sin error:
+categorías, revisiones/última READY, provisionales, abrir/compartir/ubicación/copiar/Guardar como.
+No exporta ni programa sincronización al consultar. Guarda de cierre/destino y Room 21 intactos.
+No se inventa URI de carpeta: MediaStore abre Descargas y SAF el árbol autorizado. La vista
+interna es la navegación fiable disponible con los metadatos existentes.
+
+Selección **129/129 PASS**, 24 clases, incluye los 113 anteriores y regresiones nuevas SCAP;
+no sumar repeticiones. Candidata Debug original firmada y configuración offline verificadas,
+NO INSTALAR. Ruta/hash/evidencia/archivos y alcance en SCAP_DOCUMENTOS_P04_P17_20261102.md.
+La tablet sigue en 1.4.23/37: el propietario reportó **P09, P06 y P08 PASS**; P04/P17 parcial
+en esa versión. Esto supera los estados físicos antiguos inferiores, sin acreditar todavía
+la pantalla nueva. No se accedió a tablet ni respaldos en esta intervención. P11–P15 y
+conciliación del backend siguen pendientes; **NO-GO productivo**. PR hacia integración,
+merge solo tras seguridad/regresiones; SHA final se verifica con HEAD y origin.
+
 ## Integración final B y candidatas originales — 02/11/2026 (vigente)
 
 PR #1 verificado abierto/Ready for review, SHA exacto
