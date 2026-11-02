@@ -66,28 +66,40 @@ fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
     val progress by remember(context){SyncProgressStore.get(context).flow}.collectAsState()
     var connected by remember{mutableStateOf(false)}
     LaunchedEffect(context){while(true){
-        val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
-        connected=manager.getNetworkCapabilities(manager.activeNetwork)?.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)==true
+        connected=SyncProgressPresentation.connected(context)
         kotlinx.coroutines.delay(3000)
     }}
     val views=intents.associate{i->i.key to DriveDeliveryPresentation.view(i,identities[i.key] ?: DriveDeliveryIdentity("Consultando ficha…","",null,false),
         SyncProgressPresentation.running(i,work),connected,DriveUploadPolicy.configurationError()==null,
         work.any{it.state==WorkInfo.State.ENQUEUED&&it.runAttemptCount>0}&&i.state=="ERROR",progress[i.key])}
     var message by remember {mutableStateOf<String?>(null)}
+    var scheduling by remember {mutableStateOf(false)}
+    fun schedule(retryOnly:Boolean) {
+        scheduling=true;message=null
+        scope.launch {
+            try {
+                val count=UnifiedSyncAdapter.enqueue(context,retryOnly)
+                message="$count solicitudes nuevas. También se revisará la cola existente; la entrega requiere ACK."
+            } catch(e:Exception) {
+                if(e is kotlinx.coroutines.CancellationException)throw e
+                message=e.message ?: "No se pudo programar la revisión de la cola. Los archivos locales se conservan."
+            } finally {scheduling=false}
+        }
+    }
     var review by remember{mutableStateOf<DriveDeliveryEntry?>(null)}
     AlertDialog(onDismissRequest=onClose,title={Text("Entregas Drive")},text={
         Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             Text("${views.values.count{it.confirmed}} confirmadas · ${views.values.count{!it.confirmed}} pendientes")
             Text("Guardar en la tablet no confirma una entrega en Drive.",style=MaterialTheme.typography.bodySmall)
             Text("Este detalle incluye borradores de la cola y exige ACK completo de la revisión local vigente; su total puede diferir del resumen principal.",style=MaterialTheme.typography.bodySmall)
-            Button(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,false)} registros programados."}.getOrElse {it.message}}}) {Text("Sincronizar ahora")}
-            OutlinedButton(onClick={scope.launch {message=runCatching {"${UnifiedSyncAdapter.enqueue(context,true)} reintentos programados."}.getOrElse {it.message}}}) {Text("Reintentar errores")}
+            DriveSyncActions(scheduling,message,
+                SyncProgressPresentation.workStatus(work,connected).takeIf{views.values.any{!it.confirmed}},
+                onSync={schedule(false)},onRetry={schedule(true)})
             val rows=intents.map{i->DriveDeliveryEntry(i,identities[i.key] ?: DriveDeliveryIdentity("Consultando ficha…","",null,false),views.getValue(i.key),progress[i.key])}
             DriveDeliveryLists(rows,onReview={row->if(row.intent.kind=="SCAP")review=row else message="Abre esta ficha desde Mis registros y revisa su validación."}){i->
                 scope.launch{message=runCatching{AutomaticSync.manual(context,i.kind,i.recordId);"Reintento programado."}.getOrElse{it.message}}
             }
             DeliveryCenterTechnicalSummary()
-            message?.let {Text(it)}
         }
     },confirmButton={TextButton(onClick=onClose){Text("Cerrar")}})
     review?.let{row->androidx.compose.ui.window.Dialog(onDismissRequest={review=null},
@@ -95,6 +107,18 @@ fun DriveSyncCenter(vm: InventoryViewModel, onClose: () -> Unit) {
         Surface(Modifier.fillMaxSize()) {com.tuempresa.inventariovial.scap.ui.ScapWorkspace(vm,
             initialInspectionId=row.intent.recordId,initialRoute=row.identity.target ?: com.tuempresa.inventariovial.scap.domain.ScapFieldRoute("REVIEW"),onBack={review=null})}
     }}
+}
+
+/** Immediate feedback stays beside the action even when many deliveries follow. */
+@Composable internal fun DriveSyncActions(scheduling:Boolean,message:String?,workStatus:String?,onSync:()->Unit,onRetry:()->Unit) {
+    Button(enabled=!scheduling,onClick=onSync) {Text("Sincronizar ahora")}
+    OutlinedButton(enabled=!scheduling,onClick=onRetry) {Text("Reintentar errores")}
+    if(scheduling) {
+        LinearProgressIndicator(Modifier.fillMaxWidth())
+        Text("Programando revisión de la cola…")
+    }
+    message?.let{Text(it)}
+    workStatus?.let{Text(it)}
 }
 
 @Composable private fun DeliveryCenterTechnicalSummary() {

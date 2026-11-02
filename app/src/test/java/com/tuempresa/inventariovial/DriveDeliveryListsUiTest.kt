@@ -53,21 +53,21 @@ class DriveDeliveryListsUiTest {
         section(DriveDeliverySection.HISTORY);ui.onNodeWithTag("delivery-${row.intent.key}").assertExists()
         section(DriveDeliverySection.QUEUE)
         row=listEntry("LIVE","Muro - PE-28C - PR 10+060",state="UPLOADING",running=true)
-        ui.runOnIdle{rows=listOf(row)};ui.onNodeWithText("↑ Subiendo").assertExists()
-        section(DriveDeliverySection.HISTORY);ui.onNodeWithText("↑ Subiendo").assertExists()
+        ui.runOnIdle{rows=listOf(row)};ui.onNodeWithText("↑ Enviando").assertExists()
+        section(DriveDeliverySection.HISTORY);ui.onNodeWithText("↑ Enviando").assertExists()
         section(DriveDeliverySection.QUEUE)
         row=listEntry("LIVE","Muro - PE-28C - PR 10+060",state="UPLOADING")
-        ui.runOnIdle{rows=listOf(row)};ui.onNodeWithText("◌ Verificando entrega").assertExists()
+        ui.runOnIdle{rows=listOf(row)};ui.onNodeWithText("◌ Confirmando archivos").assertExists()
         row=listEntry("LIVE","Muro - PE-28C - PR 10+060",state="SYNCED")
         ui.runOnIdle{rows=listOf(row)}
         ui.onNodeWithTag("delivery-${row.intent.key}").assertDoesNotExist()
         ui.onNodeWithText(DriveDeliveryListPresentation.EMPTY_QUEUE).assertExists()
         section(DriveDeliverySection.HISTORY)
-        ui.onNodeWithTag("delivery-${row.intent.key}").assertExists();ui.onNodeWithText("✓ Subido correctamente").assertExists()
+        ui.onNodeWithTag("delivery-${row.intent.key}").assertExists();ui.onNodeWithText("✓ Entregado con ACK").assertExists()
         val i=row.intent.copy(revision=3,state="UPDATE_PENDING");val id=row.identity.copy(currentRevision=3)
         row=DriveDeliveryEntry(i,id,DriveDeliveryPresentation.view(i,id,false,true,true))
         ui.runOnIdle{rows=listOf(row)}
-        ui.onNodeWithText("✓ Subido correctamente").assertDoesNotExist()
+        ui.onNodeWithText("✓ Entregado con ACK").assertDoesNotExist()
         section(DriveDeliverySection.QUEUE);ui.onNodeWithTag("delivery-${row.intent.key}").assertExists()
         assertEquals(0,retries)
     }
@@ -96,7 +96,7 @@ class DriveDeliveryListsUiTest {
     @Test @Config(qualifiers="w400dp-h900dp-mdpi") fun emptyQueueAndAttentionHistoryRemainReadableWithLargeFont() {
         rows=listOf(listEntry("DONE",state="SYNCED"));mount(1.3f)
         ui.onNodeWithText(DriveDeliveryListPresentation.EMPTY_QUEUE).assertIsDisplayed();capture("03-cola-vacia-telefono")
-        section(DriveDeliverySection.HISTORY);ui.onNodeWithText("✓ Subido correctamente").assertExists()
+        section(DriveDeliverySection.HISTORY);ui.onNodeWithText("✓ Entregado con ACK").assertExists()
         val base=listEntry("ERROR","Badén - PE-28C - PR 12+150",state="BLOCKED")
         val i=base.intent.copy(error="Fotografía rechazada (NOT_JPEG). Original conservado.")
         ui.runOnIdle{rows=rows+base.copy(intent=i,view=DriveDeliveryPresentation.view(i,base.identity,false,true,true))}

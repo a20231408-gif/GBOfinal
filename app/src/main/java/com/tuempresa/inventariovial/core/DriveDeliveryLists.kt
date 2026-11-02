@@ -19,6 +19,8 @@ import java.util.Date
         for(s in DriveDeliverySection.entries)FilterChip(selected=section==s,onClick={section=s},
             modifier=Modifier.testTag("drive-section-${s.name}"),label={Text(s.label)})
     }
+    Text(if(section==DriveDeliverySection.QUEUE)"Entregas de esta tablet que aún no tienen ACK completo."
+        else "Entregas de esta tablet: incluye confirmadas y pendientes.",style=MaterialTheme.typography.bodySmall)
     if(section==DriveDeliverySection.HISTORY) {
         OutlinedTextField(value=query,onValueChange={query=it},label={Text("Buscar nombre, ruta o progresiva")},
             singleLine=true,modifier=Modifier.fillMaxWidth().testTag("drive-history-search"))
