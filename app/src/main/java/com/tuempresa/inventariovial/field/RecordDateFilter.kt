@@ -22,6 +22,10 @@ fun parseRecordDate(value:String):LocalDate? {
     return null
 }
 
+/** Display only: unknown historical text remains visible, never rewritten in Room. */
+fun recordDateLabel(value:String)=parseRecordDate(value)?.format(DateTimeFormatter.ofPattern("dd/MM/uuuu")) ?: value.ifBlank{"Sin fecha registrada"}
+fun recordMonthLabel(month:Int)=java.time.Month.of(month).getDisplayName(java.time.format.TextStyle.FULL,java.util.Locale.forLanguageTag("es-PE"))
+
 @Composable fun RecordDateFilter(value:RecordDateSelection,dates:List<LocalDate>,onChange:(RecordDateSelection)->Unit) {
     Text("Fecha de registro")
     Row(Modifier.fillMaxWidth()) {
@@ -35,10 +39,10 @@ fun parseRecordDate(value:String):LocalDate? {
 @Composable private fun DatePart(label:String,value:Int?,values:List<Int>,modifier:Modifier,onChange:(Int?)->Unit) {
     var expanded by remember {mutableStateOf(false)}
     Box(modifier) {
-        OutlinedButton(onClick={expanded=true}) {Text("$label: ${value ?: "Todos"}")}
+        OutlinedButton(onClick={expanded=true}) {Text("$label: ${value?.let{if(label=="Mes")recordMonthLabel(it)else it.toString()} ?: "Todos"}")}
         DropdownMenu(expanded,onDismissRequest={expanded=false}) {
             DropdownMenuItem(text={Text("Todos")},onClick={onChange(null);expanded=false})
-            values.forEach {part->DropdownMenuItem(text={Text(part.toString())},onClick={onChange(part);expanded=false})}
+            values.forEach {part->DropdownMenuItem(text={Text(if(label=="Mes")recordMonthLabel(part)else part.toString())},onClick={onChange(part);expanded=false})}
         }
     }
 }
