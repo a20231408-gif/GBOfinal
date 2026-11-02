@@ -71,6 +71,8 @@ class ScapFinalP0UiTest {
                 val queued=db.automaticSyncDao().get("SCAP/$id")!!
                 assertEquals("QUEUED",queued.state);assertTrue(queued.warningsConfirmed);assertEquals(0,queued.syncedRevision)
                 assertNull(ctl.error.value)
+                ui.waitUntil(10_000){ui.onAllNodesWithText("Documentos del puente").fetchSemanticsNodes().isNotEmpty()}
+                assertEquals(1,db.automaticSyncDao().all().size)
             }finally{scope.cancel();ui.runOnIdle{show.value=false;models.clear()};ui.waitForIdle()}
         }
     }
