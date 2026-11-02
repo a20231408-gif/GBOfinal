@@ -70,4 +70,14 @@ no main. Describir problema, cambio, pruebas efectivamente ejecutadas y pendient
 del mantenedor antes de integrar; si el colaborador no tiene escritura, acordar fork/PR sin
 compartir credenciales. No publicar APK, bundles, propiedades privadas, bases, fotos, logs reales
 o el manual privado. No usar tablet personal, acceso Google ni datos reales como dependencia.
-P01–P17 permanecen sin ejecutar; producción sigue en el último estado acreditado V21.
+La matriz física vigente está en VALIDACION_MANUAL_GBO_20261101.md; no todos los casos están
+aprobados. Producción sigue en el último estado acreditado V21.
+
+Para regresiones que exigen nombres V2, usar el perfil explícito sin credenciales:
+
+```powershell
+.\gradlew.bat '-PgboValidationBuild=true' :app:testDebugUnitTest --init-script tools/migracion/pruebas.init.gradle --init-script tools/validacion/v2-mocks.init.gradle --tests '*SyncRecovery10DTest'
+```
+
+El init-script exige gboValidationBuild=true y habilita solo ese flag; no carga endpoints ni
+tokens. No usar el Debug resultante como APK de campo. El Run ordinario no cambia.

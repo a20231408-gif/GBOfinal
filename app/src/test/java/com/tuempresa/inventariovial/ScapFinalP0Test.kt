@@ -134,7 +134,7 @@ class ScapFinalP0Test {
     @Test fun waitingTimeNeverClaimsSixtyNineMinutesOfActiveUpload() {
         val p=SyncProgress(2,"PHOTOS",3,6,1)
         val elapsed=SyncProgressPresentation.elapsed(p,69*60*1000L+1)
-        assertTrue(elapsed.contains("69 min"));assertTrue(elapsed.contains("no es tiempo efectivo"))
+        assertTrue(elapsed.contains("69 min"));assertTrue(elapsed.contains("no mide la duración de subida"))
         val i=deliveryFixture().copy(state="UPLOADING",syncedRevision=0)
         val id=DriveDeliveryIdentity("TEST","TEST",2,true)
         assertEquals(DriveDeliveryStatus.VERIFYING,DriveDeliveryPresentation.view(i,id,false,true,true,progress=p).status)

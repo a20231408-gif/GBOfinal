@@ -84,8 +84,10 @@ import java.io.File
         if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
     if(filtered.size>latest.size||latest.size>6)TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
-    val visibleJobs=if(history)filtered.map{it.id}.toSet()else latest.map{it.id}.toSet()
-    val items=files.filter{it.state=="READY"&&it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
+    val visibleJobs=filtered.map{it.id}.toSet()
+    // Keep the last verified copy accessible while a newer attempt is pending or failed.
+    val items=LocalCopyPresentation.currentFiles(filtered,files,history)
+        .filter{it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
     items.take(visible).forEach{SavedFileActions(it)}
     if(items.size>visible)TextButton(onClick={visible+=12}){Text("Ver más archivos (${items.size})")}
 }
@@ -117,7 +119,8 @@ import java.io.File
             val uri=Uri.parse(file.uri)
             message=runCatching{c.startActivity(SharedFileActions.location(uri) ?: SharedFileActions.view(uri,file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));"Android puede abrir la ubicación accesible más cercana. Busca $publicRoot; ABRIR ARCHIVO permite acceder directamente al documento."}
                 .getOrElse{"Usa ABRIR ARCHIVO o Compartir, o entra a Archivos → Descargas → $publicRoot."}
-        }){Text("VER UBICACIÓN")}
+        }){Text("ABRIR UBICACIÓN DISPONIBLE")}
+        TextButton(onClick={(c.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("Ubicación local GBO",file.relativePath));message="Ubicación copiada. Android puede limitar el acceso directo a la carpeta."}){Text("Copiar ubicación")}
         TextButton(onClick={runCatching{saveAs.launch(file.name)}.onFailure{message="No se pudo abrir el selector de Android."}}){Text("Guardar como…")}
         if(missing)TextButton(onClick={scope.launch{message=runCatching{val d=InventoryDatabase.getInstance(c);val job=d.localFilesDao().job(file.jobId);if(job?.scope=="SAF")LocalCopies.document(c,d,File(file.source),file.recordKey.substringBefore('/'),file.mimeType)else LocalCopies.retry(c,d,file.jobId);"Recuperación programada desde el original conservado."}.getOrElse{it.message}}}){Text("Recuperar copia en Descargas")}
         message?.let{Text(it,style=MaterialTheme.typography.bodySmall)}

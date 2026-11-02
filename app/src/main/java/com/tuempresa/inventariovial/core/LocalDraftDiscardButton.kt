@@ -13,7 +13,7 @@ fun LocalDraftDiscardButton(kind:String,id:String,restore:Boolean=false,onChange
     var confirm by remember(id,restore) {mutableStateOf(false)}
     var busy by remember(id) {mutableStateOf(false)}
     var error by remember(id) {mutableStateOf<String?>(null)}
-    TextButton(enabled=!busy,onClick={confirm=true;error=null}) {Text(if(restore) "Recuperar borrador local" else "Descartar borrador local")}
+    TextButton(enabled=!busy,onClick={confirm=true;error=null}) {Text(if(restore) "Restaurar borrador local" else "Descartar borrador local")}
     error?.let {Text(it,color=MaterialTheme.colorScheme.error)}
     if(confirm)AlertDialog(onDismissRequest={if(!busy)confirm=false},
         title={Text(if(restore) "Recuperar borrador" else "Descartar borrador local")},

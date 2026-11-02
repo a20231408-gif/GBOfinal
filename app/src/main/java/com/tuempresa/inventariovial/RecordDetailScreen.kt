@@ -89,7 +89,7 @@ fun RecordDetailScreen(vm: InventoryViewModel, id: String, initialPage:String="D
         when(page) {
             "DETAIL" -> {
                 item {
-                    Text("Fecha de registro: ${r.surveyDate}")
+                    Text("Fecha de registro: ${com.tuempresa.inventariovial.field.recordDateLabel(r.surveyDate)}")
                     Text(if(r.status=="DISCARDED_LOCAL") "Descartado localmente · originales conservados" else if(r.status=="ANNULLED") "Anulado" else "Drive: ${RecordDetailPresentation.status(sync,r.status=="ACTIVE")}",style=MaterialTheme.typography.titleMedium)
                     if(sync?.revision != sync?.syncedRevision || sync==null) Text("El Excel remoto puede representar una revisión anterior.")
                     Text("Georreferenciación externa: ${runCatching {JSONObject(sync?.receiptJson ?: "{}").optString("externalGeoreferencingStatus").takeIf {it.isNotBlank()}}.getOrNull() ?: "Pendiente de confirmación externa"}")

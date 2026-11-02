@@ -3,7 +3,8 @@
 Base funcional exacta: `b3ed30eb19340d26abc909387964a1469b46e7f1` (1.4.22/36).
 Partir del HEAD publicado que la contiene, según ONBOARDING_COLABORADORES.md.
 No hay GO productivo. Pruebas históricas 82 Android/48 backend fueron selecciones locales;
-P01–P17 físicas siguen pendientes. No reinstalar, distribuir ni desplegar por aprobar mocks.
+La matriz física vigente está en VALIDACION_MANUAL_GBO_20261101.md: hay resultados reportados
+PASS de alcance limitado, parciales y pendientes. No reinstalar, distribuir ni desplegar por aprobar mocks.
 
 | Frente / rama sugerida | Archivos bajo responsabilidad | Aceptación | Dependencias y límites |
 |---|---|---|---|

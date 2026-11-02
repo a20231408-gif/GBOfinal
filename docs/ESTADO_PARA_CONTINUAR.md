@@ -1,5 +1,71 @@
 # GBO — Estado completo para continuar
 
+## Integración A y observaciones físicas — 01/11/2026 (estado vigente)
+
+Base de entrada dda0e239. Merge normal de PR #2/A en `bc1e307`, conserva el commit
+`a9d066f44cb15ffedbb212692fbe7697b408afe0` y la autoría. PR #1/B se revisó hasta
+`282b8df50a9a695ecc93c64f6ed0cb460511990f`: **sigue borrador y NO se integró**.
+No convertirlo en listo por cuenta del integrador. Revisión aislada sin credenciales con
+V2 habilitado: 27/27 PASS, incluido SyncRecovery10DTest 9/9 y Dashboard 4/4. La corrección
+estricta ACK de Pavimentos y el fixture Dashboard de B siguen pendientes en integración.
+
+Fuente nueva **1.4.23 (37)**, package original, Room 21 intacto, código consolidado en
+`c44befa4f0f6c41af8c177b2fdcade806c00246c`. Correcciones: `f14095c` separa descartados
+de pendientes activos, añade vista/restauración explícita y aclara fechas/archivos; `6e0f174`
+presenta longitud kilométrica acreditada al abrir y diferencia auxiliar sin inventar PR;
+`7608ede` aclara cantidad GLOBAL en PDF y navegación/diagnóstico SCAP. No se cambió PCI,
+la guarda de descarte, UUID, revisiones, hash, ACK ni backend. No hay borrado remoto nuevo.
+
+Selección final integración **103/103 PASS**, 18 clases, 0 fallos/errores/omitidos;
+assembleDebug y signingReport PASS, 1m1s. XML/logs conservados por corrida en
+`tmp/integracion-equipo-20261101/`. No sumar A 29/29, B 27/27 ni repeticiones al total.
+No es suite histórica completa: Dashboard con fixture original permanece pendiente de B.
+Perfil existente gboValidationBuild=true + nuevo init-script tools/validacion/v2-mocks.init.gradle
+habilita solo V2 para mocks sin endpoints/tokens; Run ordinario no cambia.
+
+**El propietario sí reportó pruebas físicas de 1.4.22/36 después de los informes inferiores.**
+No seguir diciendo 0/17 como estado actual. Matriz exacta en VALIDACION_MANUAL_GBO_20261101.md:
+P05 PASS; P07 PASS de guardado/búsqueda; P10 PASS de selección; P16 PASS solo inspección sin
+limpieza. P01/P02/P03/P04/P06/P17 parciales; P08 fallo UX, P09 fallo prioritario; P11–P15
+pendientes completos. No se validaron físicamente estas correcciones nuevas. Conteos 30/34
+Todos y 7/11 Pendientes incluían cuatro descartados, no prueban destrucción. Ahora se espera
+30/34 en Todos, 7/7 en Pendientes y cuatro en Descartados en el fixture equivalente.
+
+La tablet no fue accedida/modificada en esta integración. Respaldo previo privado intacto;
+**antes de modificar sus datos, autorización independiente para segundo respaldo actual**.
+No restaurar la base vieja sobre las pruebas nuevas. P09 conserva las guardas de registros
+con entrega. La UI se comprobó con accesibilidad/Compose simulado, no con toque físico.
+
+APK oficial nueva **APLAZADA** por PR #1 borrador y prohibición de generar candidata oficial
+antes de cerrar esa fase. Solo Debug sin credenciales, NO INSTALAR, en
+`tmp/integracion-equipo-20261101/final/GBO_1.4.23_37_VALIDACION_SIN_CREDENCIALES_NO_INSTALAR.apk`,
+SHA256 `18bf3a9c4c9e2f625d0c7b812380194c3b01b2fdec94912f7f3afb33c81c62fe`.
+Package, versión, firma Debug histórica D2E54C… y alineación verificados. No se compiló Release.
+Las candidatas privadas anteriores permanecen intactas; no distribuir ni instalar el build nuevo.
+
+NO-GO productivo: V21 sin tocar, no HTTP/Google/tablet durante este bloque. Coexistencia local
+sigue desactivada, inventario/colisión/legacy/vídeo/permisos sin conciliar. El consentimiento
+pendiente del auditor es el último estado observado, no una nueva ejecución en este bloque.
+Resumen: GBO_INTEGRACION_EQUIPO_Y_OBSERVACIONES.md. Publicación autorizada solo de fuente/docs
+seguros a la rama de integración; SHA final documental se obtiene de HEAD y referencia remota.
+
+## Auditoría operativa iniciada — 01/11/2026
+
+El usuario recuperó acceso legítimo a GBO y autorizó solo lecturas del backend original.
+Sesión GBO confirmada en el editor; `PreflightReadonly.gs` leído íntegro sin editar fuente.
+La ejecución de `gboPilotInventoryReadonly` mostró «Se requiere autorización»; el último
+registro observado no tiene salida. Consentimiento oficial delegado al usuario. No hay
+totales reales ni estabilidad/conciliación acreditados todavía. No confundir este bloqueo
+OAuth con el antiguo bloqueo de segundo factor ni con una ejecución aprobada.
+
+El conector Drive devuelve anyone:writer en destino y sus dos ancestros; no acredita
+herencia, padres ni capacidades del ejecutor GBO. No se cambiaron permisos. El auditor
+actual solo inventaría la raíz antigua y requiere complemento para staging, reservas,
+legacy/vídeo y bridgeCode del conflicto concreto. Informe de avance y acciones exactas:
+`docs/AUDITORIA_BACKEND_OPERATIVA_20261101.md`. NO-GO; ninguna activación/publicación/entrega.
+El respaldo privado de tablet sí fue verificado después del informe histórico inferior;
+no se instaló la candidata y P01–P17 siguen **0/17**. Android continúa 1.4.22 (36).
+
 ## Incorporación de colaboradores — 01/11/2026
 
 El propietario autorizó publicar la rama revisada y preparar coordinación, sin cambios

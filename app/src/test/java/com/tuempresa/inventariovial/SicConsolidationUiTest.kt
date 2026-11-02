@@ -58,7 +58,7 @@ class SicConsolidationUiTest {
             ui.waitUntil(20_000){if(opened==null)opened=org.robolectric.Shadows.shadowOf(context).nextStartedActivity;opened!=null}
             assertEquals(android.content.Intent.ACTION_VIEW,opened!!.action)
             assertEquals("SIC-17B.xlsx",provider.entries.getValue(ContentUris.parseId(opened!!.data!!)).values.getAsString(MediaStore.MediaColumns.DISPLAY_NAME))
-            ui.onNodeWithText("VER UBICACIÓN").performScrollTo().performClick()
+            ui.onNodeWithText("ABRIR UBICACIÓN DISPONIBLE").performScrollTo().performClick()
             var location:android.content.Intent?=null
             ui.waitUntil(10000){if(location==null)location=org.robolectric.Shadows.shadowOf(context).nextStartedActivity;location!=null}
             assertEquals(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS,location!!.action)

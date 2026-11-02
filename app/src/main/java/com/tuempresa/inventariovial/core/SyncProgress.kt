@@ -48,6 +48,6 @@ object SyncProgressPresentation {
         if(p.total>0) " · ${p.processed.toLong()*100/p.total}% transferidos a staging; el ACK final de la ficha se comprueba por separado" else ""
     fun elapsed(p:SyncProgress,now:Long):String {
         val seconds=maxOf(0,(now-p.startedAt)/1000)
-        return "Antigüedad desde el primer intento: ${seconds/60} min ${seconds%60} s · incluye esperas y períodos sin conexión; no es tiempo efectivo de subida"
+        return "Primer intento hace ${seconds/60} min ${seconds%60} s. Incluye tiempo sin conexión; no mide la duración de subida."
     }
 }

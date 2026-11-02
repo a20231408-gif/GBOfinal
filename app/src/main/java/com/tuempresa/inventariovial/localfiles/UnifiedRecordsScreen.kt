@@ -35,6 +35,20 @@ data class LocalInventoryItem(val kind:String,val id:String,val family:String,va
     val key get()="$kind/$id"
 }
 object LocalInventoryIndex {
+    fun discarded(item:LocalInventoryItem)=item.capture in setOf("DISCARDED_LOCAL","ANNULLED")
+    /** Capture visibility never turns a discarded draft into an active delivery. */
+    fun matchesCapture(item:LocalInventoryItem,filter:String,includeHistorical:Boolean,confirmed:Boolean,archived:Boolean=false):Boolean {
+        if(filter=="Descartados")return item.capture=="DISCARDED_LOCAL"
+        if(discarded(item))return includeHistorical && filter=="Todos"
+        if(archived && !includeHistorical && filter!="Archivados")return false
+        return when(filter) {
+            "Borradores"->item.capture=="DRAFT"
+            "Enviados"->confirmed
+            "Archivados"->archived
+            "Pendientes","Sin confirmar"->item.capture!="DRAFT" && !confirmed
+            else->true
+        }
+    }
     fun chronological(items:List<LocalInventoryItem>)=items.sortedWith(compareByDescending<LocalInventoryItem>{parseRecordDate(it.surveyDate)}.thenBy{it.key})
     fun cleanupCandidate(item:LocalInventoryItem,intent:DriveSyncIntent?,job:LocalExportJob?)=
         intent!=null && DriveDeliveryPresentation.confirmed(intent,item.revision) && job?.state=="READY" && job.revision==item.revision
@@ -114,15 +128,8 @@ object LocalInventoryIndex {
     val configured=com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null
     val latest=remember(jobs){jobs.filter{it.scope.startsWith("FULL")&&it.state!="SUPERSEDED"}.groupBy{it.recordKey}.mapValues{(_,v)->v.maxWith(compareBy({it.revision},{it.createdAt}))}}
     val shown=all.filter {r->val d=drive.find{it.key==r.key};val j=latest[r.key]
-        (historical||r.capture !in setOf("DISCARDED_LOCAL","ANNULLED")) &&
-        (historical||captureFilter=="Archivados"||!ConfirmedLocalCleanup.archived(choices,r.key,r.revision)) && (family=="Todas"||r.family.startsWith(family)) &&
-        dateFilter.matches(parseRecordDate(r.surveyDate)) && when(captureFilter) {
-            "Borradores"->r.capture=="DRAFT"
-            "Enviados"->d!=null && DriveDeliveryPresentation.confirmed(d,r.revision)
-            "Archivados"->ConfirmedLocalCleanup.archived(choices,r.key,r.revision)
-            "Pendientes","Sin confirmar"->r.capture!="DRAFT" && (d==null || !DriveDeliveryPresentation.confirmed(d,r.revision))
-            else->true
-        } &&
+        LocalInventoryIndex.matchesCapture(r,captureFilter,historical,d!=null && DriveDeliveryPresentation.confirmed(d,r.revision),ConfirmedLocalCleanup.archived(choices,r.key,r.revision)) &&
+        (family=="Todas"||r.family.startsWith(family)) && dateFilter.matches(parseRecordDate(r.surveyDate)) &&
         "${r.name} ${r.id} ${r.route}".contains(search,true)&&r.route.contains(route,true)&&r.progressive.contains(pr,true)&&
         "${r.capture} ${d?.state.orEmpty()} ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)} ${LocalInventoryIndex.localState(r,j)} ${j?.state.orEmpty()}".contains(state,true)
     }.let {if(newestFirst)LocalInventoryIndex.chronological(it)else it}
@@ -164,14 +171,25 @@ object LocalInventoryIndex {
                 listOf("Todas","SIC","SCAP","Pavimentos").forEach{f->FilterChip(family==f,{family=f},label={Text(f)})}
             }
             OutlinedTextField(route,{route=it},label={Text("Carretera")},modifier=Modifier.fillMaxWidth())
+            var routeMenu by remember{mutableStateOf(false)}
+            Box {
+                TextButton(onClick={routeMenu=true}){Text("Elegir carretera registrada")}
+                DropdownMenu(routeMenu,onDismissRequest={routeMenu=false}) {
+                    DropdownMenuItem(text={Text("Todas")},onClick={route="";routeMenu=false})
+                    all.map{it.route}.filter{it.isNotBlank()}.distinct().sorted().forEach{road->
+                        DropdownMenuItem(text={Text(road)},onClick={route=road;routeMenu=false})
+                    }
+                }
+            }
             OutlinedTextField(pr,{pr=it},label={Text("Progresiva")},modifier=Modifier.fillMaxWidth())
-            OutlinedTextField(state,{state=it},label={Text("Estado de captura / Drive / copia local")},modifier=Modifier.fillMaxWidth())
+            OutlinedTextField(state,{state=it},label={Text("Buscar en estados (captura, Drive o copia local)")},modifier=Modifier.fillMaxWidth())
             RecordDateFilter(dateFilter,all.mapNotNull{parseRecordDate(it.surveyDate)}){year=it.year;month=it.month;day=it.day}
             Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-                listOf("Todos","Borradores","Pendientes","Enviados","Archivados").forEach {f->FilterChip(captureFilter==f,{captureFilter=f},label={Text(f)})}
+                listOf("Todos","Borradores","Pendientes","Enviados","Archivados","Descartados").forEach {f->FilterChip(captureFilter==f,{captureFilter=f;selected=emptySet()},label={Text(f)})}
             }
             FilterChip(newestFirst,{newestFirst=!newestFirst},label={Text(if(newestFirst)"Fecha de registro: más recientes"else"Orden vial")})
             Row{Checkbox(historical,{historical=it});Text("Mostrar descartados, archivados y anulados")}
+            if(captureFilter=="Descartados")Text("Borradores conservados fuera del listado activo. Restaurar no programa envíos; las fichas con entrega histórica permanecen protegidas.")
             Text("Copias automáticas ${if(LocalCopySettings.enabled(c))"activadas"else"desactivadas"}. Descargas ocupa espacio y puede ser visible para otras aplicaciones. Configura en Herramientas y ajustes → Copias locales.",style=MaterialTheme.typography.bodySmall)
             Text("${shown.size} registros")
             TextButton(enabled=shown.isNotEmpty(),onClick={
@@ -202,12 +220,13 @@ object LocalInventoryIndex {
                     Text(if(r in selectable)"Seleccionar borrador"else"Seleccionar entregado para respaldo")
                 }
                 Text(r.name,style=MaterialTheme.typography.titleMedium);Text("${r.family} · ${r.route.ifBlank{"Ruta pendiente"}} · ${r.progressive}")
+                Text("Captura: ${when(r.capture){"DISCARDED_LOCAL"->"Descartado · datos conservados";"DRAFT"->"Borrador";"ANNULLED"->"Anulado";else->"Ficha activa"}}")
                 var technical by remember(r.key){mutableStateOf(false)}
-                Text("Fecha de registro: ${r.surveyDate.ifBlank{"Sin fecha registrada"}}",style=MaterialTheme.typography.bodySmall)
+                Text("Fecha de registro: ${recordDateLabel(r.surveyDate)}",style=MaterialTheme.typography.bodySmall)
                 TextButton(onClick={technical=!technical}){Text(if(technical)"Ocultar detalles técnicos"else"Detalles técnicos")}
                 if(technical){Text("UUID: ${r.id}",style=MaterialTheme.typography.bodySmall)
                     Text("Captura: ${r.capture} · revisión ${r.revision} · ${DateFormat.getDateTimeInstance().format(Date(r.revision))}",style=MaterialTheme.typography.bodySmall)}
-                Text("Drive de la ficha: ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)}${if(d?.syncedRevision!=null&&d.syncedRevision>0)" · ACK R${d.syncedRevision}"else" · sin ACK"}")
+                Text(if(LocalInventoryIndex.discarded(r))"Drive histórico: ${if(d?.syncedRevision!=null&&d.syncedRevision>0)"ACK R${d.syncedRevision}"else"sin confirmación"}. Fuera de pendientes activos; el registro se conserva."else "Drive de la ficha: ${SyncIntentPresentation.label(d,r.capture in setOf("ACTIVE","COMPLETE","CLOSED"),connected,configured)}${if(d?.syncedRevision!=null&&d.syncedRevision>0)" · ACK R${d.syncedRevision}"else" · sin ACK"}")
                 Text(LocalInventoryIndex.localState(r,job))
                 d?.receiptJson?.let{runCatching{JSONObject(it)}.getOrNull()}?.takeIf{it.optBoolean("ok")&&it.optString("key")==r.key&&it.optLong("revision")==d.syncedRevision}?.optString("logicalPath")?.takeIf{it.isNotBlank()}?.let{Text("Drive confirmado: $it",style=MaterialTheme.typography.bodySmall)}
                 OutlinedButton(onClick={detail=r.key}){Text("Ver detalle")}
@@ -240,7 +259,8 @@ object LocalInventoryIndex {
     }}
     Row(Modifier.horizontalScroll(rememberScrollState())){
         TextButton(enabled=documents.isNotEmpty(),onClick={open(false)}){Text("Abrir archivo")}
-        TextButton(onClick={message=runCatching{c.startActivity(SharedFileActions.downloads());"${documents.firstOrNull()?.relativePath ?: "Download/GBO_Ruta_Clara/"} · Android puede abrir Descargas sin seleccionar la carpeta exacta."}.getOrElse{"Abre Archivos → Descargas → GBO_Ruta_Clara"}}){Text("Ver ubicación")}
+        TextButton(onClick={message="Ubicación local: ${documents.firstOrNull()?.relativePath ?: "Sin copia pública disponible"}. Abrir archivo accede al documento exacto. Android no garantiza abrir su carpeta."}){Text("Mostrar ubicación")}
+        TextButton(enabled=documents.isNotEmpty(),onClick={val path=documents.first().relativePath;(c.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("Ubicación local GBO",path));message="Ubicación copiada. Es una ruta descriptiva, no un permiso de acceso."}){Text("Copiar ubicación")}
         TextButton(enabled=documents.isNotEmpty(),onClick={open(true)}){Text("Compartir")}
     }
     documents.firstOrNull()?.let{Text("Local: ${it.relativePath}",style=MaterialTheme.typography.bodySmall)}
