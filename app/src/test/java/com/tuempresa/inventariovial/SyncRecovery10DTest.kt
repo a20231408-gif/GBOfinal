@@ -216,6 +216,37 @@ class SyncRecovery10DTest {
         assertEquals(0,AutomaticSync.recoverConfirmedReceipts(d));assertEquals("ERROR",d.automaticSyncDao().get(original.key)!!.state)
     }}
 
+    @Test fun transportFailureThenAnotherAuthenticatedUserReplaysSameSnapshotAndKeepsRecordIdentity()=runBlocking(Dispatchers.IO) {database().use {d->
+        initializeIdleUiWorkers()
+        val sessions=com.tuempresa.inventariovial.auth.AuthGraph.get(context).sessions
+        val user=com.tuempresa.inventariovial.auth.UserCacheEntity("FICTITIOUS_A","engineer-a","Ingeniero A","ENGINEER",true,"",1,1,1)
+        sessions.logout();sessions.login(user)
+        try {
+            save(d,"different-user-38")
+            val before=d.inventoryDao().snapshot("different-user-38")!!
+            var first:String?=null;var posts=0
+            assertTrue(AutomaticSyncDrain.run(context,d,{transport {p->
+                first=p.toString();posts++;throw SyncCommunicationFailure(IOException("FICTITIOUS connection loss"))
+            }},null))
+            val failed=d.automaticSyncDao().all().single()
+            assertEquals("ERROR",failed.state);assertEquals(0L,failed.syncedRevision)
+            assertEquals(first,JSONObject(failed.preparedJson!!).toString())
+            val identity=DriveDeliveryPresentation.identity(d,failed)
+            val waiting=DriveDeliveryPresentation.view(failed,identity,false,false,true)
+            assertEquals(DriveDeliveryStatus.WAITING_CONNECTION,waiting.status);assertFalse(waiting.confirmed)
+            sessions.logout();sessions.login(user.copy(id="FICTITIOUS_B",username="engineer-b",displayName="Ingeniero B"))
+            assertFalse(AutomaticSyncDrain.run(context,d,{transport {p->
+                posts++;assertEquals(first,p.toString());receipt(p)
+            }},null))
+            val done=d.automaticSyncDao().all().single()
+            assertEquals(2,posts);assertEquals(1,d.automaticSyncDao().all().size)
+            assertEquals(failed.key,done.key);assertEquals(failed.revision,done.revision)
+            val after=d.inventoryDao().snapshot("different-user-38")!!.record
+            assertEquals(before.record.copy(photoSyncStatus=after.photoSyncStatus,excelSyncStatus=after.excelSyncStatus),after)
+            assertTrue(DriveDeliveryPresentation.confirmed(done,identity.currentRevision))
+        } finally {sessions.logout()}
+    }}
+
     @Test fun exportSchedulingAndConcurrentAckNeverRestoreAStaleQueueSnapshot()=runBlocking(Dispatchers.IO) {database().use {d->
         initializeIdleUiWorkers();save(d,"export-ack-race-p0")
         assertFalse(AutomaticSyncDrain.run(context,d,{transport(::receipt)},null))
