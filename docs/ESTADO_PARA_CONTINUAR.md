@@ -1,5 +1,19 @@
 # GBO — Estado completo para continuar
 
+## Candidata local 1.4.26 (40), sin publicación productiva — 02/11/2026
+
+Ver estado vigente en docs/PROGRESO_ACUMULADO_GBO.md. PR #5/#6/#7 integrados solo en la rama local
+codex/candidata-final-local-20261102, merge 853b455. GitHub PR abiertos, integración remota intacta.
+154/154 Android PASS y 65/65 backend PASS (selecciones, no suite histórica ni pruebas físicas).
+Debug original privada 1.4.26/40, firma histórica y configuración verificadas; Room 21 intacto.
+APK SHA256 47492403eee0c9615742094ca5c646c5aae410591a443c1c3dbdb1e5ea34ef32,
+ruta y procedimientos en registro acumulativo. No instalada/distribuida; tablet permanece 1.4.25/39.
+OAuth adicional fue bloqueado por Google; no repetir. Usar @Browser y sesión personal ya visible.
+UI confirma V21/URL y rol Editor; muestra ejecutar como Yo personal y scopes Drive completo +
+external_request. Falta acreditar ejecutor efectivo GBO; no asumir propiedad institucional por editar.
+Antes de guardar, ejecutar funciones, permisos o publicar: aprobación expresa. Inventario JSON/ACK
+real sigue bloqueado; eliminación completa deshabilitada. NO-GO productivo/online/general.
+
 ## Trabajo autónomo y bloqueo OAuth — 02/11/2026 (vigente)
 
 Registro acumulativo: docs/PROGRESO_ACUMULADO_GBO.md. GET-only real enumeró 889 entradas técnicas

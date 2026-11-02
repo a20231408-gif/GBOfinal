@@ -1,5 +1,53 @@
 # Progreso acumulado — 02/11/2026
 
+## Candidata integrada local y sesión web (estado más reciente)
+
+Rama codex/candidata-final-local-20261102. Merge LOCAL normal de #5 sobre la fuente que ya incluye
+#6/#7: 853b455e57525ee61467e5896dd1770f87f9b612. PR publicados siguen sin fusionar; main y rama
+remota de integración intactos. No confundir integración en rama candidata con aprobación productiva.
+Selección **154/154 Android PASS**, 27 clases, cero fallos/errores/omitidos (1m15s); **65/65 backend
+PASS**. No suite histórica completa ni aceptación física. Primer intento Android 153/154: expectativa
+antigua PENDING sin Internet actualizada a WAITING_CONNECTION, manteniendo PENDING con Internet y
+rechazo de confirmación falsa. XML separados en tmp/candidata-final-20261102/{regresiones,final}/.
+
+Debug privada **1.4.26 (40)** original, fuente 853b455; compilación normal sin perfil mocks, 15s.
+Package com.tuempresa.inventariovial; certificado histórico Debug D2E54C…; firma y alineación 16 KiB
+PASS, Room 21 sin cambios, endpoints/token originales comprobados offline, ningún endpoint de ensayo.
+V2=true; SIC17A/B=false. Compatible por identidad con actualización de Debug 1.4.25, NO instalación
+probada en este cierre. No actualiza Release de otra firma. Eliminación completa siempre deshabilitada.
+Ruta: C:\Users\ASUS\GBO_CANDIDATA_PRIVADA_20261102_1_4_26_40\GBO_1.4.26_40_DEBUG_ORIGINAL_CANDIDATA_NO_INSTALAR.apk
+SHA256: 47492403eee0c9615742094ca5c646c5aae410591a443c1c3dbdb1e5ea34ef32.
+NO INSTALADA / NO DISTRIBUIDA. Preservadas APK 1.4.25 y cuatro respaldos, sin acceso a tablet.
+
+Consentimiento drive.readonly intentado con archivo de autenticación separado: Google mostró
+«Se bloqueó esta app». Flujo detenido; credenciales anteriores intactas. No repetir ni evadir.
+Conector Drive comprobado solo por perfil: corresponde a identidad distinta de la personal clasp;
+no se usó para consultar datos GBO. Los 889 metadatos siguen siendo lectura parcial, no ACK conciliados.
+
+Por instrucción posterior se usa @Browser, sin Chrome ni más OAuth clasp. Pestaña inicial mostraba
+GBO; después el propietario abrió su cuenta personal y se confirmó allí el proyecto original.
+Inspección web de SOLO LECTURA: V21 activa y deploymentID/URL coincidentes con Android; el campo
+visible desde personal dice «Ejecutar como: Yo (cuenta personal)». No inferir solo de esa etiqueta
+identidad efectiva/propiedad de futuras subidas: falta confirmar desplegador y ejecución autorizada.
+Descripción general: cuenta personal es Editor; propietario del proyecto distinto de GBO; última
+modificación visible por GBO el 31/10. Scopes visibles: auth/drive COMPLETO y script.external_request.
+Un auditor cuyo cuerpo lee no limita el consentimiento del proyecto a drive.readonly.
+No se abrió propiedades secretas, guardó, editó, ejecutó, publicó ni cambió permisos/ROOT.
+
+Siguiente punto de aprobación: cualquier edición del lector remoto, ejecución de función o publicación
+debe presentarse separadamente con alcance y efectos. No usar cuenta GBO ni su sesión para ejecutar
+sin aprobación. Mientras no exista lectura de contenido legítima, siguen bloqueados journals/ACK,
+colisión SCAP e inventario exhaustivo; Users operativo/cerca en todos los escritores aún pendientes.
+Candidata revisable para aceptación OFFLINE autorizada, **NO-GO online/general/eliminación real**.
+No afirmar que las cuatro pruebas físicas reportadas acreditan todos los casos de esta nueva versión.
+
+Publicación futura: revisión del diff contra V21 exacta y catálogo SCAP preservado; respaldo de fuente,
+configuración y entrega; confirmar al desplegador/ejecutor legítimo y permisos de raíz; autorización
+explícita para editar fuente y actualizar MISMO deployment conservando URL. No publicar como personal
+suponiendo propiedad GBO. Luego una sola ficha ficticia autorizada con ACK/IDs/hashes y propietario
+comprobados. Ante fallo, pausar escritores y conservar journals/cerca: rollback V21 sin guarda puede
+resucitar registros. La candidata no habilita ninguna de esas operaciones.
+
 Autorización vigente: GET-only personal en proyecto original/raíz antigua, desarrollo local y PR
 sin merge automático. Escrituras Google, OAuth/scopes, producción y tablets requieren aprobación.
 
