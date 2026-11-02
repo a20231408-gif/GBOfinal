@@ -244,7 +244,7 @@ private fun ScapIdentification(s:ScapInspectionSnapshot,c:ScapController,catalog
         s.inspection.latitude?.let{Text("GNSS guardado: $it, ${s.inspection.longitude} · precisión ${s.inspection.gpsAccuracyM} m")}
         Text(if(catalog.bridgeType==null) "Las coordenadas UTM de la ficha se ingresan manualmente; la captura GNSS conserva latitud y longitud." else "Latitud y longitud de la ficha se ingresan en grados decimales. Aceptar GNSS conserva la ubicación observada.")
         ScapFields(s,c,catalog,"A",editable=editable)
-        TextButton(onClick={c.navigate(ScapFieldRoute("SIC"))}){Text("Abrir SIC-17 / SIC-17A / SIC-17B")}
+        TextButton(onClick={c.navigate(ScapFieldRoute("SIC"))}){Text("Abrir SIC-17 y aportes complementarios")}
     }
 }
 

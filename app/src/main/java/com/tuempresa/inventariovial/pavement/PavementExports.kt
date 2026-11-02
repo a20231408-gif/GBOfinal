@@ -141,7 +141,7 @@ object PavementPdf {
                     // Page starts are deliberate: a large plot never inherits the remaining table space.
                     y=PavementRigidPdfScheme.draw(page!!,s,p,56f,y)
                     line("#ítem código/sev · L baja, M media, H alta, - no aplica · Llamados por zona · Y → X ↓ absolutos · Losas sin renumerar.")
-                    if(p.damages.isNotEmpty())table(p.damages.map {d->listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first{it.code==d.code}.unit ?: "Global")},p.damages,"Tabla de vista ${v.index}/${v.count} · panel ${p.index}/${p.count} · solo estos ítems, en orden de los distintivos superiores e inferiores")
+                    if(p.damages.isNotEmpty())table(p.damages.map {d->listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),PavementDisplay.quantity(d),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first{it.code==d.code}.unit ?: "Global")},p.damages,"Tabla de vista ${v.index}/${v.count} · panel ${p.index}/${p.count} · solo estos ítems, en orden de los distintivos superiores e inferiores")
                 }
             } else if(s.anchoM>0 && s.largoM>0){
                 val segments=PavementPdfLayout.segments(s.anchoM,s.largoM,slabLength=if(s.surface=="RIGID" && s.slabRows>0)s.largoM/s.slabRows else null)
@@ -204,11 +204,11 @@ object PavementPdf {
                     if(local.isNotEmpty())line("Daños del esquema: "+local.joinToString(" · ") {"#${it.correlativo}"})
                     if(segment.count>1)line("Un daño que continúa en otra sección conserva su número y no se vuelve a contabilizar.")
                     if(present.isEmpty())line("Sin daños registrados en esta sección.")
-                    else table(present.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") })
+                    else table(present.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),PavementDisplay.quantity(d),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") })
                 }
             }
             line("Registro completo · cantidades medidas por daño (no sumar las repeticiones de un daño que cruza segmentos).")
-            table(damages.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),fmt(PavementRules.quantity(d)),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") },damages)
+            table(damages.map { d -> listOf("#${d.correlativo}",fmt(d.x1),fmt(d.y1),"${d.code} · ${d.name}",PavementSeverity.label(d.severity),PavementDisplay.quantity(d),PavementCatalog.forSurface(PavementSurface.valueOf(s.surface)).first { it.code==d.code }.unit ?: "Global") },damages)
             for(d in damages) {
                 if(d.code==26) {
                     line("Daño 26 — Daño del sello de junta · ${PavementSeverity.label(d.severity)}")

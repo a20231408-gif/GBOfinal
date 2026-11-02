@@ -71,7 +71,7 @@ import kotlinx.coroutines.*
                         detail=if(uri.authority=="media")"Busca el archivo en la ruta de Descargas indicada. Android puede abrir solo la lista de Descargas, no la carpeta exacta."
                             else "Se intenta abrir la carpeta autorizada. Si Android no lo permite, abre Archivos y sigue la ruta indicada desde esa carpeta."
                         runCatching{context.startActivity(target ?: SharedFileActions.view(uri,file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))}.onFailure{detail="Android no permite abrir esa carpeta. Usa ABRIR ARCHIVO o Archivos → Descargas; la copia se conserva."}
-                    }){Text("VER UBICACIÓN")}
+                    }){Text("ABRIR UBICACIÓN DISPONIBLE")}
                 }
             }
             detail?.let{Text(it)}

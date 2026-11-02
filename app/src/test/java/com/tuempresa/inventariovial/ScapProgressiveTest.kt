@@ -148,7 +148,8 @@ class ScapProgressiveTest {
                 assertEquals("inlineStr",w.cell(1,"C14").getAttribute("t"));assertNotEquals("inlineStr",w.cell(1,"D14").getAttribute("t"))
                 assertEquals(a.values,ScapSicExporter.previews(s).single{it.format=="SIC-17A"}.values)
                 assertEquals(b.values,ScapSicExporter.previews(s).single{it.format=="SIC-17B"}.values)
-                File("../docs/hotfix-progresiva-scap-sic-20261023/evidencias/SIC17_${raw.replace('+','_')}_FICTICIO.xlsx").writeBytes(bytes.toByteArray())
+                val evidence=File(System.getProperty("gbo.p0.evidence",context.cacheDir.path)).apply{mkdirs()}
+                File.createTempFile("SIC17_${raw.replace('+','_')}_FICTICIO_",".xlsx",evidence).writeBytes(bytes.toByteArray())
                 assertEquals(before.roadRecord!!.endPrCode,s.roadRecord!!.endPrCode)
                 assertEquals(before.inspection.id,s.inspection.id);assertEquals(before.inspection.roadRecordId,s.inspection.roadRecordId)
             }
