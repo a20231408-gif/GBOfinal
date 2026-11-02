@@ -45,6 +45,21 @@ class FieldCleanupAndConsolidationTest {
   d.localFilesDao().saveFile(f);s.files[f.uri!!]=original.readBytes();return ConfirmedLocalCleanup.Candidate(old.key,2)
  }
  private fun destination(backup:ConfirmedLocalCleanup.Backup):Uri=Uri.parse("content://fictitious/backup-${UUID.randomUUID()}").also{org.robolectric.Shadows.shadowOf(c.contentResolver).registerInputStreamSupplier(it){ByteArrayInputStream(backup.zip.readBytes())}}
+ @Test fun sharedPublicUriCannotBePreparedForCleanup()=runBlocking{db().use{d->
+  val s=Store();val item=seed(d,s);val original=d.localFilesDao().files("FICTITIOUS_JOB").single()
+  val other=original.copy(id="FICTITIOUS_OTHER_FILE",jobId="FICTITIOUS_OTHER_JOB",recordKey="SIC/FICTITIOUS_OTHER")
+  d.localFilesDao().saveJob(LocalExportJob(other.jobId,other.recordKey,"SIC","FICTITIOUS_OTHER",2,state="READY"))
+  d.localFilesDao().saveFile(other)
+  assertTrue("A public URI referenced by another record must be protected",runCatching{ConfirmedLocalCleanup.prepare(c,d,listOf(item),s)}.isFailure)
+  assertEquals(0,s.deletes);assertEquals(other,d.localFilesDao().files(other.jobId).single())
+ }}
+ @Test fun sharedReferenceAppearingAfterBackupStopsDeletion()=runBlocking{db().use{d->
+  val s=Store();val item=seed(d,s);val b=ConfirmedLocalCleanup.prepare(c,d,listOf(item),s)
+  val original=d.localFilesDao().files("FICTITIOUS_JOB").single();val other=original.copy(id="FICTITIOUS_OTHER_FILE",jobId="FICTITIOUS_OTHER_JOB",recordKey="SIC/FICTITIOUS_OTHER")
+  d.localFilesDao().saveJob(LocalExportJob(other.jobId,other.recordKey,"SIC","FICTITIOUS_OTHER",2,state="READY"));d.localFilesDao().saveFile(other)
+  assertTrue(runCatching{ConfirmedLocalCleanup.clean(c,d,b,destination(b),"FICTITIOUS",s)}.isFailure)
+  assertEquals(0,s.deletes);assertTrue(s.files.containsKey(original.uri));assertEquals("READY",d.localFilesDao().files(original.jobId).single().state)
+ }}
  @Test fun cleanupArchivesAndPreservesIdentity()=runBlocking{db().use{d->
   val s=Store();val item=seed(d,s);val before=d.inventoryDao().recordById(item.key.substringAfter('/'));val intent=d.automaticSyncDao().get(item.key)
   val source=File(d.localFilesDao().files("FICTITIOUS_JOB").single().source)
