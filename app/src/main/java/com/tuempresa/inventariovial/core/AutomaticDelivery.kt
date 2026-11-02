@@ -513,7 +513,7 @@ object AutomaticDelivery {
         if(ack.map {it.optString("key")}.toSet().size!=ack.size || ack.size!=expected.length())return false
         if(!(0 until expected.length()).all {n->val e=expected.getJSONObject(n);val r=ack.singleOrNull {it.optString("key")==e.getString("key")}
             r!=null && r.optString("sha256")==e.getString("sha256") && r.optString("fileId").isNotBlank() && r.optString("folderId").isNotBlank() &&
-                r.optString("requestedPath")==e.getString("path") && (if(p.getString("kind")=="PAVEMENT") r.optString("logicalPath").startsWith(a.getString("logicalPath")+"/") else r.optString("logicalPath")==a.getString("logicalPath")+"/"+e.getString("path"))})return false
+                r.optString("requestedPath")==e.getString("path") && (if(p.getString("kind")=="PAVEMENT") pavementAckPaths(p,a,e).contains(r.optString("logicalPath")) else r.optString("logicalPath")==a.getString("logicalPath")+"/"+e.getString("path"))})return false
         val aggregates=a.optJSONArray("sicFiles") ?: return false
         val rows=p.getJSONArray("sicRows")
         return (0 until rows.length()).all {n->val e=rows.getJSONObject(n)
@@ -522,5 +522,16 @@ object AutomaticDelivery {
                     (p.optInt("technicalDeliveryVersion")!=1 || f.optString("folderId").isNotBlank() && f.optString("sha256").matches(Regex("[a-f0-9]{64}"))) &&
                     f.optString("logicalPath")=="${p.getString("routeCode")}/EXCEL_SIC/${e.getString("format")}.xlsx" &&
                     f.optJSONArray("recordIds")?.let {ids->(0 until ids.length()).any {ids.getString(it)==e.getString("recordId")}}==true}}
+    }
+
+    private fun pavementAckPaths(p:JSONObject,a:JSONObject,file:JSONObject):Set<String> {
+        val folder=a.getString("logicalPath").substringAfterLast('/')
+        val sequence=Regex("^MUESTRA ([1-9][0-9]*)(?: - .+)?$").matchEntire(folder)?.groupValues?.get(1)?.toIntOrNull() ?: return emptySet()
+        val number=sequence.toString().padStart(3,'0')
+        val path=file.getString("path").replace(Regex("(HC_|M_)\\d+(\\.)")) {m->m.groupValues[1]+number+m.groupValues[2]}
+        val root=a.getString("logicalPath")+"/"
+        if(!file.getString("key").startsWith("photo/"))return setOf(root+path)
+        val prefixed=path.substringBeforeLast('/')+"/M"+number+"_"+path.substringAfterLast('/')
+        return if(p.optInt("photoNamingVersion")==2)setOf(root+path,root+prefixed) else setOf(root+prefixed)
     }
 }
