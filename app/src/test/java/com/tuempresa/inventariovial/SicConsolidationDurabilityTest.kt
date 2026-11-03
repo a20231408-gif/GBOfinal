@@ -80,7 +80,8 @@ class SicConsolidationDurabilityTest {
             val job=db.localFilesDao().jobs().single{it.state=="QUEUED"&&it.recordId==id}
             assertTrue(job.automatic)
             val prepare:suspend(Context,InventoryDatabase,LocalExportJob)->LocalPlan={_,_,j->
-                LocalPlan(listOf(LocalSharedFile(j.id+"/DOC",j.id,j.recordKey,"Download/GBO_Ruta_Clara/PRUEBA/${j.id}/","respaldo.txt","text/plain",hash.first,hash.second,source.path)),emptyList())
+                // Model a newly generated plan. Legacy frozen plans must not acquire new projections.
+                LocalPlan(listOf(LocalSharedFile(j.id+"/DOC",j.id,j.recordKey,"Download/GBO_Ruta_Clara/PRUEBA/${j.id}/","respaldo.txt","text/plain",hash.first,hash.second,source.path)),emptyList(),publicNamingVersion=6)
             }
             val st=SicTestStorage();kotlinx.coroutines.delay(AutomaticLocalDocuments.QUIET_MS+50)
             LocalCopyDrain.run(c,db,st,limit=30,prepare=prepare)
