@@ -58,6 +58,7 @@ import java.util.Date
                         Text("Revisión local: ${identity.currentRevision ?: "no disponible"} · en cola: ${i.revision} · confirmada: ${i.syncedRevision}")
                         Text("Última confirmación: ${i.lastSyncedAt?.let{DateFormat.getDateTimeInstance().format(Date(it))} ?: "Aún no confirmada"}")
                         progress?.takeIf{it.revision==i.revision}?.let{p->
+                            Text("Último progreso guardado; consulta el estado de la entrega para conocer si sigue activa.")
                             Text(SyncProgressPresentation.phase(p));Text(SyncProgressPresentation.files(p))
                             Text(SyncProgressPresentation.elapsed(p,System.currentTimeMillis()))
                         }

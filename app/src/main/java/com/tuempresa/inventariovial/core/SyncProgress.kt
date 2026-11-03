@@ -1,6 +1,8 @@
 package com.tuempresa.inventariovial.core
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.work.WorkInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +35,21 @@ class SyncProgressStore private constructor(context:Context) {
 }
 
 object SyncProgressPresentation {
+    fun connected(context:Context):Boolean {
+        val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return validatedInternet(manager.getNetworkCapabilities(manager.activeNetwork))
+    }
+    internal fun validatedInternet(caps:NetworkCapabilities?):Boolean=caps!=null &&
+        caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+
+    /** WorkManager state is scheduling evidence, never transfer progress or a receipt. */
+    fun workStatus(work:List<WorkInfo>,connected:Boolean):String=when {
+        work.any{it.state==WorkInfo.State.RUNNING}->"Android está procesando la cola. Consulta el estado de cada entrega."
+        !connected->"Esperando conexión. La cola y los archivos locales se conservan."
+        work.any{it.state in setOf(WorkInfo.State.ENQUEUED,WorkInfo.State.BLOCKED)}->"Trabajo en cola en Android. Esperando turno, condiciones del dispositivo o reintento."
+        else->"Sin trabajo activo observado. Pulsa Sincronizar ahora para revisar la cola."
+    }
+    fun measured(p:SyncProgress)=p.total>0 && p.processed in 0..p.total
     fun running(intent:DriveSyncIntent?,work:List<WorkInfo>)=intent!=null && work.any {
         it.state==WorkInfo.State.RUNNING && it.progress.getString("activeKey")==intent.key && it.progress.getLong("activeRevision",0)==intent.revision
     }
@@ -44,8 +61,12 @@ object SyncProgressPresentation {
         "COMPLETE"->"Entrega confirmada"
         else->"Pendiente de confirmación"
     }
-    fun files(p:SyncProgress):String = if(p.total==0 && p.phase=="PREPARING")"Cantidad de archivos aún no calculada; preparación local, sin ACK de entrega"else "Archivos procesados: ${p.processed} / ${p.total} · pendientes: ${maxOf(0,p.total-p.processed)}"+
-        if(p.total>0) " · ${p.processed.toLong()*100/p.total}% transferidos a staging; el ACK final de la ficha se comprueba por separado" else ""
+    fun files(p:SyncProgress):String = when {
+        p.total==0 && p.phase=="PREPARING"->"Cantidad de archivos aún no calculada; preparación local, sin ACK de entrega"
+        !measured(p)->"Progreso de archivos no disponible; confirmación final pendiente."
+        else->"Archivos procesados: ${p.processed} / ${p.total} · pendientes: ${p.total-p.processed}"+
+            " · ${p.processed.toLong()*100/p.total}% transferidos a staging; el ACK final de la ficha se comprueba por separado"
+    }
     fun elapsed(p:SyncProgress,now:Long):String {
         val seconds=maxOf(0,(now-p.startedAt)/1000)
         return "Primer intento hace ${seconds/60} min ${seconds%60} s. Incluye tiempo sin conexión; no mide la duración de subida."

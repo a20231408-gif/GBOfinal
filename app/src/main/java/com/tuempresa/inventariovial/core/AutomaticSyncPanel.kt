@@ -1,8 +1,6 @@
 package com.tuempresa.inventariovial.core
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,7 +43,8 @@ object SyncIntentPresentation {
 @Composable internal fun observedDriveWork():List<WorkInfo> {
     val context=LocalContext.current
     val flow=remember(context) {val manager=WorkManager.getInstance(context)
-        combine(manager.getWorkInfosForUniqueWorkFlow("automatic-drive-drain"),manager.getWorkInfosForUniqueWorkFlow("automatic-drive-recovery")){a,b->(a+b).distinctBy {it.id}}
+        combine(manager.getWorkInfosForUniqueWorkFlow("automatic-drive-signal"),manager.getWorkInfosForUniqueWorkFlow("automatic-drive-drain"),
+            manager.getWorkInfosForUniqueWorkFlow("automatic-drive-recovery")){a,b,c->(a+b+c).distinctBy {it.id}}
     }
     return flow.collectAsState(emptyList()).value
 }
@@ -106,8 +105,7 @@ object SyncIntentPresentation {
     var message by remember {mutableStateOf<String?>(null)}
     var tick by remember {mutableIntStateOf(0)}
     LaunchedEffect(Unit){while(true){kotlinx.coroutines.delay(3000);tick++}}
-    val connected=remember(tick){val manager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        manager.getNetworkCapabilities(manager.activeNetwork)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)==true}
+    val connected=remember(tick){SyncProgressPresentation.connected(context)}
     Column {
         val scapView=if(intent!=null)scapIdentity?.let{DriveDeliveryPresentation.view(intent,it,active,connected,DriveUploadPolicy.configurationError()==null,retrying,currentProgress)}else null
         val confirmed=if(kind=="SCAP")scapView?.confirmed==true else SyncIntentPresentation.confirmed(intent)
@@ -125,6 +123,7 @@ object SyncIntentPresentation {
         })
         currentProgress?.let {p->
             if(active)Text(SyncProgressPresentation.phase(p))
+            else Text("Último progreso guardado; no acredita envío activo.")
             if(confirmed)Text("Entrega confirmada")
             Text(SyncProgressPresentation.files(p))
             if(!confirmed) {

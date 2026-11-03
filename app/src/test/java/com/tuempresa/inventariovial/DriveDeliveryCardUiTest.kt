@@ -48,7 +48,7 @@ class DriveDeliveryCardUiTest {
         val view=DriveDeliveryPresentation.view(i,id,true,true,true,progress=p)
         ui.setContent{InventarioVialTheme{DriveDeliveryCard(i,id,view,p){}}}
         ui.onNodeWithText("16 / 16",substring=true).assertIsDisplayed()
-        ui.onNodeWithText("Verificando entrega",substring=true).assertIsDisplayed()
+        ui.onNodeWithText("Confirmando archivos",substring=true).assertIsDisplayed()
         ui.onNodeWithText("Archivos confirmados: 16 de 16").assertDoesNotExist()
     }
     private fun capture(name:String) {
@@ -74,7 +74,7 @@ class DriveDeliveryCardUiTest {
     @Test @Config(qualifiers="w400dp-h900dp-mdpi") fun phoneLargeFontKeepsIdentityAndHidesTechnicalBlocks() {
         mount(font=1.3f)
         ui.onNodeWithText("Puente 001 - Correviento").assertIsDisplayed()
-        ui.onNodeWithText("✓ Subido correctamente").assertIsDisplayed()
+        ui.onNodeWithText("✓ Entregado con ACK").assertIsDisplayed()
         ui.onNodeWithText("Archivos confirmados: 1 de 1").assertIsDisplayed()
         ui.onNodeWithText("Identidad:",substring=true).assertDoesNotExist()
         ui.onNodeWithText("Destino del último ACK:",substring=true).assertDoesNotExist()
@@ -89,7 +89,7 @@ class DriveDeliveryCardUiTest {
     @Test @Config(qualifiers="w800dp-h1280dp-mdpi") fun tabletPendingRetryAndDetailsKeepTheirExistingActions() {
         var retries=0;val i=deliveryFixture().copy(state="ERROR",syncedRevision=0,error="Servidor ocupado (BUSY). Esperando para reintentar.")
         mount(i,onRetry={retries++})
-        ui.onNodeWithText("… Pendiente de subir").assertIsDisplayed()
+        ui.onNodeWithText("… Pendiente de envío").assertIsDisplayed()
         ui.onNodeWithText("Esperando para reintentar.").assertIsDisplayed()
         ui.onNodeWithText("Archivos confirmados:",substring=true).assertDoesNotExist()
         ui.onNodeWithText("Reintentar ahora").performScrollTo().performClick();assertEquals(1,retries)

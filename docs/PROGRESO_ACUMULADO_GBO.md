@@ -1,5 +1,148 @@
 # Progreso acumulado — 02/11/2026
 
+## Cierre vigente: instalada 1.4.26; aceptación local A–D PASS
+
+Referencia única de entrega: `../CONTINUIDAD_FINAL_GBO.md`. Sustituye los estados inferiores
+de «no instalada»: actualización autorizada Success, hash original, firma histórica, 43 tablas
+idénticas antes/después de abrir, 797 archivos preservados y tres SQLite íntegras. El propietario
+confirmó A búsqueda/filtros, B ficha/documentos, C borrador Solo dispositivo y D descarte/restauración
+PASS en 1.4.26. No equivale a aprobación de toda la matriz ni a subida real. Xiaomi offline,
+dos SIC históricos pendientes intactos durante la instalación. Emulador fuera de alcance por
+instrucción del propietario. Sin POST, ACK nuevo ni propietario institucional acreditado.
+V21/ROOT sin cambios; NO-GO online/general. Cierre solo documental y push saneado de PR #8.
+
+## Acta única de prueba integral 1.4.26 — reanudación USB, cierre NO-GO
+
+La Xiaomi se conectó y se verificó 1.4.25 (39) Debug, package original y firma histórica D2E54C…;
+APK instalada SHA b07e424d5411750aa69136b2c6de772406893feae5f4b0196f423333ebb4bc0c.
+Modo avión/Wi-Fi apagado y sin proceso GBO; force-stop autorizado para copia coherente.
+**Quinto respaldo privado VERIFICADO**: 826 archivos, TAR SHA256
+4e3ca0855d2ddf55970abc937efc0eeab54b1cab748b75e55c45a5a6724812a7;
+3 SQLite integrity_check=ok/foreign_key_check=0, 486 referencias internas cubiertas, 380 copias públicas
+verificadas y 2 SAF limitadas con fuente interna exacta. Origen inalterado al cierre, cuarto TAR previo
+sin cambios; los cuatro anteriores no se sobrescribieron. Restauración no ensayada/Keystore no exportable.
+
+Copia offline revela outbox ERROR=1, QUEUED=1, SYNCED=14, BLOCKED=1. Dos SIC anteriores cumplen
+estado elegible y ficha ACTIVE; ninguno lleva marcador BRIDGE_IDENTITY_CONFLICT. El worker actual
+recupera estados y procesa toda la cola; no tiene filtro exclusivo de ficha. **No garantiza aislamiento**.
+Por condición explícita del propietario, se detuvo antes de instalar, crear/restaurar/descartar fichas,
+activar red o enviar POST. Ningún pendiente fue cambiado/cancelado para fabricar una prueba segura.
+APK 1.4.26 sigue privada, sin instalar; tablet permanece 1.4.25 y GBO detenido sin red.
+
+Resultado de capacidad GET V21: PASS (3/4, nombres V2/panel2); identidad efectiva aún no acreditada.
+Resultado físico 1.4.26: NO EJECUTADO. Resultado de carga/ACK/propietario de prueba: NO EJECUTADO.
+Ruta ficticia segura aún no acreditada. V21 además puede recuperar journals PENDING globalmente al
+construir v3Store: cualquier prueba futura debe evitar esos efectos sobre otras entregas; no se reabrió
+el incidente histórico ni se ejecutó recuperación para este cierre.
+
+Acta única y evidencia real exclusivamente privadas en
+C:\Users\ASUS\GBO_QUINTO_RESPALDO_PRIVADO_20261102T232523887Z\ACTA_UNICA_PRUEBA_1_4_26.md.
+**NO-GO prueba online/publicación**. Reanudar requiere aislamiento verificable sin borrar ni cancelar
+pendientes, ejecutor acreditado y destino ficticio seguro. No sustituir por una prueba HTTP externa
+presentándola como aceptación física. No nueva APK, despliegue, ROOT, permisos ni Google modificado.
+
+## Dictamen de alta NUEVA antes de publicación (vigente)
+
+**NO LISTO PARA PUBLICAR.** Por decisión del propietario, recuperación histórica queda fuera de
+este cierre. La eliminación definitiva tampoco condiciona la aceptación de una ficha nueva.
+APK 1.4.26/40 existente y verificada sigue sin cambios ni instalación: no recompilar por este dictamen.
+
+Con sesión GBO ya abierta en @Browser, inspección de solo lectura confirma V21 y deployment/URL
+original. La misma configuración muestra «Yo (personal)» desde personal y «Yo (GBO)» desde GBO:
+esa etiqueta depende de sesión y NO identifica por sí sola al desplegador/ejecutor efectivo.
+Propietario del proyecto distinto de GBO, rol Editor acreditado. Raíz antigua: GBO Editor explícito,
+propietario de otra cuenta; carpetas técnicas y de rutas visibles pertenecen a personal. Acceso general
+actual de raíz: enlace con Lector, no Editor. No se modificó nada. La cuenta GBO muestra almacenamiento
+contratado, pero eso no prueba a quién se imputan nuevas cargas del endpoint.
+
+Validación adicional PRIVADA contra SyncV3/SyncV3Core V21 exactos: **15/15 PASS** usando harness
+Drive en memoria y ejemplos sintéticos, fuera del repositorio/capturas. Cubre nuevas altas, rutas,
+SCAP, consolidación SIC14/18, archivos y ACK, idempotencia y fallos. Otra prueba **1/1 PASS** ejecuta
+doGet EXTRAÍDO solo en VM local con flags mock y verifica protocolos 3/4, nombres V2, panel SCAP v2
+y las veinte categorías oficiales. Con flags desactivados no anuncia compatibilidad. No se ejecutó
+doGet remoto ni se leyeron valores de propiedades secretas. Evidencia privada:
+validacion-ficha-nueva-v21/server y tests.log en carpeta clasp. No sumar como prueba real ni confundir
+capacidad del código con flags/permisos efectivos. Selecciones ya acreditadas: Android 154/154 y
+backend administrativo/lectores/modelos 65/65; no repetidas sin cambios.
+
+Integrado en rama candidata: presentación sync #5, previsualización bloqueada #6 y módulos #7.
+Solo V21 está publicado; estos PR no fueron fusionados en GitHub. Backend administrativo requiere
+Users/verificador/inspector/backup reales y cableado de guardas; continúa desactivado, sin rutas nuevas.
+El modelo de eliminación sigue simulado. Captura/exportación se realiza Android; V21 recibe, valida,
+publica archivos y consolida SIC con ACK. Fuente V21 soporta alta nueva si las capacidades y permisos
+reales coinciden; no se ha demostrado que un cambio de backend sea indispensable para esa alta.
+
+Bloqueos concretos para publicar nuevas fichas:
+1. Confirmar ejecutor/desplegador y que los archivos NUEVOS pertenezcan a GBO, no inferirlo del visor.
+2. Consultar capacidades efectivas y acreditar una entrega nueva extremo a extremo: reserva, archivos,
+   documentos legibles, hashes/IDs/revisión del ACK y reapertura local. Ni mocks ni sesión Editor bastan.
+3. Aceptación de la APK 40 en dispositivo con respaldo actualizado y autorización de actualización.
+
+Mínima prueba REAL propuesta, NO ejecutada ni autorizada: una entrega SCAP ficticia de revisión 1 y
+UUID nuevo, sin vídeos, con documentos/fotos sintéticos y aporte SIC17 conforme a flags (17A/B apagados),
+utilizando configuración Android original y endpoint V21. Ruta ficticia única aprobada, precomprobada
+ausente tanto pública como técnicamente, para NO sobrescribir consolidados de rutas reales. No basta
+que el puente tenga otro nombre: EXCEL_SIC es compartido por ruta. El selector Android usa catálogo;
+no inventar que admite ruta libre. Si no se dispone de ruta ficticia autorizada en el cliente, primer
+ensayo backend puede usar payload generado por el código Android en fixture local con esa ruta;
+esto NO sustituye prueba de captura física y debe informarse como tal. No usar una ruta real sin
+autorización adicional de actualización de su consolidado.
+
+Antes de la prueba: aprobar expresamente la única carga, sus IDs/raíz/ruta y nuevos archivos/carpetas
+técnicos necesarios; aprobar aparte o en el mismo acto el respaldo/actualización y la captura física
+si se harán en tablet. Registrar capacidad antes, enviar una vez, verificar ACK/hashes/propietario GBO
+y ausencia de modificación de registros preexistentes; un solo replay idempotente si se incluye en la
+autorización. Ante fallo no borrar, migrar, reintentar indiscriminadamente ni cambiar endpoint/ROOT.
+NO necesita desplegar el backend de eliminación, ni cambiar V21, ni recuperar entregas históricas.
+
+## Candidata integrada local y sesión web (estado más reciente)
+
+Rama codex/candidata-final-local-20261102. Merge LOCAL normal de #5 sobre la fuente que ya incluye
+#6/#7: 853b455e57525ee61467e5896dd1770f87f9b612. PR publicados siguen sin fusionar; main y rama
+remota de integración intactos. No confundir integración en rama candidata con aprobación productiva.
+Selección **154/154 Android PASS**, 27 clases, cero fallos/errores/omitidos (1m15s); **65/65 backend
+PASS**. No suite histórica completa ni aceptación física. Primer intento Android 153/154: expectativa
+antigua PENDING sin Internet actualizada a WAITING_CONNECTION, manteniendo PENDING con Internet y
+rechazo de confirmación falsa. XML separados en tmp/candidata-final-20261102/{regresiones,final}/.
+
+Debug privada **1.4.26 (40)** original, fuente 853b455; compilación normal sin perfil mocks, 15s.
+Package com.tuempresa.inventariovial; certificado histórico Debug D2E54C…; firma y alineación 16 KiB
+PASS, Room 21 sin cambios, endpoints/token originales comprobados offline, ningún endpoint de ensayo.
+V2=true; SIC17A/B=false. Compatible por identidad con actualización de Debug 1.4.25, NO instalación
+probada en este cierre. No actualiza Release de otra firma. Eliminación completa siempre deshabilitada.
+Ruta: C:\Users\ASUS\GBO_CANDIDATA_PRIVADA_20261102_1_4_26_40\GBO_1.4.26_40_DEBUG_ORIGINAL_CANDIDATA_NO_INSTALAR.apk
+SHA256: 47492403eee0c9615742094ca5c646c5aae410591a443c1c3dbdb1e5ea34ef32.
+NO INSTALADA / NO DISTRIBUIDA. Preservadas APK 1.4.25 y cuatro respaldos, sin acceso a tablet.
+
+Consentimiento drive.readonly intentado con archivo de autenticación separado: Google mostró
+«Se bloqueó esta app». Flujo detenido; credenciales anteriores intactas. No repetir ni evadir.
+Conector Drive comprobado solo por perfil: corresponde a identidad distinta de la personal clasp;
+no se usó para consultar datos GBO. Los 889 metadatos siguen siendo lectura parcial, no ACK conciliados.
+
+Por instrucción posterior se usa @Browser, sin Chrome ni más OAuth clasp. Pestaña inicial mostraba
+GBO; después el propietario abrió su cuenta personal y se confirmó allí el proyecto original.
+Inspección web de SOLO LECTURA: V21 activa y deploymentID/URL coincidentes con Android; el campo
+visible desde personal dice «Ejecutar como: Yo (cuenta personal)». No inferir solo de esa etiqueta
+identidad efectiva/propiedad de futuras subidas: falta confirmar desplegador y ejecución autorizada.
+Descripción general: cuenta personal es Editor; propietario del proyecto distinto de GBO; última
+modificación visible por GBO el 31/10. Scopes visibles: auth/drive COMPLETO y script.external_request.
+Un auditor cuyo cuerpo lee no limita el consentimiento del proyecto a drive.readonly.
+No se abrió propiedades secretas, guardó, editó, ejecutó, publicó ni cambió permisos/ROOT.
+
+Siguiente punto de aprobación: cualquier edición del lector remoto, ejecución de función o publicación
+debe presentarse separadamente con alcance y efectos. No usar cuenta GBO ni su sesión para ejecutar
+sin aprobación. Mientras no exista lectura de contenido legítima, siguen bloqueados journals/ACK,
+colisión SCAP e inventario exhaustivo; Users operativo/cerca en todos los escritores aún pendientes.
+Candidata revisable para aceptación OFFLINE autorizada, **NO-GO online/general/eliminación real**.
+No afirmar que las cuatro pruebas físicas reportadas acreditan todos los casos de esta nueva versión.
+
+Publicación futura: revisión del diff contra V21 exacta y catálogo SCAP preservado; respaldo de fuente,
+configuración y entrega; confirmar al desplegador/ejecutor legítimo y permisos de raíz; autorización
+explícita para editar fuente y actualizar MISMO deployment conservando URL. No publicar como personal
+suponiendo propiedad GBO. Luego una sola ficha ficticia autorizada con ACK/IDs/hashes y propietario
+comprobados. Ante fallo, pausar escritores y conservar journals/cerca: rollback V21 sin guarda puede
+resucitar registros. La candidata no habilita ninguna de esas operaciones.
+
 Autorización vigente: GET-only personal en proyecto original/raíz antigua, desarrollo local y PR
 sin merge automático. Escrituras Google, OAuth/scopes, producción y tablets requieren aprobación.
 
