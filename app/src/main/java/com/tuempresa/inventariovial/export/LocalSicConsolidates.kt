@@ -26,6 +26,52 @@ data class LocalSicResult(val route:String,val format:String,val uri:Uri,val fil
 /** Local-only projection. Never uploads a route workbook or alters remote ACK/revisions. */
 object LocalSicConsolidates {
     private val mutex=Mutex()
+    /** Public visibility only: the builder's individual XLSX and frozen row remain private.
+     * Never suppress a draft, missing/stale row, failed publication, explicit ZIP or special family.
+     * Existing frozen manifests are intentionally not passed through this policy by the drain.
+     */
+    suspend fun preferConsolidates(context:Context,db:InventoryDatabase,job:LocalExportJob,plan:LocalPlan,
+        storage:SharedDocumentStore):LocalPlan {
+        if(job.kind!="SIC"||!job.scope.startsWith("FULL")||plan.publicNamingVersion!=5)return plan
+        val record=db.inventoryDao().recordById(job.recordId) ?: return plan
+        if(record.status!="ACTIVE"||record.sicCode=="SIC-17"||record.routeCode.isBlank())return plan
+        return mutex.withLock {
+            val privateRows=mutableListOf<LocalSharedFile>();val publicPaths=mutableListOf<String>()
+            val visible=plan.files.filterNot{file->
+                val format=Regex("(SIC-[0-9]+[A-Z]?)(?:_PROVISIONAL)?\\.xlsx").matchEntire(file.name)?.groupValues?.get(1)
+                if(format!=record.sicCode && !(record.sicCode=="SIC-18"&&format=="SIC-18A"))false
+                else try {
+                    val dir=File(context.filesDir,"sic_consolidated/"+key(record.routeCode,requireNotNull(format)))
+                    val meta=read(File(dir,"current.json"))
+                    val rows=meta?.optJSONArray("rows")
+                    val covered=rows!=null && (0 until rows.length()).any{n->val row=rows.getJSONObject(n)
+                        row.getString("id")==record.id&&row.getLong("revision")==job.revision}
+                    if(!covered || read(File(dir,"journal.json"))?.optString("phase")!="DONE")false
+                    else {
+                        require(meta!!.getString("route")==record.routeCode && meta.getString("format")==format)
+                        val consolidated=descriptor(requireNotNull(meta))
+                        require(fileDigest(File(consolidated.source))==(consolidated.size to consolidated.sha256))
+                        val slot=SharedDocumentStore.Slot(Uri.parse(meta.getString("uri")),true)
+                        storage.checkSlot(slot,consolidated)
+                        (storage.digest(slot.uri)==(consolidated.size to consolidated.sha256)).also{verified->
+                            if(verified){privateRows+=file;publicPaths+=consolidated.relativePath+consolidated.name}
+                        }
+                    }
+                }catch(e:CancellationException){throw e}catch(e:Exception){false} // Fail open for visibility, never lose the fallback document.
+            }
+            if(privateRows.isEmpty())return@withLock plan
+            // The public manifest must not claim that a private per-record workbook was published.
+            val files=visible.map{file->if(file.name!="MANIFIESTO_LOCAL.json")file else {
+                val manifest=JSONObject(File(file.source).readText()).put("localFilesExpected",visible.size)
+                    .put("privateSicWorkbooks",JSONArray(privateRows.map{JSONObject().put("name",it.name).put("sha256",it.sha256).put("size",it.size)}))
+                    .put("publicSicConsolidates",JSONArray(publicPaths.distinct()))
+                    .put("files",JSONArray(visible.filter{it.id!=file.id}.map{JSONObject().put("path",it.relativePath+it.name).put("sha256",it.sha256).put("size",it.size)}))
+                atomic(File(file.source),manifest.toString(2).toByteArray())
+                val digest=fileDigest(File(file.source));file.copy(size=digest.first,sha256=digest.second)
+            }}
+            plan.copy(files=files)
+        }
+    }
     private fun key(route:String,format:String)=com.tuempresa.inventariovial.delivery.sha256("$route\u0000$format".toByteArray())
     private fun atomic(file:File,bytes:ByteArray) {
         file.parentFile!!.let{check(it.isDirectory||it.mkdirs())}

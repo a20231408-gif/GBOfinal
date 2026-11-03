@@ -1,5 +1,11 @@
 # GBO — Continuidad final 1.4.26 (40)
 
+Último ajuste de fuente, 03/11/2026: rama local `codex/consolidados-sic-principales-20261102`.
+EXCEL_SIC es la publicación principal de SIC ordinarios verificados; filas/revisiones individuales
+privadas y excepciones conservadas. 65 pruebas únicas PASS. Ver actualización en
+`docs/CORRECCION_DOCUMENTOS_1_4_27.md`. El propietario confirmó cinco pruebas físicas PASS de la
+APK 1.4.27 previa; esa APK no contiene este último ajuste. Sin nueva APK, push o cambios V21.
+
 ## Actualización posterior: corrección documental 1.4.27 (41), solo local
 
 Ver `docs/CORRECCION_DOCUMENTOS_1_4_27.md`: nueva rama local

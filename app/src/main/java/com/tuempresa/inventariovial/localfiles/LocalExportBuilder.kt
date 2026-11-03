@@ -37,7 +37,9 @@ object LocalExportNames {
     fun root(kind:String,route:String,id:String,revision:Long,label:String)=
         "Download/GBO_Ruta_Clara/${when(kind){"PAVEMENT"->"PAVIMENTOS";"PHOTO"->"FOTOGRAFIAS";else->kind}}/${safe(route)}/${safe(label)}_${safe(id)}/R_$revision/"
 }
-/** Uses existing contractual exporters; never uses a Drive preparation, reservation, receipt or HTTP. */
+/** Uses existing contractual exporters; never uses a Drive preparation, reservation, receipt or HTTP.
+ * Individual workbooks are generated privately even when the publication policy selects EXCEL_SIC.
+ */
 object LocalExportBuilder {
     fun work(context:Context,job:LocalExportJob)=File(context.filesDir,"local_exports/${job.id}").apply{check(isDirectory||mkdirs())}
     fun space(context:Context,bytes:Long){VerifiedZipArchive.checkedSpace(StatFs(context.filesDir.path).availableBytes,bytes)}

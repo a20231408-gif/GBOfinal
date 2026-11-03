@@ -132,9 +132,13 @@ object LocalCopyDrain {
             if(job.automatic && job.manifestJson==null && DeliveryDestination.revision(db,job.kind,job.recordId)!=job.revision){dao.saveJob(job.copy(state="SUPERSEDED",message="Agrupada en la revisión actual"));continue}
             try {
                 job=job.copy(state="RUNNING",message="Preparando copia local…");dao.saveJob(job)
-                val consolidationIssues=if(job.automatic && job.scope.startsWith("FULL"))
+                val ordinaryManual=job.kind=="SIC" && job.manifestJson==null &&
+                    db.inventoryDao().recordById(job.recordId)?.sicCode?.let{it!="SIC-17"}==true
+                val consolidationIssues=if((job.automatic||ordinaryManual) && job.scope.startsWith("FULL"))
                     com.tuempresa.inventariovial.export.LocalSicConsolidates.refreshRecord(c,db,job.kind,job.recordId,storage) else emptyList()
-                val plan=job.manifestJson?.let(LocalPlan::parse) ?: prepare(c,db,job).also{
+                val plan=job.manifestJson?.let(LocalPlan::parse) ?: prepare(c,db,job).let{
+                    com.tuempresa.inventariovial.export.LocalSicConsolidates.preferConsolidates(c,db,job,it,storage)
+                }.also{
                     // The producer and consumer both enforce the revision before freezing a plan.
                     require(DeliveryDestination.revision(db,job.kind,job.recordId)==job.revision){"La ficha cambió durante la preparación. Reintenta la revisión actual."}
                     job=job.copy(manifestJson=it.json(),total=it.files.size);dao.saveJob(job)

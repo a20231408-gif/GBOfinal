@@ -1,5 +1,34 @@
 # Documentos públicos estables — 1.4.27 (41)
 
+## Ajuste posterior de consolidados — 03/11/2026 (fuente, sin APK nueva)
+
+El propietario confirma las cinco pruebas físicas de documentos PASS en la APK 1.4.27 original.
+Se demostró una duplicación adicional: LocalSicConsolidates ya publica un único libro por
+carretera/formato, pero LocalExportBuilder también genera y publica el Excel individual.
+Corrección en rama local `codex/consolidados-sic-principales-20261102`: conservar la generación
+individual privada y omitir únicamente su publicación normal si EXCEL_SIC contiene el UUID y la
+revisión exactos, journal DONE, ruta/formato correctos y bytes públicos/privados verificados.
+También se actualiza el consolidado al solicitar una nueva copia manual ordinaria FULL.
+El manifiesto distingue libros privados de consolidados públicos; no anuncia copias inexistentes.
+
+Para nuevas copias ordinarias, destino principal `carretera/EXCEL_SIC/SIC-xx.xlsx`.
+Sin fila actual verificable se conserva el provisional individual como respaldo; no se ocultan
+borradores ni documentos cuya consolidación falle. SIC-17, SCAP, Pavimentos, ZIP explícitos y
+ordenamientos especiales conservan sus reglas. Los manifiestos congelados y archivos históricos
+NO se migran: duplicados antiguos pueden seguir físicamente presentes. No se borró ninguno.
+V21 real ya usa EXCEL_SIC por carretera con pathVersion=4; backend/ACK/ROOT sin cambios.
+
+**65 casos únicos PASS, siete clases**, incluidos siete nuevos de publicación principal:
+altas sucesivas SIC-18/18A, revisión sin filas duplicadas, filas retenidas, apertura verificada,
+privados e historial conservados, fallback ante consolidado ausente/antiguo/editado y manifiestos
+históricos con las mismas URIs. Regresiones de SCAP/SIC-17/Pavimentos y MediaStore/SAF aprobadas.
+Evidencia: `C:\GBO\tmp\sic-principal-20261103\RESULTADOS_UNICOS.json` y XML separados.
+No suite completa ni aceptación física de este ajuste. Fallo inicial de compilación del test por
+import faltante corregido antes de ejecutar los casos. Sin relajación de aserciones productivas.
+La APK 1.4.27 anterior sigue intacta y **NO contiene este ajuste de fuente**. No se generó otra
+APK ni se incrementó versión; al empaquetar la corrección deberá usarse código superior a 41.
+Sin push, instalación ni acceso a Google o datos de teléfonos.
+
 02/11/2026. Rama local `codex/documentos-publicos-estables-20261102`, desde cierre 1.4.26
 `b79456ed0fd30430517228290013582cd0b5e56c`. Fuente compilada:
 `72a100b7ceda38b4001f7a615c81ffcdbe188d98`. Sin push, instalación ni distribución.
