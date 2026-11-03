@@ -78,17 +78,18 @@ import java.io.File
     var history by remember(key){mutableStateOf(false)}
     val latest=LocalCopyPresentation.latest(filtered)
     val latestIds=latest.map{it.id}.toSet()
+    val principals=rememberRecordPrincipals(key?.substringBefore('/').orEmpty(),key?.substringAfter('/').orEmpty(),currentRevision)
     (if(history)filtered else latest).take(if(history)filtered.size else 6).forEach{j->
         Text(LocalCopyPresentation.context(j,if(key!=null)currentRevision else null,j.id in latestIds),style=MaterialTheme.typography.bodySmall)
         Text(LocalCopyPresentation.result(j),style=MaterialTheme.typography.titleSmall)
         if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
-    if(filtered.size>latest.size||latest.size>6)TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
+    if(filtered.size>latest.size||latest.size>6||files.any{f->f.state=="READY"&&principals.any{RecordDocuments.sicFormat(it)==RecordDocuments.sicFormat(f)}})TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
     val visibleJobs=filtered.map{it.id}.toSet()
     // Keep the last verified copy accessible while a newer attempt is pending or failed.
-    val items=LocalCopyPresentation.currentFiles(filtered,files,history)
-        .filter{it.jobId in visibleJobs&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
-    items.take(visible).forEach{SavedFileActions(it)}
+    val items=RecordDocuments.current(filtered,files,principals,history)
+        .filter{(it.id.startsWith("SIC_PRIMARY/")||it.jobId in visibleJobs)&&(kind==null||it.recordKey.startsWith("$kind/"))}.distinctBy{it.uri}
+    items.take(visible).forEach{SavedFileActions(it,key,history)}
     if(items.size>visible)TextButton(onClick={visible+=12}){Text("Ver más archivos (${items.size})")}
 }
 
@@ -98,7 +99,22 @@ import java.io.File
     files.firstOrNull{it.uri==uri&&it.state=="READY"}?.let{SavedFileActions(it)}
 }
 
-@Composable fun SavedFileActions(file:LocalSharedFile){
+@Composable internal fun rememberRecordPrincipals(kind:String,id:String,revision:Long?):List<LocalSharedFile> {
+    val c=LocalContext.current;val db=remember(c){InventoryDatabase.getInstance(c)};val scope=rememberCoroutineScope()
+    var generation by remember(kind,id){mutableIntStateOf(0)}
+    var documents by remember(kind,id){mutableStateOf<List<LocalSharedFile>>(emptyList())}
+    DisposableEffect(db,kind,id){
+        val observer=object:androidx.room.InvalidationTracker.Observer("local_shared_files","local_export_jobs","inventory_records","sic18a_details"){
+            override fun onInvalidated(tables:Set<String>){scope.launch{generation++}}
+        }
+        if(kind=="SIC")db.invalidationTracker.addObserver(observer)
+        onDispose{if(kind=="SIC")db.invalidationTracker.removeObserver(observer)}
+    }
+    LaunchedEffect(kind,id,revision,generation){documents=withContext(Dispatchers.IO){com.tuempresa.inventariovial.export.LocalSicConsolidates.principals(c,db,kind,id)}}
+    return documents
+}
+
+@Composable fun SavedFileActions(file:LocalSharedFile,ownerKey:String?=null,history:Boolean=false){
     val c=LocalContext.current;val scope=rememberCoroutineScope();var message by remember{mutableStateOf<String?>(null)}
     val publicRoot=file.relativePath.removePrefix("Download/").substringBefore('/')
     var missing by remember(file.id,file.uri){mutableStateOf(false)}
@@ -107,12 +123,16 @@ import java.io.File
     }}
     Column(Modifier.fillMaxWidth().padding(vertical=4.dp)){
         Text("ARCHIVO GUARDADO · ${file.name}")
+        if(RecordDocuments.provisional(file))Text("PROVISIONAL · datos pendientes; no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
         Text(if(Build.VERSION.SDK_INT<29&&file.relativePath.startsWith("Download/"))"Carpeta autorizada / "+file.relativePath.removePrefix("Download/")else file.relativePath.replace("Download/","Descargas/"),style=MaterialTheme.typography.bodySmall)
         fun open(share:Boolean){scope.launch{
-            val valid=withContext(Dispatchers.IO){runCatching{AndroidSharedDocumentStore(c).digest(Uri.parse(file.uri))==(file.size to file.sha256)}.getOrDefault(false)}
-            if(!valid){missing=true;message="El archivo fue movido, eliminado o perdió acceso. Puedes guardar otra copia desde el original conservado.";return@launch}
+            val target=withContext(Dispatchers.IO){runCatching{
+                if(ownerKey!=null)RecordDocuments.openTarget(c,InventoryDatabase.getInstance(c),ownerKey.substringBefore('/'),ownerKey.substringAfter('/'),file,history)
+                else file.also{require(AndroidSharedDocumentStore(c).digest(Uri.parse(it.uri))==(it.size to it.sha256))}
+            }.getOrNull()}
+            if(target==null){missing=true;message="El archivo fue movido, eliminado o perdió acceso. Puedes guardar otra copia desde el original conservado.";return@launch}
             missing=false
-            message=runCatching{c.startActivity(if(share)SharedFileActions.share(Uri.parse(file.uri),file.mimeType)else SharedFileActions.view(Uri.parse(file.uri),file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));null}.getOrElse{if(share)"No se pudo abrir el menú de compartir."else"No hay una aplicación compatible para abrir este archivo."}
+            message=runCatching{c.startActivity(if(share)SharedFileActions.share(Uri.parse(target.uri),target.mimeType)else SharedFileActions.view(Uri.parse(target.uri),target.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));null}.getOrElse{if(share)"No se pudo abrir el menú de compartir."else"No hay una aplicación compatible para abrir este archivo."}
         }}
         Row {TextButton(onClick={open(false)}){Text("ABRIR ARCHIVO")};TextButton(onClick={open(true)}){Text("Compartir")}}
         TextButton(onClick={

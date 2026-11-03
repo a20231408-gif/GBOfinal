@@ -47,6 +47,7 @@ function v3Store(request,purpose='commit') {
   if(PropertiesService.getScriptProperties().getProperty('GBO_ROOT_ROUTING_ENABLED')==='true'&&typeof gboDeliveryRoute!=='function')SyncV3.reject('ROOT_ROUTING_MODULE_REQUIRED');
   const route=typeof gboDeliveryRoute==='function'?gboDeliveryRoute(request,purpose):{root:gboAuthorizedRoot()};
   const root=route.root;
+  if(route.dual)gboEnsureRootActivation(route);
   const registry=getOrCreateFolder(root,'._GBO_SYNC_V3');
   const hash=bytes=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,bytes).map(x=>(x&255).toString(16).padStart(2,'0')).join('');
   const decode=s=>Utilities.base64Decode(s);

@@ -26,6 +26,31 @@ data class LocalSicResult(val route:String,val format:String,val uri:Uri,val fil
 /** Local-only projection. Never uploads a route workbook or alters remote ACK/revisions. */
 object LocalSicConsolidates {
     private val mutex=Mutex()
+    /** Resolve the CURRENT verified route document, never a cached URI or an older retained row. */
+    suspend fun principals(context:Context,db:InventoryDatabase,kind:String,id:String,
+        storage:SharedDocumentStore=AndroidSharedDocumentStore(context)):List<LocalSharedFile> {
+        if(kind!="SIC")return emptyList()
+        val snapshot=db.inventoryDao().snapshot(id) ?: return emptyList();val r=snapshot.record
+        if(r.status!="ACTIVE"||r.sicCode=="SIC-17"||r.routeCode.isBlank())return emptyList()
+        val formats=listOf(r.sicCode)+if(r.sicCode=="SIC-18"&&snapshot.sic18a!=null)listOf("SIC-18A")else emptyList()
+        val verified=mutex.withLock {formats.mapNotNull{format->
+            try {
+                val dir=File(context.filesDir,"sic_consolidated/"+key(r.routeCode,format))
+                if(read(File(dir,"journal.json"))?.optString("phase")!="DONE")return@mapNotNull null
+                val meta=read(File(dir,"current.json")) ?: return@mapNotNull null
+                require(meta.getString("route")==r.routeCode&&meta.getString("format")==format)
+                val rows=meta.getJSONArray("rows")
+                if((0 until rows.length()).none{n->val row=rows.getJSONObject(n);row.getString("id")==id&&row.getLong("revision")==r.updatedAt})return@mapNotNull null
+                val f=descriptor(meta).copy(id="SIC_PRIMARY/$id/$format",recordKey="SIC/$id",uri=meta.getString("uri"),state="READY")
+                require(fileDigest(File(f.source))==(f.size to f.sha256))
+                storage.checkSlot(SharedDocumentStore.Slot(Uri.parse(f.uri),true),f)
+                require(storage.digest(Uri.parse(f.uri))==(f.size to f.sha256))
+                f
+            }catch(e:CancellationException){throw e}catch(e:Exception){null}
+        }}
+        val current=db.inventoryDao().recordById(id)
+        return if(current?.updatedAt==r.updatedAt&&current.status=="ACTIVE"&&current.routeCode==r.routeCode)verified else emptyList()
+    }
     /** Public visibility only: the builder's individual XLSX and frozen row remain private.
      * Never suppress a draft, missing/stale row, failed publication, explicit ZIP or special family.
      * Existing frozen manifests are intentionally not passed through this policy by the drain.

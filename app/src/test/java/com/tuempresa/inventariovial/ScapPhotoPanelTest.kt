@@ -110,7 +110,8 @@ VISTA DE CAUCE AGUAS ABAJO""".lines()
             val r=ScapRepository(db,ScapCatalog.load(c));val id=populate(r);val s=r.dao.snapshot(id)!!
             val plan=LocalExportBuilder.build(c,db,LocalExportJob("PANEL_LOCAL_FICTICIO","SCAP/$id","SCAP",id,s.inspection.updatedAt,scope="PHOTOS"))
             val photos=plan.files.filter{it.mimeType=="image/jpeg"};assertEquals(5,photos.size)
-            for((f,p)in photos.zip(ScapPhotoPanel.ordered(s))){val path=ScapPhotoPanel.photoPath(s,p,root="FOTOGRAFIAS");assertTrue(f.relativePath.endsWith(path.substringBeforeLast('/')+"/"));assertEquals(path.substringAfterLast('/'),f.name);assertEquals(ScapDelivery.sha256(File(p.originalPath)),f.sha256);assertFalse(f.name.contains(p.id))}
+            for((f,p)in photos.zip(ScapPhotoPanel.ordered(s))){val path=ScapPhotoPanel.photoPath(s,p,root="FOTOGRAFIAS");assertTrue(f.relativePath.endsWith(path.substringBeforeLast('/')+"/"));assertTrue(f.name.startsWith("PUENTE - PE-28H - PR 10+100 - "));assertTrue(f.name.matches(Regex(".* - Foto [1-5]\\.jpg")));assertTrue(f.name.length<=80);assertEquals(ScapDelivery.sha256(File(p.originalPath)),f.sha256);assertFalse(f.name.contains(p.id))}
+            assertEquals(5,photos.map{it.name}.distinct().size)
             File(evidence,"PLAN_LOCAL_FICTICIO.json").writeText(plan.json())
             assertEquals(s,r.dao.snapshot(id));assertTrue(db.automaticSyncDao().all().isEmpty())
         }

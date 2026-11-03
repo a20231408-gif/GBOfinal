@@ -1,4 +1,127 @@
-# Progreso acumulado — 02/11/2026
+# Progreso acumulado — cierre local 03/11/2026
+
+## Estado para retomar a las 15:00 — prevalece sobre el historial inferior
+
+**NO-GO productivo. BLOQUEADO POR AUTORIZACIÓN institucional.** El propietario ordenó
+detener los intentos OAuth GBO: no reabrirlos hasta que avise que dispone del segundo factor.
+No se guardó código remoto, no se ejecutó el inventario, no se cambió V21/ROOT/permisos,
+no se enviaron fichas ni se tocó la Xiaomi. El intento autorizado del auditor se detuvo
+en consentimiento. Su guarda institucional permanece intacta. No sustituirlo por
+`v3Store()` ni por una ejecución personal que requiere quitar esa guarda.
+
+Rama revisable: `codex/cierre-backend-drive-institucional-20261103`, derivada de
+`fc834beb3a1b34cbdec4c99aa97d7081c18b82bf` (Android 1.4.29/43).
+El SHA del cierre es el tip publicado de esta rama; comprobarlo con `git ls-remote`.
+PR de este cierre: https://github.com/a20231408-gif/GBOfinal/pull/10 (draft),
+basado en `codex/candidata-1-4-28-20261103` (PR #9), sin merge.
+Commits de código: backend `0a04f55`, transporte Android `53a9167b023c9689627e364cd9091458b41a9f25`.
+PR #8 y #9 siguen siendo dependencias abiertas; no fusionarlos automáticamente.
+
+### Qué quedó implementado y cómo se acredita
+
+- `backend/candidato-original-reanudable/NewRootAdmission.gs`: verificación del ejecutor,
+  propiedad institucional del destino, acceso sin edición pública, admisión por época
+  de corte/fecha original. No admite una cola antigua como una captura nueva.
+- `DeliveryRootRouting.gs`: raíces y bindings conservados, duplicados/ambigüedad bloqueados,
+  marca durable antes de la primera escritura, modo histórico de solo lectura y vídeo
+  vinculado a padre con ACK. No recupera PENDING legacy ni permite downgrade silencioso.
+- `SyncV3.gs`: activa la marca de corte antes de crear el primer directorio técnico.
+- `preparar_paquete_privado.py`: ensambla desde V21 real sin perder panel SCAP, vídeo,
+  observaciones, autenticación ni manifest. No toca el editor ni despliega.
+- `AutomaticDelivery.kt` y `RootRoutingEnvelope.kt`: fecha original persistida y sobre
+  negociado en reserva, staging y commit. V21 recibe su sobre anterior; canonical hash,
+  ACK, identidad y revisión permanecen iguales. No cambia Room ni datos almacenados.
+- `ScapPhotoPanelTest`: actualiza la expectativa local anterior a 1.4.27; sigue exigiendo
+  cinco originales íntegros, categorías correctas, nombres legibles únicos y sin UUID.
+
+### Resultados acreditados, sin sumar repeticiones
+
+- Backend: **63/63 PASS**, Node, cinco clases de `candidato-original-reanudable/tests`.
+  Incluye el paquete privado real de V21 en VM; nuevos casos de corte, dos tablets,
+  SIC-18 con filas Android sintéticas, SIC-18A con workbook OOXML sintético, conservación
+  de filas/estilos, SCAP, vídeo, Pavimentos, BUSY, hash/ACK e idempotencia. No es una
+  subida real ni la suite histórica completa; Pavimentos de esta matriz es entrega nativa.
+- Android: **41/41 PASS**, seis clases: RootRoutingEnvelope(7), PhotoNamesIntegration10E(5),
+  SyncRecovery10D(10), PhotoTransport10(6), PavementAnnotationSync147(1), ScapPhotoPanel(12).
+  HTTP interceptado, sin red productiva. Evidencia XML/log privada conservada al cerrar.
+  El primer intento se bloqueó por JAVA_HOME ausente; se usó el JBR instalado sin cambiar
+  configuraciones. Un fixture antiguo de nombres falló y se corrigió; una alteración
+  accidental de codificación de ese fixture también se corrigió antes de la ejecución final.
+- Pruebas físicas de 1.4.29: confirmadas por el propietario para captura, carpetas,
+  consolidación SIC, apertura correcta e historial. No repetidas ni atribuidas al nuevo backend.
+- Auditoría Google: nueva captura GET de V21/editor; diez fuentes idénticas y un lector
+  adicional en el editor. V21 sigue USER_DEPLOYING en el endpoint original. «Ejecutar como yo»
+  cambia con la sesión y no demuestra el desplegador. El deployment llamado GBO es V13
+  USER_ACCESSING: **no es el endpoint original ni un reemplazo institucional validado**.
+- Inventario anterior de metadatos: 889 entradas, incluidas 207 denominadas journal y
+  207 record. **No es un inventario de contenido estable actual**; los estados COMPLETE,
+  PENDING y ACK no se acreditaron. No se marcará inventoryReviewed por esos totales.
+
+### Destino y material privado indispensable
+
+El nuevo enlace proporcionado el 03/11 sustituye al anterior «1.- ARCHIVOS CAMPO» en Papelera.
+El nombre real del nuevo destino es **GBO Inventario**, en Mi unidad / 02 GBO APPS /
+02 INVENTARIO, RELEVAMIENTO Y PUENTES (GEORUTA). UI institucional: vacío, propietario GBO,
+acceso restringido; ambos ancestros muestran propiedad GBO y acceso privado. La cuenta
+personal recibe 404 al consultarlo por API. Se buscaron ambos IDs en archivos rastreados, sin seguimiento e ignorados, incluidos .properties.
+No hay IDs operativos en la fuente versionable ni referencias de raíz en .properties locales;
+la propuesta vigente usa exclusivamente el ID nuevo. Las coincidencias del ID descartado son
+evidencias privadas históricas, con avisos de obsolescencia y originales conservados.
+No se restauró la carpeta sustituida ni se
+cambiaron permisos. Estos hechos no acreditan aún la capacidad de escritura del endpoint.
+
+Todo el material sensible está fuera de Git en
+`C:\Users\ASUS\GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z`:
+`editor/`, `v21/` inalterados, metadatos/versiones/despliegues y hashes, configuración local
+resguardada, `PROPUESTA_CONFIG_NO_APLICAR.json` desactivada y `paquete-publicacion-no-activar/`.
+La propuesta contiene IDs reales y propietario histórico en privado; no contiene valores
+inventados de token, inventario, época ni instante de activación. Las ScriptProperties
+productivas **todavía no se han respaldado**; hay un listado privado de nombres, sin valores.
+Capturas previas intactas en `C:\Users\ASUS\GBO_CLASP_PRIVADO_20261102T222357Z`.
+
+APK conservada, sin recompilar ni instalar:
+`C:\Users\ASUS\GBO_CANDIDATA_PRIVADA_20261103_1_4_29_43\GBO_1.4.29_43_DEBUG_ORIGINAL_SIC_PRINCIPAL_NO_INSTALAR.apk`.
+SHA-256 `f90b96046e2fb0ab20566be5b0917c58f73a37b912e04dfaff63acc16b57548d`.
+Package original, firma Debug histórica; fuente base fc834be. El transporte nuevo de esta
+rama **no está dentro de esa APK**. No distribuirla como compatible con el corte nuevo.
+No crear APK intermedia: una sola sucesora al fijar endpoint/identidad, incrementando versión.
+
+### Procedimiento único de publicación — requiere autorización futura
+
+1. Cuenta GBO legítima y consentimiento oficial existente. Ejecutar únicamente el lector
+   auditado, inventario paginado y segunda lectura estable; guardar evidencias en privado.
+   Conciliar PENDING, duplicados, ilegibles, UUID, revisiones, bindings y ACK. No adoptar,
+   recuperar ni migrar automáticamente. Confirmar lectura de la raíz histórica compartida.
+2. Acreditar desplegador de V21 y ejecutor efectivo; respaldar por canal privado las
+   ScriptProperties con el propietario, sin imprimirlas. Confirmar IDs/cadena/propiedad y
+   capacidades del destino desde GBO. Eliminar el bloqueo de permisos solo con acceso
+   legítimo; no ampliar permisos a personal para resolverlo. Medir el coste real del lector:
+   el escaneo completo bajo bloqueo puede agotar 85 segundos; no activar si ocurre.
+3. Revisar paquete final y diff contra V21, conservar versión/deployment/URL originales,
+   rellenar inventario real y autorizar explícitamente configuración/época/instante. Mantener
+   ROOT literal antiguo y modo histórico READ_ONLY; nuevas fichas solo en destino nuevo.
+   Mantener eliminación definitiva deshabilitada. No marcar el inventario revisado por mocks.
+4. Una aprobación consolidada identificará exactamente fuente, propiedades no secretas,
+   versión y deployment. Publicar desde GBO: conservar deployment/URL solo si la identidad
+   ejecutora institucional está acreditada; si Google exige deployment nuevo, hacerlo en
+   el mismo proyecto con GBO y fijar esa URL Android. No usar el V13 por su nombre.
+5. Generar una única APK sucesora con firma y package compatibles y endpoint final;
+   comprobar versión, certificado, hash y actualización sin pérdida de datos. No instalar
+   en Xiaomi principal ni usarla para la prueba online: conserva pendientes históricos.
+6. Prueba real separadamente autorizada con dispositivo de cola vacía acreditada: dos
+   alcantarillas ficticias en progresivas sin colisión, SIC-18/18A, SCAP/vídeo y Pavimentos.
+   Identificar/proteger consolidados antes de escribir, verificar propietario GBO, nombres,
+   rutas, bytes/hashes, filas previas, ACK estricto persistente e idempotencia. No borrar
+   pruebas después sin aprobación. Solo entonces decidir GO por familia/distribución.
+7. Antes de activar autoridades nuevas, la reversión a V21 requiere conciliación y ausencia
+   de escrituras nuevas. Después, **no volver a V21 ni desactivar el enrutamiento**: usar
+   candidato compatible DRAIN_ONLY, conservar raíces/pins/journals/ACK y terminar únicamente
+   operaciones reanudables conocidas. El modo histórico READ_ONLY continúa protegiendo datos.
+
+**Siguiente intervención institucional:** recuperar segundo factor y verificar inventario,
+ejecutor y propiedades. Hasta entonces están BLOQUEADOS POR AUTORIZACIÓN el inventario remoto,
+el corte, cualquier carga real, la propiedad de nuevos archivos y el ACK operativo.
+No continuar intentos OAuth, desplegar, activar ROOT, instalar ni distribuir automáticamente.
 
 ## Cierre vigente: instalada 1.4.26; aceptación local A–D PASS
 

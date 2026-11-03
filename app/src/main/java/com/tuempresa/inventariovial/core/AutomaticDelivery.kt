@@ -74,9 +74,9 @@ class AutomaticDriveHttp internal constructor(
         if(payload.optInt("publicNamingVersion")==1&&!supportsPublicNames())throw SyncPending("El servidor no admite todavía los nombres descriptivos; se conserva la reserva.")
         requireScapPanel(payload)
         val request=JSONObject().put("action","reservePhotoNamesV2").put("photoNamingVersion",2)
-        for(key in listOf("pathVersion","kind","key","recordId","revision","baseRevision","identityId","routeCode","familyPath","family","tramo","surface","publicNamingVersion","publicDisplayLabel"))if(payload.has(key))request.put(key,payload.get(key))
+        for(key in listOf("pathVersion","kind","key","recordId","revision","baseRevision","identityId","routeCode","familyPath","family","tramo","surface","publicNamingVersion","publicDisplayLabel","captureCreatedAt"))if(payload.has(key))request.put(key,payload.get(key))
         val files=payload.getJSONArray("files");request.put("photos",JSONArray((0 until files.length()).map {files.getJSONObject(it)}.filter {it.getString("key").startsWith("photo/")}.map {JSONObject().put("id",it.getString("key").substringAfter("photo/")).put("category",it.optString("photoCategory","GENERAL"))}))
-        return send(request)
+        return send(RootRoutingEnvelope.apply(request,capabilities))
     }
     override fun supportsTechnicalDeliveryWithoutGps()=supportsV3() && capabilities.optBoolean("technicalDeliveryWithoutGps")
     private fun send(payload:JSONObject,onWritten:()->Unit = {}):JSONObject {
@@ -113,7 +113,7 @@ class AutomaticDriveHttp internal constructor(
             throw SyncPending("El panel oficial SCAP requiere nombres fotográficos V2. Evidencia conservada.")
         if(payload.optInt("photoNamingVersion")==1 && capabilities.optInt("photoNamingVersion") !in setOf(1,2))throw SyncPending("El backend aún no admite prefijos fotográficos. Cola conservada.")
         if(payload.optInt("photoNamingVersion")==2 && !supportsReadablePhotoNames())throw SyncPending("El backend no admite nombres fotográficos V2; copia conservada.")
-        val commit=JSONObject(payload.toString());val files=commit.getJSONArray("files")
+        val commit=RootRoutingEnvelope.apply(payload,capabilities);val files=commit.getJSONArray("files")
         val sic=commit.optJSONArray("sicRows") ?: JSONArray()
         val rowBytes=(0 until sic.length()).sumOf{n->val v=sic.getJSONObject(n).getString("base64");v.length.toLong()*3/4-v.takeLast(2).count{it=='='}}
         RemoteRevisionBudget.check((0 until files.length()).map{File(files.getJSONObject(it).getString("localFile")).length()},rowBytes)
@@ -139,11 +139,13 @@ class AutomaticDriveHttp internal constructor(
             observer(DeliveryProgress(if(file.getString("key").startsWith("photo/"))"PHOTOS" else "DOCUMENTS",done,files.length()))
             val staged=JSONObject(file.toString()).apply {remove("localFile");put("base64",Base64.encodeToString(bytes,Base64.NO_WRAP))}
             metric(if(file.getString("key").startsWith("photo/"))"PHOTO_PREPARE" else "FILE_PREPARE",fileStart,bytes.size.toLong())
-            val ack=send(JSONObject().put("action","stageRecordV3").put("syncProtocol",3).put("key",commit.getString("key"))
+            val stage=JSONObject().put("action","stageRecordV3").put("syncProtocol",3).put("key",commit.getString("key"))
                 .put("kind",commit.getString("kind")).put("recordId",commit.getString("recordId"))
                 .put("identityId",commit.optString("identityId",commit.getString("recordId")))
                 .put("bridgeCode",commit.optString("bridgeCode")).put("baseRevision",commit.getLong("baseRevision"))
-                .put("revision",commit.getLong("revision")).put("file",staged))
+                .put("revision",commit.getLong("revision")).put("file",staged)
+            for(key in listOf("captureCreatedAt","rootRoutingVersion","rootEpoch"))if(commit.has(key))stage.put(key,commit.get(key))
+            val ack=send(stage)
             if(!ack.optBoolean("ok"))throw SyncRejection(ack.optString("code"),ack.optBoolean("retryable"))
             require(ack.optString("key")==commit.getString("key") && ack.optLong("revision")==commit.getLong("revision") &&
                 ack.optString("fileKey")==file.getString("key") && ack.optString("sha256")==file.getString("sha256") && ack.optString("stageFileId").isNotBlank())
@@ -172,6 +174,7 @@ object AutomaticDelivery {
         when(i.kind) {
             "SIC"->{
                 val s=requireNotNull(db.inventoryDao().snapshot(i.recordId));val r=s.record
+                p.put("captureCreatedAt",r.createdAt)
                 technicalOrder(c,r) // Preserve the existing contractual-location gate before a reservation.
                 val asset=RoadOrdering.orderAssetsForRoute(listOf(RouteDelivery.row(s))).single()
                 if(asset.assetFamily==AssetFamily.OTROS)throw SyncPending("Pendiente de clasificación de familia.")
@@ -184,6 +187,7 @@ object AutomaticDelivery {
             }
             "PAVEMENT"->{
                 val s=requireNotNull(db.pavementDao().sample(i.recordId))
+                p.put("captureCreatedAt",s.createdAt)
                 p.put("routeCode",s.ruta).put("tramo",s.tramo).put("family","MUESTRA")
                     .put("surface",when(s.surface){"ASPHALT"->"ASFALTICO";"RIGID"->"RIGIDO";else->"NO_PAVIMENTADO"})
                 var n=0
@@ -259,6 +263,13 @@ object AutomaticDelivery {
             .put("key",i.key).put("kind",i.kind).put("recordId",i.recordId).put("revision",i.revision)
             .put("baseRevision",i.syncedRevision).put("origin",i.origin).put("warningsConfirmed",i.warningsConfirmed)
             .put("files",files).put("sicRows",rows).put("removeMissingOwnedFiles",true)
+        val capturedAt=when(i.kind) {
+            "SIC"->requireNotNull(db.inventoryDao().recordById(i.recordId)).createdAt
+            "SCAP"->requireNotNull(db.scapDao().snapshot(i.recordId)?.roadRecord).createdAt
+            "PAVEMENT"->requireNotNull(db.pavementDao().sample(i.recordId)).createdAt
+            else->error("Familia no compatible")
+        }
+        p.put("captureCreatedAt",capturedAt)
         if(readable)p.put("photoNamingVersion",2)
         fun add(key:String,path:String,mime:String,bytes:ByteArray,aggregate:Boolean=false) {
             require(path.split('/').all {FileNameComplianceValidator.safeComponent(it) && it.length<=80}) {"Nombre de entrega inválido: $path"}

@@ -251,7 +251,7 @@ object LocalInventoryIndex {
     }
 }
 
-@Composable private fun DirectLocalDocuments(item:LocalInventoryItem,job:LocalExportJob?) {
+@Composable internal fun DirectLocalDocuments(item:LocalInventoryItem,job:LocalExportJob?) {
     val c=LocalContext.current;val db=remember(c){InventoryDatabase.getInstance(c)};val scope=rememberCoroutineScope()
     val files by db.localFilesDao().observeFilesFor(item.key).collectAsState(emptyList())
     val jobs by db.localFilesDao().observeJobsFor(item.key).collectAsState(emptyList())
@@ -260,15 +260,20 @@ object LocalInventoryIndex {
     val revisions=jobs.associateBy{it.id}
     val allDocuments=files.filter{it.state=="READY"&&it.mimeType in setOf(com.tuempresa.inventariovial.export.SicExcelWriter.XLSX_MIME,"application/pdf","application/zip")}
         .sortedWith(compareByDescending<LocalSharedFile>{revisions[it.jobId]?.revision ?: 0}.thenBy{if(it.name.startsWith("SCAP")||it.mimeType=="application/pdf")0 else 1}.thenBy{it.name}).distinctBy{it.uri}
-    val documents=LocalCopyPresentation.currentFiles(jobs,allDocuments,documentHistory)
-    val hasHistorical=LocalCopyPresentation.currentFiles(jobs,allDocuments).size<allDocuments.size
-    fun open(share:Boolean){if(documents.size!=1){selector=true;return};val file=documents.single();scope.launch{
-        message=runCatching{withContext(Dispatchers.IO){require(AndroidSharedDocumentStore(c).digest(android.net.Uri.parse(file.uri))==(file.size to file.sha256)){"El archivo ya no está disponible. Reintenta la copia local."}}
-            c.startActivity(if(share)SharedFileActions.share(android.net.Uri.parse(file.uri),file.mimeType)else SharedFileActions.view(android.net.Uri.parse(file.uri),file.mimeType).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK));null
+    val principals=rememberRecordPrincipals(item.kind,item.id,item.revision)
+    val documents=RecordDocuments.current(jobs,allDocuments,principals,documentHistory)
+    val hasHistorical=allDocuments.any{old->RecordDocuments.current(jobs,allDocuments,principals).none{it.id==old.id}}
+    fun openFile(file:LocalSharedFile,share:Boolean){scope.launch{
+        message=runCatching{val target=withContext(Dispatchers.IO){RecordDocuments.openTarget(c,db,item.kind,item.id,file,documentHistory)}
+            c.startActivity(if(share)SharedFileActions.share(android.net.Uri.parse(target.uri),target.mimeType)else SharedFileActions.view(android.net.Uri.parse(target.uri),target.mimeType).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK));null
         }.getOrElse{"No se pudo abrir el documento: comprueba acceso o una aplicación compatible. Los originales se conservan."}
     }}
+    fun open(share:Boolean){if(documents.size!=1){selector=true;return};openFile(documents.single(),share)}
+    if(principals.isNotEmpty())Text("Documento principal: consolidado SIC verificado en EXCEL_SIC.",style=MaterialTheme.typography.bodySmall)
+    else if(documents.any(RecordDocuments::provisional))Text("Documento provisional: contiene datos pendientes y no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
+    if(item.kind=="SIC"&&principals.isEmpty()&&documents.any(RecordDocuments::provisional))Text("No hay un consolidado actual verificado para esta ficha; se conserva el provisional.",style=MaterialTheme.typography.bodySmall)
     Row(Modifier.horizontalScroll(rememberScrollState())){
-        TextButton(enabled=documents.isNotEmpty(),onClick={open(false)}){Text("Abrir archivo")}
+        TextButton(enabled=documents.isNotEmpty(),onClick={open(false)}){Text(if(documents.size==1&&RecordDocuments.provisional(documents.single()))"Abrir provisional"else"Abrir archivo")}
         TextButton(onClick={message="Ubicación local: ${documents.firstOrNull()?.relativePath ?: "Sin copia pública disponible"}. Abrir archivo accede al documento exacto. Android no garantiza abrir su carpeta."}){Text("Mostrar ubicación")}
         TextButton(enabled=documents.isNotEmpty(),onClick={val path=documents.first().relativePath;(c.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("Ubicación local GBO",path));message="Ubicación copiada. Es una ruta descriptiva, no un permiso de acceso."}){Text("Copiar ubicación")}
         TextButton(enabled=documents.isNotEmpty(),onClick={open(true)}){Text("Compartir")}
@@ -277,7 +282,12 @@ object LocalInventoryIndex {
     if(hasHistorical)TextButton(onClick={documentHistory=!documentHistory}){Text(if(documentHistory)"Ocultar archivos anteriores"else"Ver archivos anteriores")}
     if(job==null||job.state in setOf("FAILED","PARTIAL","CLEANED"))TextButton(onClick={scope.launch{message=runCatching{withContext(Dispatchers.IO){LocalCopies.requestCurrent(c,db,item.kind,item.id)};"Actualizando archivos locales…"}.getOrElse{"No se pudo solicitar la copia; los originales siguen guardados."}}}){Text(if(job==null)"Incorporar histórico a copias locales"else if(job.state=="CLEANED")"Regenerar copias conservadas"else"Reintentar copia local")}
     if(selector)AlertDialog(onDismissRequest={selector=false},title={Text("Documentos disponibles")},text={
-        LazyColumn{items(documents,key={it.id}){file->Text("R${revisions[file.jobId]?.revision ?: "?"}${if(file.name.contains("PROVISIONAL")||file.name.contains("BORRADOR"))" · provisional"else""}");SavedFileActions(file)}}
+        LazyColumn{items(documents,key={it.id}){file->
+            Text(file.name)
+            Text(if(file.id.startsWith("SIC_PRIMARY/"))"Consolidado verificado"else if(RecordDocuments.provisional(file))"PROVISIONAL · datos pendientes"else"Revisión guardada ${revisions[file.jobId]?.revision ?: "?"}")
+            Row{TextButton(onClick={openFile(file,false)}){Text(if(RecordDocuments.provisional(file))"Abrir provisional"else"Abrir documento")}
+                TextButton(onClick={openFile(file,true)}){Text("Compartir documento")}}
+        }}
     },confirmButton={TextButton(onClick={selector=false}){Text("Cerrar")}})
     message?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
 }

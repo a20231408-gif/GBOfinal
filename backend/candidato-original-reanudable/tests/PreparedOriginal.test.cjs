@@ -5,9 +5,9 @@ const original=process.env.GBO_PREPARED_ORIGINAL_DIR;
 function prepared(){
  assert.ok(original,'Provide GBO_PREPARED_ORIGINAL_DIR for a locally prepared private package.');
  const e=env('INTEGRADO');e.props.GBO_RESUMABLE_ROOT_ID=ROOT;
- require('./RootGuardMock.cjs').rootGuardMock(e);
+ const guard=require('./RootGuardMock.cjs').rootGuardMock(e);
  const context=vm.createContext({...e.context});
- for(const name of ['Codigo','AuthorizedRootGuard','DeliveryRootRouting','ScapPhotoPanelV2','SicObservationsV1Core','VideoNamesV2Core','VideoV1Core','VideoV1','PublicDeliveryNames','SyncV3Core','PhotoNamesV2Core','SyncV3']){
+ for(const name of ['Codigo','AuthorizedRootGuard','DeliveryRootRouting','NewRootAdmission','ScapPhotoPanelV2','SicObservationsV1Core','VideoNamesV2Core','VideoV1Core','VideoV1','PublicDeliveryNames','SyncV3Core','PhotoNamesV2Core','SyncV3']){
   let source=fs.readFileSync(path.join(original,name+'.gs'),'utf8');
   if(name==='Codigo'){
    const pattern=/^const ROOT_FOLDER_ID\s*=.*?;/m;assert.ok(pattern.test(source),'Root declaration absent; no private value printed.');
@@ -15,7 +15,7 @@ function prepared(){
   }
   vm.runInContext(source,context,{filename:name+'.gs'});
  }
- return {e,context,json:out=>JSON.parse(out.getContent())};
+ return {e,guard,context,json:out=>JSON.parse(out.getContent())};
 }
 test('complete original package keeps protocol 3/V4/V2/panel 2 and announces resumable commits with explicit matching root',()=>{
  const {e,context,json}=prepared();const caps=json(context.doGet());assert.equal(caps.syncProtocol,3);assert.equal(caps.pathVersion,4);assert.equal(caps.readablePhotoNamingVersion,2);assert.equal(caps.scapPhotoPanelVersion,2);assert.equal(caps.commitContinuationVersion,1);assert.equal(caps.rootFolderId,ROOT);
@@ -51,7 +51,21 @@ test('prepared authenticated router refuses unreviewed dual-root and video/legac
  const before=e.writes.length;
  for(const action of ['beginVideoV1','finishVideoV1','uploadScap','uploadSicExport','uploadDeliveryFile','uploadPavementFile']){
   const reply=json(context.doPost({postData:{contents:JSON.stringify({token:e.props.GBO_DRIVE_API_TOKEN,action})}}));
-  assert.equal(reply.code,'ROOT_ROUTE_UNSUPPORTED_ACTION',action);
+  assert.equal(reply.code,'ROOT_ROUTING_NOT_APPROVED',action);
  }
  assert.equal(e.writes.length,before);
+});
+
+
+test('prepared GET negotiates routing epoch without exposing executor and verifies the institutional identity once',()=>{
+ const {e,guard,context,json}=prepared(),next=new e.root.constructor('FICTITIOUS_DESTINATION',null,'MEMORY_NEW_ROOT');
+ guard.additional[next.id]={id:next.id,name:next.name,mimeType:'application/vnd.google-apps.folder',trashed:false,parents:[guard.parent.id],capabilities:{canEdit:true,canAddChildren:true}};
+ for(const f of [guard.parent,guard.additional[next.id]])Object.assign(f,{owners:[{emailAddress:'institutional@example.invalid'}],permissions:[{type:'user',role:'owner'}]});
+ const get=context.Drive.Files.get;context.Drive.Files.get=(id,...a)=>id===ROOT?{...get(id,...a),owners:[{emailAddress:'historical@example.invalid'}],parents:[]}:get(id,...a);
+ let aboutReads=0;context.Drive.About={get:()=>{aboutReads++;return {user:{emailAddress:'institutional@example.invalid'}};}};
+ e.props.GBO_ROOT_ROUTING_ENABLED='true';e.props.GBO_ROOT_ROUTING_CONFIG=JSON.stringify({version:1,oldRootId:ROOT,oldRootReadOnly:{name:e.root.name,ownerEmail:'historical@example.invalid'},
+  newRoot:{id:next.id,parentId:guard.parent.id,name:next.name,parentName:guard.parent.name,ancestorIds:[guard.parent.id]},
+  inventoryReviewed:true,inventorySha256:'a'.repeat(64),mode:'OPEN',admission:{version:1,epoch:'e'.repeat(32),activatedAt:100,executorEmail:'institutional@example.invalid'}});
+ const before=e.writes.length,caps=json(context.doGet());assert.equal(caps.rootGuardReady,true);assert.equal(caps.rootRoutingVersion,2);assert.equal(caps.rootEpoch,'e'.repeat(32));assert.equal(caps.rootActivatedAt,100);
+ assert.equal(caps.commitContinuationVersion,1);assert.equal(aboutReads,1);assert.equal(e.writes.length,before);assert.ok(!JSON.stringify(caps).includes('institutional@example.invalid'));
 });

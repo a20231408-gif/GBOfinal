@@ -1,5 +1,67 @@
 # Candidato local para GBO_Inventario original — NO DESPLEGADO
 
+## Cierre vigente — 03/11/2026, propuesta sin activar
+
+Este apartado sustituye las restricciones antiguas de vídeo y admisión descritas abajo.
+La base contractual se volvió a descargar mediante GET: los diez archivos de V21 coinciden
+con sus capturas anteriores y con el editor, que solo añade el auditor de lectura.
+El empaquetador verifica los hashes de la captura V21 y conserva esos módulos, manifest,
+autenticación y literal ROOT original.
+Nunca hace push, run ni deploy. Exige un directorio de salida nuevo y verifica cada
+transformación del adaptador original de vídeo antes de generar el paquete privado.
+
+- `NewRootAdmission.gs` exige ejecutor Drive institucional, propietario institucional de
+  destino/ancestros, Mi unidad, permisos verificables y ausencia de edición pública.
+- El corte anuncia `rootRoutingVersion=2`, un `rootEpoch` público de 32 hex y
+  `rootActivatedAt`. El cliente añade el `captureCreatedAt` persistido de la ficha.
+  Una identidad desconocida anterior al corte, sin estos datos, con otra época, con
+  reloj futuro mayor de cinco minutos o con baseRevision distinta de cero se bloquea
+  **antes de crear carpetas, reservas o staging**. Una edición no rejuvenece una ficha.
+  Es admisión dentro del contrato de subida autenticado, no autoridad administrativa
+  ni prueba criptográfica del reloj del dispositivo. Los relojes deben estar correctos.
+- Registros, reservas y bindings existentes conservan su raíz. Un SCAP comparte la
+  identidad del puente. Ambigüedad entre raíces, metadatos duplicados o ilegibles y
+  conflictos de código se bloquean; nunca se inventa una asociación.
+- La configuración opcional `oldRootReadOnly:{name,ownerEmail}` permite leer una raíz
+  histórica compartida que pertenece a otra cuenta sin fingir acceso a sus ancestros.
+  Comprueba ID literal, nombre, propietario, tipo y papelera; **rechaza todas sus
+  operaciones de entrega, incluidos vídeo y replay**. No cambia pendientes ni ACK.
+  Este es el modo preparado para el corte; reanudar históricos requerirá otra revisión.
+- Vídeo nuevo sigue exclusivamente al SCAP confirmado de la misma raíz. El adaptador
+  ya no llama `v3Store()` para leer el padre. Verifica revisión, ACK, journal y cadena
+  de carpeta antes de escribir. PENDING devuelve BUSY sin recuperación. Conserva
+  nombres V1/V2, ID binario, sesiones reanudables y checksum de V21.
+- `DRAIN_ONLY` termina entregas reanudables y vídeos ya vinculados; bloquea nuevas
+  revisiones, identidades y vídeos. La marca de activación se persiste bajo ScriptLock
+  **antes de la primera escritura Drive**, con raíces, época, instante y política de
+  históricos inmutables. Desactivar o sustituirlos después se rechaza.
+- Las rutas legacy se rechazan durante el modo dual. No hay borrado administrativo,
+  migración, recuperación legacy automática ni modificación del Servicio de Usuarios.
+
+Configuración adicional privada: `admission:{version:1,epoch,activatedAt,executorEmail}`
+dentro de `GBO_ROOT_ROUTING_CONFIG`. No rellenar `inventoryReviewed` ni su SHA con
+resultados simulados. El destino operativo y sus IDs no se incorporan a este módulo.
+`rootFolderId` del GET conserva el ancla histórica del contrato V21; no se debe usar
+para inferir el destino de una entrega enrutada.
+
+Android incorpora únicamente metadatos de transporte negociados; con V21 se eliminan
+del sobre HTTP. No cambian canonical hash, UUID, revisión, ACK ni Room. Preparaciones
+históricas sin fecha no reciben una fecha inventada. La APK 1.4.29 sigue intacta; este
+contrato necesita una única sucesora, que se empaquetará al fijar el endpoint institucional.
+
+**Limitaciones reales:** inventario institucional y desplegador aún no acreditados.
+El enrutador lee completamente los registros bajo bloqueo, con presupuesto cooperativo
+de 85 segundos; no hay índice/cache validado. El coste sobre el volumen real debe
+medirse antes de activar. Una llamada Drive individual puede exceder ese presupuesto.
+Las pruebas en memoria no acreditan latencia, permisos ni propiedad en Google.
+
+63 casos backend únicos PASS y 41 Android únicos PASS en la selección afectada.
+Las pruebas de enrutamiento/vídeo usan fuente pública y mocks sin cuenta Google; la
+prueba `PreparedOriginal.test.cjs` recibe explícitamente `GBO_PREPARED_ORIGINAL_DIR`
+apuntando al paquete privado generado desde la captura autorizada, siempre en una VM.
+El procedimiento único y el estado para retomar están en
+`docs/PROGRESO_ACUMULADO_GBO.md`. **NO-GO productivo**; no se cambió Google.
+
 ## Propuesta vigente de coexistencia — 01/11/2026, NO ACTIVAR
 
 `DeliveryRootRouting.gs` añade un modo opcional y cerrado por defecto. **No se cambia
