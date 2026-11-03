@@ -81,6 +81,97 @@ function gboAssertRootRoutingAction(p) {
     DeliveryRootPolicy.reject('ROOT_ROUTE_UNSUPPORTED_ACTION');
 }
 
+/** Disposable read cache, never routing authority. Every use verifies a complete live
+ * metadata generation before AND after reading. Missing/evicted chunks are rebuilt;
+ * a bounded request can yield with zero Drive/property writes and resume on retry.
+ * Only projections needed by select() are cached, not documents or upload credentials.
+ */
+function gboReadRootRegistry(registry,deadline) {
+  const reject=DeliveryRootPolicy.reject,rootId=registry.getId();
+  const hash=s=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,s).map(b=>(b&255).toString(16).padStart(2,'0')).join('');
+  const checkpoint=()=>{if(Date.now()>deadline)reject('ROOT_ROUTING_READ_IN_PROGRESS',true);};
+  function metadata() {
+    const all=[],ids=new Set(),names=new Set();let token;
+    do {
+      checkpoint();
+      const page=Drive.Files.list({q:"'"+rootId+"' in parents and trashed=false",pageSize:100,pageToken:token,
+        fields:'nextPageToken,files(id,name,modifiedTime)',orderBy:'name',supportsAllDrives:true,includeItemsFromAllDrives:true});
+      for(const f of page.files||[]) {
+        if(!f.id||typeof f.name!=='string'||!f.modifiedTime||ids.has(f.id)||names.has(f.name))reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+        ids.add(f.id);names.add(f.name);all.push(f);
+      }
+      if(token&&token===page.nextPageToken)reject('ROOT_REGISTRY_REQUIRES_REVIEW');token=page.nextPageToken;
+    }while(token);
+    return all.sort((a,b)=>a.id.localeCompare(b.id));
+  }
+  const fingerprint=xs=>hash(JSON.stringify(xs.map(f=>[f.id,f.name,f.modifiedTime])));
+  const before=metadata(),generation=fingerprint(before);
+  const targets=before.filter(f=>/^(record_|binding_|journal_|root_route_v1_)/.test(f.name));
+  const cache=typeof CacheService==='undefined'?null:CacheService.getScriptCache();
+  function project(f) {
+    let v;try{v=JSON.parse(DriveApp.getFileById(f.id).getBlob().getDataAsString());}
+    catch(e){reject('ROOT_REGISTRY_REQUIRES_REVIEW');}
+    if(!v||typeof v!=='object'||Array.isArray(v))reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+    let fields;
+    if(f.name.startsWith('record_')) {
+      if(typeof v.key!=='string'||f.name!=='record_'+hash(v.key)+'.json')reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+      fields=['key','identityId','bridgeCode','revision','contentHash'];
+    }else if(f.name.startsWith('binding_')) {
+      if(typeof v.identity!=='string')reject('ROOT_REGISTRY_REQUIRES_REVIEW');fields=['identity'];
+    }else if(f.name.startsWith('root_route_v1_')) {
+      if(typeof v.key!=='string'||f.name!=='root_route_v1_'+hash(v.key)+'.json')reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+      fields=['version','key','identityId','rootId'];
+    }else {
+      if(!['PENDING','COMPLETE','ROLLED_BACK'].includes(v.status))reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+      fields=['status','key','revision','contentHash','continuationVersion'];
+    }
+    const value={};for(const k of fields)if(v[k]!==undefined)value[k]=v[k];
+    if(f.name.startsWith('record_')&&v.receipt)value.receipt={ok:v.receipt.ok};
+    return {id:f.id,name:f.name,value};
+  }
+  const result=[];
+  for(let offset=0;offset<targets.length;offset+=20) {
+    checkpoint();const group=targets.slice(offset,offset+20),key='gbo-root-read-v1:'+hash(rootId+generation+offset);
+    let chunk=null;
+    try {const raw=cache&&cache.get(key);if(raw)chunk=JSON.parse(raw);}catch(e){chunk=null;}
+    if(!Array.isArray(chunk)||chunk.length!==group.length||chunk.some((r,i)=>r?.id!==group[i].id||r?.name!==group[i].name||!r.value)) {
+      chunk=[];
+      for(const f of group){checkpoint();chunk.push(project(f));}
+      // Cache failure is not success and is not permission to skip any registry entry.
+      const encoded=JSON.stringify(chunk);
+      if(cache&&encoded.length<=30000)try{cache.put(key,encoded,3600);}catch(e){}
+    }
+    result.push(...chunk);
+    // Reserve time for a complete second metadata snapshot before selecting a root.
+    if(offset+20<targets.length&&Date.now()>deadline-20000)reject('ROOT_ROUTING_READ_IN_PROGRESS',true);
+  }
+  if(fingerprint(metadata())!==generation)reject('ROOT_REGISTRY_CHANGED_RETRY',true);
+  checkpoint();return result;
+}
+
+/** Editor-only preparation, never a public endpoint. Requires the approved routing
+ * config and institutional identity. Changes only disposable ScriptCache entries;
+ * no Drive files, properties, pins, journals or recovery. Run before enabling writers.
+ */
+function gboWarmRootRegistryReadCache() {
+  const c=gboRootRoutingConfig();gboAssertInstitutionalExecutor(c);
+  const roots=[gboHistoricalReadRoot(c),gboInstitutionalDestination(c)],deadline=Date.now()+85000;
+  const counts=[];
+  try {
+    for(const root of roots) {
+      const folders=root.getFoldersByName('._GBO_SYNC_V3');
+      if(!folders.hasNext()){counts.push(0);continue;}
+      const registry=folders.next();if(folders.hasNext())DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+      counts.push(gboReadRootRegistry(registry,deadline).length);
+    }
+    return {complete:true,counts,driveMutations:0,propertyMutations:0,disposableCacheOnly:true};
+  }catch(e){
+    if(e.code==='ROOT_ROUTING_READ_IN_PROGRESS'||e.code==='ROOT_REGISTRY_CHANGED_RETRY')
+      return {complete:false,code:e.code,retryable:true,driveMutations:0,propertyMutations:0,disposableCacheOnly:true};
+    throw e;
+  }
+}
+
 /** Called under the existing ScriptLock. Read both complete registries BEFORE any write. */
 function gboDeliveryRoute(p,purpose) {
   if(!gboRootRoutingEnabled())return {root:gboAuthorizedRoot()};
@@ -95,24 +186,14 @@ function gboDeliveryRoute(p,purpose) {
   function snapshot(root) {
     const state={rootId:root.getId(),records:[],bindings:[],pins:[],photoIdentities:[],journals:[],stagedKey:false};
     const registry=only(root.getFoldersByName('._GBO_SYNC_V3'));if(!registry)return state;
-    const seenNames=new Set();
-    for(const f of list(registry.getFiles())) {
-      const name=f.getName();if(!/^(record_|binding_|journal_|root_route_v1_)/.test(name))continue;
-      if(seenNames.has(name))DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');seenNames.add(name);
-      let value;try{checkpoint();value=JSON.parse(f.getBlob().getDataAsString());}catch(e){if(e.code)throw e;DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');}
-      if(!value||typeof value!=='object')DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
-      if(name.startsWith('record_')) {
-        if(typeof value.key!=='string'||name!=='record_'+hash(value.key)+'.json')DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
-        state.records.push(value);
-      }else if(name.startsWith('binding_')) {
-        if(typeof value.identity!=='string')DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');state.bindings.push(value);
-      }else if(name.startsWith('root_route_v1_')) {
-        if(typeof value.key!=='string'||name!=='root_route_v1_'+hash(value.key)+'.json')DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');state.pins.push(value);
-      }else {
-        if(!['PENDING','COMPLETE','ROLLED_BACK'].includes(value.status))DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
-        if(value.key)state.journals.push(value);
-        else if(p&&name==='journal_'+hash(p.key)+'.json')state.journals.push({...value,key:p.key});
-      }
+    const summaries=gboReadRootRegistry(registry,deadline);
+    for(const item of summaries) {
+      const {name,value}=item;
+      if(name.startsWith('record_'))state.records.push(value);
+      else if(name.startsWith('binding_'))state.bindings.push(value);
+      else if(name.startsWith('root_route_v1_'))state.pins.push(value);
+      else if(value.key)state.journals.push(value);
+      else if(p&&name==='journal_'+hash(p.key)+'.json')state.journals.push({...value,key:p.key});
     }
     if(p) {
       const identity=p.identityId||(p.key?.startsWith('SCAP/')?null:p.key?.split('/')[1]);
