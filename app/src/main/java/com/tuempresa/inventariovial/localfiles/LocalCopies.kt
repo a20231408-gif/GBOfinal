@@ -150,6 +150,15 @@ object LocalCopyDrain {
                 for(source in plan.files){
                     try {
                         require(fileDigest(File(source.source))==(source.size to source.sha256)){"El archivo privado cambió. No se sobrescribió la revisión exportada."}
+                        // A frozen plan may predate an asynchronously verified route workbook.
+                        // Reconcile visibility now without rewriting that plan or deleting old copies.
+                        if(job.kind=="SIC"&&job.scope.startsWith("FULL")&&RecordDocuments.sicFormat(source)!=null&&
+                            com.tuempresa.inventariovial.export.LocalSicConsolidates.principals(c,db,job.kind,job.recordId,storage)
+                                .any{RecordDocuments.sicFormat(it)==RecordDocuments.sicFormat(source)}) {
+                            done++
+                            dao.saveJob(job.copy(completed=done,total=plan.files.size,message="Excel SIC disponible en EXCEL_SIC; fuente individual conservada privada."))
+                            continue
+                        }
                         if(plan.publicNamingVersion==5 && job.scope!=DriveMirrorPlan.SCOPE) {
                             val published=StableLocalPublication.publish(c,db,job,source,storage)
                             dao.saveFile(published);done++
