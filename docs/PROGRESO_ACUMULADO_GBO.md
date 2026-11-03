@@ -1,5 +1,16 @@
 # Progreso acumulado — 02/11/2026
 
+## Cierre vigente: instalada 1.4.26; aceptación local A–D PASS
+
+Referencia única de entrega: `../CONTINUIDAD_FINAL_GBO.md`. Sustituye los estados inferiores
+de «no instalada»: actualización autorizada Success, hash original, firma histórica, 43 tablas
+idénticas antes/después de abrir, 797 archivos preservados y tres SQLite íntegras. El propietario
+confirmó A búsqueda/filtros, B ficha/documentos, C borrador Solo dispositivo y D descarte/restauración
+PASS en 1.4.26. No equivale a aprobación de toda la matriz ni a subida real. Xiaomi offline,
+dos SIC históricos pendientes intactos durante la instalación. Emulador fuera de alcance por
+instrucción del propietario. Sin POST, ACK nuevo ni propietario institucional acreditado.
+V21/ROOT sin cambios; NO-GO online/general. Cierre solo documental y push saneado de PR #8.
+
 ## Acta única de prueba integral 1.4.26 — reanudación USB, cierre NO-GO
 
 La Xiaomi se conectó y se verificó 1.4.25 (39) Debug, package original y firma histórica D2E54C…;

@@ -1,5 +1,12 @@
 # GBO — Estado completo para continuar
 
+## Cierre de continuidad vigente — 02/11/2026
+
+Leer primero `../CONTINUIDAD_FINAL_GBO.md`: reemplaza los estados históricos inferiores.
+Xiaomi ya tiene 1.4.26 (40), conservó datos y el propietario confirmó A–D PASS.
+Subida/ACK/propietario institucional no verificados; V21 sin actualizar; NO-GO online/general.
+Fuente final recuperable en rama candidata/PR #8 y dependencias, sin merge remoto.
+
 ## Candidata local 1.4.26 (40), sin publicación productiva — 02/11/2026
 
 Ver estado vigente en docs/PROGRESO_ACUMULADO_GBO.md. PR #5/#6/#7 integrados solo en la rama local
