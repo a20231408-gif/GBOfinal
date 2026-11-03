@@ -16,24 +16,38 @@ import kotlinx.coroutines.*
 @Composable internal fun PavementSicPanel(s: PavementSampleEntity, damages: List<PavementDamageEntity>, repo: PavementRepository, canEdit: Boolean) {
     val context=LocalContext.current;val scope=rememberCoroutineScope()
     var editing by remember(s.id) { mutableStateOf<PavementSicFormat?>(null) }
-    var exporting by remember { mutableStateOf<PavementSicFormat?>(null) }
+    var exporting by remember { mutableStateOf<com.tuempresa.inventariovial.localfiles.ManualDocument?>(null) }
+    var exportBusy by remember {mutableStateOf(false)}
     var publishedUri by remember(s.id){mutableStateOf<String?>(null)}
     var message by remember { mutableStateOf("") }
     val export=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) { uri ->
-        val format=exporting
-        if(uri!=null && format!=null)scope.launch {
-            runCatching { withContext(Dispatchers.IO) { PavementGeneratedFiles.export(context,uri,s,"SIC_${format.name}","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","xlsx") { PavementSic.write(it,s,damages,format) } } }
-                .onSuccess { publishedUri=it.destinationUri;message="ARCHIVO GUARDADO · ${format.label}"+if(PavementSic.status(s,damages,format).complete)""else" · PROVISIONAL: datos técnicos pendientes" }.onFailure { message=it.message.orEmpty() }
+        val prepared=exporting
+        if(uri==null)message="Guardado cancelado; la muestra y el consolidado privado se conservan."
+        else if(prepared!=null)scope.launch {
+            exportBusy=true
+            try{val db=com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context)
+                com.tuempresa.inventariovial.localfiles.ManualDocumentExport.save(context,db,prepared,uri)
+                publishedUri=uri.toString();message="ARCHIVO GUARDADO · "+prepared.notice
+            }catch(e:CancellationException){throw e}catch(e:Exception){message=e.message.orEmpty()}
+            finally{exportBusy=false}
         }
     }
+
     Text("Datos para SIC",style=MaterialTheme.typography.titleMedium)
     Text("PR, distancias y faja opcionales. Excel por fecha de registro; las referencias ausentes quedan vacías.",style=MaterialTheme.typography.bodySmall)
     PavementSicFormat.entries.filter { it.surface==s.surface }.forEach { format ->
         val status=PavementSic.status(s,damages,format)
-        Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-            Text("${format.label} · ${if(status.complete)"✓ Completo" else "! Faltan ${status.missingCount}"}",Modifier.weight(1f))
+        FlowRow(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
+            Text("${format.label} · ${if(status.complete)"✓ Completo" else "! Faltan ${status.missingCount}"}")
             if(canEdit)TextButton(onClick={editing=format}) { Text("Completar") }
-            TextButton(enabled=damages.isNotEmpty(),onClick={exporting=format;export.launch("${format.label}-M${s.muestra}.xlsx")}) { Text("Excel") }
+            TextButton(enabled=damages.isNotEmpty()&&!exportBusy,onClick={scope.launch {
+                exportBusy=true
+                try{exporting=com.tuempresa.inventariovial.export.LocalSicConsolidates.prepareManual(context,
+                    com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),s.ruta,format.label)
+                    export.launch("${format.label}.xlsx")
+                }catch(e:CancellationException){throw e}catch(e:Exception){message=e.message.orEmpty()}
+                finally{exportBusy=false}
+            }}) { Text("Exportar consolidado") }
         }
         status.blockers.forEach { Text(it,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.error) }
     }

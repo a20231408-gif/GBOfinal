@@ -25,10 +25,11 @@ import kotlinx.coroutines.*
     var checking by remember(id){mutableStateOf(false)}
     val archiveProgress by LocalArchiveProgress.flow.collectAsState()
     val inProgress=job?.state in setOf("QUEUED","RUNNING") || checking
-    LaunchedEffect(job,files) {
+    val jobFiles=files.filter{it.jobId==job?.id}
+    LaunchedEffect(job,jobFiles) {
         verified=null;detail=null
         if(job==null){result=null;return@LaunchedEffect}
-        result=when(job.state){"QUEUED","RUNNING"->"Preparando SCAP…";"READY"->"Verificando SCAP…";else->"No se pudo guardar SCAP"}
+        result=when(job.state){"QUEUED","RUNNING"->"Preparando ZIP de respaldo…";"READY"->"Verificando ZIP de respaldo…";else->"No se pudo guardar ZIP de respaldo"}
         if(job.state=="READY" || job.state=="PARTIAL" && files.any{it.jobId==job.id&&it.state=="READY"&&it.mimeType=="application/zip"}) {
             checking=true
             try {
@@ -39,16 +40,16 @@ import kotlinx.coroutines.*
                     require(store.digest(uri)==(f.size to f.sha256)){"La copia pública cambió o quedó incompleta. El original sigue en GBO."}
                     f
                 }
-                result=if(job.state=="READY")"SCAP guardado correctamente"else"SCAP guardado parcialmente"
+                result=if(job.state=="READY")"ZIP de respaldo guardado correctamente"else"ZIP de respaldo guardado parcialmente"
                 if(job.state=="PARTIAL")detail=LocalCopyDrain.publicError(Exception(job.message))
-            }catch(e:CancellationException){throw e}catch(e:Exception){result="No se pudo verificar SCAP";detail=LocalCopyDrain.publicError(e)}
+            }catch(e:CancellationException){throw e}catch(e:Exception){result="No se pudo verificar ZIP de respaldo";detail=LocalCopyDrain.publicError(e)}
             finally{checking=false}
         }else if(job.state !in setOf("QUEUED","RUNNING"))detail=LocalCopyDrain.publicError(Exception(job.message))
     }
     LaunchedEffect(inProgress,result){result?.let{onStatus(inProgress,it)}}
     if(job!=null)Card(Modifier.fillMaxWidth().testTag("scap-local-result")) {
         Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
-            Text(if(verified!=null)"ARCHIVO GUARDADO"else result ?: "Preparando SCAP…")
+            Text(result ?: "Preparando ZIP de respaldo…")
             archiveProgress[job.id]?.takeIf{inProgress}?.let{Text(LocalArchiveProgress.label(it))}
             if(inProgress){LinearProgressIndicator(Modifier.fillMaxWidth());Text(if(job.state=="QUEUED")"Solicitud guardada en la tablet; espera la ejecución de Android. Este resultado queda disponible."
                 else "Generando y verificando la copia local. Puedes volver a consultar este resultado.")}
@@ -65,7 +66,7 @@ import kotlinx.coroutines.*
                             context.startActivity(SharedFileActions.view(uri,file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                         }catch(e:CancellationException){throw e}catch(e:android.content.ActivityNotFoundException){detail="No hay una aplicación compatible para abrir ZIP. El archivo guardado se conserva."}
                         catch(e:Exception){detail=LocalCopyDrain.publicError(e)}
-                    }}){Text("ABRIR ARCHIVO")}
+                    }}){Text("ABRIR ZIP DE RESPALDO")}
                     TextButton(modifier=Modifier.testTag("scap-open-location"),onClick={
                         val uri=Uri.parse(file.uri);val target=SharedFileActions.location(uri)
                         detail=if(uri.authority=="media")"Busca el archivo en la ruta de Descargas indicada. Android puede abrir solo la lista de Descargas, no la carpeta exacta."

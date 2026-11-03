@@ -63,11 +63,8 @@ object PublicLocalFolderNames {
     }
     suspend fun describe(db:InventoryDatabase,job:LocalExportJob,label:String):String=when(job.kind){
         "SCAP"->{
-            val s=requireNotNull(db.scapDao().snapshot(job.recordId));val v=s.values()
-            val name=(v["singularityName"] ?: s.inspection.bridgeName.takeUnless{it.equals("PUENTE",true)}).orEmpty()
-            val code=s.inspection.bridgeCode.trim()
-            val prefix="Puente"+if(code.isBlank())""else" $code"
-            if(name.isNotBlank())"$prefix - $name"else if(code.isNotBlank())prefix else location(prefix,s.roadRecord)
+            val s=requireNotNull(db.scapDao().snapshot(job.recordId))
+            com.tuempresa.inventariovial.scap.export.ScapDocumentNames.folder(s)
         }
         "SIC"->{
             val s=requireNotNull(db.inventoryDao().snapshot(job.recordId))

@@ -8,7 +8,7 @@ import com.tuempresa.inventariovial.export.LocalSicConsolidates
 /** Principal document links are resolved, never persisted as mutable aliases of a shared workbook. */
 object RecordDocuments {
     fun sicFormat(file:LocalSharedFile)=Regex("(SIC-[0-9]+[A-Z]?)(?:_PROVISIONAL)?\\.xlsx").matchEntire(file.name)?.groupValues?.get(1)
-    fun provisional(file:LocalSharedFile)=file.name.contains("_PROVISIONAL")||file.name.contains("_BORRADOR")
+    fun provisional(file:LocalSharedFile)=file.name.contains("_PROVISIONAL")||file.name.contains("_BORRADOR")||file.source.contains("_PROVISIONAL")||file.source.replace('\\','/').contains("/BORRADOR/")
     fun current(jobs:List<LocalExportJob>,files:List<LocalSharedFile>,principals:List<LocalSharedFile>,history:Boolean=false):List<LocalSharedFile> {
         val formats=principals.mapNotNull(::sicFormat).toSet()
         val local=LocalCopyPresentation.currentFiles(jobs,files,history)

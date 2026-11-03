@@ -31,10 +31,10 @@ fun streamDigest(input:InputStream):Pair<Long,String> = input.use { stream->
 fun fileDigest(file:File)=streamDigest(file.inputStream())
 
 /** URI only. Never turns content:// into a fictitious java.io.File. */
-class AndroidSharedDocumentStore(private val context:Context):SharedDocumentStore {
+class AndroidSharedDocumentStore(private val context:Context,private val authorizedTree:Uri?=null):SharedDocumentStore {
     private val resolver=context.contentResolver
     private val prefs=context.getSharedPreferences("gbo_local_copies",Context.MODE_PRIVATE)
-    private val media get()=Build.VERSION.SDK_INT>=29
+    private val media get()=authorizedTree==null && Build.VERSION.SDK_INT>=29
     private val collection get()=MediaStore.Downloads.EXTERNAL_CONTENT_URI
     override fun removeOwned(file:LocalSharedFile):Boolean {
         val uri=Uri.parse(requireNotNull(file.uri))
@@ -47,8 +47,7 @@ class AndroidSharedDocumentStore(private val context:Context):SharedDocumentStor
             require(digest(uri)==(file.size to file.sha256)){"La copia cambió fuera de GBO; no se limpió."}
             check(resolver.delete(uri,null,null)==1){"Android no confirmó la limpieza."};return true
         }
-        val saved=prefs.getString("legacyTree",null) ?: error("Vuelve a autorizar la carpeta local.")
-        val tree=Uri.parse(saved)
+        val tree=authorizedTree ?: prefs.getString("legacyTree",null)?.let(Uri::parse) ?: error("Vuelve a autorizar la carpeta local.")
         require(uri.authority==tree.authority&&DocumentsContract.isChildDocument(resolver,
             DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getTreeDocumentId(tree)),uri)){"La copia no pertenece a la carpeta autorizada."}
         require(resolver.persistedUriPermissions.any{it.uri==tree&&it.isReadPermission&&it.isWritePermission}){"Vuelve a autorizar la carpeta local antes de limpiar."}
@@ -149,8 +148,8 @@ class AndroidSharedDocumentStore(private val context:Context):SharedDocumentStor
         };return rows
     }
     private fun treeParent(file:LocalSharedFile):Uri {
-        val saved=prefs.getString("legacyTree",null) ?: error("Android 8/9: elige una carpeta local en Herramientas → Copias locales. La ficha sigue dentro de GBO.")
-        val tree=Uri.parse(saved);require(tree.authority=="com.android.externalstorage.documents"){"Elige almacenamiento de la tablet, no un proveedor en Internet."}
+        val tree=authorizedTree ?: prefs.getString("legacyTree",null)?.let(Uri::parse) ?: error("Android 8/9: elige una carpeta local en Herramientas → Copias locales. La ficha sigue dentro de GBO.")
+        require(tree.scheme=="content" && (authorizedTree!=null||tree.authority=="com.android.externalstorage.documents")){"Elige almacenamiento de la tablet, no un proveedor en Internet."}
         require(resolver.persistedUriPermissions.any {it.uri==tree&&it.isReadPermission&&it.isWritePermission}){"Vuelve a autorizar la carpeta local en Herramientas."}
         var parent=DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getTreeDocumentId(tree))
         // The chosen directory is a base; never infer its filesystem path.

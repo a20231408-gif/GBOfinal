@@ -59,6 +59,6 @@ class SicProvisionalOpeningUiTest {
         ui.onNodeWithText("Abrir archivo").performClick()
         try{ui.waitUntil(5000){shadowOf(c).peekNextStartedActivity()!=null}}catch(e:Throwable){throw AssertionError(ui.onAllNodes(isRoot()).printToString(),e)}
         assertEquals(actual.uri,shadowOf(c).nextStartedActivity.data)
-        runBlocking{assertTrue(db.localFilesDao().files(job.id).any{it.name=="SIC-18_PROVISIONAL.xlsx"});assertTrue(db.automaticSyncDao().all().isEmpty())}
+        runBlocking{assertTrue(db.localFilesDao().files(job.id).any{it.name=="SIC-18.xlsx"&&RecordDocuments.provisional(it)});assertTrue(db.automaticSyncDao().all().isEmpty())}
     }
 }

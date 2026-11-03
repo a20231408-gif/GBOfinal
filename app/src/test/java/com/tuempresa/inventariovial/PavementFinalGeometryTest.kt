@@ -58,7 +58,9 @@ class PavementFinalGeometryTest {
         assertFalse(PavementPdfSegment(3,3,50.0,60.0).contains(p,d))
     }
     @Test fun patchModeSurvivesRealRoomCloseReopenAndExportEnvelopeWithoutMigration()=runBlocking {
-        val c=ApplicationProvider.getApplicationContext<Context>();val name="patch_${UUID.randomUUID()}.db"
+        // Robolectric already isolates the context; a short filename also supports
+        // Windows temporary-directory limits while exercising a real disk reopen.
+        val c=ApplicationProvider.getApplicationContext<Context>();val name="patch.db"
         fun open()=Room.databaseBuilder(c,InventoryDatabase::class.java,name).build()
         val session=AuthSessionManager().apply{login(UserCacheEntity("test","test","FICTICIO","OPERATOR",true,"",0,0,0))}
         val s=visualSample().copy(sicDataJson="{\"HISTORICAL_UNKNOWN\":{\"literal\":\"=1+2\"}}")

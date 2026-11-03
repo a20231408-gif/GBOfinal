@@ -299,3 +299,6 @@ docs/manual-10i/capturas-reales/*
 *.bundle
 /GBO_MANUAL_PRIVADO_CONTINUIDAD_20261031.md
 /GBO_PROMPT_CODEX_CHECKPOINT_GITHUB_20261031.md
+
+# Generated synthetic spreadsheet evidence; the fixture source is versioned.
+/app/consolidados/

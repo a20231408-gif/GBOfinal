@@ -39,7 +39,7 @@ class ScapP0UiTest {
         provider=SicDownloadsProvider().apply{attachInfo(ui.activity,ProviderInfo().apply{authority="media"})}
         ShadowContentResolver.registerProviderInternal("media",provider)
     }
-    @Test fun actualFiftyFourPhotoDialogHasDurableProgressAndVerifiedOpenAndLocationAfterNavigation()=runBlocking {
+    @Test fun optionalFiftyFourPhotoZipHasDurableProgressAndVerifiedOpenAndLocationAfterNavigation()=runBlocking {
         val c=ui.activity
         SicConsolidationFixtures.db(c).use{db->
             val id=ScapP0Fixture.create(c,db);val s=db.scapDao().snapshot(id)!!
@@ -49,11 +49,10 @@ class ScapP0UiTest {
                 ScapExportActions(true,busy,{},{action.value="SCAP:${System.nanoTime()}"})
                 if(show.value)ScapExportPanel(s,true,controller,requestedAction=action.value,onHandled={action.value=null},onStatus={b,m->busy=b;status=m})
             }}}}
-            ui.onNodeWithText("EXPORTAR SCAP").performClick()
-            ui.onNodeWithText("Confirmar exportación local").assertExists()
-            ui.onNodeWithText("Preparar copia local").performClick()
+            ui.onNodeWithText("Opciones de exportación y diagnóstico").performScrollTo().performClick()
+            ui.onNodeWithText("Guardar paquete ZIP de respaldo (opcional)").performScrollTo().performClick()
             ui.waitUntil(20_000){runBlocking(Dispatchers.IO){db.localFilesDao().jobs().any{it.scope=="ZIP"}}}
-            ui.waitUntil(20_000){status=="Preparando SCAP…"}
+            ui.waitUntil(20_000){ui.onAllNodesWithText("Preparando ZIP de respaldo…").fetchSemanticsNodes().isNotEmpty()}
             val job=db.localFilesDao().jobs().single{it.scope=="ZIP"};assertEquals("QUEUED",job.state)
             ui.runOnIdle{show.value=false}
             assertEquals(job.id,db.localFilesDao().jobs().single{it.scope=="ZIP"}.id)
@@ -67,7 +66,7 @@ class ScapP0UiTest {
                 trace.appendText(ui.onRoot(useUnmergedTree=true).printToString())
                 throw AssertionError("No se restauro el resultado: status=$status; job="+db.localFilesDao().job(job.id)!!.state+"; files="+db.localFilesDao().files(job.id).map{it.state},e)
             }
-            assertTrue(ui.onAllNodesWithText("SCAP guardado correctamente").fetchSemanticsNodes().isNotEmpty())
+            assertTrue(ui.onAllNodesWithText("ZIP de respaldo guardado correctamente").fetchSemanticsNodes().isNotEmpty())
             ui.onNodeWithTag("scap-open-file").performScrollTo().performClick()
             var opened:Intent?=null
             ui.waitUntil(10_000){if(opened==null)opened=org.robolectric.Shadows.shadowOf(c).nextStartedActivity;opened!=null}
@@ -100,12 +99,12 @@ class ScapP0UiTest {
                 }
             }
             LocalCopyDrain.run(c,db,failing)
-            ui.waitUntil(20_000){message=="No se pudo guardar SCAP"}
+            ui.waitUntil(20_000){ui.onAllNodesWithText("No se pudo guardar ZIP de respaldo").fetchSemanticsNodes().isNotEmpty()}
             ui.onNodeWithTag("scap-open-file").assertDoesNotExist()
             ui.onNodeWithText("REINTENTAR COPIA LOCAL").performScrollTo().performClick()
             ui.waitUntil(20_000){runBlocking(Dispatchers.IO){db.localFilesDao().job(job.id)?.state=="QUEUED"}}
             LocalCopyDrain.run(c,db,real)
-            ui.waitUntil(20_000){message=="SCAP guardado correctamente"}
+            ui.waitUntil(20_000){ui.onAllNodesWithText("ZIP de respaldo guardado correctamente").fetchSemanticsNodes().isNotEmpty()}
             ui.onNodeWithTag("scap-open-file").assertExists()
             assertEquals(s,db.scapDao().snapshot(id));assertFalse(com.tuempresa.inventariovial.core.SyncIntentPresentation.confirmed(db.automaticSyncDao().get("SCAP/$id")))
             scope.cancel()
@@ -125,7 +124,7 @@ class ScapP0UiTest {
                     else Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(s.value,true,controller,requestedAction=action.value,onHandled={action.value=null},onStatus={_,m->message=m})}
                 }
             }}}
-            ui.waitUntil(20_000){message?.contains("Fecha")==true}
+            ui.waitUntil(20_000){ui.onAllNodesWithText("Falta fecha de inspección para SIC-17").fetchSemanticsNodes().isNotEmpty()}
             ui.onNodeWithText("Falta fecha de inspección para SIC-17").assertExists()
             ui.onNodeWithText("COMPLETAR FECHA").performScrollTo().performClick()
             assertEquals("SIC-17",controller.destination.value!!.second.repeatableItemId)

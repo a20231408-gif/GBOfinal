@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.tuempresa.inventariovial.localfiles.*
 import com.tuempresa.inventariovial.scap.data.ScapInspectionSnapshot
+import com.tuempresa.inventariovial.scap.export.ScapDocumentNames
 
 /** Projection only: entering or changing filters never requests export or sync. */
 object BridgeDocuments {
@@ -25,25 +26,26 @@ object BridgeDocuments {
     }
     fun label(f:LocalSharedFile,provisional:Boolean=false)=if(provisional || (f.relativePath+f.name).contains(Regex("provisional|borrador",RegexOption.IGNORE_CASE)))
         "PROVISIONAL · copia local" else "Verificado localmente · no acredita ACK remoto"
-    fun visible(jobs:List<LocalExportJob>,files:List<LocalSharedFile>,history:Boolean)=
-        LocalCopyPresentation.currentFiles(jobs,files,history).distinctBy{it.uri}
+    fun visible(jobs:List<LocalExportJob>,files:List<LocalSharedFile>,history:Boolean,principals:List<LocalSharedFile> = emptyList())=
+        (principals+LocalCopyPresentation.currentFiles(jobs,files,history).filter{history||it.mimeType!="application/json"&&RecordDocuments.sicFormat(it)==null}).distinctBy{it.uri}
 }
 
 @Composable internal fun BridgeDocumentsScreen(s:ScapInspectionSnapshot,c:ScapController,onBack:()->Unit) {
     val key="SCAP/${s.inspection.id}";val db=c.localDatabase
     val jobs by remember(key,db){db.localFilesDao().observeJobsFor(key)}.collectAsState(emptyList())
     val files by remember(key,db){db.localFilesDao().observeFilesFor(key)}.collectAsState(emptyList())
-    BridgeDocumentsContent(s.inspection.bridgeName,s.roadRecord?.routeCode.orEmpty(),
+    val principals=rememberRecordPrincipals("SCAP",s.inspection.id,s.inspection.updatedAt)
+    BridgeDocumentsContent(ScapDocumentNames.bridge(s),s.roadRecord?.routeCode.orEmpty(),
         s.values()["progressive"].orEmpty(),s.inspection.updatedAt,jobs,files,
-        currentProvisional=s.inspection.status!="COMPLETE" || s.values("completion")["status"]=="INCOMPLETE",onBack=onBack)
+        currentProvisional=s.inspection.status!="COMPLETE" || s.values("completion")["status"]=="INCOMPLETE",onBack=onBack,principals=principals)
 }
 
 @Composable internal fun BridgeDocumentsContent(name:String,route:String,progressive:String,revision:Long,
-    jobs:List<LocalExportJob>,files:List<LocalSharedFile>,currentProvisional:Boolean=false,onBack:()->Unit) {
+    jobs:List<LocalExportJob>,files:List<LocalSharedFile>,currentProvisional:Boolean=false,principals:List<LocalSharedFile> = emptyList(),onBack:()->Unit) {
     var history by rememberSaveable(name){mutableStateOf(false)}
-    val current=BridgeDocuments.visible(jobs,files,false)
-    val older=BridgeDocuments.visible(jobs,files,true).any{f->current.none{it.id==f.id}}
-    val shown=BridgeDocuments.visible(jobs,files,history)
+    val current=BridgeDocuments.visible(jobs,files,false,principals)
+    val older=BridgeDocuments.visible(jobs,files,true,principals).any{f->current.none{it.id==f.id}}
+    val shown=BridgeDocuments.visible(jobs,files,history,principals)
     BackHandler(onBack=onBack)
     LazyColumn(Modifier.fillMaxSize().testTag("bridge-documents").padding(horizontal=16.dp),
         contentPadding=PaddingValues(vertical=12.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
@@ -70,7 +72,7 @@ object BridgeDocuments {
                     Text(BridgeDocuments.label(file,currentProvisional && job?.revision==revision))
                     Text("Ubicación: ${file.relativePath}",style=MaterialTheme.typography.bodySmall)
                     Text("Android puede abrir solo Descargas o el árbol autorizado, sin seleccionar esta carpeta. Usa ABRIR ARCHIVO para el documento exacto.",style=MaterialTheme.typography.bodySmall)
-                    SavedFileActions(file)
+                    SavedFileActions(file,ownerKey=file.recordKey,history=history)
                 }
             }
         }

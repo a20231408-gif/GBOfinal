@@ -82,7 +82,7 @@ import java.io.File
     (if(history)filtered else latest).take(if(history)filtered.size else 6).forEach{j->
         Text(LocalCopyPresentation.context(j,if(key!=null)currentRevision else null,j.id in latestIds),style=MaterialTheme.typography.bodySmall)
         Text(LocalCopyPresentation.result(j),style=MaterialTheme.typography.titleSmall)
-        if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
+        if(j.state in setOf("FAILED","PARTIAL")&&!j.scope.startsWith("SAF"))TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
     if(filtered.size>latest.size||latest.size>6||files.any{f->f.state=="READY"&&principals.any{RecordDocuments.sicFormat(it)==RecordDocuments.sicFormat(f)}})TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
     val visibleJobs=filtered.map{it.id}.toSet()
@@ -104,11 +104,11 @@ import java.io.File
     var generation by remember(kind,id){mutableIntStateOf(0)}
     var documents by remember(kind,id){mutableStateOf<List<LocalSharedFile>>(emptyList())}
     DisposableEffect(db,kind,id){
-        val observer=object:androidx.room.InvalidationTracker.Observer("local_shared_files","local_export_jobs","inventory_records","sic18a_details"){
+        val observer=object:androidx.room.InvalidationTracker.Observer("local_shared_files","local_export_jobs","inventory_records","sic18a_details","scap_inspections","scap_values","pavement_samples","pavement_damages"){
             override fun onInvalidated(tables:Set<String>){scope.launch{generation++}}
         }
-        if(kind=="SIC")db.invalidationTracker.addObserver(observer)
-        onDispose{if(kind=="SIC")db.invalidationTracker.removeObserver(observer)}
+        if(kind in setOf("SIC","SCAP","PAVEMENT"))db.invalidationTracker.addObserver(observer)
+        onDispose{if(kind in setOf("SIC","SCAP","PAVEMENT"))db.invalidationTracker.removeObserver(observer)}
     }
     LaunchedEffect(kind,id,revision,generation){documents=withContext(Dispatchers.IO){com.tuempresa.inventariovial.export.LocalSicConsolidates.principals(c,db,kind,id)}}
     return documents
@@ -119,11 +119,16 @@ import java.io.File
     val publicRoot=file.relativePath.removePrefix("Download/").substringBefore('/')
     var missing by remember(file.id,file.uri){mutableStateOf(false)}
     val saveAs=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(file.mimeType)){uri->if(uri!=null)scope.launch{
-        message=runCatching{withContext(Dispatchers.IO){val source=File(file.source);require(fileDigest(source)==(file.size to file.sha256)){"El original preparado cambió."};requireNotNull(c.contentResolver.openOutputStream(uri,"wt")).use{out->source.inputStream().use{it.copyTo(out)}};LocalCopies.rememberSaf(c,InventoryDatabase.getInstance(c),source,file.recordKey.substringBefore('/'),file.mimeType,uri)};"Archivo exportado y verificado en la ubicación elegida."}.getOrElse{LocalCopyDrain.publicError(it as? Exception ?: Exception())}
+        message=runCatching{
+            val prepared=ManualDocument(file.source,file.name,file.mimeType,file.recordKey.substringBefore('/'),file.size,file.sha256,0,
+                if(RecordDocuments.provisional(file))"BORRADOR · datos pendientes; original conservado."else"")
+            ManualDocumentExport.save(c,InventoryDatabase.getInstance(c),prepared,uri)
+            "Archivo exportado y verificado en la ubicación elegida."
+        }.getOrElse{LocalCopyDrain.publicError(it as? Exception ?: Exception())}
     }}
     Column(Modifier.fillMaxWidth().padding(vertical=4.dp)){
         Text("ARCHIVO GUARDADO · ${file.name}")
-        if(RecordDocuments.provisional(file))Text("PROVISIONAL · datos pendientes; no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
+        if(RecordDocuments.provisional(file))Text("BORRADOR · datos pendientes; no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
         Text(if(Build.VERSION.SDK_INT<29&&file.relativePath.startsWith("Download/"))"Carpeta autorizada / "+file.relativePath.removePrefix("Download/")else file.relativePath.replace("Download/","Descargas/"),style=MaterialTheme.typography.bodySmall)
         fun open(share:Boolean){scope.launch{
             val target=withContext(Dispatchers.IO){runCatching{
