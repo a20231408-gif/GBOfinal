@@ -43,7 +43,8 @@ var DeliveryRootPolicy=(()=>{
       const replay=purpose==='commit'&&r&&r.revision===p.revision&&r.contentHash===p.contentHash&&!pending;
       const resume=pending&&pending.continuationVersion===1&&pending.revision===p.revision&&
         (!p.contentHash||pending.contentHash===p.contentHash)&&purpose!=='reserve';
-      if(!replay&&!resume)reject('ROOT_ROUTING_DRAIN_ONLY');
+      const videoParent=purpose==='video'&&r&&r.receipt&&r.receipt.ok===true&&!pending;
+      if(!replay&&!resume&&!videoParent)reject('ROOT_ROUTING_DRAIN_ONLY');
     }
     return {index:n,identity:identity||s.pins.find(x=>x.key===p.key)?.identityId||s.records.find(x=>x.key===p.key)?.identityId||null};
   }
@@ -62,28 +63,30 @@ function gboRootRoutingConfig() {
      config.newRoot.id===ROOT_FOLDER_ID||!['OPEN','DRAIN_ONLY'].includes(config.mode)||
      config.inventoryReviewed!==true||!/^[a-f0-9]{64}$/.test(config.inventorySha256||''))
     DeliveryRootPolicy.reject('ROOT_ROUTING_NOT_APPROVED');
+  gboValidateRootAdmissionConfig(config);
   let oldAncestors;try{oldAncestors=JSON.parse(props.getProperty('GBO_AUTHORIZED_ROOT_ANCESTOR_IDS'));}catch(e){DeliveryRootPolicy.reject('ROOT_ROUTING_NOT_APPROVED');}
   if(!Array.isArray(oldAncestors)||!Array.isArray(config.newRoot.ancestorIds)||oldAncestors.includes(config.newRoot.id)||config.newRoot.ancestorIds.includes(ROOT_FOLDER_ID))
     DeliveryRootPolicy.reject('ROOT_ROUTING_NOT_APPROVED');
   const activated=props.getProperty('GBO_ROOT_ROUTING_ACTIVATED');
   if(activated) {
     let old;try{old=JSON.parse(activated);}catch(e){DeliveryRootPolicy.reject('ROOT_ROUTING_NOT_APPROVED');}
-    if(old.oldRootId!==config.oldRootId||old.newRootId!==config.newRoot.id)DeliveryRootPolicy.reject('ROOT_ROUTING_DOWNGRADE_BLOCKED');
+    if(old.oldRootId!==config.oldRootId||old.newRootId!==config.newRoot.id||old.epoch!==config.admission.epoch||old.activatedAt!==config.admission.activatedAt||old.historicalReadOnly!==!!config.oldRootReadOnly)DeliveryRootPolicy.reject('ROOT_ROUTING_DOWNGRADE_BLOCKED');
   }
   return config;
 }
-function gboRootRoutingReady(){try{const c=gboRootRoutingConfig();gboAuthorizedRoot();gboVerifyRootIdentity(c.newRoot);return gboRootRoutingEnabled();}catch(e){return false;}}
+function gboRootRoutingReady(){try{const c=gboRootRoutingConfig();gboAssertInstitutionalExecutor(c);gboHistoricalReadRoot(c);gboInstitutionalDestination(c);return gboRootRoutingEnabled();}catch(e){return false;}}
 function gboDeliveryBackendReady(){try{return gboRootRoutingEnabled()?gboRootRoutingReady():gboRootReady();}catch(e){return false;}}
 function gboAssertRootRoutingAction(p) {
-  if(gboRootRoutingEnabled()&&!['reservePhotoNamesV2','stageRecordV3','commitRecordV3'].includes(p.action))
+  if(gboRootRoutingEnabled()&&!['reservePhotoNamesV2','stageRecordV3','commitRecordV3','beginVideoV1','finishVideoV1'].includes(p.action))
     DeliveryRootPolicy.reject('ROOT_ROUTE_UNSUPPORTED_ACTION');
 }
 
 /** Called under the existing ScriptLock. Read both complete registries BEFORE any write. */
 function gboDeliveryRoute(p,purpose) {
-  const oldRoot=gboAuthorizedRoot();
-  if(!gboRootRoutingEnabled())return {root:oldRoot};
-  const config=gboRootRoutingConfig(),newRoot=gboVerifyRootIdentity(config.newRoot);
+  if(!gboRootRoutingEnabled())return {root:gboAuthorizedRoot()};
+  const config=gboRootRoutingConfig();gboAssertInstitutionalExecutor(config);
+  const oldRoot=gboHistoricalReadRoot(config);
+  const newRoot=gboInstitutionalDestination(config);
   const deadline=Date.now()+85000;
   const checkpoint=()=>{if(Date.now()>deadline)DeliveryRootPolicy.reject('ROOT_ROUTING_READ_IN_PROGRESS',true);};
   const hash=x=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,x).map(b=>(b&255).toString(16).padStart(2,'0')).join('');
@@ -92,8 +95,10 @@ function gboDeliveryRoute(p,purpose) {
   function snapshot(root) {
     const state={rootId:root.getId(),records:[],bindings:[],pins:[],photoIdentities:[],journals:[],stagedKey:false};
     const registry=only(root.getFoldersByName('._GBO_SYNC_V3'));if(!registry)return state;
+    const seenNames=new Set();
     for(const f of list(registry.getFiles())) {
       const name=f.getName();if(!/^(record_|binding_|journal_|root_route_v1_)/.test(name))continue;
+      if(seenNames.has(name))DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');seenNames.add(name);
       let value;try{checkpoint();value=JSON.parse(f.getBlob().getDataAsString());}catch(e){if(e.code)throw e;DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');}
       if(!value||typeof value!=='object')DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
       if(name.startsWith('record_')) {
@@ -118,14 +123,18 @@ function gboDeliveryRoute(p,purpose) {
     return state;
   }
   const roots=[oldRoot,newRoot],states=roots.map(snapshot),selected=DeliveryRootPolicy.select(p,states,config.mode,purpose);
+  const known=states.some(s=>s.records.some(r=>r.key===p.key||selected.identity&&r.identityId===selected.identity)||
+    s.pins.some(r=>r.key===p.key||selected.identity&&r.identityId===selected.identity)||
+    selected.identity&&(s.bindings.some(b=>b.identity===selected.identity)||s.photoIdentities.includes(selected.identity))||s.stagedKey||s.journals.some(j=>j.key===p.key));
+  if(selected.index===0&&config.oldRootReadOnly)DeliveryRootPolicy.reject('HISTORICAL_ROOT_READ_ONLY');
+  if(selected.index===1&&!known)gboAssertNewRootAdmission(p,config);
   return {root:roots[selected.index],identity:selected.identity,dual:true};
 }
 
 /** Durable key-to-root authority for older staging requests that omit the parent UUID. */
 function gboPinDeliveryRoot(route,p) {
   if(!route.dual||!route.identity)return;
-  const props=PropertiesService.getScriptProperties(),config=gboRootRoutingConfig();
-  if(!props.getProperty('GBO_ROOT_ROUTING_ACTIVATED'))props.setProperty('GBO_ROOT_ROUTING_ACTIVATED',JSON.stringify({oldRootId:config.oldRootId,newRootId:config.newRoot.id}));
+  gboEnsureRootActivation(route);
   const root=route.root,registry=getOrCreateFolder(root,'._GBO_SYNC_V3');
   const hash=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p.key).map(x=>(x&255).toString(16).padStart(2,'0')).join('');
   const name='root_route_v1_'+hash+'.json',files=registry.getFilesByName(name);
@@ -139,4 +148,69 @@ function gboPinDeliveryRoot(route,p) {
   registry.createFile(Utilities.newBlob(JSON.stringify(pin),'application/json',name));
 }
 
+/** Called under ScriptLock BEFORE the first folder or binding can be created. */
+function gboEnsureRootActivation(route) {
+  if(!route.dual)return;
+  const props=PropertiesService.getScriptProperties(),config=gboRootRoutingConfig();
+  if(!props.getProperty('GBO_ROOT_ROUTING_ACTIVATED'))props.setProperty('GBO_ROOT_ROUTING_ACTIVATED',JSON.stringify({oldRootId:config.oldRootId,newRootId:config.newRoot.id,epoch:config.admission.epoch,activatedAt:config.admission.activatedAt,historicalReadOnly:!!config.oldRootReadOnly}));
+}
+
 if(typeof module!=='undefined')module.exports=DeliveryRootPolicy;
+
+/** Video can only follow an already acknowledged SCAP parent. It cannot admit a new identity. */
+function gboVideoDeliveryRoute(p) {
+  const match=/^SCAP\/([A-Za-z0-9_-]{1,80})$/.exec(p?.parentKey||'');
+  if(!match||!Number.isSafeInteger(p.parentRevision)||p.parentRevision<1)DeliveryRootPolicy.reject('INVALID_VIDEO');
+  const route=gboDeliveryRoute({key:p.parentKey,revision:p.parentRevision},'video');
+  const registries=route.root.getFoldersByName('._GBO_SYNC_V3');
+  if(!registries.hasNext())DeliveryRootPolicy.reject('VIDEO_PARENT_NOT_SYNCED');
+  const registry=registries.next();if(registries.hasNext())DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+  const hash=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p.parentKey).map(x=>(x&255).toString(16).padStart(2,'0')).join('');
+  const journals=registry.getFilesByName('journal_'+hash+'.json');
+  if(journals.hasNext()){
+    const journal=JSON.parse(journals.next().getBlob().getDataAsString());
+    if(journals.hasNext())DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+    if(journal.status==='PENDING')DeliveryRootPolicy.reject('BUSY',true);
+    if(journal.status!=='COMPLETE')DeliveryRootPolicy.reject('VIDEO_PARENT_NOT_SYNCED');
+  }
+  const files=registry.getFilesByName('record_'+hash+'.json');
+  if(!files.hasNext())DeliveryRootPolicy.reject('VIDEO_PARENT_NOT_SYNCED');
+  const parent=JSON.parse(files.next().getBlob().getDataAsString());
+  if(files.hasNext()||parent.key!==p.parentKey||parent.kind!=='SCAP'||parent.pathVersion!==4||parent.revision<p.parentRevision||!parent.receipt?.ok||parent.receipt.key!==parent.key||parent.receipt.revision!==parent.revision||parent.receipt.contentHash!==parent.contentHash)
+    DeliveryRootPolicy.reject('VIDEO_PARENT_NOT_SYNCED');
+  return {root:route.root,parent};
+}
+
+function gboAssertFolderWithinRoot(id,rootId) {
+  const seen=new Set();
+  for(let n=0;n<32;n++){
+    if(id===rootId)return;
+    if(!id||seen.has(id))DeliveryRootPolicy.reject('VIDEO_PARENT_ROOT_MISMATCH');
+    seen.add(id);let f;
+    try{f=Drive.Files.get(id,{fields:'id,mimeType,trashed,parents',supportsAllDrives:true});}catch(e){DeliveryRootPolicy.reject('VIDEO_PARENT_ROOT_UNVERIFIED',true);}
+    if(f.id!==id||f.trashed||f.mimeType!=='application/vnd.google-apps.folder'||f.parents?.length!==1)
+      DeliveryRootPolicy.reject('VIDEO_PARENT_ROOT_MISMATCH');
+    id=f.parents[0];
+  }
+  DeliveryRootPolicy.reject('VIDEO_PARENT_ROOT_MISMATCH');
+}
+
+/** Read-only gate before the original video adapter can create a folder, journal or upload session. */
+function gboVideoStoreContext(p) {
+  VideoV1.validate(p);
+  const route=gboVideoDeliveryRoute(p);
+  gboAssertFolderWithinRoot(route.parent.receipt.folderId,route.root.getId());
+  if(gboRootRoutingEnabled()&&gboRootRoutingConfig().mode==='DRAIN_ONLY') {
+    const registry=route.root.getFoldersByName('._GBO_SYNC_V3').next();
+    const videos=registry.getFoldersByName('VIDEO_V1');
+    if(!videos.hasNext())DeliveryRootPolicy.reject('ROOT_ROUTING_DRAIN_ONLY');
+    const folder=videos.next();if(videos.hasNext())DeliveryRootPolicy.reject('ROOT_REGISTRY_REQUIRES_REVIEW');
+    const hash=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p.mediaId).map(x=>(x&255).toString(16).padStart(2,'0')).join('');
+    const files=folder.getFilesByName('video_'+hash+'.json');
+    if(!files.hasNext())DeliveryRootPolicy.reject('ROOT_ROUTING_DRAIN_ONLY');
+    const old=JSON.parse(files.next().getBlob().getDataAsString());
+    if(files.hasNext()||old.parentKey!==p.parentKey||old.folderId!==route.parent.receipt.folderId)
+      DeliveryRootPolicy.reject('VIDEO_IDENTITY_CONFLICT');
+  }
+  return route;
+}
