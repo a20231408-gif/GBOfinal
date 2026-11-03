@@ -1,3 +1,11 @@
+## Expediente de corte preparado — checkpoint 03/11/2026
+
+Verificado checkpoint GitHub `4a592e35051bcbd761389e9db75f08f0b85bbf2a`, árbol limpio y paquete privado 14/14 hashes íntegros. Expediente revisable: `docs/EXPEDIENTE_CORTE_INSTITUCIONAL_20261103.md`; anexo con URL/deployment exactos exclusivamente en `operacion-institucional/EXPEDIENTE_CORTE_ANEXO_PRIVADO.md`. No se ejecutaron nuevamente las 117/76 pruebas; no se modificó código, APK ni Google. Corrección documental: inventario exacto del paquete son CINCO reemplazos, cuatro adiciones y cinco archivos conservados; el texto anterior que decía seis reemplazos era un error de conteo.
+
+Pendiente autorización única escalonada: candidato V22 en deployment original con DRAIN_ONLY, propiedades enumeradas, acreditación ejecutora por guarda runtime, calentamiento de caché; OPEN y ensayo sintético condicionados a aceptación física, identidad/permisos y pausa acreditada de otros clientes. OPEN no restringe por dispositivo. Los 13 bindings históricos permanecen protegidos y sin adoptar; clientes antiguos/colas históricas pueden quedar bloqueados, efecto que requiere aceptación expresa. Físico OPPO pendiente; ACK/cargas nuevas no ejecutados. NO-GO distribución. Siguiente: aprobación del expediente y resultados físicos; no aplicar por el mero hecho de prepararlo. Identificar último SHA documental con git log -1 y ls-remote, sin rehacer pruebas.
+
+---
+
 ## Hito vigente 03/11/2026 — candidata 1.4.30 y auditoría completa
 
 Esta sección sustituye el cierre anterior. Rama `codex/scap-pavimentos-cierre-20261103`, PR #11 draft, dependencias #10/#9/#8 sin fusionar. Base de esta intervención: `74372531d773e109cd98cbbaae07c394436e0308`. Identificar el último SHA mediante `git log -1` y contrastar con `git ls-remote origin refs/heads/codex/scap-pavimentos-cierre-20261103`.
