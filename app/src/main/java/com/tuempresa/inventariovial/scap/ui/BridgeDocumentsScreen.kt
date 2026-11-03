@@ -27,7 +27,7 @@ object BridgeDocuments {
     fun label(f:LocalSharedFile,provisional:Boolean=false)=if(provisional || (f.relativePath+f.name).contains(Regex("provisional|borrador",RegexOption.IGNORE_CASE)))
         "PROVISIONAL · copia local" else "Verificado localmente · no acredita ACK remoto"
     fun visible(jobs:List<LocalExportJob>,files:List<LocalSharedFile>,history:Boolean,principals:List<LocalSharedFile> = emptyList())=
-        (principals+LocalCopyPresentation.currentFiles(jobs,files,history).filter{history||it.mimeType!="application/json"&&RecordDocuments.sicFormat(it)==null}).distinctBy{it.uri}
+        (principals+LocalCopyPresentation.currentFiles(jobs,files,history).filter{if(history) it.mimeType!="application/json"&&!RecordDocuments.provisional(it) else it.mimeType!="application/json"&&RecordDocuments.sicFormat(it)==null}).distinctBy{it.uri}
 }
 
 @Composable internal fun BridgeDocumentsScreen(s:ScapInspectionSnapshot,c:ScapController,onBack:()->Unit) {

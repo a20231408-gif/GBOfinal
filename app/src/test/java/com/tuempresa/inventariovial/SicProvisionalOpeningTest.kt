@@ -56,7 +56,8 @@ class SicProvisionalOpeningTest {
         assertEquals("SIC-18.xlsx",RecordDocuments.openTarget(c,d,"SIC",id,previous,storage=store).name)
         assertEquals(previous.uri,RecordDocuments.openTarget(c,d,"SIC",id,previous,history=true,storage=store).uri)
         assertTrue(RecordDocuments.provisional(previous))
-        assertTrue(RecordDocuments.current(d.localFilesDao().jobs(),docs,principal,history=true).any{it.id==previous.id})
+        assertFalse(RecordDocuments.current(d.localFilesDao().jobs(),docs,principal,history=true).any{it.id==previous.id})
+        assertTrue(File(previous.source).isFile) // Recovery bytes remain private; not a useful visible historical document.
     }}
     @Test fun frozenPlanIsRecheckedWithoutRewritingItsPrivateRevision()=runBlocking {db().use{d->
         val store=SicTestStorage();val id="TEST_FROZEN"

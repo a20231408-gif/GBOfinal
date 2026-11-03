@@ -12,7 +12,7 @@ object RecordDocuments {
     fun current(jobs:List<LocalExportJob>,files:List<LocalSharedFile>,principals:List<LocalSharedFile>,history:Boolean=false):List<LocalSharedFile> {
         val formats=principals.mapNotNull(::sicFormat).toSet()
         val local=LocalCopyPresentation.currentFiles(jobs,files,history)
-            .filter{history||sicFormat(it) !in formats}
+            .filter{if(history) !provisional(it) else sicFormat(it) !in formats}
         return (principals+local).distinctBy{it.uri}
     }
     /** Resolve again at the actual click: a newer consolidation may have archived the old URI. */

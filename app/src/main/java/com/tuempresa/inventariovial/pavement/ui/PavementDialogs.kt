@@ -107,7 +107,8 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
     var diameter by rememberSaveable { mutableStateOf(d.diameterM?.toString().orEmpty()) }
     var depth by rememberSaveable { mutableStateOf(d.depthMm?.toString().orEmpty()) }
     var holeArea by rememberSaveable { mutableStateOf(d.areaM2?.toString().orEmpty()) }
-    var measure by rememberSaveable { mutableStateOf((if(d.geometry=="AREA")d.areaM2 else d.lengthM)?.toString().orEmpty()) }; var crack by rememberSaveable { mutableStateOf(d.crackWidthMm?.toString().orEmpty()) }
+    var measure by rememberSaveable { mutableStateOf(PavementCoordinateDisplay.text(if(d.geometry=="AREA")d.areaM2 else d.lengthM)) }; var crack by rememberSaveable { mutableStateOf(d.crackWidthMm?.toString().orEmpty()) }
+    var measureEdited by rememberSaveable {mutableStateOf(false)}
     var observation by rememberSaveable { mutableStateOf(d.observation.orEmpty()) }; var slabs by rememberSaveable { mutableStateOf(d.slabs) }
     var severity by rememberSaveable { mutableStateOf(PavementSeverity.canonical(d.severity)) }; var error by rememberSaveable { mutableStateOf("") }
     val definition = PavementCatalog.forSurface(PavementSurface.valueOf(d.surface)).first { it.code == d.code }
@@ -121,7 +122,7 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
             val a = if (geometric) PavementCoordinateDisplay.value(x1,d.x1,x1Edited) else null; val b = if (geometric) PavementCoordinateDisplay.value(y1,d.y1,y1Edited) else null
             val c = if (two) PavementCoordinateDisplay.value(x2,d.x2,x2Edited) else null; val e = if (two) PavementCoordinateDisplay.value(y2,d.y2,y2Edited) else null
             val w = if (two) abs(c!!-a!!) else null; val l = if (two) abs(e!!-b!!) else null
-            val override = measure.takeIf { it.isNotBlank() }?.let { number(it) }
+            val override = measure.takeIf { it.isNotBlank() }?.let { if(!measureEdited) (if(d.geometry=="AREA")d.areaM2 else d.lengthM) else number(it) }
             val updated=d.copy(severity = severity, x1=a, y1=b, x2=c, y2=e,
                 diameterM = if (d.geometry == "POTHOLE") number(diameter) else null,
                 widthM=w, lengthM=if (d.geometry=="LINEAR") override ?: hypot(w!!,l!!) else l,
@@ -220,7 +221,10 @@ private fun number(value: String): Double = value.replace(',', '.').toDouble().a
                 }
             }
         }
-        if(d.geometry in listOf("AREA","LINEAR")) Field("Medida manual opcional (${definition.unit}); vacío = geométrica",measure){measure=it}
+        if(d.geometry in listOf("AREA","LINEAR")) {
+            Field("Medida manual (opcional) · ${definition.unit}",measure){measure=it;measureEdited=true}
+            Text("Si está vacío, se usa la medida calculada.",style=MaterialTheme.typography.bodySmall)
+        }
         if(PavementDamageFields.depth(d.code))Field(PavementDamageFields.depthLabel(d.code),depth){depth=it}
         if(d.geometry=="POTHOLE") {
             Field("Diámetro medido (m)",diameter){diameter=it}

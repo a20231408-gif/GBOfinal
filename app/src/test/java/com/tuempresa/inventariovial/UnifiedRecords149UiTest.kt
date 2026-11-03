@@ -111,6 +111,7 @@ class UnifiedRecords149UiTest {
         ui.runOnUiThread{vm=InventoryViewModel(app)}
         ui.setContent{MaterialTheme{UnifiedRecordsScreen(vm){}}}
         ui.onNodeWithText("Mis registros").assertExists()
+        ui.onNodeWithText("Preparar nuevo tramo").assertDoesNotExist()
         ui.onNodeWithText("Buscar elemento o UUID").performTextInput("UI_149")
         ui.onNodeWithText("SIC",useUnmergedTree=true).performClick()
         ui.onNodeWithTag("mis-registros").performScrollToNode(hasText("Ver detalle"))

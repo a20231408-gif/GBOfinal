@@ -1,3 +1,13 @@
+## Correcciones físicas OPPO — trabajo en curso 03/11/2026
+
+La aceptación 1.4.30 confirmó fotos, SIC/consolidación y captura/interfaz Pavimentos; fallaron destino/nombre de carpeta SCAP, historial provisional y presentación de medida manual. Corte institucional NO autorizado ni aplicado.
+
+Primer hito local: retirada navegación «Preparar nuevo tramo» solo en Mis registros; provisionales excluidos del historial normal sin borrar bytes; medida manual a dos decimales, valor original preservado sin edición y etiqueta simplificada. Selección focalizada 11/11 PASS (PavementPhoneAcceptanceTest, SicProvisionalOpeningTest, UnifiedRecords149UiTest). Primer intento 10/11: expectativa histórica anterior exigía mostrar provisional; actualizada al requisito físico conservando prueba de originales privados. Evidencia privada `operacion-institucional/aceptacion-44-correcciones/presentacion-corregida-xml` y log. No APK nueva; no instalación ni nuevas pruebas Google.
+
+PENDIENTE EN ESTA INTERVENCIÓN: carpeta de puente por identidad y renombrado verificado, destino SAF por puente, política de ausencia de nombre, propuesta backend de nomenclatura, regresión final afectada y única sucesora. Causa observada en código: binding PublicLocalFolderNames V2 congela primer nombre; selector no lleva carpeta inicial del puente. No declarar estas correcciones completas ni reutilizar autorización de corte.
+
+---
+
 ## Expediente de corte preparado — checkpoint 03/11/2026
 
 Verificado checkpoint GitHub `4a592e35051bcbd761389e9db75f08f0b85bbf2a`, árbol limpio y paquete privado 14/14 hashes íntegros. Expediente revisable: `docs/EXPEDIENTE_CORTE_INSTITUCIONAL_20261103.md`; anexo con URL/deployment exactos exclusivamente en `operacion-institucional/EXPEDIENTE_CORTE_ANEXO_PRIVADO.md`. No se ejecutaron nuevamente las 117/76 pruebas; no se modificó código, APK ni Google. Corrección documental: inventario exacto del paquete son CINCO reemplazos, cuatro adiciones y cinco archivos conservados; el texto anterior que decía seis reemplazos era un error de conteo.

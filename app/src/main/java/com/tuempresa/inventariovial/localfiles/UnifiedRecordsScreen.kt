@@ -101,7 +101,6 @@ object LocalInventoryIndex {
     var discardReview by remember {mutableStateOf<List<LocalDraftDiscard.Candidate>?>(null)}
     var discardBusy by remember {mutableStateOf(false)}
     var discardMessage by remember {mutableStateOf<String?>(null)}
-    var prepareSegment by rememberSaveable {mutableStateOf(false)}
     val scope=rememberCoroutineScope()
     var cleanupBackup by remember{mutableStateOf<ConfirmedLocalCleanup.Backup?>(null)}
     var cleanupBusy by remember{mutableStateOf(false)}
@@ -159,11 +158,6 @@ object LocalInventoryIndex {
             finally{discardBusy=false;discardReview=null}
         }}){Text("Confirmar descarte reversible")}},
         dismissButton={TextButton(enabled=!discardBusy,onClick={discardReview=null}){Text("Cancelar")}})}
-    if(prepareSegment) SessionDialog(vm.field,onClose={prepareSegment=false},requireRoute=true,onStarted={
-        prepareSegment=false;selected=emptySet();search="";route="";pr="";state="";family="Todas"
-        year=null;month=null;day=null;captureFilter="Todos";historical=false;newestFirst=true
-        discardMessage="Nuevo tramo iniciado. Las fichas, el historial y las entregas pendientes se conservaron."
-    })
     LazyColumn(Modifier.testTag("mis-registros").fillMaxSize().padding(horizontal=16.dp),contentPadding=PaddingValues(vertical=16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             TextButton(onClick=onBack){Text("Volver")};Text("Mis registros",style=MaterialTheme.typography.headlineMedium)
@@ -207,7 +201,6 @@ object LocalInventoryIndex {
                 runCatching{ConfirmedLocalCleanup.prepare(c,db,cleanable.filter{it.key in selected}.map{ConfirmedLocalCleanup.Candidate(it.key,it.revision)})}
                     .onSuccess{cleanupBackup=it}.onFailure{discardMessage=it.message ?: "No se pudo verificar el respaldo."};cleanupBusy=false
             }}){Text(if(cleanupBusy)"Verificando respaldo…"else"Respaldar y limpiar entregados seleccionados")}
-            TextButton(onClick={prepareSegment=true}){Text("Preparar nuevo tramo")}
             TextButton(enabled=shown.any{it.key in selected},onClick={scope.launch {
                 runCatching{RemovalPreview.inspect(db,shown.filter{it.key in selected})}
                     .onSuccess{removalPreview=it}.onFailure{discardMessage="No se pudo inventariar la selección; no se modificó ningún registro."}
@@ -262,7 +255,7 @@ object LocalInventoryIndex {
         .sortedWith(compareByDescending<LocalSharedFile>{revisions[it.jobId]?.revision ?: 0}.thenBy{if(it.name.startsWith("SCAP")||it.mimeType=="application/pdf")0 else 1}.thenBy{it.name}).distinctBy{it.uri}
     val principals=rememberRecordPrincipals(item.kind,item.id,item.revision)
     val documents=RecordDocuments.current(jobs,allDocuments,principals,documentHistory)
-    val hasHistorical=allDocuments.any{old->RecordDocuments.current(jobs,allDocuments,principals).none{it.id==old.id}}
+    val hasHistorical=RecordDocuments.current(jobs,allDocuments,principals,true).any{old->RecordDocuments.current(jobs,allDocuments,principals).none{it.id==old.id}}
     fun openFile(file:LocalSharedFile,share:Boolean){scope.launch{
         message=runCatching{val target=withContext(Dispatchers.IO){RecordDocuments.openTarget(c,db,item.kind,item.id,file,documentHistory)}
             c.startActivity(if(share)SharedFileActions.share(android.net.Uri.parse(target.uri),target.mimeType)else SharedFileActions.view(android.net.Uri.parse(target.uri),target.mimeType).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK));null
