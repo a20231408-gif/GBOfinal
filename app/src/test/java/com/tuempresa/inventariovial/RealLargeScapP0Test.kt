@@ -46,6 +46,11 @@ class RealLargeScapP0Test {
                 override fun write(uri:Uri,source:File){source.inputStream().use{input->destinations.getValue(uri).outputStream().use{input.copyTo(it,64*1024)}}}
                 override fun digest(uri:Uri)=fileDigest(destinations.getValue(uri))
                 override fun publish(slot:SharedDocumentStore.Slot,file:LocalSharedFile):Uri{published++;return slot.uri}
+                override fun renameOwned(slot:SharedDocumentStore.Slot,from:LocalSharedFile,to:LocalSharedFile):SharedDocumentStore.Slot {
+                    // This single-ZIP provider keeps a stable URI across the local promotion.
+                    require(from.relativePath==to.relativePath && digest(slot.uri)==(from.size to from.sha256))
+                    return SharedDocumentStore.Slot(slot.uri,true)
+                }
             }
             LocalCopyDrain.run(c,db,store,20)
             val saved=db.localFilesDao().job(job.id)!!;assertEquals(saved.message,"READY",saved.state)

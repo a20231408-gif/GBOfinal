@@ -1,5 +1,10 @@
 # GBO — Estado completo para continuar
 
+Última intervención: corrección documental **1.4.27 (41)** en rama local
+`codex/documentos-publicos-estables-20261102`. Leer `CORRECCION_DOCUMENTOS_1_4_27.md`;
+138 pruebas únicas PASS, APK privada histórica Debug preparada, sin instalación ni publicación.
+Carpeta pública estable; históricos conservados; V21/ACK/ROOT intactos. NO-GO online/general.
+
 ## Cierre de continuidad vigente — 02/11/2026
 
 Leer primero `../CONTINUIDAD_FINAL_GBO.md`: reemplaza los estados históricos inferiores.

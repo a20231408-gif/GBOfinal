@@ -1,5 +1,14 @@
 # GBO — Continuidad final 1.4.26 (40)
 
+## Actualización posterior: corrección documental 1.4.27 (41), solo local
+
+Ver `docs/CORRECCION_DOCUMENTOS_1_4_27.md`: nueva rama local
+`codex/documentos-publicos-estables-20261102`, fuente funcional `72a100b7ceda38b4001f7a615c81ffcdbe188d98`.
+138 casos únicos PASS; APK privada con firma histórica, aún no instalada/publicada. Documentos nuevos
+en carpeta estable por carretera/familia/elemento/PR, historial recuperable, sin mover históricos.
+La candidata 1.4.26 y PR #8 de las secciones siguientes quedan preservados. V21/ROOT/ACK intactos.
+Esta corrección NO está subida a GitHub por instrucción de no publicar. NO-GO online/general vigente.
+
 Fecha: 02/11/2026, America/Lima. Este documento prevalece sobre estados históricos que dicen
 «no instalada», «tablet 1.4.25» o «pruebas físicas no ejecutadas».
 
