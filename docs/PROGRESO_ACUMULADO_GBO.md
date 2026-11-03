@@ -1,6 +1,172 @@
 # Progreso acumulado — cierre local 03/11/2026
 
-## Estado para retomar a las 15:00 — prevalece sobre el historial inferior
+## Cierre controlado del 03/11/2026 — ESTADO VIGENTE
+
+**Trabajo detenido por instrucción del propietario. NO-GO productivo.** No iniciar funciones,
+compilaciones, lotes remotos o instalaciones solo para cerrar. No se generó una APK nueva.
+Este apartado prevalece sobre todo el historial inferior, incluido el antiguo bloqueo OAuth:
+el consentimiento institucional fue completado legítimamente durante esta sesión.
+
+### Git y recuperación
+
+- Rama: `codex/scap-pavimentos-cierre-20261103`.
+- Base preservada: `f8e3ed53af488b2f81319b09c6c1289dca91c353`, rama/PR #10
+  `codex/cierre-backend-drive-institucional-20261103`. Dependencias anteriores PR #8/#9;
+  no se fusionó ningún PR ni se modificó main.
+- Android WIP: `abc6356dad493ab53d58d29709315b3d24aa1be2`.
+- Lector/conciliador: `cf2b84a10865183f8934b32b002a1d115a9d93ed`.
+- El commit documental de cierre se identifica con `git log -1 -- docs/PROGRESO_ACUMULADO_GBO.md`.
+  El SHA total publicado se verificará contra `git ls-remote origin refs/heads/codex/scap-pavimentos-cierre-20261103`.
+- PR revisable del cierre: https://github.com/a20231408-gif/GBOfinal/pull/11, **draft**,
+  contra la rama del PR #10. Mantenerlo en borrador hasta cerrar la validación.
+
+### Android implementado y preservado; no validado físicamente en esta sesión
+
+| Área | Cambio y archivos principales | Estado |
+|---|---|---|
+| SCAP Excel | `scap/export/ScapLocalDocuments.kt`, `scap/ui/ScapExportPanel.kt`: exportación principal XLSX mediante CreateDocument; nombre carretera/puente; copia privada congelada, verificación de bytes y apertura del URI elegido; cancelar conserva captura | Implementado; pruebas locales; pendiente física |
+| Carpeta PUENTES | `ScapFolderExport.kt`, `SharedDocumentStore.kt`, `PublicLocalFolderNames.kt`: selector OpenDocumentTree, SCAP/fotos/croquis legibles, idempotencia local; no SIC individual ni JSON técnico público; el reintento de un árbol interrumpido exige reelección, sin caer en Descargas | Implementado; fixtures SAF; pendiente física |
+| Fotografías e historia | Se conservan originales y hashes; nombres por categoría y croquis por tipo; almacenamiento privado versionado y destino público estable. No se borraron ni migraron carpetas históricas | Implementado; fixtures de tres fotos y un croquis, más ZIP histórico seleccionado |
+| SIC | `LocalSicConsolidates.kt`: principal verificado EXCEL_SIC para SIC, SCAP y Pavimentos; filas privadas, cobertura por identidad/revisión, conservación de filas y formatos. `LocalExportBuilder.kt`/`LocalCopies.kt`: plan 6; documentos técnicos privados, nombres públicos sin sufijo provisional, marca BORRADOR preservada internamente y en XLSX | Implementado; requiere pasada integrada final |
+| Guardar como SIC | `LocalSicExport.kt`, `SicExportScreen.kt`, `Sic18AExportButton.kt`: instantánea privada del consolidado y selector nativo; exige guardar cambios SIC-18A antes de exportar; no encola Drive | Implementado; última prueba de los tres formatos puente 2/2 PASS |
+| Guardar como común | `ManualDocumentExport.kt`, `LocalFilesUi.kt`, `RecordDocuments.kt`, `StableLocalPublication.kt`: valida XLSX/CRC/tamaño/hash, rechaza destino no vacío con otros bytes, recuerda nombre elegido, conserva BORRADOR y distingue apertura vigente/historial | Implementado; fixtures; no reemplaza la aceptación física de DocumentsUI |
+| ZIP SCAP | `ScapLocalExportStatus.kt`: respaldo opcional separado del XLSX principal; progreso y apertura explícitos de ZIP; su estado no pisa el resultado del guardado nativo | Implementado; prueba ZIP seleccionada |
+| Pavimentos celular | `PavementEditorHeader.kt`, `PavementWorkspace.kt`, `PavementDamageTable.kt`: título/contexto/acciones separados, área de trabajo desplazable, fotos accesibles con texto grande y acciones que fluyen | Implementado; Compose 320/360/411dp y fuentes grandes; pendiente física |
+| Pavimentos exportar | `PavementOutputPanel.kt`, `PavementSicPanel.kt`, `PavementGeneratedFiles.kt`: PDF/Excel con selector; Excel por carretera/superficie, SIC consolidado; exportación manual no programa entregas | Implementado; pendiente prueba física |
+| Planes históricos | `LocalCopies.kt`: no extender la nueva consolidación SCAP/Pavimentos a planes antiguos al reanudarlos; una exportación exclusivamente consolidada puede quedar READY con acreditación, sin archivo individual redundante | Corregido después de la primera pasada integrada; regresión específica aprobada, resto por repetir |
+
+No se cambió Room (sigue 21), cálculo PCI/URCI, daño 26, UUID/revisiones, ACK, endpoint ni
+backend de sincronización Android. La modificación del encolado se limita a eliminar el efecto
+indebido de exportaciones manuales; el flujo explícito de cierre/entrega conserva sus guardas.
+
+### Pruebas exactas de esta sesión
+
+- Compilación Kotlin y de pruebas: PASS en las ejecuciones locales; última ejecución Gradle exitosa.
+- Documentos/selectores: una selección intermedia **42/42 PASS**, anterior al último ajuste del drain.
+- Selección integrada de 24 clases: **117 ejecutadas, 110 PASS y 7 FAIL**.
+  Fallos: dos expectativas READY de `LocalCopyFinalTest` por consolidación extendida a plan antiguo;
+  un archivo SQLite temporal de nombre largo en Windows (`PavementFinalGeometryTest`);
+  fecha SIC (`ScapP0UiTest`), dos pruebas de publicación automática SIC ahora sustituidas por SAF,
+  y expectativa de nombre provisional público (`SicProvisionalOpeningUiTest`).
+- Se corrigió la protección productiva de planes antiguos; se actualizaron los fixtures/expectativas
+  del nuevo contrato manual. Reejecución focalizada: **12 casos, 10 PASS / 2 FAIL**. Los dos fallos
+  restantes eran la cola duplicada de intents VIEW del harness Robolectric, no un ACK ni una subida.
+  Corregida esa cola, última ejecución **SicConsolidationUiTest 2/2 PASS**, 0 omitidos.
+- Por tanto, los siete casos fallidos iniciales tienen comprobación focalizada posterior satisfactoria,
+  pero **NO existe una nueva pasada integrada 117/117 sobre el estado final**. No sumarlos ni declarar
+  la suite histórica completa aprobada. Repetir únicamente esa selección al retomar, con evidencia.
+- `PreflightReadonlyPaged.test.cjs`: **8/8 PASS**, mocks: identidad incorrecta, 405 JSON paginados,
+  cobertura completa por 16 particiones, ilegibles, cambio concurrente, filas faltantes/ACK obsoleto,
+  propiedad/cadena y permisos paginados del destino. No acreditan acceso real ni GO.
+- Pruebas físicas nuevas, subida real, ACK real y propietario de archivos recién subidos: **NO realizadas**.
+- Los logs de todas estas ejecuciones se copiaron fuera de Git. Los XML de la pasada integrada 117
+  no quedaron preservados antes de la siguiente ejecución; solo están acreditados por su log agregado.
+  Se conserva el XML de la última selección (2 casos). No inventar XML históricos. Al retomar, copiar
+  los XML inmediatamente tras la pasada final y antes de cualquier otra ejecución Gradle.
+
+### Auditoría institucional: estado exacto
+
+El propietario completó el consentimiento oficial con GBO. La ejecución original
+`gboPilotInventoryReadonly` agotó **seis minutos** y no emitió resumen completo: NO contar como inventario.
+Con autorización separada se añadió SOLO `PreflightReadonlyPaged.gs` al editor original, sin
+sobrescribir archivos. Revisión + 8 pruebas confirman dependencias exclusivamente lectoras; no llama
+`v3Store`, recuperación, inicializadores, setters, creación de carpetas ni propiedades.
+
+Se descargó una captura GET posterior: todos los archivos previos del editor, los diez archivos
+publicados V21 y las implementaciones permanecen byte a byte/sin cambios. El único añadido es
+el módulo autorizado; su contenido coincide con la propuesta privada aprobada.
+
+| Función | Partición | Resultado guardado |
+|---|---|---|
+| `gboPilotInventoryReadonly00` a `09` | 0–9 | **10/16 completas**, 406 filas, doble listado de metadatos estable en cada lote y una firma común |
+| `gboPilotInventoryReadonly10` a `15` | a–f | **NO ejecutadas** por orden de cierre |
+| `gboPilotNewDestinationReadonly` | destino/ancestros/permisos | Preparada y guardada como wrapper privado del lector; **NO ejecutada** |
+| `readonly-reconcile.cjs` | unión offline de 16 lotes | Probado con mocks; **NO ejecutado contra inventario real incompleto** |
+
+**Inventario global INCOMPLETO.** No hay totales acreditados COMPLETE/PENDING/ROLLED_BACK/ilegibles,
+conciliación final de ACK/bindings ni prueba de estabilidad de contenido JSON. La doble lectura actual
+verifica IDs/nombres/modifiedTime del registro técnico; no valida bytes de cada archivo final remoto.
+La lectura anterior de 889 entradas era metadatos; no sustituye los seis lotes faltantes.
+
+V21 original: UI institucional confirma el deployment original, versión 21 y «Ejecutar como Yo
+(GBO)». Su referencia exacta está en la configuración Android privada y en la captura de despliegue.
+No confundir otra implementación llamada GBO que corresponde a V13/USER_ACCESSING.
+La carpeta definitiva vigente se verificó en UI como propiedad GBO y acceso Restringido; no se
+cambiaron permisos. La comprobación API de TODOS sus ancestros y capacidades queda pendiente.
+El ID correcto está en `PROPUESTA_CONFIG_NO_APLICAR.json` y en el wrapper privado aprobado.
+El destino propuesto antiguo y en Papelera es obsoleto: NO reutilizarlo ni cambiar ROOT por él.
+
+Se respaldaron **50 ScriptProperties únicas** en JSON privado, SHA-256
+`c5d371d61cd7c58ab9f4bfd5ffc95fd565e55bd0b080d0ef5266b28cd017c8a5`.
+No se publicaron sus claves/valores, ni se cambió ninguna propiedad remota. La propuesta de
+coexistencia/admisión y el backend reanudable del PR #10 siguen locales/desactivados.
+**No se creó versión, no se actualizó V21/URL, no se escribió Drive, no se tocó la tablet.**
+
+### Material privado indispensable (ASUS; no añadir al repositorio)
+
+1. `C:\Users\ASUS\GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z\operacion-institucional\`:
+   `partition-0.json` … `partition-9.json`, AX/DOM asociados, `CIERRE_PARCIAL_VERIFICADO.json`,
+   `SCRIPT_PROPERTIES_PRIVADAS.json`, `VERIFICACION_LECTOR_Y_V21.json`, captura
+   `fuente-despues-lector/`, propuesta privada configurada `PreflightReadonlyPaged_PREPARADO_NO_GUARDADO.gs`,
+   `cierre-android-evidencias/` (logs y XML final), auditoría de publicación y `GBO_CIERRE_CONTROLADO_20261103.bundle` (verificado al cerrar).
+2. Carpeta padre `GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z`: capturas inmutables `editor/`, `v21/`,
+   paquete `paquete-publicacion-no-activar/`, `PROPUESTA_CONFIG_NO_APLICAR.json`, metadatos y rollback.
+3. `C:\Users\ASUS\GBO_CLASP_PRIVADO_20261102T222357Z`: capturas anteriores, herramientas y OAuth
+   personal legítimo. No reintentar el consentimiento OAuth Drive de clasp bloqueado por Google.
+4. `C:\GBO\server.local.properties`, `drive.local.properties`, `keystore.properties`, `local.properties`,
+   `.private-signing/huawei-debug.keystore` y el keystore Release histórico indicado en la configuración
+   privada. Todos separados del código; no sustituir firma Release por Debug.
+5. Todos los respaldos privados de Xiaomi de sesiones anteriores, incluido el quinto vigente;
+   esta sesión no creó ni cambió respaldos de tablet.
+
+### APK y versión
+
+No hay APK nueva con estos cambios. El source sigue declarado **1.4.29 (43)**; hay cambios WIP
+posteriores y aún NO se incrementó a la sucesora. No presentar el APK 43 como binario de este source.
+Artefacto previo conservado:
+`C:\Users\ASUS\GBO_CANDIDATA_PRIVADA_20261103_1_4_29_43\GBO_1.4.29_43_DEBUG_ORIGINAL_SIC_PRINCIPAL_NO_INSTALAR.apk`.
+SHA-256 previo verificado: `f90b96046e2fb0ab20566be5b0917c58f73a37b912e04dfaff63acc16b57548d`.
+Package original `com.tuempresa.inventariovial`; certificado Debug histórico
+`d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872`.
+El APK no se añade a Git ni se instala/distribuye al cerrar.
+
+### Próximo paso al recibir una nueva instrucción de continuación
+
+1. Leer SOLO este estado vigente y comprobar rama/HEAD/PR, sin repetir migración ASUS ni OAuth.
+2. Retomar las lecturas autorizadas 10–15 en el MISMO proyecto y sesión institucional. No volver a
+   ejecutar 0–9 a ciegas. Guardar cada salida completa en la misma carpeta privada; comprobar que
+   coincida su firma de metadatos con las diez existentes. Si cambió, conciliar el alcance del cambio;
+   el conciliador rechaza firmas distintas, faltantes y truncamientos.
+3. Ejecutar el lector del destino ya aprobado (solo GET); luego, con 16/16 completas y estables:
+
+```powershell
+node backend/candidato-original-reanudable/readonly-reconcile.cjs "C:\Users\ASUS\GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z\operacion-institucional" "C:\Users\ASUS\GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z\operacion-institucional\CONCILIACION_REAL_PRIVADA.json"
+```
+
+4. Cerrar la regresión Android final, sin nuevas funciones. La selección exacta de la pasada 117 fue:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+$gboTests=@('ManualExportAcceptanceTest','ScapNativeExportUiTest','PavementPhoneAcceptanceTest','PavementPhotoUi10CTest','SicPrimaryPublicationTest','SicProvisionalOpeningTest','SicProvisionalOpeningUiTest','StablePublicDocumentsTest','SicLocalConsolidationTest','SicConsolidationSafTest','SicConsolidationMediaTest','SicConsolidationDurabilityTest','SicConsolidationUiTest','SicNewFormatsTest','SicExcelWriterTest','PavementEditor147Test','PavementFinalIntegrityTest','PavementJointFlow20261019Test','PavementFinalGeometryTest','LocalCopyFinalTest','LocalCopyPresentationTest','ScapCanonicalExportTest','ScapP0Test','ScapP0UiTest')
+$gboTestArgs=foreach($gboCase in $gboTests){'--tests';"*$gboCase"}
+& .\gradlew.bat :app:testDebugUnitTest @gboTestArgs --console=plain
+# Copiar inmediatamente app/build/test-results/testDebugUnitTest a una NUEVA carpeta privada.
+node --test backend/candidato-original-reanudable/tests/PreflightReadonlyPaged.test.cjs
+```
+
+5. Revisar resultados y compatibilidad con PR #10; solo entonces preparar UNA sucesora con versión
+   disponible, firma histórica y endpoint original. Aceptación física/instalación requieren autorización.
+6. Presentar un corte institucional concreto: inventario conciliado, raíces/bindings preservados,
+   permisos/propiedad verificados, diff de la V21 real, respaldo de propiedades, configuración aún
+   desactivada, plan para pendientes y rollback. Pedir autorización SEPARADA y consolidada antes de
+   modificar fuente productiva, V21, ROOT, ScriptProperties, permisos, despliegues o hacer una carga.
+
+La autorización de esta sesión solo añadió el lector aislado y ejecutó sus lotes 0–9. No habilita
+endpoints destructivos, eliminación administrativa, migraciones históricas, nuevas entregas ni GO.
+
+---
+
+## Histórico anterior al cierre institucional — no es el estado vigente
 
 **NO-GO productivo. BLOQUEADO POR AUTORIZACIÓN institucional.** El propietario ordenó
 detener los intentos OAuth GBO: no reabrirlos hasta que avise que dispone del segundo factor.
