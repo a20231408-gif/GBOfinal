@@ -1,3 +1,36 @@
+## Hito vigente 03/11/2026 — candidata 1.4.30 y auditoría completa
+
+Esta sección sustituye el cierre anterior. Rama `codex/scap-pavimentos-cierre-20261103`, PR #11 draft, dependencias #10/#9/#8 sin fusionar. Base de esta intervención: `74372531d773e109cd98cbbaae07c394436e0308`. Identificar el último SHA mediante `git log -1` y contrastar con `git ls-remote origin refs/heads/codex/scap-pavimentos-cierre-20261103`.
+
+- Android: primera repetición 116/117 PASS. Único fallo: fixture de autoguardado generaba plan antiguo (versión 1), excluido legítimamente de la nueva consolidación SCAP. Fixture actualizado a plan 6; aserciones conservadas. Focalizada 9/9; repetición integrada FINAL **117/117 PASS**, cero fallos/errores/omitidos. No representa la suite histórica completa. Logs y XML de cada ejecución archivados inmediatamente en privado.
+- Backend: **76/76 PASS** con mocks y paquete completo construido desde V21 real. Incluye lector, contratos, ACK, vídeo, raíces y nueva regresión de coste. No equivale a subida real.
+- Defecto confirmado del candidato: la lectura histórica completa reiniciaba en cada petición bajo presupuesto de 85 segundos. Los 16 lotes reales sumaron 791500 ms (incluyen metadatos). `DeliveryRootRouting.gs` ahora conserva proyecciones en ScriptCache desechable por generación de metadatos, avanza por bloques y cede antes de efectos Drive. Cada uso comprueba listados completos antes/después; cambios, ilegibles, duplicados y conflictos siguen bloqueando. Caché expirable no es autoridad; su pérdida exige releer. `gboWarmRootRegistryReadCache` prepara la caché desde editor con identidad institucional y configuración aprobada, sin escrituras Drive/propiedades. NO ejecutado remotamente. El coste real del escritor nuevo sigue pendiente.
+- Auditor institucional: **16/16 completos y estables**, misma firma; 891 entradas técnicas totales, 634 JSON pertinentes: 207 journals COMPLETE, 207 records, 220 bindings; PENDING/ROLLED_BACK/ilegibles=0, nombres duplicados=0. Conciliador offline: 207 ACK coherentes en key/revisión/hash. Todos los records enlazan a binding con la misma carpeta. **13 bindings sin record confirmado**: conservar en raíz histórica; no adoptar, liberar, borrar ni recuperar automáticamente. No se descargaron/validaron todos los bytes de archivos finales ni contenidos de reservas fotográficas.
+- Destino definitivo: lector real acreditó cadena de tres carpetas, propietario GBO, escritura permitida y cero permisos generales de edición. UI institucional muestra destino vacío y privado. Identificadores y permisos completos quedan privados. No confundir con el destino obsoleto en Papelera. Históricos conservan su raíz.
+- V21 y deployment original permanecen activos. Historial visible llega a versión 21; propuesta futura 22, volver a verificar disponibilidad. La sesión/editor GBO está acreditada, pero la etiqueta «Yo» y USER_DEPLOYING **no prueban por sí solas el ejecutor real del endpoint**. La recaptura API personal devolvió 401; no se repitió OAuth. Capturas V21 originales siguen intactas.
+- Corte preparado privadamente: 6 archivos reemplazados, 4 añadidos, manifest y otros 4 módulos conservados; mapear `Codigo.gs` del paquete a `Código.gs` existente, sin duplicar router; conservar los dos lectores editor-only. Propuesta inicial DRAIN_ONLY, raíz histórica READ_ONLY, época preparada y timestamp pendiente del instante autorizado. No aplicar configuración ni crear versión sin autorización. Antes de OPEN: acreditar ejecutor mediante guarda institucional en GET, calentar caché, estabilidad fresca, aceptación física y aislamiento de cola. No se autorizó publicación ni cargas. Rollback antes de primera activación/escritura: V21 y propiedades respaldadas; después de activación, DRAIN_ONLY compatible, nunca retirar la cerca o reasignar raíces.
+
+### APK y aceptación
+
+Única APK nueva Debug **1.4.30 (44)**, compilación normal original, package `com.tuempresa.inventariovial`, firma Debug histórica `d2e54cb086aa731ef046be300977d0b16c0d8f66fdcb08d0d9cfd2038bf0d872`, alineación 16 KiB verificada. Endpoint/token originales comprobados offline contra APK 43, sin perfil de validación; Room sin cambios. `validateReleaseConfiguration` PASS no convierte Debug en Release.
+
+Ruta privada: `C:\Users\ASUS\GBO_CANDIDATA_PRIVADA_20261103_1_4_30_44\GBO_1.4.30_44_DEBUG_ORIGINAL_ACEPTACION_NO_INSTALAR.apk`.
+SHA256: `bd876cf00b4ff6e4c694a8b1e61566159cfaeb31e953909747784d96564c0126`.
+
+Propietario autorizó actualizar exclusivamente su teléfono de pruebas, conservando datos y offline; OPPO CPH2557 conectado con 1.4.29/43. Xiaomi principal excluida. Al escribir este checkpoint: pendiente respaldo/validación e instalación; no declarar instalada ni aceptación física.
+
+Aceptación manual pendiente (no ejecutar automáticamente con datos reales): 1) SCAP Guardar como, nombre editable y reapertura; 2) carpeta PUENTES con fotos/croquis y ZIP opcional separado; 3) SIC-17 consolidado fuera de carpeta individual; 4) dos SIC sucesivos/revisión conservan filas y abren consolidado; 5) daños/fotos Pavimentos en teléfono; 6) Excel/PDF por selector; 7) históricos recuperables; 8) datos conservados tras actualizar. Mantener offline, no cerrar fichas para Drive ni limpiar datos.
+
+### Evidencia y continuación desde otra computadora
+
+Privado ASUS: `C:\Users\ASUS\GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z\operacion-institucional`. Preservar `partition-0.json` a `partition-f.json`, DOM, `CONCILIACION_REAL_PRIVADA.json`, `CONCILIACION_BINDINGS_PRIVADA.json`, `DESTINO_LECTURA_REAL_PRIVADA.json`, respaldo de 50 propiedades, `CORTE_PROPUESTA_FINAL_NO_APLICAR.json`, `CORTE_ARCHIVOS_EXACTOS_PRIVADO.json`, logs/XML `android-final-corregido-20261103`, `backend-final-cache-tests.log`. Paquete privado `paquete-final-cache-no-activar` en carpeta padre; capturas editor/V21 inmutables y respaldos anteriores intactos. Credenciales, propiedades locales, firmas y backups de dispositivos siempre fuera de Git.
+
+Comandos ya ejecutados: selección de 24 clases indicada en el cierre inferior; `node --test backend/candidato-original-reanudable/tests/*.test.cjs` con `GBO_PREPARED_ORIGINAL_DIR` privado; `:app:assembleDebug :app:signingReport :app:validateReleaseConfiguration`; `tools/apk_identity_audit.ps1` sobre APK privada. No repetir 117/76 sin cambios relacionados. En otra computadora: clonar rama y comprobar SHA remoto; trasladar por canal privado solo configuración legítima, keystore Debug/Release correspondiente, APK/evidencias necesarias; reconstruir paquete con `preparar_paquete_privado.py` desde captura V21 acreditada. No usar `clasp push/deploy/run` como continuación automática.
+
+Estado por módulo: SCAP/SIC/Pavimentos PASS local, físico pendiente; Drive propiedad/permisos PASS lectura; sincronización nueva/ACK real/reintento real NO EJECUTADOS. **NO-GO productivo/distribución**. Siguiente hito: respaldo e instalación offline del teléfono expresamente autorizado; después aceptación del propietario y autorización consolidada concreta del corte.
+
+---
+
 # Progreso acumulado — cierre local 03/11/2026
 
 ## Cierre controlado del 03/11/2026 — ESTADO VIGENTE
