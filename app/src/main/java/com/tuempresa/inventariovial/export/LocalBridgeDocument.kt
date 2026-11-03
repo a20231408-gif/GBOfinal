@@ -30,13 +30,13 @@ object LocalBridgeDocument {
             try{out.write(bytes);atomic.finishWrite(out)}catch(e:Exception){atomic.failWrite(out);throw e}
         }
         val digest=fileDigest(source);require(digest.first==bytes.size.toLong()&&digest.second==com.tuempresa.inventariovial.delivery.sha256(bytes)){"La copia anterior se conserva; revisa la revisión guardada."}
-        val parent=DriveMirrorPlan.ROOT+"_PROVISIONALES/SIC_POR_IDENTIFICAR/"
+        val route=s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty().ifBlank{"SIN_CARRETERA"}
+        val parent=DriveMirrorPlan.ROOT+LocalExportNames.safe(route)+"/PUENTES/"
         val folder=PublicLocalFolderNames.reserve(db,job.recordKey,parent,PublicLocalFolderNames.describe(db,job,"Puente"))
-        val f=LocalSharedFile(id,id,job.recordKey,"$parent$folder/REVISIONES/R_${job.revision}/",source.name,SicExcelWriter.XLSX_MIME,digest.first,digest.second,source.path)
-        val slot=storage.reserve(f);storage.checkSlot(slot,f)
-        if(!slot.published){storage.write(slot.uri,source);require(storage.digest(slot.uri)==digest)}
-        val uri=storage.publish(slot,f);require(storage.digest(uri)==digest)
-        db.withTransaction{db.localFilesDao().saveJob(job.copy(state="READY",completed=1,total=1,message="ARCHIVO GUARDADO · PROVISIONAL: ubicación pendiente; fuera del consolidado de ruta."));db.localFilesDao().saveFile(f.copy(uri=uri.toString(),state="READY"))}
+        val f=LocalSharedFile(id,id,job.recordKey,"$parent$folder/",source.name,SicExcelWriter.XLSX_MIME,digest.first,digest.second,source.path)
+        val saved=StableLocalPublication.publish(c,db,job,f,storage)
+        val uri=Uri.parse(saved.uri)
+        db.withTransaction{db.localFilesDao().saveJob(job.copy(state="READY",completed=1,total=1,message="ARCHIVO GUARDADO · PROVISIONAL: ubicación pendiente; fuera del consolidado de ruta."));db.localFilesDao().saveFile(saved)}
         uri
     }
 }

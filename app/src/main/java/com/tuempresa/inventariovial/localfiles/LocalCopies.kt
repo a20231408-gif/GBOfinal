@@ -33,9 +33,9 @@ object LocalCopies {
         val key="$kind/$id";val jobId=sha256((key+"/"+revision+"/"+scope).toByteArray())
         val dao=db.localFilesDao();val old=dao.job(jobId) ?: dao.jobForRevision(key,revision,scope)
         if(!automatic&&scope in setOf("FULL","PHOTOS","ZIP")&&old?.manifestJson!=null&&old.state !in setOf("QUEUED","RUNNING")&&
-            LocalPlan.parse(old.manifestJson).publicNamingVersion<4) {
+            LocalPlan.parse(old.manifestJson).publicNamingVersion<5) {
             // Explicit regeneration only: retain the historical job, URIs, bytes and frozen paths.
-            return@withTransaction request(c,db,kind,id,revision,scope+"_LAYOUT_V4",automatic=false)
+            return@withTransaction request(c,db,kind,id,revision,scope+"_LAYOUT_V5",automatic=false)
         }
         val job=old ?: LocalExportJob(jobId,key,kind,id,revision,scope,automatic=automatic)
         if(old==null)dao.saveJob(job)
@@ -146,6 +146,12 @@ object LocalCopyDrain {
                 for(source in plan.files){
                     try {
                         require(fileDigest(File(source.source))==(source.size to source.sha256)){"El archivo privado cambió. No se sobrescribió la revisión exportada."}
+                        if(plan.publicNamingVersion==5 && job.scope!=DriveMirrorPlan.SCOPE) {
+                            val published=StableLocalPublication.publish(c,db,job,source,storage)
+                            dao.saveFile(published);done++
+                            dao.saveJob(job.copy(completed=done,total=plan.files.size,message="Copia local: $done/${plan.files.size} archivos verificados"))
+                            continue
+                        }
                         val stored=priorFiles[source.id]
                         val retained=stored?.state=="READY"&&stored.uri?.let{uri->runCatching{storage.digest(Uri.parse(uri))==(source.size to source.sha256)}.getOrDefault(false)}==true
                         val slot=if(retained)SharedDocumentStore.Slot(Uri.parse(stored!!.uri),true)else storage.reserve(source,stored?.uri?.let(Uri::parse))

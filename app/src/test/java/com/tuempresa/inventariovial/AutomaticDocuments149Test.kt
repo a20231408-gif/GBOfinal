@@ -88,7 +88,7 @@ class AutomaticDocuments149Test {
         assertTrue(plan.problems.joinToString(),plan.problems.isEmpty());assertEquals(5,plan.files.count{it.relativePath.contains("CROQUIS")})
         assertEquals(3,plan.files.count{it.name.startsWith("SIC-")&&it.name.endsWith("PROVISIONAL.xlsx")});assertTrue(plan.files.any{it.name=="SCAP_PROVISIONAL.xlsx"})
         for(sk in s.sketches)assertTrue(plan.files.any{it.sha256==fileDigest(File(sk.localUri)).second})
-        assertTrue(plan.files.all{it.relativePath.startsWith(DriveMirrorPlan.ROOT+"_PROVISIONALES/PE-3N/PUENTES/")})
+        assertTrue(plan.files.all{it.relativePath.startsWith(DriveMirrorPlan.ROOT+"PE-3N/PUENTES/")})
         val manifest=JSONObject(File(plan.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText());assertFalse(manifest.getBoolean("roomRestorable"));assertEquals("PROVISIONAL_UUID",manifest.getJSONObject("location").getString("identityStatus"))
     }}
     @Test fun incompleteLegacySicKeepsBlankPrAndCapturedObservations()=runBlocking{db().use{d->
@@ -128,6 +128,13 @@ class AutomaticDocuments149Test {
     private class Store:SharedDocumentStore {
         val entries=linkedMapOf<String,ByteArray>();var writes=0;var stop=false
         override fun reserve(file:LocalSharedFile,knownUri:Uri?):SharedDocumentStore.Slot {val uri=Uri.parse("content://test/"+android.net.Uri.encode(file.relativePath+file.name));return SharedDocumentStore.Slot(uri,entries.containsKey(uri.toString()))}
+        override fun renameOwned(slot:SharedDocumentStore.Slot,from:LocalSharedFile,to:LocalSharedFile):SharedDocumentStore.Slot {
+            val uri=Uri.parse("content://test/"+Uri.encode(to.relativePath+to.name))
+            require(uri==slot.uri || !entries.containsKey(uri.toString()))
+            require(digest(slot.uri)==(from.size to from.sha256))
+            entries[uri.toString()]=entries.remove(slot.uri.toString())!!
+            return SharedDocumentStore.Slot(uri,true)
+        }
         override fun write(uri:Uri,source:File){entries[uri.toString()]=source.readBytes();writes++}
         override fun digest(uri:Uri)=entries.getValue(uri.toString()).let{it.size.toLong() to com.tuempresa.inventariovial.delivery.sha256(it)}
         override fun publish(slot:SharedDocumentStore.Slot,file:LocalSharedFile):Uri{if(stop){stop=false;throw CancellationException("TEST_STOP_AFTER_WRITE")};return slot.uri}

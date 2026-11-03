@@ -45,7 +45,7 @@ object LocalExportBuilder {
     suspend fun build(context:Context,db:InventoryDatabase,job:LocalExportJob):LocalPlan {
         val dir=work(context,job);space(context,0)
         val files=mutableListOf<LocalSharedFile>();val problems=mutableListOf<String>();var root="";var location:LocalDocumentLocation?=null;var captureState="";val pendingFields=mutableListOf<String>()
-        val exportScope=job.scope.removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")
+        val exportScope=job.scope.removeSuffix("_LAYOUT_V5").removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")
         val photosOnly=exportScope=="PHOTOS"
         fun add(file:File,relative:String,mime:String,officialPanel:Boolean=false){
             require(relative.split('/').all{it.isNotBlank()&&it!=".."&&it!="."})
@@ -80,7 +80,7 @@ object LocalExportBuilder {
                 
                 val family=com.tuempresa.inventariovial.road.AssetPresentationCatalog.resolve(com.tuempresa.inventariovial.data.entity.InventoryRecordWithPhotos(r,snapshot.photos,snapshot.sic23,snapshot.sic18,snapshot.sic20,snapshot.sic19,snapshot.sic18a,snapshot.sicExtension,snapshot.sic21))
                 location=LocalDocumentLocation.resolve(db,job,r.routeCode,com.tuempresa.inventariovial.core.DriveInventorySchema.familyPath(family),com.tuempresa.inventariovial.core.DriveInventorySchema.elementLabel(family))
-                root=location.revision(job.revision)+if(job.scope.startsWith("FULL_MEDIA_"))"MEDIOS_${job.scope.removePrefix("FULL_MEDIA_").take(16)}/"else""
+                root=location.base
                 space(context,snapshot.photos.filter{it.scapInspectionId==null}.sumOf{File(it.originalPath.ifBlank{it.localPath}).length()}+16L*1024*1024)
                 if(!photosOnly){
                     val row=com.tuempresa.inventariovial.data.entity.InventoryRecordForExport(r,snapshot.sic17,snapshot.sic18,snapshot.sic19,snapshot.sic20,snapshot.sic21,snapshot.sic22,snapshot.sic23,snapshot.sic18a,snapshot.sicExtension)
@@ -121,7 +121,7 @@ object LocalExportBuilder {
                 val s=requireNotNull(db.scapDao().snapshot(job.recordId));captureState=s.inspection.status;pendingFields+=com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(s,ScapCatalog.load(context).forSnapshot(s)).pending.map{"${it.section}: ${it.field}"};require(s.inspection.updatedAt==job.revision){"La revisión SCAP cambió."}
                 
                 location=LocalDocumentLocation.resolve(db,job,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),"PUENTES","PUENTE")
-                root=location.revision(job.revision)+if(job.scope.startsWith("FULL_MEDIA_"))"MEDIOS_${job.scope.removePrefix("FULL_MEDIA_").take(16)}/"else""
+                root=location.base
                 val videos=if(photosOnly)emptyList()else VideoDatabase.get(context).videos().all().filter{it.parentKey==job.recordKey&&!it.retired}
                 space(context,s.photos.sumOf{File(it.originalPath.ifBlank{it.localPath}).length()}+videos.sumOf{it.sizeBytes}+16L*1024*1024)
                 if(!photosOnly){
@@ -171,7 +171,7 @@ object LocalExportBuilder {
                 val s=requireNotNull(db.pavementDao().sample(job.recordId));captureState=s.status;require(s.updatedAt==job.revision){"La revisión de la muestra cambió."}
                 
                 location=LocalDocumentLocation.resolve(db,job,s.ruta,"EVALUACION_SUPERFICIAL/${s.tramo}/${when(s.surface){"ASPHALT"->"ASFALTICO";"RIGID"->"RIGIDO";else->"NO_PAVIMENTADO"}}","MUESTRA")
-                root=location.revision(job.revision)+if(job.scope.startsWith("FULL_MEDIA_"))"MEDIOS_${job.scope.removePrefix("FULL_MEDIA_").take(16)}/"else""
+                root=location.base
                 val damages=db.pavementDao().damages(s.id);val photos=damages.associate{it.id to db.pavementDao().photos(it.id)}
                 space(context,photos.values.flatten().sumOf{File(it.localPath).length()}+16L*1024*1024)
                 if(!photosOnly){
@@ -209,6 +209,6 @@ object LocalExportBuilder {
             VerifiedZipArchive.write(zip,sources,cancel={execution.ensureActive()},progress={LocalArchiveProgress.record(job.id,it)})
             files.clear();add(zip,zip.name,"application/zip")
         }
-        return LocalPlan(files,problems.distinct(),4)
+        return LocalPlan(files,problems.distinct(),5)
     }
 }

@@ -60,7 +60,7 @@ class RealEvidenceP0Test {
             val r=SicConsolidationFixtures.repo(c,db);val id=r.create("TEST_NO_LOCATION","TEST",null,com.tuempresa.inventariovial.scap.domain.ScapBridgeType.SLAB)
             val s=r.dao.snapshot(id)!!;val storage=SicTestStorage();assertFalse(LocalBridgeDocument.located(s))
             val uri=LocalBridgeDocument.provisional(c,db,s,"SIC-17A",storage)
-            assertTrue(storage.find(uri).name.contains("PROVISIONAL"));assertTrue(storage.find(uri).parent.contains("SIC_POR_IDENTIFICAR"))
+            assertTrue(storage.find(uri).name.contains("PROVISIONAL"));assertTrue(storage.find(uri).parent.contains("/PUENTES/"))
             assertEquals(1,SicRouteWorkbook.inspect(storage.find(uri).bytes,"SIC-17A"));assertEquals(s,r.dao.snapshot(id))
         }
     }

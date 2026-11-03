@@ -36,13 +36,13 @@ internal object SicConsolidationFixtures {
 /** Storage fault injection only; Android provider contract has separate tests. */
 internal class SicTestStorage:SharedDocumentStore {
     data class Entry(val uri:Uri,var name:String,var parent:String,var bytes:ByteArray=byteArrayOf(),var published:Boolean=false)
-    val entries=linkedMapOf<Uri,Entry>();var shortWrite=false;var writes=0;var stopAfterBackup=false;var stopAfterPromote=false;var deny=false
+    val entries=linkedMapOf<Uri,Entry>();private var sequence=0;var shortWrite=false;var writes=0;var stopAfterBackup=false;var stopAfterPromote=false;var deny=false
     fun find(uri:Uri)=entries.getValue(uri)
     fun canonical(format:String,route:String="PE-28H")=entries.values.single{it.name=="$format.xlsx"&&it.parent.contains("/$route/")}
     override fun reserve(file:LocalSharedFile,knownUri:Uri?):SharedDocumentStore.Slot {
         if(deny)throw SecurityException("FICTICIO_DENIED")
         val e=knownUri?.let(entries::get) ?: entries.values.singleOrNull{it.name==file.name&&it.parent==file.relativePath}
-            ?: Entry(Uri.parse("content://ficticio.sic/${entries.size+1}"),file.name,file.relativePath).also{entries[it.uri]=it}
+            ?: Entry(Uri.parse("content://ficticio.sic/${++sequence}"),file.name,file.relativePath).also{entries[it.uri]=it}
         return SharedDocumentStore.Slot(e.uri,e.published)
     }
     override fun checkSlot(slot:SharedDocumentStore.Slot,file:LocalSharedFile) {
@@ -56,7 +56,7 @@ internal class SicTestStorage:SharedDocumentStore {
         require(digest(slot.uri)==(from.size to from.sha256))
         require(entries.values.none{it.uri!=e.uri&&it.parent==to.relativePath&&it.name==to.name}){"FICTICIO_NAME_OCCUPIED"}
         e.name=to.name
-        if(stopAfterBackup && to.name.contains(".anterior-")){stopAfterBackup=false;throw kotlinx.coroutines.CancellationException("FICTICIO_STOP_AFTER_BACKUP")}
+        if(stopAfterBackup && (to.name.contains(".anterior-")||to.name.startsWith(".Historial - "))){stopAfterBackup=false;throw kotlinx.coroutines.CancellationException("FICTICIO_STOP_AFTER_BACKUP")}
         if(stopAfterPromote && !to.name.startsWith('.')){stopAfterPromote=false;throw kotlinx.coroutines.CancellationException("FICTICIO_LOST_PROMOTION_RESULT")}
         return SharedDocumentStore.Slot(e.uri,true)
     }
