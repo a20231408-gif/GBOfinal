@@ -5,7 +5,8 @@
 Este apartado sustituye las restricciones antiguas de vídeo y admisión descritas abajo.
 La base contractual se volvió a descargar mediante GET: los diez archivos de V21 coinciden
 con sus capturas anteriores y con el editor, que solo añade el auditor de lectura.
-El empaquetador conserva esos módulos, manifest, autenticación y literal ROOT original.
+El empaquetador verifica los hashes de la captura V21 y conserva esos módulos, manifest,
+autenticación y literal ROOT original.
 Nunca hace push, run ni deploy. Exige un directorio de salida nuevo y verifica cada
 transformación del adaptador original de vídeo antes de generar el paquete privado.
 
@@ -55,6 +56,9 @@ medirse antes de activar. Una llamada Drive individual puede exceder ese presupu
 Las pruebas en memoria no acreditan latencia, permisos ni propiedad en Google.
 
 63 casos backend únicos PASS y 41 Android únicos PASS en la selección afectada.
+Las pruebas de enrutamiento/vídeo usan fuente pública y mocks sin cuenta Google; la
+prueba `PreparedOriginal.test.cjs` recibe explícitamente `GBO_PREPARED_ORIGINAL_DIR`
+apuntando al paquete privado generado desde la captura autorizada, siempre en una VM.
 El procedimiento único y el estado para retomar están en
 `docs/PROGRESO_ACUMULADO_GBO.md`. **NO-GO productivo**; no se cambió Google.
 
