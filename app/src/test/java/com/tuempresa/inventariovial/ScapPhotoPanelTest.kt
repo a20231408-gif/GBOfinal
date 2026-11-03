@@ -38,9 +38,10 @@ class ScapPhotoPanelTest {
         val bitmap=Bitmap.createBitmap(40,30,Bitmap.Config.ARGB_8888)
         outputStream().use{bitmap.compress(Bitmap.CompressFormat.JPEG,95,it)};bitmap.recycle()
     }
-    private suspend fun populate(r:ScapRepository):String {
+    private suspend fun populate(r:ScapRepository,named:Boolean=false):String {
         val id=r.create("FICTICIO","FICTICIO",null,ScapBridgeType.MODULAR);val img=image()
         r.setField(id,"inspection","route","PE-28H");r.setField(id,"inspection","sic17.roadbedCode","CD");r.setField(id,"inspection","progressive","10+100")
+        if(named)r.setField(id,"inspection","singularityName","FICTICIO PANEL")
         for(n in listOf(20,15,8,3,1)){
             val photo=r.addPhotoRecord(id,ScapPhotoPanel.categories[n-1].label,"EVIDENCIA FICTICIA $n")
             r.replacePhoto(id,photo,img.path)
@@ -107,10 +108,10 @@ VISTA DE CAUCE AGUAS ABAJO""".lines()
     }
     @Test fun tabletPlanUsesSameNumberedFoldersWithoutUuidOrHashInMediaNamesAndPreservesItsSources()=runBlocking {
         Room.inMemoryDatabaseBuilder(c,InventoryDatabase::class.java).build().use{db->
-            val r=ScapRepository(db,ScapCatalog.load(c));val id=populate(r);val s=r.dao.snapshot(id)!!
+            val r=ScapRepository(db,ScapCatalog.load(c));val id=populate(r,true);val s=r.dao.snapshot(id)!!
             val plan=LocalExportBuilder.build(c,db,LocalExportJob("PANEL_LOCAL_FICTICIO","SCAP/$id","SCAP",id,s.inspection.updatedAt,scope="PHOTOS"))
             val photos=plan.files.filter{it.mimeType=="image/jpeg"};assertEquals(5,photos.size)
-            for((f,p)in photos.zip(ScapPhotoPanel.ordered(s))){val path=ScapPhotoPanel.photoPath(s,p,root="FOTOGRAFIAS");assertTrue(f.relativePath.endsWith(path.substringBeforeLast('/')+"/"));assertTrue(f.name.startsWith("PUENTE - PE-28H - PR 10+100 - "));assertTrue(f.name.matches(Regex(".* - Foto [1-5]\\.jpg")));assertTrue(f.name.length<=80);assertEquals(ScapDelivery.sha256(File(p.originalPath)),f.sha256);assertFalse(f.name.contains(p.id))}
+            for((f,p)in photos.zip(ScapPhotoPanel.ordered(s))){val path=ScapPhotoPanel.photoPath(s,p,root="FOTOGRAFIAS");assertTrue("category path: ${f.relativePath} expected $path",f.relativePath.endsWith(path.substringBeforeLast('/')+"/"));assertEquals("Official panel filename must remain unchanged",path.substringAfterLast('/'),f.name);assertTrue("name length: ${f.name}",f.name.length<=80);assertEquals(ScapDelivery.sha256(File(p.originalPath)),f.sha256);assertFalse(f.name.contains(p.id))}
             assertEquals(5,photos.map{it.name}.distinct().size)
             File(evidence,"PLAN_LOCAL_FICTICIO.json").writeText(plan.json())
             assertEquals(s,r.dao.snapshot(id));assertTrue(db.automaticSyncDao().all().isEmpty())
@@ -186,7 +187,7 @@ VISTA DE CAUCE AGUAS ABAJO""".lines()
     }
     @Test fun officialLocalVideoPlanKeepsCategoryAndExistingElementAssociationWithoutRenamingPrivateOriginal()=runBlocking {
         Room.inMemoryDatabaseBuilder(c,InventoryDatabase::class.java).build().use{db->
-            val r=ScapRepository(db,ScapCatalog.load(c));val id=populate(r);var s=r.dao.snapshot(id)!!
+            val r=ScapRepository(db,ScapCatalog.load(c));val id=populate(r,true);var s=r.dao.snapshot(id)!!
             val code=r.catalog.forSnapshot(s).elements.first().code
             val photo=r.addPhotoRecord(id,ScapPhotoPanel.categories[14].label,elementCode=code);assertEquals(code,r.dao.snapshot(id)!!.photos.single{it.id==photo}.scapElementCode)
             s=r.dao.snapshot(id)!!

@@ -133,7 +133,7 @@ object LocalExportBuilder {
             "SCAP"->{
                 val s=requireNotNull(db.scapDao().snapshot(job.recordId));captureState=s.inspection.status;pendingFields+=com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(s,ScapCatalog.load(context).forSnapshot(s)).pending.map{"${it.section}: ${it.field}"};require(s.inspection.updatedAt==job.revision){"La revisión SCAP cambió."}
                 
-                location=LocalDocumentLocation.resolve(db,job,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),"PUENTES","PUENTE")
+                location=LocalDocumentLocation.resolve(db,job,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),"PUENTES","PUENTE",context)
                 root=location.base
                 val videos=if(photosOnly)emptyList()else VideoDatabase.get(context).videos().all().filter{it.parentKey==job.recordKey&&!it.retired}
                 space(context,s.photos.sumOf{File(it.originalPath.ifBlank{it.localPath}).length()}+videos.sumOf{it.sizeBytes}+16L*1024*1024)

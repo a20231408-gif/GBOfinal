@@ -15,11 +15,15 @@ import java.io.File
 object ScapDocumentNames {
     fun route(s:ScapInspectionSnapshot)=s.roadRecord?.routeCode?.takeIf{it.isNotBlank()}
         ?: s.values()["route"].orEmpty().ifBlank{"SIN CARRETERA"}
-    fun bridge(s:ScapInspectionSnapshot):String = listOf(s.values()["bridgeName"],s.values()["singularityName"],s.inspection.bridgeName)
-        .firstOrNull{!it.isNullOrBlank()&&!it.trim().equals("PUENTE",true)}?.trim()
-        ?: "Puente sin nombre"
+    fun confirmedName(s:ScapInspectionSnapshot):String? {
+        val v=s.values()
+        val name=if(v.containsKey("singularityName"))v["singularityName"] else s.inspection.bridgeName.takeIf{it.isNotBlank()} ?: v["bridgeName"]
+        return name?.trim()?.takeIf{it.isNotBlank()&&it.lowercase(java.util.Locale.ROOT) !in setOf("puente","sin nombre","puente sin nombre")}
+    }
+    fun bridge(s:ScapInspectionSnapshot)=confirmedName(s) ?: "Puente sin nombre"
     fun excel(s:ScapInspectionSnapshot)=PublicLocalFolderNames.component("SCAP - ${route(s)} - ${bridge(s)}")+".xlsx"
-    fun folder(s:ScapInspectionSnapshot)=PublicLocalFolderNames.component("Puente - ${route(s)} - ${bridge(s)}")
+    fun folder(s:ScapInspectionSnapshot)=PublicLocalFolderNames.component("Puente (${requireNotNull(confirmedName(s)){"Asigna y guarda el nombre del puente antes de crear su carpeta pública. El borrador se conserva en GBO."}})")
+
 }
 
 /** The contractual template remains unchanged. Incomplete captures carry a visible draft marker inside XLSX. */

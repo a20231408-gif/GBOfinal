@@ -1,3 +1,21 @@
+## SCAP carpetas corregidas — candidata 1.4.31 (45), 03/11/2026
+
+Base preservada `b5ddaa3bab5703fa6a46c61832217eb86f4deab5`, PR11. El renombrado se vincula a SCAP/UUID y la reserva persistida, no al texto del puente. `ScapDocumentNames` usa B/singularityName persistido (o nombre histórico de inspección cuando no existe B); rechaza nombres ausentes/de relleno antes de generar carpeta definitiva, manteniendo borrador privado. Formato local: `PE-22A/PUENTES/Puente (PRUEBA 3)/SCAP - PE-22A - PRUEBA 3.xlsx`.
+
+`PublicLocalFolderNames.reserve` deja de congelar el primer nombre SCAP cuando se solicita una exportación actual acreditada. Colisiones conservan sufijo propio sin mezclar UUIDs. `ScapFolderRename` inventaría TODA la carpeta, verifica propietario/referencias/bytes y destinos antes de modificar; journal privado anterior a efectos permite reanudar respuesta perdida. MediaStore conserva URI; SAF vuelve a resolver descendientes y actualiza URI/rutas después de verificar bytes, incluso si el proveedor cambia todos los IDs. Publicación y renombrado comparten exclusión antes de transacción Room. Fuentes, planes congelados y versiones privadas originales no se borran; metadatos públicos se resuelven mediante alias y nueva copia de metadatos verificada. No afecta ACK ni UUID/revisión remota. Históricos ambiguos, compartidos, fuera del espacio moderno o con archivos desconocidos se bloquean y conservan para intervención controlada; no hay migración masiva.
+
+SCAP ofrece «Guardar en carpeta del puente» con nombre editable dentro de GBO y verificación de archivo, y «Guardar como…» con selector Android. Se conserva un permiso de BASE SAF explícitamente autorizado y una vinculación por inspección; reutilizar base no reutiliza carpeta de otro puente. Selector propone el URI verificado actual mediante EXTRA_INITIAL_URI; Android/proveedor puede ignorarlo, por lo que el flujo directo es la alternativa que acredita destino. Cancelar no publica. No utiliza permisos globales ni programa Drive.
+
+Pruebas: focal inicial 16/16 PASS; primera integración 97/100 con tres expectativas históricas/fixtures que se corrigieron (dos fixtures de foto sin nombre y etiqueta fotográfica anterior, y expectativa de historial provisional). Integración final de documentos: **101/101 PASS**, cero omitidos, 18 clases. La prueba fotográfica exige ahora igualdad EXACTA con el nombre oficial del panel, categorías, hashes y originales; no se cambió nomenclatura fotográfica productiva. Focal adicional con IDs de descendientes SAF cambiantes y pérdida de respuesta: PASS, XML/log conservados. Prueba adicional de nombre editable directo en curso al crear este checkpoint; no sumar repeticiones. Selecciones no equivalen a suite histórica completa ni aceptación física. No se repitieron 117/76 indiscriminadamente; no auditoría institucional nueva.
+
+Versión fuente incrementada a 1.4.31/45, package original, firma y endpoints sin cambio; APK sucesora pendiente de compilación/verificación al escribir este checkpoint. No se instaló ni distribuyó nada ni se tocó OPPO/Xiaomi. Datos de la aceptación física 44 se conservan; la futura instalación 45 requiere aprobación nueva y respaldo vigente.
+
+Backend candidato V22 **sin cambios**: el guardado/renombrado local no debe reasignar bindings remotos ni cambiar sus rutas ACK. La propuesta de nomenclatura local no es una migración Drive. GBO_PUBLIC_NAMES_ENABLED continúa false en la propuesta privada; cualquier futura activación o nuevo formato remoto exige contrato compatible y autorización. No cambió V21, ROOT, ScriptProperties, deployment ni los 13 bindings. NO-GO productivo/distribución.
+
+Evidencia exclusivamente privada: `C:\Users\ASUS\GBO_CIERRE_BACKEND_PRIVADO_20261103T124125Z\operacion-institucional\aceptacion-44-correcciones`, logs y XML de cada pasada archivados sin sobrescribir; `integrada-carpetas-final-xml` acredita los 101 casos. Código publicable en PR11; verificar tip con git log -1 y git ls-remote antes de continuar.
+
+---
+
 ## Correcciones físicas OPPO — trabajo en curso 03/11/2026
 
 La aceptación 1.4.30 confirmó fotos, SIC/consolidación y captura/interfaz Pavimentos; fallaron destino/nombre de carpeta SCAP, historial provisional y presentación de medida manual. Corte institucional NO autorizado ni aplicado.

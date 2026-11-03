@@ -52,7 +52,7 @@ class SicProvisionalOpeningUiTest {
         }
         ui.waitUntil(5000){ui.onAllNodesWithText("Documento principal: consolidado SIC verificado en EXCEL_SIC.").fetchSemanticsNodes().isNotEmpty()}
         ui.onNodeWithText("Abrir provisional").assertDoesNotExist()
-        ui.onNodeWithText("Ver archivos anteriores").assertExists()
+        ui.onNodeWithText("Ver archivos anteriores").assertDoesNotExist() // Only a recovery provisional exists; private bytes are asserted below.
         shadowOf(c.packageManager).addResolveInfoForIntent(SharedFileActions.view(actual.uri,com.tuempresa.inventariovial.export.SicExcelWriter.XLSX_MIME),ResolveInfo().apply{
             activityInfo=ActivityInfo().apply{packageName="test.viewer";name="test.viewer.ExcelActivity";exported=true;enabled=true}
         })

@@ -12,7 +12,7 @@ data class LocalDocumentLocation(val base:String,val remotePath:String?,val remo
         .put("identityStatus",if(remotePath==null)"PROVISIONAL_UUID"else"SERVER_ACK")
         .put("publicFolderNamingVersion",5)
     companion object {
-        suspend fun resolve(db:InventoryDatabase,job:LocalExportJob,route:String,family:String,label:String):LocalDocumentLocation {
+        suspend fun resolve(db:InventoryDatabase,job:LocalExportJob,route:String,family:String,label:String,context:android.content.Context?=null):LocalDocumentLocation {
             val i=db.automaticSyncDao().get(job.recordKey)
             val ack=i?.takeIf{it.syncedRevision>0&&it.lastSyncedAt!=null}?.receiptJson?.let{runCatching{JSONObject(it)}.getOrNull()}
                 ?.takeIf{a->a.optBoolean("ok")&&a.optString("key")==job.recordKey&&a.optLong("revision")==job.revision&&
@@ -21,7 +21,7 @@ data class LocalDocumentLocation(val base:String,val remotePath:String?,val remo
             // This is a local display namespace, not a claim of a confirmed Drive identity.
             // Only DriveMirrorPlan uses ACK-accredited remote names and prepared bytes.
             val parent=DriveMirrorPlan.ROOT+("${route.ifBlank{"SIN_CARRETERA"}}/$family").split('/').joinToString("/"){LocalExportNames.safe(it)}+"/"
-            val folder=PublicLocalFolderNames.reserve(db,job.recordKey,parent,PublicLocalFolderNames.describe(db,job,label))
+            val folder=PublicLocalFolderNames.reserve(db,job.recordKey,parent,PublicLocalFolderNames.describe(db,job,label),context)
             return LocalDocumentLocation(parent+folder+"/",remote,ack?.optString("folderId"),ack?.optLong("revision"))
         }
     }

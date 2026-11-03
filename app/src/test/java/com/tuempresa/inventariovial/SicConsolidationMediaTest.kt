@@ -24,13 +24,13 @@ import java.io.File
 /** Actual AndroidSharedDocumentStore over a controlled Downloads provider; no physical tablet. */
 internal class SicDownloadsProvider:ContentProvider() {
     data class Entry(val id:Long,val values:ContentValues,val file:File)
-    val entries=linkedMapOf<Long,Entry>();var mutateFinalName=false
+    val entries=linkedMapOf<Long,Entry>();var mutateFinalName=false;var losePathMoveResponse=false
     override fun onCreate()=true
     override fun getType(uri:Uri)=SicExcelWriter.XLSX_MIME
     override fun query(uri:Uri,projection:Array<out String>?,selection:String?,selectionArgs:Array<out String>?,sortOrder:String?):Cursor {
         val cols=projection ?: arrayOf("_id","_display_name","relative_path","is_pending","owner_package_name")
         val id=uri.lastPathSegment?.toLongOrNull()
-        val matches=entries.values.filter{(id==null||it.id==id)&&(selectionArgs==null || it.values.getAsString(MediaStore.MediaColumns.RELATIVE_PATH)==selectionArgs[0]&&it.values.getAsString(MediaStore.MediaColumns.DISPLAY_NAME)==selectionArgs[1])}
+        val matches=entries.values.filter{(id==null||it.id==id)&&(selectionArgs==null || if(selection?.startsWith("substr(")==true)it.values.getAsString(MediaStore.MediaColumns.RELATIVE_PATH).startsWith(selectionArgs[1])else it.values.getAsString(MediaStore.MediaColumns.RELATIVE_PATH)==selectionArgs[0]&&it.values.getAsString(MediaStore.MediaColumns.DISPLAY_NAME)==selectionArgs[1])}
         return MatrixCursor(cols).apply{matches.forEach{row->addRow(cols.map{if(it=="_id")row.id else row.values.get(it)})}}
     }
     override fun insert(uri:Uri,values:ContentValues?):Uri {
@@ -42,6 +42,7 @@ internal class SicDownloadsProvider:ContentProvider() {
     override fun update(uri:Uri,values:ContentValues?,selection:String?,selectionArgs:Array<out String>?):Int {
         val row=entries[ContentUris.parseId(uri)] ?: return 0
         row.values.putAll(values)
+        if(losePathMoveResponse&&values?.containsKey(MediaStore.MediaColumns.RELATIVE_PATH)==true){losePathMoveResponse=false;throw IllegalStateException("FICTICIO_LOST_PATH_MOVE_RESPONSE")}
         if(mutateFinalName && values?.getAsString(MediaStore.MediaColumns.DISPLAY_NAME)?.let{it.startsWith("SIC-")}==true)
             row.values.put(MediaStore.MediaColumns.DISPLAY_NAME,"FICTICIO_NOMBRE_CAMBIADO.xlsx")
         return 1

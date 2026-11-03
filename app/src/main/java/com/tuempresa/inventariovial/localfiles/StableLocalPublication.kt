@@ -19,6 +19,7 @@ import java.io.File
  */
 object StableLocalPublication {
     private val mutex=Mutex()
+    suspend fun <T> folderOperation(block:suspend ()->T):T=mutex.withLock{block()}
     private fun read(file:File):JSONObject? = if(file.exists()||File(file.path+".bak").exists())
         JSONObject(AtomicFile(file).openRead().use{it.readBytes().toString(Charsets.UTF_8)}) else null
     private fun atomic(file:File,write:(java.io.OutputStream)->Unit) {
@@ -113,7 +114,8 @@ object StableLocalPublication {
         db.localFilesDao().saveFile(target.copy(uri=final.uri.toString(),state="READY"))
         j.put("phase","DONE");save(journalFile,j)
     }
-    suspend fun publish(c:Context,db:InventoryDatabase,job:LocalExportJob,input:LocalSharedFile,storage:SharedDocumentStore,namespace:String=""):LocalSharedFile=mutex.withLock {
+    suspend fun publish(c:Context,db:InventoryDatabase,job:LocalExportJob,originalInput:LocalSharedFile,storage:SharedDocumentStore,namespace:String=""):LocalSharedFile=mutex.withLock {
+        val input=if(job.scope==DriveMirrorPlan.SCOPE)originalInput else ScapFolderRename.current(db,originalInput)
         require(input.recordKey==job.recordKey && input.jobId==job.id)
         // A completed document replaces its provisional/draft presentation in the SAME slot.
         // Its previous label and bytes remain in history instead of appearing as another current file.

@@ -147,7 +147,11 @@ class AndroidSharedDocumentStore(private val context:Context,private val authori
             while(c.moveToNext())rows+=DocumentsContract.buildDocumentUriUsingTree(parent,c.getString(0)) to (c.getString(1) to c.getString(2))
         };return rows
     }
-    private fun treeParent(file:LocalSharedFile):Uri {
+    fun directory(path:String,create:Boolean=true):Uri {
+        val file=LocalSharedFile("DIRECTORY","DIRECTORY","DIRECTORY",path,"unused","text/plain",0,"","")
+        return treeParent(file,create)
+    }
+    private fun treeParent(file:LocalSharedFile,create:Boolean=true):Uri {
         val tree=authorizedTree ?: prefs.getString("legacyTree",null)?.let(Uri::parse) ?: error("Android 8/9: elige una carpeta local en Herramientas → Copias locales. La ficha sigue dentro de GBO.")
         require(tree.scheme=="content" && (authorizedTree!=null||tree.authority=="com.android.externalstorage.documents")){"Elige almacenamiento de la tablet, no un proveedor en Internet."}
         require(resolver.persistedUriPermissions.any {it.uri==tree&&it.isReadPermission&&it.isWritePermission}){"Vuelve a autorizar la carpeta local en Herramientas."}
@@ -156,7 +160,7 @@ class AndroidSharedDocumentStore(private val context:Context,private val authori
         for(name in file.relativePath.removePrefix(Environment.DIRECTORY_DOWNLOADS+"/").split('/').filter{it.isNotBlank()}) {
             val found=children(parent).filter{it.second.first==name};require(found.size<=1){"Carpeta duplicada en el destino."}
             parent=found.singleOrNull()?.also {require(it.second.second==DocumentsContract.Document.MIME_TYPE_DIR)}?.first
-                ?: requireNotNull(DocumentsContract.createDocument(resolver,parent,DocumentsContract.Document.MIME_TYPE_DIR,name))
+                ?: if(create)requireNotNull(DocumentsContract.createDocument(resolver,parent,DocumentsContract.Document.MIME_TYPE_DIR,name)) else error("La carpeta autorizada ya no existe; no se recreó para renombrarla.")
         }
         return parent
     }

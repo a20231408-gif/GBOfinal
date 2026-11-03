@@ -159,7 +159,8 @@ object LocalCopyDrain {
                 LocalExportBuilder.space(c,plan.files.sumOf{it.size})
                 var done=0;val failures=(plan.problems+consolidationIssues).toMutableList()
                 val priorFiles=dao.files(job.id).associateBy{it.id}
-                for(source in plan.files){
+                for(originalSource in plan.files){
+                    val source=if(job.scope==DriveMirrorPlan.SCOPE)originalSource else ScapFolderRename.current(db,originalSource)
                     try {
                         require(fileDigest(File(source.source))==(source.size to source.sha256)){"El archivo privado cambió. No se sobrescribió la revisión exportada."}
                         if(job.scope.startsWith("FULL")&&job.scope!=DriveMirrorPlan.SCOPE&&

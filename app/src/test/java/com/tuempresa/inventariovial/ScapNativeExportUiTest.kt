@@ -67,5 +67,26 @@ class ScapNativeExportUiTest {
             assertFalse(db.localFilesDao().jobs().any{it.scope=="SAF_TREE"});assertTrue(db.automaticSyncDao().all().isEmpty())
             assertEquals(before,repo.dao.snapshot(id));scope.cancel()
         }
+    }    @Test fun saveAsProposesCurrentBridgeFolderRatherThanPreviousBridge()=runBlocking {
+        val c=ui.activity
+        val provider=SicDocumentsProvider().apply{attachInfo(c,android.content.pm.ProviderInfo().apply{authority="com.android.externalstorage.documents";exported=true;grantUriPermissions=true;readPermission="android.permission.MANAGE_DOCUMENTS";writePermission="android.permission.MANAGE_DOCUMENTS"})}
+        org.robolectric.shadows.ShadowContentResolver.registerProviderInternal("com.android.externalstorage.documents",provider)
+        val tree=android.provider.DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents","root")
+        SicConsolidationFixtures.db(c).use{db->val repo=SicConsolidationFixtures.repo(c,db)
+            val previous=SicConsolidationFixtures.bridge(repo,"PRUEBA 2");val id=SicConsolidationFixtures.bridge(repo,"PRUEBA 3")
+            com.tuempresa.inventariovial.scap.export.ScapFolderExport.save(c,db,repo.dao.snapshot(previous)!!,tree)
+            com.tuempresa.inventariovial.scap.export.ScapFolderExport.save(c,db,repo.dao.snapshot(id)!!,tree)
+            val expected=com.tuempresa.inventariovial.scap.export.ScapFolderExport.folderUri(c,db,id)
+            val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val controller=ScapController(c,db,scope)
+            val snapshot=repo.dao.snapshot(id)!!
+            ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(snapshot,true,controller)}}}
+            ui.onNodeWithTag("scap-save-excel").performScrollTo().performClick()
+            ui.waitUntil(20000){shadowOf(c).peekNextStartedActivityForResult()!=null}
+            val request=shadowOf(c).nextStartedActivityForResult
+            assertEquals(expected,request.intent.getParcelableExtra<android.net.Uri>(android.provider.DocumentsContract.EXTRA_INITIAL_URI))
+            assertNotEquals(com.tuempresa.inventariovial.scap.export.ScapFolderExport.folderUri(c,db,previous),expected)
+            ui.runOnIdle{c.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)};scope.cancel()
+        }
     }
+
 }

@@ -24,7 +24,7 @@ import java.io.File
 
 internal class SicDocumentsProvider:DocumentsProvider() {
     data class Doc(val id:String,var name:String,val mime:String,val parent:String?,val file:File)
-    val docs=linkedMapOf<String,Doc>();private var sequence=0;var stopAfterBackup=false;var stopAfterPromotion=false
+    val docs=linkedMapOf<String,Doc>();private var sequence=0;var stopAfterBackup=false;var stopAfterPromotion=false;var stopAfterFolderRename=false;var changeFolderDescendantIds=false
     override fun onCreate():Boolean{docs["root"]=Doc("root","Descargas",DocumentsContract.Document.MIME_TYPE_DIR,null,File(context!!.filesDir,"FICTICIO_TREE"));return true}
     private fun cursor(rows:List<Doc>,projection:Array<out String>?):Cursor {
         val columns=projection ?: arrayOf("document_id","_display_name","mime_type","flags")
@@ -44,6 +44,14 @@ internal class SicDocumentsProvider:DocumentsProvider() {
     override fun renameDocument(documentId:String,displayName:String):String {
         val doc=docs.remove(documentId)!!;val id="doc_${++sequence}"
         docs[id]=doc.copy(id=id,name=displayName)
+        fun relocateChildren(oldParent:String,newParent:String) {
+            for(child in docs.values.filter{it.parent==oldParent}.toList()) {
+                if(changeFolderDescendantIds){docs.remove(child.id);val newId="doc_${++sequence}";docs[newId]=child.copy(id=newId,parent=newParent);relocateChildren(child.id,newId)}
+                else docs[child.id]=child.copy(parent=newParent)
+            }
+        }
+        relocateChildren(documentId,id)
+        if(stopAfterFolderRename&&doc.mime==DocumentsContract.Document.MIME_TYPE_DIR){stopAfterFolderRename=false;throw CancellationException("FICTICIO_LOST_FOLDER_RENAME")}
         if(stopAfterBackup&&(displayName.contains(".anterior-")||displayName.startsWith(".Historial - "))){stopAfterBackup=false;throw CancellationException("FICTICIO_SAF_LOST_BACKUP_URI")}
         if(stopAfterPromotion&&displayName.startsWith("SIC-")){stopAfterPromotion=false;throw CancellationException("FICTICIO_SAF_LOST_FINAL_URI")}
         return id
