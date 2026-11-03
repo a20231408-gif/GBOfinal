@@ -52,6 +52,13 @@ class PublicLocalNamesTest {
             return SharedDocumentStore.Slot(Uri.parse(uri),data.containsKey(uri))
         }
         override fun checkSlot(slot:SharedDocumentStore.Slot,file:LocalSharedFile){require(paths[slot.uri.toString()]==file.relativePath+file.name)}
+        override fun renameOwned(slot:SharedDocumentStore.Slot,from:LocalSharedFile,to:LocalSharedFile):SharedDocumentStore.Slot {
+            val uri="content://ficticio/"+Uri.encode(to.relativePath+to.name)
+            require(uri==slot.uri.toString() || !data.containsKey(uri))
+            require(digest(slot.uri)==(from.size to from.sha256))
+            data[uri]=data.remove(slot.uri.toString())!!;paths.remove(slot.uri.toString());paths[uri]=to.relativePath+to.name
+            return SharedDocumentStore.Slot(Uri.parse(uri),true)
+        }
         override fun write(uri:Uri,source:File){data[uri.toString()]=source.readBytes();writes++}
         override fun digest(uri:Uri)=data.getValue(uri.toString()).let{it.size.toLong() to com.tuempresa.inventariovial.delivery.sha256(it)}
         override fun publish(slot:SharedDocumentStore.Slot,file:LocalSharedFile):Uri{if(stop){stop=false;throw CancellationException("FICTICIO_STOP")};return slot.uri}
@@ -100,7 +107,7 @@ class PublicLocalNamesTest {
         val next=job(d,id);val plan=LocalExportBuilder.build(c,d,next);assertEquals(base(old),base(plan));assertEquals("Santa Rosa",d.scapDao().inspection(id)!!.bridgeName);assertFalse(base(plan).contains(id))
         assertFalse(base(plan).contains("/PUENTE 49/"));assertEquals(remote,d.automaticSyncDao().get(j.recordKey))
         d.localFilesDao().saveJob(next.copy(manifestJson=plan.json()));LocalCopyDrain.run(c,d,store)
-        for((k,v)in previous)assertArrayEquals(v,store.data.getValue(k))
+        for(v in previous.values)assertTrue("An earlier version must remain recoverable",store.data.values.any{it.contentEquals(v)})
         assertEquals(oldPlan,d.localFilesDao().job(j.id)!!.manifestJson)
         assertTrue(JSONObject(File(plan.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText()).getJSONObject("location").isNull("remoteLogicalPath")) // A stale/incomplete receipt cannot accredit the current revision.
     }}
@@ -146,8 +153,8 @@ class PublicLocalNamesTest {
         for(scope in listOf("FULL","PHOTOS","ZIP")) {
             val j=job(d,id,scope);val f=LocalSharedFile("FICTICIO_"+scope,j.id,j.recordKey,path,"anterior.txt","text/plain",digest.first,digest.second,raw.path,"content://anterior/$scope","READY")
             val plan=LocalPlan(listOf(f),emptyList()).json();d.localFilesDao().saveJob(j.copy(state="READY",manifestJson=plan));d.localFilesDao().saveFile(f)
-            val next=job(d,id,scope);assertEquals(scope+"_LAYOUT_V4",next.scope);assertNotEquals(j.id,next.id);assertEquals(plan,d.localFilesDao().job(j.id)!!.manifestJson);assertEquals(f,d.localFilesDao().files(j.id).single())
-            val built=LocalExportBuilder.build(c,d,next);assertEquals(4,built.publicNamingVersion)
+            val next=job(d,id,scope);assertEquals(scope+"_LAYOUT_V5",next.scope);assertNotEquals(j.id,next.id);assertEquals(plan,d.localFilesDao().job(j.id)!!.manifestJson);assertEquals(f,d.localFilesDao().files(j.id).single())
+            val built=LocalExportBuilder.build(c,d,next);assertEquals(5,built.publicNamingVersion)
             val expected=when(scope){"FULL"->"Documentos y medios";"PHOTOS"->"Fotografías";else->"Paquete ZIP"}
             assertTrue(LocalCopyPresentation.context(next,next.revision,true).contains(expected))
             assertTrue(built.files.all{it.relativePath.startsWith(DriveMirrorPlan.ROOT)});assertEquals(next.id,job(d,id,scope).id)

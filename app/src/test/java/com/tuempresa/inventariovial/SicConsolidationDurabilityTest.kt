@@ -55,17 +55,17 @@ class SicConsolidationDurabilityTest {
     @Test fun pavementSic15UsesDamageIdentityAndDoesNotMixSurfaceOrChangeCalculations()=runBlocking {
         SicConsolidationFixtures.db(c).use{db->
             val st=SicTestStorage()
-            for(n in 1..2) {
+            for(n in listOf(2,1)) {
                 val id="FICTICIO_SAMPLE_$n"
-                var sample=PavementSampleEntity(id,"TRAMO","PE-28H",n,"Derecho","CD","00+000","00+020",10.0,20.0,"RIGID","26/10/2026","TEST","FICTICIO",updatedAt=100+n.toLong())
-                val damage=PavementDamageEntity("FICTICIO_DAMAGE_$n",id,1,"RIGID",22,"FICTICIO","M","AREA",0.0,0.0,1.0,1.0,null,1.0,2.0,2.0,1.0,null,"FICTICIO")
+                var sample=PavementSampleEntity(id,"TRAMO","PE-28H",n,"Derecho","CD","00+000","00+020",10.0,20.0,"RIGID","2026-10-26","TEST","FICTICIO",updatedAt=100+n.toLong())
+                val damage=PavementDamageEntity("FICTICIO_DAMAGE_$n",id,1,"RIGID",22,"FICTICIO","M","AREA",0.0,0.0,1.0,1.0,null,1.0,2.0,2.0,1.0,null,"FICTICIO",createdAt=n.toLong())
                 sample=sample.copy(sicDataJson=PavementSic.update(sample,PavementSicFormat.SIC15,damage.id,mapOf("faja" to "1","prInicio" to if(n==1)"0012"else"0000","distanciaInicio" to "10","prFin" to "0012","distanciaFin" to "20","longitud" to "2","ancho" to "1","gravedad" to "2")))
                 db.pavementDao().saveSample(sample);db.pavementDao().saveDamage(damage)
             }
             val before=db.pavementDao().localSamplesForSic()
             val a=LocalSicConsolidates.update(c,db,"PE-28H","SIC-15",st)
             assertEquals(2,a.rows);val book=TemplateWorkbook(a.file.inputStream())
-            assertEquals(listOf("0000","0012"),book.sheet(1).nodes("row").filter{it.getAttribute("r").toInt()>=3}.map{it.children()[3].textContent})
+            assertEquals(listOf("0012","0000"),book.sheet(1).nodes("row").filter{it.getAttribute("r").toInt()>=3}.map{it.children()[3].textContent})
             assertEquals(before,db.pavementDao().localSamplesForSic())
             assertTrue(runCatching{LocalSicConsolidates.update(c,db,"PE-28H","SIC-14",st)}.isFailure)
             assertTrue(st.entries.values.none{it.name=="SIC-14.xlsx"})
@@ -85,7 +85,9 @@ class SicConsolidationDurabilityTest {
             val st=SicTestStorage();kotlinx.coroutines.delay(AutomaticLocalDocuments.QUIET_MS+50)
             LocalCopyDrain.run(c,db,st,limit=30,prepare=prepare)
             for(format in listOf("SIC-17","SIC-17A","SIC-17B"))assertEquals(1,SicRouteWorkbook.inspect(st.canonical(format).bytes,format))
-            assertEquals(db.localFilesDao().job(job.id)!!.message,"READY",db.localFilesDao().job(job.id)!!.state);assertTrue(db.automaticSyncDao().all().isEmpty())
+            val result=db.localFilesDao().job(job.id)!!
+            assertEquals(result.message,"PARTIAL",result.state);assertEquals(result.total,result.completed)
+            assertTrue(result.message!!.contains("PROVISIONAL"));assertTrue(db.automaticSyncDao().all().isEmpty())
             val previousUri=st.canonical("SIC-17A").uri
             SicConsolidationFixtures.bridge(r,"SEGUNDO_AUTOMATICO","11+000")
             r.setSicField(id,"SIC-17A","bridgeName","AUTOMATICO_EDITADO")

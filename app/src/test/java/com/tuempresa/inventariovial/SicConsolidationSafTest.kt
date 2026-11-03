@@ -44,7 +44,7 @@ internal class SicDocumentsProvider:DocumentsProvider() {
     override fun renameDocument(documentId:String,displayName:String):String {
         val doc=docs.remove(documentId)!!;val id="doc_${++sequence}"
         docs[id]=doc.copy(id=id,name=displayName)
-        if(stopAfterBackup&&displayName.contains(".anterior-")){stopAfterBackup=false;throw CancellationException("FICTICIO_SAF_LOST_BACKUP_URI")}
+        if(stopAfterBackup&&(displayName.contains(".anterior-")||displayName.startsWith(".Historial - "))){stopAfterBackup=false;throw CancellationException("FICTICIO_SAF_LOST_BACKUP_URI")}
         if(stopAfterPromotion&&displayName.startsWith("SIC-")){stopAfterPromotion=false;throw CancellationException("FICTICIO_SAF_LOST_FINAL_URI")}
         return id
     }
@@ -94,6 +94,35 @@ class SicConsolidationSafTest {
             val repo=SicConsolidationFixtures.repo(c,db);SicConsolidationFixtures.bridge(repo,"PENDIENTE")
             assertTrue(runCatching{LocalSicConsolidates.update(c,db,"PE-28H","SIC-17A")}.isFailure)
             assertTrue(provider.docs.values.none{it.name=="SIC-17A.xlsx"});assertEquals(1,repo.dao.allSnapshots().size)
+        }
+    }
+    @Test fun stableElementDocumentsRecoverChangedSafIdsAndKeepHistoryOpenable()=runBlocking {
+        val storage=com.tuempresa.inventariovial.localfiles.AndroidSharedDocumentStore(c)
+        SicConsolidationFixtures.db(c).use{db->
+            val key="SIC/TEST_STABLE_SAF"
+            suspend fun publish(rev:Long):com.tuempresa.inventariovial.localfiles.LocalSharedFile {
+                val job=com.tuempresa.inventariovial.localfiles.LocalExportJob("SAF_$rev",key,"SIC","TEST_STABLE_SAF",rev,createdAt=rev)
+                db.localFilesDao().saveJob(job)
+                val f=File(c.filesDir,"stable-saf-$rev.xlsx").apply{writeText("FICTICIO $rev")}
+                val h=com.tuempresa.inventariovial.localfiles.fileDigest(f)
+                val file=com.tuempresa.inventariovial.localfiles.LocalSharedFile(job.id,job.id,key,
+                    "Download/GBO Inventario Vial/PE-22A/ALCANTARILLAS/TEST_STABLE_SAF/","SIC-18.xlsx",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",h.first,h.second,f.path)
+                return com.tuempresa.inventariovial.localfiles.StableLocalPublication.publish(c,db,job,file,storage)
+                    .also{db.localFilesDao().saveFile(it)}
+            }
+            val first=publish(1)
+            for(rev in 2L..3L) {
+                provider.stopAfterBackup=rev==2L;provider.stopAfterPromotion=rev==3L
+                assertTrue(runCatching{publish(rev)}.isFailure)
+                val next=publish(rev)
+                assertEquals(next.size to next.sha256,storage.digest(Uri.parse(next.uri)))
+                assertEquals(1,provider.docs.values.count{it.name=="SIC-18.xlsx"})
+            }
+            val history=db.localFilesDao().files("SAF_1").single()
+            assertNotEquals(first.uri,history.uri);assertTrue(history.name.startsWith(".Historial - "))
+            assertEquals(history.size to history.sha256,storage.digest(Uri.parse(history.uri)))
+            assertTrue(File(history.source).isFile);assertTrue(db.automaticSyncDao().all().isEmpty())
         }
     }
 }

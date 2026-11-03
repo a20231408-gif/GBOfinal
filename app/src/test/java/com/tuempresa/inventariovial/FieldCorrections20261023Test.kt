@@ -70,9 +70,9 @@ class FieldCorrections20261023Test {
         val j=LocalExportJob("LOCAL","SIC/FICTICIO_UUID","SIC","FICTICIO_UUID",1)
         d.inventoryDao().insertRecord(testRecord("FICTICIO_UUID",sic="SIC-18",route="PE-28H"))
         val a=LocalDocumentLocation.resolve(d,j,"PE-28H","ALCANTARILLAS","ALCANTARILLA")
-        assertTrue(a.base.startsWith(DriveMirrorPlan.ROOT+"_PROVISIONALES/PE-28H/ALCANTARILLAS/"));assertFalse(a.base.contains("FICTICIO_UUID"))
+        assertTrue(a.base.startsWith(DriveMirrorPlan.ROOT+"PE-28H/ALCANTARILLAS/"));assertFalse(a.base.contains("FICTICIO_UUID"))
         assertNull(a.remotePath);assertEquals(a,LocalDocumentLocation.resolve(d,j,"PE-28H","ALCANTARILLAS","OTRO NOMBRE"))
-        assertEquals(4,a.json().getInt("publicFolderNamingVersion"))
+        assertEquals(5,a.json().getInt("publicFolderNamingVersion"))
         assertTrue(d.automaticSyncDao().all().isEmpty())
     }}
     @Test fun videoPublicNameRequiresItsOwnConfirmedIdentityNotOnlyParentAck() {
@@ -101,7 +101,8 @@ class FieldCorrections20261023Test {
         photo.outputStream().use{image.compress(Bitmap.CompressFormat.JPEG,95,it)};image.recycle()
         val doc=File(dir,"SCAP.xlsx").apply{writeText("FICTICIO_STAGE_ONLY")}
         fun entry(key:String,f:File,mime:String)=JSONObject().put("key",key).put("path",f.name).put("localFile",f.path).put("mimeType",mime).put("sha256",sha256(f.readBytes()))
-        val p=JSONObject().put("key","SCAP/FICTICIO_HTTP").put("revision",1).put("contentHash","f".repeat(64))
+        val p=JSONObject().put("key","SCAP/FICTICIO_HTTP").put("kind","SCAP").put("recordId","FICTICIO_HTTP")
+            .put("baseRevision",0).put("revision",1).put("contentHash","f".repeat(64))
             .put("files",JSONArray().put(entry("photo/f",photo,"image/jpeg")).put(entry("scap",doc,SicExcelWriter.XLSX_MIME)))
         val before=p.toString();val staged=mutableListOf<String>();var commits=0
         val client=OkHttpClient.Builder().addInterceptor{chain->

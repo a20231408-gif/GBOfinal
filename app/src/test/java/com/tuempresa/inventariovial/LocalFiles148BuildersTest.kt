@@ -49,7 +49,7 @@ class LocalFiles148BuildersTest {
         val before=d.pavementDao().sample(s.id);val job=LocalExportJob("PAV_BUILD","PAVEMENT/${s.id}","PAVEMENT",s.id,123);val plan=LocalExportBuilder.build(c,d,job)
         assertTrue(plan.files.any{it.name=="Inspeccion.pdf"});assertTrue(plan.files.any{it.name=="Datos.xlsx"});val json=JSONObject(File(plan.files.single{it.name=="Muestra.json"}.source).readText());assertTrue(json.getJSONObject("sample").getJSONObject("sicData").has("_gboJointAnnotations"))
         assertTrue(plan.files.any{it.sha256==fileDigest(f).second});assertEquals(before,d.pavementDao().sample(s.id));assertTrue(d.automaticSyncDao().all().isEmpty())
-        val zip=LocalExportBuilder.build(c,d,job.copy(id="PAV_ZIP",scope="ZIP"));ZipFile(zip.files.single().source).use{z->val names=z.entries().asSequence().map{it.name}.toSet();for(name in listOf("Inspeccion.pdf","Datos.xlsx","MANIFIESTO_LOCAL.json"))assertTrue(names.toString(),names.any{it.endsWith("/$name")})}
+        val zip=LocalExportBuilder.build(c,d,job.copy(id="PAV_ZIP",scope="ZIP"));ZipFile(zip.files.single().source).use{z->val names=z.entries().asSequence().map{it.name}.toSet();for(name in listOf("Inspeccion.pdf","Datos.xlsx","MANIFIESTO_LOCAL.json"))assertTrue(names.toString(),names.contains(name))}
     }}
     @Test fun scapDocuments()=runBlocking{db().use{d->
         // Reuse an existing comprehensive synthetic fixture; no new contractual template invented.

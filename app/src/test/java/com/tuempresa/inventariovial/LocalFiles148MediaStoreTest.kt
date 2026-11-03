@@ -68,6 +68,27 @@ class LocalFiles148MediaStoreTest {
         assertTrue(runCatching{storage.reserve(entry)}.isFailure);assertTrue(runCatching{storage.reserve(entry,slot.uri)}.isFailure)
         assertEquals(1,provider.rows.size)
     }
+    @Test fun stablePublicationUsesRealMediaStoreOwnershipAndPreservesPreviousUri()=kotlinx.coroutines.runBlocking {
+        val provider=Provider(c);provider.attachInfo(c,android.content.pm.ProviderInfo().apply{authority="media";exported=false});ShadowContentResolver.registerProviderInternal("media",provider)
+        androidx.room.Room.inMemoryDatabaseBuilder(c,com.tuempresa.inventariovial.data.database.InventoryDatabase::class.java).build().use{db->
+            val storage=AndroidSharedDocumentStore(c);val key="SIC/TEST_STABLE_MEDIA";val parent="Download/GBO Inventario Vial/PE-22A/ALCANTARILLAS/TEST_STABLE_MEDIA/"
+            fun entry(rev:Long):Pair<LocalExportJob,LocalSharedFile>{
+                val job=LocalExportJob("MEDIA_$rev",key,"SIC","TEST_STABLE_MEDIA",rev,createdAt=rev)
+                val source=File(c.filesDir,"media-stable-$rev.xlsx").apply{writeText("FICTICIO $rev")};val hash=fileDigest(source)
+                return job to LocalSharedFile(job.id,job.id,key,parent,"SIC-18.xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",hash.first,hash.second,source.path)
+            }
+            val (j1,f1)=entry(1);db.localFilesDao().saveJob(j1)
+            val first=StableLocalPublication.publish(c,db,j1,f1,storage);db.localFilesDao().saveFile(first)
+            val (j2,f2)=entry(2);db.localFilesDao().saveJob(j2)
+            val next=StableLocalPublication.publish(c,db,j2,f2,storage)
+            assertEquals(f2.size to f2.sha256,storage.digest(Uri.parse(next.uri)))
+            val old=db.localFilesDao().files(j1.id).single();assertTrue(old.name.startsWith(".Historial - "))
+            assertEquals(first.uri,old.uri);assertEquals(f1.size to f1.sha256,storage.digest(Uri.parse(old.uri)))
+            assertEquals(1,provider.rows.values.count{it.getAsString(MediaStore.MediaColumns.DISPLAY_NAME)=="SIC-18.xlsx"})
+            assertTrue(provider.rows.values.all{it.getAsString(MediaStore.MediaColumns.RELATIVE_PATH)==parent})
+            assertEquals(2,provider.rows.size)
+        }
+    }
     @Test @Config(sdk=[28]) fun legacyRequiresLocalFolder(){
         c.getSharedPreferences("gbo_local_copies",0).edit().clear().commit()
         val entry=LocalSharedFile("TEST","JOB","SIC/TEST","Download/GBO_Ruta_Clara/","test.pdf","application/pdf",1,"a".repeat(64),"TEST_SOURCE")

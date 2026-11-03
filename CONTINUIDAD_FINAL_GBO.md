@@ -1,5 +1,20 @@
 # GBO — Continuidad final 1.4.26 (40)
 
+Último ajuste de fuente, 03/11/2026: rama local `codex/consolidados-sic-principales-20261102`.
+EXCEL_SIC es la publicación principal de SIC ordinarios verificados; filas/revisiones individuales
+privadas y excepciones conservadas. 65 pruebas únicas PASS. Ver actualización en
+`docs/CORRECCION_DOCUMENTOS_1_4_27.md`. El propietario confirmó cinco pruebas físicas PASS de la
+APK 1.4.27 previa; esa APK no contiene este último ajuste. Sin nueva APK, push o cambios V21.
+
+## Actualización posterior: corrección documental 1.4.27 (41), solo local
+
+Ver `docs/CORRECCION_DOCUMENTOS_1_4_27.md`: nueva rama local
+`codex/documentos-publicos-estables-20261102`, fuente funcional `72a100b7ceda38b4001f7a615c81ffcdbe188d98`.
+138 casos únicos PASS; APK privada con firma histórica, aún no instalada/publicada. Documentos nuevos
+en carpeta estable por carretera/familia/elemento/PR, historial recuperable, sin mover históricos.
+La candidata 1.4.26 y PR #8 de las secciones siguientes quedan preservados. V21/ROOT/ACK intactos.
+Esta corrección NO está subida a GitHub por instrucción de no publicar. NO-GO online/general vigente.
+
 Fecha: 02/11/2026, America/Lima. Este documento prevalece sobre estados históricos que dicen
 «no instalada», «tablet 1.4.25» o «pruebas físicas no ejecutadas».
 
