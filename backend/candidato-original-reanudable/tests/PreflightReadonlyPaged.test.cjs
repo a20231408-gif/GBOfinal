@@ -51,3 +51,15 @@ test('destination ownership, ancestry and account mismatches never receive an im
  assert.equal(result.chainMatches,false);assert.equal(result.institutionalOwners,false);assert.equal(result.canWrite,false);
  f.c.Drive.About.get=()=>({user:{emailAddress:'OTHER_ACCOUNT'}});assert.throws(()=>f.c.gboPilotDestinationReadonlyWithConfig_({destinationId:'DEST',ancestorIds:['PARENT']}),/PREFLIGHT_WRONG_EXECUTOR/);
 });
+
+test('sixteen partitions must cover exactly the hexadecimal buckets',()=>{
+ const f=fixture(),parts=[...Array(16)].map((_,i)=>partition(f,i.toString(16)));
+ parts[0].end.bucket='q';assert.throws(()=>reconcilePartitions(parts),/INCOMPLETE_PARTITIONS/);
+});
+test('matching signatures cannot combine different roots or executors',()=>{
+ const f=fixture(),parts=[...Array(16)].map((_,i)=>partition(f,i.toString(16)));
+ const original=parts[0].end.rootId;parts[0].end.rootId='OTHER_ROOT';
+ assert.throws(()=>reconcilePartitions(parts),/CROSS_PARTITION_IDENTITY/);
+ parts[0].end.rootId=original;parts[0].end.executor='OTHER_EXECUTOR';
+ assert.throws(()=>reconcilePartitions(parts),/CROSS_PARTITION_IDENTITY/);
+});
