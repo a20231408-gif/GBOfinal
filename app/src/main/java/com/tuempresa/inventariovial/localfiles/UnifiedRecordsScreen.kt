@@ -263,10 +263,10 @@ object LocalInventoryIndex {
     }}
     fun open(share:Boolean){if(documents.size!=1){selector=true;return};openFile(documents.single(),share)}
     if(principals.isNotEmpty())Text("Documento principal: consolidado SIC verificado en EXCEL_SIC.",style=MaterialTheme.typography.bodySmall)
-    else if(documents.any(RecordDocuments::provisional))Text("Documento provisional: contiene datos pendientes y no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
+    else if(documents.any(RecordDocuments::provisional))Text("Borrador: contiene datos pendientes y no es una entrega final.",style=MaterialTheme.typography.bodySmall)
     if(item.kind=="SIC"&&principals.isEmpty()&&documents.any(RecordDocuments::provisional))Text("No hay un consolidado actual verificado para esta ficha; se conserva el provisional.",style=MaterialTheme.typography.bodySmall)
     Row(Modifier.horizontalScroll(rememberScrollState())){
-        TextButton(enabled=documents.isNotEmpty(),onClick={open(false)}){Text(if(documents.size==1&&RecordDocuments.provisional(documents.single()))"Abrir provisional"else"Abrir archivo")}
+        TextButton(enabled=documents.isNotEmpty(),onClick={open(false)}){Text(if(documents.size==1&&RecordDocuments.provisional(documents.single()))"Abrir borrador"else"Abrir archivo")}
         TextButton(onClick={message="Ubicación local: ${documents.firstOrNull()?.relativePath ?: "Sin copia pública disponible"}. Abrir archivo accede al documento exacto. Android no garantiza abrir su carpeta."}){Text("Mostrar ubicación")}
         TextButton(enabled=documents.isNotEmpty(),onClick={val path=documents.first().relativePath;(c.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("Ubicación local GBO",path));message="Ubicación copiada. Es una ruta descriptiva, no un permiso de acceso."}){Text("Copiar ubicación")}
         TextButton(enabled=documents.isNotEmpty(),onClick={open(true)}){Text("Compartir")}
@@ -277,8 +277,8 @@ object LocalInventoryIndex {
     if(selector)AlertDialog(onDismissRequest={selector=false},title={Text("Documentos disponibles")},text={
         LazyColumn{items(documents,key={it.id}){file->
             Text(file.name)
-            Text(if(file.id.startsWith("SIC_PRIMARY/"))"Consolidado verificado"else if(RecordDocuments.provisional(file))"PROVISIONAL · datos pendientes"else"Revisión guardada ${revisions[file.jobId]?.revision ?: "?"}")
-            Row{TextButton(onClick={openFile(file,false)}){Text(if(RecordDocuments.provisional(file))"Abrir provisional"else"Abrir documento")}
+            Text(if(file.id.startsWith("SIC_PRIMARY/"))"Consolidado verificado"else if(RecordDocuments.provisional(file))"BORRADOR · datos pendientes"else"Revisión guardada ${revisions[file.jobId]?.revision ?: "?"}")
+            Row{TextButton(onClick={openFile(file,false)}){Text(if(RecordDocuments.provisional(file))"Abrir borrador"else"Abrir documento")}
                 TextButton(onClick={openFile(file,true)}){Text("Compartir documento")}}
         }}
     },confirmButton={TextButton(onClick={selector=false}){Text("Cerrar")}})

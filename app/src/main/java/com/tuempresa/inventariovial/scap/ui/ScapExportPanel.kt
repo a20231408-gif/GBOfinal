@@ -84,7 +84,8 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                 val saved=controller.savedSnapshot(s.inspection.id)
                 val files=ScapFolderExport.save(context,controller.localDatabase,saved,tree, directName ?: ScapDocumentNames.excel(saved))
                 savedDocumentUri=files.firstOrNull{it.name==(directName ?: ScapDocumentNames.excel(saved))}?.uri
-                message="CARPETA GUARDADA · ${files.size} archivos verificados. No confirma Drive."
+                val primary=files.first{it.name==(directName ?: ScapDocumentNames.excel(saved))}
+                message="ARCHIVO GUARDADO · "+primary.let{it.relativePath.removePrefix(DriveMirrorPlan.ROOT)+it.name+if(RecordDocuments.provisional(it))" · BORRADOR: ficha pendiente de completar."else""}
             }catch(e:CancellationException){throw e}catch(e:Exception){message="Carpeta no completada: "+LocalCopyDrain.publicError(e)}
             finally{busy=false}
         }
@@ -111,36 +112,26 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
                     }
                 }
                 pendingDocument=prepared.copy(kind="SCAP",ownerKey="SCAP/${saved.inspection.id}",revision=saved.inspection.updatedAt).json();message=prepared.notice;picking=true
-                initialFolder=if(format=="SCAP"&&ScapFolderExport.remembered(controller.localDatabase,saved.inspection.id)!=null)ScapFolderExport.folderUri(context,controller.localDatabase,saved.inspection.id) else null
+                initialFolder=if(format=="SCAP"&&ScapFolderExport.authorized(context,controller.localDatabase,saved.inspection.id)!=null)ScapFolderExport.folderUri(context,controller.localDatabase,saved.inspection.id) else null
                 saveExcel.launch(prepared.name)
             }catch(e:CancellationException){throw e}catch(e:Exception){picking=false;message="No se pudo preparar $format: "+LocalCopyDrain.publicError(e)}
             finally{busy=false}
         }
     }
-    if(directMode)AlertDialog(onDismissRequest={directMode=false},title={Text("Guardar en carpeta del puente")},text={
-        OutlinedTextField(directName.orEmpty(),{directName=it},label={Text("Nombre del Excel (.xlsx)")})
-    },confirmButton={TextButton(onClick={
-        directMode=false;scope.launch {busy=true
-            try {val saved=controller.savedSnapshot(s.inspection.id);val name=directName.orEmpty()
-                require(name.endsWith(".xlsx",true)&&name.none{it=='/'||it=='\\'||it.code<32}){"Escribe un nombre XLSX válido."}
-                ScapDocumentNames.folder(saved)
-                val tree=ScapFolderExport.remembered(controller.localDatabase,saved.inspection.id)
-                if(tree==null){picking=true;folderPicker.launch(null)}else {
-                    val files=ScapFolderExport.save(context,controller.localDatabase,saved,tree,name)
-                    savedDocumentUri=files.first{it.name==name}.uri;message="ARCHIVO GUARDADO · Carpeta del puente actual verificada."
-                }
-            }catch(e:CancellationException){throw e}catch(e:Exception){message=LocalCopyDrain.publicError(e)}finally{busy=false}
-        }
-    }){Text("Guardar")}},dismissButton={TextButton(onClick={directMode=false}){Text("Cancelar")}})
+    fun exportBridge() {
+        if(!ready||busy||packageBusy||picking)return
+        scope.launch{try{val saved=controller.savedSnapshot(s.inspection.id);ScapDocumentNames.folder(saved)
+            directName=ScapDocumentNames.excel(saved);directMode=true
+        }catch(e:CancellationException){throw e}catch(e:Exception){message=LocalCopyDrain.publicError(e)}}
+    }
     LaunchedEffect(busy,packageBusy,picking,message){onStatus(busy || packageBusy || picking,message)}
     LaunchedEffect(requestedAction) {
         val action=requestedAction?.substringBefore(':') ?: return@LaunchedEffect
         onHandled()
         if(!ready || busy || packageBusy || picking){message="Espera el guardado o la exportación en curso.";return@LaunchedEffect}
         if(action=="SCAP") {
-            // A local provisional copy preserves even incomplete/invalid raw capture.
-            // Remote/contractual validation is independent and remains enforced.
-            export(action)
+            // The main/header action uses the current persisted bridge, never CreateDocument.
+            exportBridge()
         } else {
             val p=sic.firstOrNull{it.format==action}
             if(p==null)message="Formato SIC no disponible."
@@ -156,10 +147,35 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         TextButton(modifier=Modifier.testTag("complete-missing-sic"),onClick={controller.navigate(com.tuempresa.inventariovial.scap.domain.ScapFieldRoute("SIC",repeatableItemId=format,fieldKey=if(missingDate)"surveyDate"else""))}){Text(if(missingDate)"COMPLETAR FECHA"else"Completar $format")}
     }
     Text("Pendientes de captura: ${completeness.pending.size}. ${if(completeness.pending.isNotEmpty())"La exportación es una copia de trabajo marcada BORRADOR en el Excel."else"Revisa el estado antes de entregar."}")
+    Button(enabled=ready&&!busy&&!packageBusy&&!picking,onClick={exportBridge()},modifier=Modifier.testTag("scap-export-direct")){Text("Exportar SCAP")}
+    if(directMode)Card(Modifier.fillMaxWidth().testTag("scap-direct-name")) {
+        Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+            Text("Guardar en carpeta del puente",style=MaterialTheme.typography.titleMedium)
+            OutlinedTextField(directName.orEmpty(),{directName=it},singleLine=true,modifier=Modifier.fillMaxWidth(),label={Text("Nombre del Excel (.xlsx)")})
+            Row {
+                TextButton(onClick={
+                    directMode=false;scope.launch {busy=true
+                        try {val saved=controller.savedSnapshot(s.inspection.id);val name=directName.orEmpty()
+                            require(name.endsWith(".xlsx",true)&&name.none{it=='/'||it=='\\'||it.code<32}){"Escribe un nombre XLSX válido."}
+                            ScapDocumentNames.folder(saved)
+                            val tree=ScapFolderExport.authorized(context,controller.localDatabase,saved.inspection.id)
+                            if(tree==null){picking=true;folderPicker.launch(null)}else {
+                                val files=ScapFolderExport.save(context,controller.localDatabase,saved,tree,name)
+                                val file=files.first{it.name==name};savedDocumentUri=file.uri;message="ARCHIVO GUARDADO · "+file.relativePath.removePrefix(DriveMirrorPlan.ROOT)+file.name+if(RecordDocuments.provisional(file))" · BORRADOR: ficha pendiente de completar."else""
+                            }
+                        }catch(e:CancellationException){throw e}catch(e:Exception){message=LocalCopyDrain.publicError(e)}finally{busy=false}
+                    }
+                }){Text("Guardar")}
+                TextButton(onClick={directMode=false}){Text("Cancelar")}
+            }
+        }
+    }
+    Text("Guarda en la carpeta del puente actual. Si falta autorización, Android solicitará una carpeta base.",style=MaterialTheme.typography.bodySmall)
+    OutlinedButton(enabled=ready&&!busy,onClick={controller.submit{it.saveDraft(s.inspection.id);message="Borrador guardado en GBO; puedes continuar editándolo."}}){Text("Guardar borrador")}
     Button(enabled=ready&&!busy&&!packageBusy&&!picking,onClick={export("SCAP")},modifier=Modifier.testTag("scap-save-excel")){Text("Guardar como…")}
-    Button(enabled=ready&&!busy&&!packageBusy&&!picking,onClick={scope.launch{runCatching{controller.savedSnapshot(s.inspection.id)}.onSuccess{directName=ScapDocumentNames.excel(it);directMode=true}.onFailure{message=it.message ?: "Espera el guardado local."}}}){Text("Guardar en carpeta del puente")}
+
     OutlinedButton(enabled=ready&&!busy&&!packageBusy&&!picking,onClick={directName=null;picking=true;runCatching{folderPicker.launch(null)}.onFailure{picking=false;message="Android no pudo abrir el selector de carpeta."}},modifier=Modifier.testTag("scap-save-folder")){Text("Exportar carpeta del puente")}
-    Text("Autoriza una carpeta base una vez por puente. Guardar como propone su carpeta cuando Android lo permite; el proveedor puede ignorarla. Excel: elige carpeta y nombre en Android. Carpeta del puente: SCAP, fotografías y croquis; los consolidados SIC se exportan aparte.",style=MaterialTheme.typography.bodySmall)
+    Text("Exportar SCAP guarda en la carpeta del puente dentro de la base autorizada. Guardar como permite otra ubicación; Android puede mostrar la última carpeta visitada. Los consolidados SIC se exportan aparte.",style=MaterialTheme.typography.bodySmall)
     ScapLocalExportStatus(s.inspection.id,s.inspection.updatedAt,controller){running,_->packageBusy=running}
     com.tuempresa.inventariovial.core.AutomaticSyncPanel("SCAP",s.inspection.id,s.inspection.status=="COMPLETE",compact=true,database=controller.localDatabase)
     if(!ready)Text("Espera el guardado local antes de exportar.")
@@ -170,13 +186,10 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
         emptyList(),s.photos.sortedBy {it.photoIndex}.map { File(it.originalPath.ifBlank {it.localPath}) },
         com.tuempresa.inventariovial.core.CompletionResult(emptyList()))
     Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-        OutlinedButton(enabled=ready && !busy,onClick={scope.launch {
-            controller.submit {it.saveDraft(s.inspection.id);message="Ficha guardada dentro de GBO. Pendientes: ${completeness.pending.size}"}
-        }}) {Text("Guardar borrador")}
         TextButton(onClick={completeness.pending.firstOrNull()?.let(onCompleteMissing)}) {Text("Completar faltantes")}
     }
     Text("Exportación Excel",style=MaterialTheme.typography.titleMedium)
-    Text("Exportar SCAP abre Guardar como de Android para un XLSX real. El ZIP de respaldo es una opción distinta.")
+    Text("Exportar SCAP guarda el Excel en su carpeta. Guardar como permite otra ubicación; el ZIP es un respaldo opcional.")
     if(!ready) Text("Espera a que termine el guardado local y resuelve cualquier error antes de exportar.")
     exportErrors.forEach{Text(it,color=MaterialTheme.colorScheme.error)}
     review.warnings.forEach{Text("• $it",style=MaterialTheme.typography.bodySmall)}
@@ -271,6 +284,8 @@ internal fun ScapExportPanel(s:ScapInspectionSnapshot,ready:Boolean,controller:S
 
     }
     var filesVisible by rememberSaveable(s.inspection.id){mutableStateOf(false)}
-    TextButton(onClick={filesVisible=!filesVisible}){Text(if(filesVisible)"Ocultar archivos locales" else "Abrir archivos locales e historial")}
-    if(filesVisible)com.tuempresa.inventariovial.localfiles.LocalFilesList("SCAP/${s.inspection.id}")
+    TextButton(onClick={filesVisible=true}){Text("Ver archivos")}
+    if(filesVisible)androidx.compose.ui.window.Dialog(onDismissRequest={filesVisible=false},properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {
+        Surface(Modifier.fillMaxSize()){BridgeDocumentsScreen(s,controller){filesVisible=false}}
+    }
 }

@@ -28,7 +28,7 @@ import org.robolectric.shadows.ShadowStatFs
 class ScapNativeExportUiTest {
     @get:Rule val ui=createAndroidComposeRule<ComponentActivity>()
     @Before fun init(){initializeIdleUiWorkers();ShadowStatFs.registerStats(ui.activity.filesDir.path,1_000_000,900_000,900_000)}
-    @Test fun primaryExportImmediatelyRequestsNativeExcelSaveAsAndCancelPreservesCapture()=runBlocking {
+    @Test fun secondarySaveAsRequestsNativeExcelAndCancelPreservesCapture()=runBlocking {
         SicConsolidationFixtures.db(ui.activity).use{db->
             val repo=SicConsolidationFixtures.repo(ui.activity,db);val id=SicConsolidationFixtures.bridge(repo,"PUENTE QUEBRADA",route="PE-3N")
             val before=repo.dao.snapshot(id)!!;val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main)
@@ -86,6 +86,58 @@ class ScapNativeExportUiTest {
             assertEquals(expected,request.intent.getParcelableExtra<android.net.Uri>(android.provider.DocumentsContract.EXTRA_INITIAL_URI))
             assertNotEquals(com.tuempresa.inventariovial.scap.export.ScapFolderExport.folderUri(c,db,previous),expected)
             ui.runOnIdle{c.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)};scope.cancel()
+        }
+    }
+    private fun provider():SicDocumentsProvider {
+        val p=SicDocumentsProvider().apply{attachInfo(ui.activity,android.content.pm.ProviderInfo().apply{authority="com.android.externalstorage.documents";exported=true;grantUriPermissions=true;readPermission="android.permission.MANAGE_DOCUMENTS";writePermission="android.permission.MANAGE_DOCUMENTS"})}
+        org.robolectric.shadows.ShadowContentResolver.registerProviderInternal("com.android.externalstorage.documents",p);return p
+    }
+    @Test fun primaryPe3ngExportIgnoresPreviousPe22aAndSecondaryCancelPublishesNothing()=runBlocking {
+        val provider=provider();val c=ui.activity;val tree=android.provider.DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents","root")
+        SicConsolidationFixtures.db(c).use{db->val repo=SicConsolidationFixtures.repo(c,db)
+            val previous=SicConsolidationFixtures.bridge(repo,"ANTERIOR",route="PE-22A")
+            com.tuempresa.inventariovial.scap.export.ScapFolderExport.save(c,db,repo.dao.snapshot(previous)!!,tree)
+            val id=SicConsolidationFixtures.bridge(repo,"PRUEBA 2",route="PE-3NG");val before=repo.dao.snapshot(id)!!
+            val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val controller=ScapController(c,db,scope);var message:String?=null
+            ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(before,true,controller,onStatus={_,m->message=m})}}}
+            ui.onNodeWithTag("scap-export-direct").performScrollTo().performClick()
+            ui.waitUntil(10000){ui.onAllNodesWithText("Guardar en carpeta del puente").fetchSemanticsNodes().isNotEmpty()}
+            ui.onNodeWithText("Guardar en carpeta del puente").assertExists()
+            assertNull(shadowOf(c).peekNextStartedActivityForResult())
+            ui.onNodeWithText("Guardar",useUnmergedTree=true).performScrollTo().performClick()
+            ui.waitUntil(20000){message?.startsWith("ARCHIVO GUARDADO")==true}
+            assertNull(shadowOf(c).peekNextStartedActivityForResult())
+            assertTrue(message!!.contains("PE-3NG/PUENTES/Puente (PRUEBA 2)/SCAP - PE-3NG - PRUEBA 2.xlsx"));assertTrue(message!!.contains("BORRADOR"))
+            val file=db.localFilesDao().filesForRecord("SCAP/$id").single{it.name=="SCAP - PE-3NG - PRUEBA 2.xlsx"}
+            val store=com.tuempresa.inventariovial.localfiles.AndroidSharedDocumentStore(c,tree);assertEquals(file.size to file.sha256,store.digest(android.net.Uri.parse(file.uri)))
+            val wb=com.tuempresa.inventariovial.scap.export.TemplateWorkbook(java.io.File(file.source).inputStream())
+            assertTrue(wb.cell(1,"C4").textContent.contains("PRUEBA 2"))
+            assertFalse(db.localFilesDao().filesForRecord("SCAP/$id").any{it.relativePath.contains("PE-22A")||it.name.contains("PROVISIONAL")})
+            val publicCount=provider.docs.size
+            ui.onNodeWithTag("scap-save-excel").performScrollTo().performClick();ui.waitUntil(20000){shadowOf(c).peekNextStartedActivityForResult()!=null}
+            val request=shadowOf(c).nextStartedActivityForResult;assertEquals(Intent.ACTION_CREATE_DOCUMENT,request.intent.action)
+            ui.runOnIdle{c.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)}
+            ui.waitUntil(5000){message?.startsWith("Guardado cancelado")==true};assertEquals(publicCount,provider.docs.size)
+            assertEquals(before,repo.dao.snapshot(id));assertTrue(db.automaticSyncDao().all().isEmpty());scope.cancel()
+        }
+    }
+    @Test fun absentAndRevokedSafGrantRequestOnlyBaseAuthorizationFromPrimaryHeader()=runBlocking {
+        provider();val c=ui.activity;val tree=android.provider.DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents","root")
+        SicConsolidationFixtures.db(c).use{db->val repo=SicConsolidationFixtures.repo(c,db);val id=SicConsolidationFixtures.bridge(repo,"PRUEBA 2",route="PE-3NG")
+            assertNull(com.tuempresa.inventariovial.scap.export.ScapFolderExport.authorized(c,db,id))
+            com.tuempresa.inventariovial.scap.export.ScapFolderExport.save(c,db,repo.dao.snapshot(id)!!,tree)
+            c.contentResolver.releasePersistableUriPermission(tree,Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            assertNull(com.tuempresa.inventariovial.scap.export.ScapFolderExport.authorized(c,db,id))
+            val before=repo.dao.snapshot(id)!!;val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val controller=ScapController(c,db,scope)
+            var requestAction by mutableStateOf<String?>(null)
+            ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(before,true,controller,requestedAction=requestAction,onHandled={requestAction=null})}}}
+            ui.runOnIdle{requestAction="SCAP:HEADER"}
+            ui.waitUntil(10000){ui.onAllNodesWithText("Guardar en carpeta del puente").fetchSemanticsNodes().isNotEmpty()}
+            ui.onNodeWithText("Guardar en carpeta del puente").assertExists();ui.onNodeWithText("Guardar",useUnmergedTree=true).performScrollTo().performClick()
+            ui.waitUntil(10000){shadowOf(c).peekNextStartedActivityForResult()!=null};val request=shadowOf(c).nextStartedActivityForResult
+            assertEquals(Intent.ACTION_OPEN_DOCUMENT_TREE,request.intent.action)
+            ui.runOnIdle{c.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)}
+            assertEquals(before,repo.dao.snapshot(id));assertTrue(db.automaticSyncDao().all().isEmpty());scope.cancel()
         }
     }
 

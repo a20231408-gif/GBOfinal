@@ -14,6 +14,8 @@ import java.io.File
 /** Explicit SAF tree export. The destination never becomes the automatic-copy preference. */
 object ScapFolderExport {
     suspend fun remembered(db:InventoryDatabase,id:String):Uri?=(db.localFilesDao().choice("SCAP_EXPORT_TREE/"+id) ?: db.localFilesDao().choice("SCAP_EXPORT_AUTHORIZED_BASE"))?.destination?.let(Uri::parse)
+    suspend fun authorized(c:Context,db:InventoryDatabase,id:String):Uri? = remembered(db,id)?.takeIf{uri->
+        c.contentResolver.persistedUriPermissions.any{it.uri==uri&&it.isReadPermission&&it.isWritePermission}}
     suspend fun folderUri(c:Context,db:InventoryDatabase,id:String):Uri? {
         val tree=remembered(db,id) ?: return null
         val s=requireNotNull(db.scapDao().snapshot(id));val parent=DriveMirrorPlan.ROOT+ScapDocumentNames.route(s)+"/PUENTES/"
