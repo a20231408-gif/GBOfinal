@@ -1,3 +1,13 @@
+## Hito B condicionado y prioridad Android — 04/11/2026
+
+El propietario autorizó lectura/respaldo y condicionó V22/DRAIN_ONLY a acreditar pausa total de clientes. La pausa NO fue confirmada; no se modificó fuente remota, ScriptProperties, ROOT ni deployment y no se ejecutaron funciones. Tras recuperar la conexión del navegador integrado sin OAuth, se capturaron por lectura los diez archivos V21 del visor de historial y las propiedades visibles en almacenamiento privado `GBO_HITO_B_PREFLIGHT_PRIVADO_20261104T105625Z`. El informe privado acredita comparación textual con la captura anterior.
+
+**Corrección de alcance:** Google indica más de 50 ScriptProperties y muestra solo las primeras 50. Ni esta captura ni el respaldo anterior de 50 acreditan todas las propiedades. El respaldo íntegro y la ausencia global de claves de activación siguen PENDIENTES; no guardar un lector adicional sin cumplir las condiciones/autorización del propietario. Hay doPost completados después del inventario anterior: no demuestran por sí solos mutaciones, pero impiden asumir vigencia de 207/207/220/13 sin nueva conciliación. Cero ejecuciones visibles no prueba pausa ni ausencia de clientes desconocidos.
+
+Hito B BLOQUEADO antes de cambios: falta relación/custodia completa y confirmación offline de todos los clientes, revisión de ejecuciones vigente, propiedades completas e inventario fresco estable. No activar OPEN ni ejecutar recuperación. El nuevo encargo prioriza Android/SCAP; la pregunta de pausa queda para retomar backend. V22 candidato intacto, sin autorización ejecutable hasta satisfacer condiciones. No repetir auditorías ni iniciar lotes durante el cierre Android.
+
+---
+
 ## Backend institucional — Hito A cerrado, 04/11/2026 (Lima)
 
 Base local/remoto y PR11 verificados: `f44d953f68e0e885579f71a0660cac8ee93840a2`, árbol limpio al iniciar; PR11 abierto draft, sin merge; #8–#10 ya contenidos. Revisión enfocada del paquete V22 existente: 16/16 comprobaciones estáticas de hashes/procedencia/contrato/configuración/13 bindings; sintaxis de 13 scripts + manifest JSON PASS sin ejecutar funciones. Log previo 76/76 backend conservado y leído, no repetido. Ningún defecto funcional nuevo confirmado: código Android/backend sin cambios, sin APK ni pruebas 117/61 repetidas.
