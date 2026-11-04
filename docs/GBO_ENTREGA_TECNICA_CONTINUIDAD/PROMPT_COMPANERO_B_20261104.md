@@ -1,5 +1,11 @@
 # Continuación corta para compañero B
 
+Lee primero `TRASPASO_COMPANERO_B_20261104.md`, especialmente «Actualización final», y confirma el SHA remoto de `codex/scap-pavimentos-cierre-20261103` contra tu clon limpio. PR #12 está integrado; PR #11 sigue en borrador. No fusionar main.
+
+Orden de trabajo: (1) en ASUS generar/verificar Android 1.4.33 con configuración y firma históricas según `RECUPERACION_ANDROID.md`, sin instalar automáticamente; (2) con sesión institucional GBO y anexo privado, verificar por ID propietarios reales de destino/ancestros, proyecto y deployment V21; la carpeta homónima bajo PUCP_SOFTWARE **no está acreditada**; (3) revisar el riesgo de permisos **posteriores a la creación** en `PrivatePropertiesBackup.PROPOSED.gs` y obtener autorización específica para código, dos lecturas completas y dos archivos privados, o elegir transporte privado alternativo; (4) acreditar pausa de todos los clientes mediante matriz; (5) autorizar y ejecutar dos ciclos de 16 lectores existentes, comparar journals/records/bindings/ACK y preservar 13 bindings históricos. No ejecutar escritores, desplegar V22 ni habilitar OPEN por este traspaso.
+
+Último checkpoint anterior a esta actualización: `36ed260ff8940d3741a1f9f040590d82cbf72a5c`; consultar el tip remoto para el SHA documental final. No pedir secretos por chat ni repetir suites ya acreditadas sin cambio relacionado.
+
 Clona https://github.com/a20231408-gif/GBOfinal y trabaja desde `codex/scap-pavimentos-cierre-20261103` (PR #11). Comprueba SHA remoto contra el checkpoint de `TRASPASO_COMPANERO_B_20261104.md` y este documento. PR #12 ya fue integrado en esa rama mediante `32d852fe70a9662d619f1dc4ac7fffe46ad27733`; no tocar main.
 
 Android 1.4.33 (47) tiene 73/73 regresiones afectadas PASS y compilación Kotlin/Java acreditada. En ASUS, usa exclusivamente configuración y firma Debug históricas; sigue `compilar-apk-asus.ps1` y `RECUPERACION_ANDROID.md`. Verifica endpoints y contrato contra el manifiesto privado previo antes de considerar la APK apta; conserva SHA e identidad. No instalar automáticamente ni cambiar outbox del OPPO.
