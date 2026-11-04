@@ -1,5 +1,15 @@
 # Recuperar Android sin depender de la conversación
 
+## Candidata 1.4.33 (47) en ASUS, tras integración de PR #12
+
+PR #12 se integró en la rama de PR #11 mediante `32d852fe70a9662d619f1dc4ac7fffe46ad27733`, sin cambiar main. El auxiliar [compilar-apk-asus.ps1](compilar-apk-asus.ps1) exige árbol limpio, actualiza esa rama de forma lineal, comprueba versión 47, usa exclusivamente las propiedades privadas locales y el keystore Debug histórico indicado, compila sin perfil de validación y verifica package, versión, certificado y SHA-256. Ejemplo en PowerShell desde la raíz del clon ASUS:
+
+```powershell
+./docs/GBO_ENTREGA_TECNICA_CONTINUIDAD/compilar-apk-asus.ps1 -SdkRoot 'RUTA_SDK_ASUS' -HistoricalDebugKeystore 'RUTA_PRIVADA_FIRMA_DEBUG_HISTORICA' -PrivateOutputDirectory 'RUTA_PRIVADA_FUERA_DE_GIT'
+```
+
+El auxiliar comprueba que los campos de endpoint/token generados no estén vacíos, pero **no compara sus valores con la APK46**. El custodio debe efectuar esa comparación en privado con el manifiesto de identidad/configuración original antes de declarar la candidata apta para actualización. No publicar valores ni APK en GitHub. En esta computadora se verificó solamente la sintaxis del auxiliar; no se ejecutó la compilación con secretos ni se generó APK. No instalar automáticamente.
+
 ## Herramientas y fuente
 
 Mantener versiones fijadas, no actualizar por iniciativa del IDE: Android Studio 2026.2.2, JBR Java 25, Gradle Wrapper 9.6.0 (SHA de distribución fijado), AGP 9.5.0, Kotlin 2.2.10, KSP 2.3.6, Compose BOM 2026.02.01, Room 2.8.5 y WorkManager 2.11.2. Compile/target SDK 37, min SDK 26, compatibilidad fuente/bytecode Java 11. ASUS dispone de plataforma `android-37.0`, Build Tools 36.0.0 y Platform Tools. JDK ejecutor 25 y bytecode Java 11 son configuraciones distintas, no una contradicción. Node 24.22.1/Python 3.12.10 se usaron para herramientas locales backend; no son necesarios para copiar el paquete revisado en el editor manualmente.
