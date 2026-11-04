@@ -1,7 +1,8 @@
 'use strict';
 /** Offline only. Input and detailed output belong outside Git; stdout is aggregate counts. */
 function reconcilePartitions(parts){
- if(parts.length!==16||new Set(parts.map(p=>p.end?.bucket)).size!==16)throw Error('INCOMPLETE_PARTITIONS');
+ if(parts.length!==16||parts.some(p=>!/^[0-9a-f]$/.test(p.end?.bucket||''))||new Set(parts.map(p=>p.end?.bucket)).size!==16)throw Error('INCOMPLETE_PARTITIONS');
+ if(parts.some(p=>typeof p.end.rootId!=='string'||!p.end.rootId||typeof p.end.executor!=='string'||!p.end.executor)||new Set(parts.map(p=>p.end.rootId)).size!==1||new Set(parts.map(p=>p.end.executor)).size!==1)throw Error('CROSS_PARTITION_IDENTITY');
  const signatures=new Set(parts.map(p=>p.end.signature));if(signatures.size!==1)throw Error('CROSS_PARTITION_CHANGE');
  const rows=[];
  for(const p of parts){
