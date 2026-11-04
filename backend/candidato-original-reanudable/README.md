@@ -1,6 +1,10 @@
 # Candidato local para GBO_Inventario original — NO DESPLEGADO
 
-## Cierre vigente — 03/11/2026, propuesta sin activar
+## Vigencia 04/11/2026: prevalece el expediente de corte
+
+[Expediente actual](../../docs/EXPEDIENTE_CORTE_INSTITUCIONAL_20261103.md): Hito A cerrado sin cambios de código. Inventario 16/16 anterior conciliado y caché descartable implementada; los apartados históricos siguientes que indican inventario inexistente, vídeo no enrutado o ausencia de caché han quedado superados. La latencia real de caché, identidad runtime y entrega real siguen pendientes. B=DRAIN_ONLY y C=OPEN requieren autorizaciones distintas y pausa de clientes. Antes de marca/pin/efecto, rollback condicionado al respaldo inmediato; después, únicamente recuperación compatible. No aplicar las instrucciones históricas de rollback sin estas guardas.
+
+## Cierre histórico — 03/11/2026, propuesta sin activar
 
 Este apartado sustituye las restricciones antiguas de vídeo y admisión descritas abajo.
 La base contractual se volvió a descargar mediante GET: los diez archivos de V21 coinciden

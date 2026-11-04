@@ -1,67 +1,75 @@
-# Expediente de autorización del corte institucional — 03/11/2026
+# Corte institucional V22 — expediente vigente al 04/11/2026 (Lima)
 
-Estado: PREPARADO PARA AUTORIZACIÓN ESCALONADA; NO APLICADO; NO-GO distribución. Checkpoint verificado local/remoto `4a592e35051bcbd761389e9db75f08f0b85bbf2a`, rama `codex/scap-pavimentos-cierre-20261103`, PR #11 draft con dependencias #10/#9/#8. Sin merge. Este expediente no concede autorización.
+**Hito A terminado localmente. LISTO PARA CORTE CONTROLADO, condicionado a autorización y puertas previas; NO-GO productivo/general.** V22 no está autorizado ni desplegado. Este expediente sustituye la propuesta anterior que agrupaba OPEN con la publicación y consideraba el OPPO como posible dispositivo conectado. La aceptación física Android pendiente no impide preparar/publicar DRAIN_ONLY; sí limita la aceptación final y la distribución.
 
-## Código exacto y versión
+Base verificada local/remoto: `f44d953f68e0e885579f71a0660cac8ee93840a2`; rama `codex/scap-pavimentos-cierre-20261103`, PR #11 abierto en borrador, sin merge. #8–#10 ya contenidos. La actualización de este hito es documental, sin cambios Android/backend ni APK.
 
-Paquete privado `paquete-final-cache-no-activar`, ensamblado desde captura inmutable de V21 real: 14 archivos, hashes revisados sin recompilar ni repetir pruebas. Manifest SHA256 `d26e19de83ad867561d9215ab0c4bada4f4e60db9b7055504a08797ce845e161`.
+## A. Evidencia y código exacto
 
-- REEMPLAZAR: Código.gs, PhotoNamesV2Core.gs, SyncV3.gs, SyncV3Core.gs, VideoV1.gs (cinco archivos; ver inventario de operaciones exacto privado).
-- AÑADIR: AuthorizedRootGuard.gs, DeliveryRootRouting.gs, NewRootAdmission.gs, PublicDeliveryNames.gs.
-- CONSERVAR: appsscript.json, ScapPhotoPanelV2.gs, SicObservationsV1Core.gs, VideoNamesV2Core.gs, VideoV1Core.gs.
-- Preservar también PreflightReadonly.gs y PreflightReadonlyPaged.gs del editor. No subir todo un directorio mediante clasp eliminando estos lectores. `Codigo.gs` del paquete sustituye al único `Código.gs` original; no añadir otro router.
+Lectura del navegador integrado con sesión institucional: proyecto original y deployment/URL coinciden con el anexo; versión activa 21; «Ejecutar como» muestra GBO; historial visible llega a V21 y HEAD del 3 de noviembre; cero activadores visibles para esa cuenta. No se editó código/configuración ni se ejecutaron funciones. Estos datos no prueban el runtime de V22, la ausencia de triggers de otros propietarios ni la pausa de clientes.
 
-Corrección a la anotación previa: el inventario exacto contiene CINCO reemplazos, cuatro adiciones y cinco archivos conservados (14), no seis reemplazos. La fuente candidata está versionada en `backend/candidato-original-reanudable/`; el router completo con configuración histórica permanece privado.
+Paquete `PRIVADO/apps-script/paquete-final-cache-no-activar/` del kit. Manifiesto revisado SHA-256:
+`d26e19de83ad867561d9215ab0c4bada4f4e60db9b7055504a08797ce845e161`.
 
-V21 activa. Propuesta: V22 si sigue libre al ejecutar; si cambió el historial o deployment, detener y revisar. Mismo proyecto original, deployment ID y URL /exec Android, especificados en anexo privado. No crear otro servidor/deployment. No cambiar ROOT_FOLDER_ID literal, Users, credenciales, scopes ni permisos.
-
-## Propiedades propuestas (ninguna aplicada)
-
-| Propiedad | Cambio aprobado que se solicitará |
+| Acción autorizable | Archivos exactos |
 |---|---|
-| GBO_ROOT_ROUTING_CONFIG | Crear configuración versionada con raíz histórica READ_ONLY, destino institucional exacto y ancestros, inventario/hash, modo DRAIN_ONLY, época y cuenta ejecutora esperada |
-| GBO_ROOT_ROUTING_ENABLED | Crear true solamente al instalar el corte aprobado con CONFIG válida; control explícito del orden |
-| GBO_RESUMABLE_ROOT_ID | Crear enlace al ID histórico literal; activa compatibilidad reanudable sin trasladar la raíz |
-| GBO_AUTHORIZED_ROOT_ANCESTOR_IDS | Crear [] para la raíz histórica compartida, cuya identidad/propietario se validan por oldRootReadOnly; NO sustituye la cadena obligatoria del destino nuevo |
-| GBO_PUBLIC_NAMES_ENABLED | Crear false: conservar negociación original; no activar un cambio adicional de nomenclatura remota |
-| GBO_ROOT_ROUTING_ACTIVATED | NO crear manualmente. Lo escribe el backend antes de su primera mutación autorizada; después es una cerca durable que no debe retirarse |
+| Reemplazar cinco existentes | `Código.gs` desde `Codigo.gs`; `PhotoNamesV2Core.gs`; `SyncV3.gs`; `SyncV3Core.gs`; `VideoV1.gs` |
+| Añadir cuatro, solo tras verificar ausencia/conflictos | `AuthorizedRootGuard.gs`; `DeliveryRootRouting.gs`; `NewRootAdmission.gs`; `PublicDeliveryNames.gs` |
+| Conservar cinco | `appsscript.json`; `ScapPhotoPanelV2.gs`; `SicObservationsV1Core.gs`; `VideoNamesV2Core.gs`; `VideoV1Core.gs` |
+| Conservar lectores del editor | `PreflightReadonly.gs`; `PreflightReadonlyPaged.gs` |
 
-Estas seis claves estaban ausentes en el respaldo de 50 propiedades; volver a comparar el estado antes de aplicar, sin sobrescribir cambios ajenos. Preservar las demás propiedades completas. Epoch privado ya preparado; activatedAt se fija UNA vez al instante UTC del corte autorizado, no usar una fecha de preparación antigua. No cambiar epoch/timestamp después de activación. El cambio DRAIN_ONLY→OPEN se hará solo bajo las condiciones de aceptación siguientes.
+Los hashes individuales y nombres editor están en `CORTE_ARCHIVOS_EXACTOS_PRIVADO.json`. No subir manifiestos privados ni crear otro router. Conservados autenticación, literal ROOT histórico, Servicio de Usuarios, URL, deployment ID y scopes. El destino nuevo exacto figura en CONFIG privada y en el encargo del propietario; el destino anterior obsoleto está excluido.
 
-## Identidad, URL y destino
+Revisión actual: **16/16 comprobaciones estáticas** de manifiesto, 14 hashes, procedencia V21, cinco módulos intactos, ocho módulos locales equivalentes, router reconstruido, autenticación/ROOT, destino, modo y 13 bindings. Sintaxis de 13 scripts y JSON del manifest válida, sin invocar funciones. Ningún defecto funcional nuevo confirmado. Las **76/76 backend** previas siguen acreditadas por su log privado; no repetidas, no sumar a verificaciones estáticas. Las 117 Android y 61 posteriores tampoco se repitieron ni se suman como casos únicos.
 
-Cuenta GBO acreditada en sesión/editor y en lector real Drive.About; destino y dos ancestros son propiedad GBO, con capacidades de escritura y sin edición general. URL definitiva PROPUESTA: la misma /exec que usa APK44, sin /dev ni endpoint de ensayos. El anexo privado contiene URL/deployment/scriptId exactos. USER_DEPLOYING y «Yo» NO identifican por sí solos el ejecutor actual del endpoint; no afirmar que está acreditado.
+## B. Propiedades y protección
 
-Tras autorización: publicar candidato en el deployment original inicialmente DRAIN_ONLY. GET de capacidades debe dar rootGuardReady=true y rootRoutingVersion=2/epoch esperados: esa rama ejecuta gboAssertInstitutionalExecutor mediante Drive.About y compara con la identidad institucional configurada. Si no coincide, no habilitar OPEN ni enviar fichas. No crear otro deployment para salvar el bloqueo. Un consentimiento de Google lo completa el propietario oficialmente.
+Solo estas cinco claves se proponen establecer; comparar primero las 50 propiedades respaldadas con el estado actual y conservar las ajenas:
 
-## Históricos y los 13 bindings
+| Clave | Propuesta |
+|---|---|
+| `GBO_ROOT_ROUTING_CONFIG` | JSON privado versionado: raíz histórica READ_ONLY; destino/ancestros institucionales; inventario/hash; admisión/ejecutor; época; `activatedAt` fijado al instante real del corte; modo `DRAIN_ONLY` |
+| `GBO_RESUMABLE_ROOT_ID` | Literal histórico original, nunca el destino nuevo |
+| `GBO_AUTHORIZED_ROOT_ANCESTOR_IDS` | `[]` para el ancla histórica compartida; no reemplaza la cadena del destino nuevo |
+| `GBO_PUBLIC_NAMES_ENABLED` | `false`, sin cambio adicional de nombres remotos |
+| `GBO_ROOT_ROUTING_ENABLED` | `true`, después de CONFIG válida y las anteriores, bajo pausa operativa |
 
-Inventario real 16/16 estable: 207 journals COMPLETE, 207 records y 220 bindings. Todos los ACK comparados coinciden en key/revisión/hash y carpeta de binding. Los 13 bindings sin record están individualizados en CONCILIACION_BINDINGS_PRIVADA.json con acción PRESERVE_OLD_ROOT_NO_ADOPTION. Son reservas/identidades históricas, no fichas declaradas descartables. Ninguno se borra, libera, adopta, reintenta o migra. Una solicitud con su identidad queda vinculada a la raíz antigua y bloqueada por HISTORICAL_ROOT_READ_ONLY. Duplicados, conflicto SCAP, autoridad ilegible o identidad repartida bloquean la entrega afectada sin inventar IDs.
+`GBO_ROOT_ROUTING_ACTIVATED` **no se crea/edita/borra manualmente**. Es la cerca durable del backend previa al primer efecto. Si ya existe, detener y conciliar antes de aplicar otra época. `GBO_SYNC_V3_ENABLED` y `GBO_PHOTO_NAMES_V2_ENABLED` estaban true en la captura: revalidarlas y conservarlas; un cambio exige revisar el corte, no corregir valores silenciosamente. Tokens/credenciales no se copian a documentos públicos.
 
-Todas las nuevas capturas admitidas requieren sobre de enrutamiento v2, epoch correcta, fecha original posterior al corte y baseRevision=0, sin evidencia histórica en ninguna raíz. Reserva/pin durable anterior a efectos fija la raíz. No reemplazar una fecha antigua por la actual. Clientes antiguos y colas históricas pueden quedar BLOQUEADOS; esto afecta disponibilidad y debe aceptarse expresamente. No es una migración transparente para todas las tablets.
+Protecciones comprobadas en fuente y pruebas existentes:
 
-## Secuencia autorizable y recuperación
+- Drive.About exige ejecutor institucional; destino y ancestros con propiedad institucional, identidad exacta, no papelera, escritura y sin edición general. La UI por sí sola no sustituye la guarda.
+- **207 journals COMPLETE, 207 records, 220 bindings**, inventario previo estable en 16/16 lotes y segunda lectura. **13 bindings sin record: PRESERVE_OLD_ROOT_NO_ADOPTION**. Sin borrar, liberar, adoptar, renumerar, migrar ni suplir records. Identidad histórica queda en su raíz y se bloquean sus escrituras, incluso replay/vídeo. DRAIN_ONLY no promete reparar históricos.
+- Nuevas capturas requieren sobre v2, época, fecha original posterior al corte, revisión base cero y ausencia de autoridad en ambas raíces. Pin y marca persistentes antes de efectos; UUID, revisión, reservas, hashes y ACK no se relajan. Legacy incompatible se rechaza: aceptar expresamente este impacto de disponibilidad.
+- Reanudación conserva journal/IDs y opera con ScriptLock. BUSY/incompleto no produce ACK. DRAIN_ONLY permite continuaciones conocidas compatibles en raíces habilitadas; no nuevas capturas/revisiones/vídeos. Conserva consolidados por raíz y filas/IDs de V21. No une consolidados históricos con nuevos.
 
-1. Comparación de código/editor, V21/deployment y propiedades contra capturas privadas; si cambió algo, detener el corte. Ratificar cadena/propiedad/permisos y destino vacío. Pausa operativa de sincronización de otros clientes acreditada por el responsable.
-2. Respaldo privado inmediato de fuente/configuración afectada, sin datos en GitHub. Instalar solo archivos revisados; crear V22 disponible y actualizar el MISMO deployment. CONFIG DRAIN_ONLY e identidad/tiempo correctos antes de habilitar routing. Ninguna carga en esta fase.
-3. GET de capacidades acredita la guarda ejecutora y protocolo. Ejecutar gboWarmRootRegistryReadCache hasta complete=true, con presupuesto acotado: solo ScriptCache desechable, sin Drive/propiedades/pins. Verificar estabilidad frente al inventario; caché perdida se reconstruye y nunca autoriza omitir filas.
-4. Antes de OPEN: aceptación física del propietario, copia vigente del teléfono, cola/reservas/intentos elegibles revisados, identidades/rutas ficticias ausentes y resto de clientes en pausa. OPEN no es una lista de dispositivos autorizados: si no puede aislarse operativamente, no abrirlo.
-5. Cambiar solo modo a OPEN para el ensayo aprobado. Tras prueba, mantener distribución suspendida hasta dictamen; ante fallo volver a DRAIN_ONLY compatible y conservar evidencia.
+## C. Hito B: única autorización pendiente para DRAIN_ONLY
 
-Antes de primera marca de activación o efecto nuevo: se puede restaurar deployment V21 y las propiedades exactas respaldadas tras comprobar ausencia de mutaciones. Después de GBO_ROOT_ROUTING_ACTIVATED o cualquier efecto nuevo: NO volver a V21 ni desactivar routing/retirar la marca. DRAIN_ONLY permite reanudación conocida y ACK idempotente, bloquea admisión nueva; mantener journals, staging, pins y raíces, y usar corrección compatible revisada si fuese necesaria. BUSY/lectura incompleta no dan ACK; hashes/identidad inválidos no se fuerzan; un PENDING conserva operaciones/IDs y se reanuda únicamente por contrato. No borrar pruebas ni activar eliminación administrativa.
+La autorización debe cubrir las acciones siguientes, **condicionadas a que el responsable acredite la pausa de sincronización de todos los demás clientes**. OPPO (dos QUEUED) y Xiaomi quedan excluidos y offline. No bastan cero ejecuciones visibles o modo DRAIN_ONLY para acreditar esa pausa.
 
-## Prueba real mínima, aún NO autorizada ni ejecutada
+1. Lectura previa del editor, versiones/deployment, triggers/ejecuciones visibles, propiedades y permisos/destino/ancestros. Captura privada nueva de lo que se modificará, sin sobrescribir las anteriores. Comparar con V21/paquete/anexo. Ejecución autorizada de los lectores paginados existentes para obtener inventario previo completo y estable; no v3Store, recuperación ni carga. Si la fuente, configuración, permisos o conjunto 207/207/220/13 cambió, detener la parte dependiente y conciliar antes de editar.
+2. Aplicar únicamente los cinco reemplazos, cuatro adiciones y cinco propiedades anteriores. Conservar lectores y manifest. No usar clasp push. Crear V22 **solo si sigue libre** y editar el mismo deployment conservando URL, ejecutor institucional y acceso. No nueva implementación, ROOT literal, Usuarios, OAuth ni permisos.
+3. Mantener DRAIN_ONLY; GET real de capacidades debe acreditar `rootGuardReady=true`, `rootRoutingVersion=2`, época/instante previstos, continuidad y contrato V21. El modo DRAIN_ONLY se verifica en CONFIG: GET no publica el modo y no debe inferirse de `rootGuardReady`. Si runtime falla, no probar cargas ni cambiar identidad.
+4. Ejecutar `gboWarmRootRegistryReadCache` hasta `complete=true`. Solo ScriptCache desechable; cero escrituras Drive/propiedades/pins. Medir latencia real. La referencia es **634 proyecciones** de journals/records/bindings históricos, no las 891 entradas totales: reservas fotográficas no forman parte de esa proyección. Cache completa no prueba inmutabilidad de todos los archivos.
+5. Lectores paginados posteriores y comparación privada de conjuntos, IDs, revisiones, ACK, hashes de contenido del registro y los 13 bindings contra el previo. Cero cambios atribuibles al corte; mismo estado durable, sin marca/pin nuevo por las verificaciones. Si no se puede probar estabilidad, conservar evidencia y detener la fase afectada. No afirmar verificación global de binarios o de reservas fotográficas.
+6. Checkpoint con resultados reales, fuente/versión aplicada, propiedades privadas y manifiesto/bundle. Mantener DRAIN_ONLY sin enviar fichas. Si el corte falla antes de marca/pin/efecto, rollback condicionado al respaldo inmediato; después de cualquiera de ellos, únicamente pausa/recuperación compatible, nunca V21 a ciegas ni routing deshabilitado.
 
-Solo teléfono de pruebas expresamente autorizado (OPPO si cumple aislamiento); excluir Xiaomi principal. La aceptación offline puede crear trabajo pendiente: volver a revisar la cola antes de conectar, sin cancelar, editar o reenviar registros previos. Outbox=0 anterior a las pruebas no acredita aislamiento posterior.
+**La aprobación de B NO autoriza OPEN, entregas ficticias, reintentos de colas, instalación, distribución ni eliminación.** El estado de las 207/207/220 autoridades deberá volver a comprobarse al ejecutarlo; la captura anterior no acredita su estado actual.
 
-Con catálogo permitido, progresivas/elementos ficticios únicos previamente comprobados, capturados DESPUÉS del corte: dos alcantarillas en una carretera para SIC-18/SIC-18A, una SCAP con fotos/croquis y una muestra Pavimentos. Procesar una ficha por vez. Vídeo únicamente si la funcionalidad efectiva lo admite y se incluye expresamente; de lo contrario queda sin GO de vídeo. No introducir carreteras arbitrarias ni confundir etiqueta PRUEBA con prueba de inexistencia.
+## D. Hito C: ensayo real posterior, autorización independiente
 
-Antes de escribir: inventariar destinos y consolidados, conservar copia/IDs/hash/filas de cualquier consolidado existente. Si no puede protegerse, detener. Verificar tras cada entrega: ACK completo/persistido con UUID/key/revisión/contentHash y archivos; SHA256 y tamaño de bytes descargados; nombres/rutas; carpeta bajo destino institucional; propietario efectivo GBO de TODOS los nuevos archivos (no solo carpeta); filas previas y ambas filas SIC-18/18A, sin duplicados ni cambio ajeno. Un único replay de la misma revisión/bytes por entrega debe devolver mismo ACK/IDs sin duplicación. Sin ACK o dueño GBO: NO-GO. No borrar datos de prueba después.
+Preparar un dispositivo limpio expresamente autorizado, con APK46/configuración/firma legítimas, outbox vacío y sin reservas/intentos anteriores. **No usar el OPPO actual ni la Xiaomi**; no modificar sus datos para simular aislamiento. Identificar todas las instalaciones que usan la URL y hacer que el responsable mantenga su sincronización pausada toda la ventana. OPEN no filtra por dispositivo y puede admitir a cualquier cliente compatible autenticado; si no se acredita la pausa, no abrirlo.
 
-OPEN no limita por sí solo las cargas a ese teléfono. Si no se acredita pausa de los demás clientes, el ensayo conectado permanece bloqueado aunque se autorice la publicación DRAIN_ONLY.
+Solo después del PASS de B, solicitar específicamente OPEN y las fichas ficticias elegidas. Capturarlas después de `activatedAt`, con reloj correcto, ruta del catálogo y elementos/progresivas verificados como inexistentes. Para las tres familias: dos alcantarillas para conservación multirregistro SIC-18/18A, un puente SCAP con foto/croquis y una muestra Pavimentos; una por vez. Menos fichas solo acreditan el alcance realmente ensayado. Vídeo queda fuera salvo autorización/ensayo propios.
 
-## Evidencia, checkpoints y aprobación
+Inventariar destinos y consolidados antes: elegir ámbito sin consolidados existentes cuando sea posible. Si existe uno compartido, su modificación necesita inclusión expresa en la autorización, copia privada previa de bytes/IDs/hash/filas y verificación de todas las filas anteriores. Si no es protegible, no cargar. La etiqueta PRUEBA no prueba inexistencia.
 
-117/117 Android y 76/76 backend ya acreditados, no repetidos. Aceptación física APK44 pendiente; no se generó otra APK. Fuente/estado recuperables en PR11 sin merge. Evidencias, manifest completo, propiedades, IDs/UUID reales y plan individual de 13 bindings solo en almacenamiento privado ASUS. Referencia: docs/PROGRESO_ACUMULADO_GBO.md.
+Por entrega: ACK completo persistente y misma revisión/UUID/contentHash; descarga SHA-256/tamaño de cada archivo; rutas/nombres; propietario GBO de cada archivo; consolidado íntegro; ausencia de cambios ajenos. Un replay idéntico autorizado conserva ACK/IDs/filas sin duplicados. Ante fallo: DRAIN_ONLY compatible, guardar IDs/journal/errores; no borrar, repetir desde cero o revertir a V21 después de efectos. La nueva raíz no recibe automáticamente archivos históricos.
 
-La autorización solicitada es UNA operación escalonada condicionada: fuente/V22/deployment original + propiedades enumeradas + verificación DRAIN_ONLY/cache; OPEN y cuatro fichas/replays únicamente si aceptación/identidad/permisos/aislamiento se acreditan. Si falta una condición, detener solo la fase dependiente. Excluye distribución general, permisos, ROOT literal, Users, credenciales, migración/eliminación y Xiaomi principal.
+## E. Cierre y límites
+
+No hay nuevo defecto local de backend confirmado ni cambios Android indispensables para este hito. Quedan comprobaciones operativas reales: pausa de clientes, preflight fresco, ejecución institucional efectiva, caché/latencia real, inmutabilidad histórica tras corte y aceptación conectada. Solo B puede acreditarlas para DRAIN_ONLY; C acredita entregas y no concede distribución general.
+
+Android permanece 1.4.32/46, aceptación SCAP A–D pendiente de respuesta del propietario, sin reinstalar ni generar APK. Binarios remotos globales/reservas completas no certificados. **LISTO PARA CORTE CONTROLADO condicionado; NO-GO productivo/general.**
+
+Continuidad: `docs/PROGRESO_ACUMULADO_GBO.md`. Evidencias de esta revisión y UI exclusivamente privadas: `%USERPROFILE%/GBO_CIERRE_V22_PRIVADO_20261104`; kit actualizado conservando el paquete original y sus hashes. No se ejecutó ninguna fase B/C por preparar este documento.

@@ -51,4 +51,4 @@ Se verificó copia privada íntegra del respaldo OPPO, con soporte de rutas larg
 
 ## Orden para continuar
 
-Recibir aceptación SCAP del propietario → registrar resultado y conservar checkpoint → revisar expediente V22 con el responsable institucional → solicitar una autorización consolidada y condicionada para código/propiedades/deployment DRAIN_ONLY → comprobar ejecutor/capacidades/permisos → solo con dispositivo limpio, clientes pausados y autorización específica, habilitar ensayo OPEN. El OPPO tiene **dos filas QUEUED** preservadas: no conectarlo para este ensayo ni alterar su cola para obtener aislamiento.
+Prioridad vigente 04/11/2026: Hito A del backend cerrado → autorización condicionada de B y pausa de clientes → preflight actual/código/propiedades/mismo deployment DRAIN_ONLY → comprobar runtime/caché/inmutabilidad histórica → C con dispositivo limpio, pausa y autorización independiente OPEN/entregas. Registrar aceptación SCAP cuando el propietario la comunique; no esperar ajustes menores Android para preparar B. El OPPO tiene **dos filas QUEUED** preservadas: no conectarlo para este ensayo ni alterar su cola para obtener aislamiento.

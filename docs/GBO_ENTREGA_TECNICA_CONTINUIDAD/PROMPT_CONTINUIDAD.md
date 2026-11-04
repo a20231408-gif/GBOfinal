@@ -1,3 +1,5 @@
+> Prioridad actualizada 04/11/2026: cerrar primero backend. Leer el bloque Hito A del progreso y el expediente revisado. Código V22 intacto, manifest d26e19de…e161; revisión estática 16/16 y sintaxis PASS, sin suites repetidas. UI institucional verifica deployment original V21; no ejecución remota. Próximo paso pendiente: autorización específica de B=DRAIN_ONLY con pausa de clientes; no incluye C=OPEN. Aceptación SCAP A–D aún pendiente, OPPO dos QUEUED y Xiaomi fuera del ensayo. No reabrir Android ni esperar sus ajustes menores para B. El SHA vigente se acredita en CHECKPOINT_ENTREGA.json y remoto, no en los SHA históricos de abajo.
+
 # Prompt autosuficiente para otra sesión
 
 Actúa como integrador Android/Kotlin y Apps Script de GBO Inventario Vial. No reinicies auditorías ni desarrolles funciones secundarias. El encargo inmediato es cerrar la aceptación Android y preparar un corte institucional revisable, sin ejecutarlo sin autorización.

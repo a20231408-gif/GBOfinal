@@ -1,6 +1,8 @@
 # Estado, pruebas y recursos de la entrega
 
-Vigencia: 03/11/2026 Lima; las rutas con 20261104T04… usan UTC. No confundir fechas ni una evidencia antigua con verificación actual. Los resultados físicos posteriores deben anotarse con versión y dispositivo; el respaldo pre-46 no los cubre automáticamente.
+Actualización backend 04/11/2026: Hito A cerrado, revisión estática 16/16 y sintaxis válida; UI institucional muestra mismo deployment V21. No funciones remotas ni suites repetidas. B=DRAIN_ONLY requiere aprobación y pausa; C=OPEN requiere otra aprobación. Ver expediente vigente. Evidencias Android siguientes conservan su fecha.
+
+Vigencia de captura Android: 03/11/2026 Lima; las rutas con 20261104T04… usan UTC. No confundir fechas ni una evidencia antigua con verificación actual. Los resultados físicos posteriores deben anotarse con versión y dispositivo; el respaldo pre-46 no los cubre automáticamente.
 
 ## Android y aceptación
 

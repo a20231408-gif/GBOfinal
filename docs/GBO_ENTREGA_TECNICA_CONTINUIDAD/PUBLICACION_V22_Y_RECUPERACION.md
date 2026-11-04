@@ -4,6 +4,8 @@
 
 Fuente de decisión: `docs/EXPEDIENTE_CORTE_INSTITUCIONAL_20261103.md` y `PRIVADO/apps-script/operacion-institucional/EXPEDIENTE_CORTE_ANEXO_PRIVADO.md`. El anexo identifica scriptId, deploymentId, URL `/exec`, raíces, cadena de ancestros, configuración propuesta y evidencias. No copiar sus valores a este documento público. No usar una URL `/dev` o de ensayos en Android. Servicio de Usuarios independiente, sin cambios.
 
+Actualización 04/11/2026: el [expediente vigente](../EXPEDIENTE_CORTE_INSTITUCIONAL_20261103.md) separa B (DRAIN_ONLY, autorización pendiente) de C (OPEN/entregas, otra autorización). La aceptación Android pendiente no bloquea preparar B. GET no anuncia el modo: comprobar CONFIG; caché completa no sustituye comparación de autoridades antes/después. Pausa operativa de otros clientes obligatoria antes de B.
+
 ## 1. Identificación y condiciones anteriores a toda edición
 
 1. Con la cuenta institucional, abrir **GBO_Inventario original** y comparar scriptId de Configuración del proyecto con el anexo. El nombre no basta. Completar personalmente el flujo oficial si Google solicita seguridad; no compartir códigos ni tokens y no eludir controles.
@@ -28,7 +30,7 @@ Operaciones exactas y SHA de cada archivo: `PRIVADO/apps-script/operacion-instit
 | Conservar sin cambios | `appsscript.json`; `ScapPhotoPanelV2.gs`; `SicObservationsV1Core.gs`; `VideoNamesV2Core.gs`; `VideoV1Core.gs` |
 | Conservar adicionalmente en editor | `PreflightReadonly.gs`; `PreflightReadonlyPaged.gs` |
 
-Son cinco reemplazos, cuatro adiciones y cinco conservados en el paquete de 14, más lectores del editor. No crear un segundo router Codigo/Código ni borrar lectores. `MANIFIESTO_PRIVADO.json` no es archivo de Apps Script. No pegar la carpeta completa ni usar clasp push para ahorrar pasos. No tocar los cuatro archivos KEEP o scopes del manifiesto para corregir saltos de línea. El paquete reconstruido desde GitHub tiene equivalencia textual; el candidato privado revisado conserva los bytes de referencia.
+Son cinco reemplazos, cuatro adiciones y cinco conservados en el paquete de 14, más lectores del editor. No crear un segundo router Codigo/Código ni borrar lectores. `MANIFIESTO_PRIVADO.json` no es archivo de Apps Script. No pegar la carpeta completa ni usar clasp push para ahorrar pasos. No tocar los cinco archivos KEEP o scopes del manifiesto para corregir saltos de línea. El paquete reconstruido desde GitHub tiene equivalencia textual; el candidato privado revisado conserva los bytes de referencia.
 
 En el editor original, después de autorización: abrir cada archivo, reemplazar únicamente su contenido previsto, añadir los cuatro módulos ausentes, guardar y comprobar ausencia de funciones duplicadas y errores de sintaxis. No ejecutar doPost, v3Store, inicializadores o recuperaciones. Ningún guardado de fuente crea por sí mismo una versión publicada, pero también debe estar autorizado.
 
