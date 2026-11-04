@@ -4,6 +4,8 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -93,20 +95,22 @@ class FieldCorrectionsUi20261023Test {
         Room.inMemoryDatabaseBuilder(context,InventoryDatabase::class.java).build().use{db->
             val repo=ScapRepository(db,ScapCatalog.load(context));val id=repo.create("FICTICIO","FICTICIO",null,ScapBridgeType.MODULAR)
             repo.setField(id,"inspection","route","PE-28H")
+            repo.setField(id,"inspection","singularityName","PUENTE FICTICIO")
             val s=repo.dao.snapshot(id)!!;val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main)
             val controller=ScapController(context,db,scope)
             var status:String?=null
-            ui.setContent{InventarioVialTheme{Surface{Column {
+            ui.setContent{InventarioVialTheme{Surface{Column(Modifier.verticalScroll(rememberScrollState())) {
                 ScapExportPanel(s,true,controller,requestedAction="SCAP:FICTICIO",onStatus={_,m->status=m})
             }}}}
-            ui.onNodeWithText("Preparar copia local").performClick()
+            ui.onNodeWithText("Opciones de exportación y diagnóstico").performClick()
+            ui.onNodeWithText("Guardar paquete ZIP de respaldo (opcional)").performScrollTo().performClick()
             ui.waitUntil(30_000){runBlocking{db.localFilesDao().jobs().any{it.recordId==id&&it.scope=="ZIP"}}}
             val job=db.localFilesDao().jobs().single{it.recordId==id&&it.scope=="ZIP"}
             assertEquals(s.inspection.updatedAt,job.revision);assertEquals("QUEUED",job.state)
             val plan=com.tuempresa.inventariovial.localfiles.LocalExportBuilder.build(context,db,job)
             val file=File(plan.files.single{it.mimeType=="application/zip"}.source)
             assertTrue(file.isFile);ZipFile(file).use {archive->
-                val workbook=archive.entries().asSequence().single{it.name.endsWith("SCAP_PROVISIONAL.xlsx")||it.name.endsWith("SCAP.xlsx")}
+                val workbook=archive.entries().asSequence().single{it.name.endsWith(com.tuempresa.inventariovial.scap.export.ScapDocumentNames.excel(s))}
                 java.util.zip.ZipInputStream(archive.getInputStream(workbook)).use{excel->
                     var found=false
                     while(true){val e=excel.nextEntry ?: break;if(e.name=="xl/workbook.xml")found=true}

@@ -1,5 +1,7 @@
 # GBO — entrega técnica y continuidad independiente
 
+**Continuación Android 04/11/2026:** fuente 1.4.33 (47) en la rama `handoff/scap-cierre-final-20261104`, desde `f9f6f84402907d4e85a556c01a24f65b602439bb`. Regresión SCAP afectada 73/73 PASS y compilación de validación PASS. En esta computadora no hay configuración ni firma histórica: no existe APK 1.4.33 instalable. El OPPO conserva 1.4.32 (46) offline; aceptación física pendiente. Detalles y evidencia en [progreso acumulado](../PROGRESO_ACUMULADO_GBO.md). V21 y V22 no se tocaron.
+
 Estado al 03/11/2026, hora de Lima. Este kit complementa, no reemplaza, los originales privados. **NO-GO productivo y distribución**. La instalación offline de 1.4.32 está verificada; la aceptación SCAP corresponde al propietario. No hay autorización de corte V22.
 
 ## Empezar aquí
