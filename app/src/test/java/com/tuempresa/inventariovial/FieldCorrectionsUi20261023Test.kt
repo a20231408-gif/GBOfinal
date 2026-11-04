@@ -36,7 +36,7 @@ class FieldCorrectionsUi20261023Test {
     @Before fun workers(){initializeIdleUiWorkers()}
     private fun capture(name:String){ui.runOnIdle {
         val view=ui.activity.window.decorView;val b=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888)
-        view.draw(Canvas(b));val f=File("../docs/campo-20261023/previews/$name.png").apply{parentFile!!.mkdirs()}
+        view.draw(Canvas(b));val f=File(System.getenv("GBO_TEST_EVIDENCE") ?: "../docs/campo-20261023/previews","$name.png").apply{parentFile!!.mkdirs()}
         f.outputStream().use{assertTrue(b.compress(Bitmap.CompressFormat.PNG,100,it))};b.recycle()
     }}
     @Test fun fixedTabsSwitchSingleFormAndPersistAnEditWithoutCreatingRecords()=runBlocking {
@@ -47,7 +47,7 @@ class FieldCorrectionsUi20261023Test {
             val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main)
             val controller=ScapController(context,db,scope)
             ui.setContent{InventarioVialTheme{Surface{Column(Modifier.fillMaxSize().padding(12.dp)) {
-                ScapExportActions(true,false,{},{})
+                ScapExportActions(true,false,{},{},{})
                 ScapBridgeSicPanel(state.value,controller,true)
             }}}}
             ui.onNodeWithText("SIC-17A",useUnmergedTree=true).performClick()
@@ -70,21 +70,21 @@ class FieldCorrectionsUi20261023Test {
         var calls=0;val busy=mutableStateOf(false)
         ui.setContent{InventarioVialTheme{Surface{Column(Modifier.fillMaxSize().padding(16.dp)) {
             Text("SCAP · EJEMPLO FICTICIO")
-            ScapExportActions(true,busy.value,{calls++;busy.value=true},{calls++;busy.value=true})
+            ScapExportActions(true,busy.value,{calls++;busy.value=true},{calls++;busy.value=true},{calls++;busy.value=true})
             if(busy.value){LinearProgressIndicator();Text("Preparando exportación…")}
         }}}}
-        ui.onNodeWithText("EXPORTAR SCAP").performClick()
-        ui.onNodeWithText("EXPORTAR SCAP").assertIsNotEnabled();ui.onNodeWithText("EXPORTAR SIC").assertIsNotEnabled()
+        ui.onNodeWithText("Exportar SCAP").performClick()
+        ui.onNodeWithText("Exportar SCAP").assertIsNotEnabled();ui.onNodeWithText("Ver documentos").assertIsNotEnabled()
         assertEquals(1,calls);capture("02-acciones-reales-compose")
     }
     @Test @Config(qualifiers="w360dp-h800dp-mdpi") fun phoneWithLargeFontKeepsBothActionsVisible() {
         ui.setContent{CompositionLocalProvider(LocalDensity provides Density(1f,1.4f)){InventarioVialTheme{Surface {
             Column(Modifier.fillMaxSize().padding(12.dp)) {
-                ScapExportActions(true,false,{},{})
+                ScapExportActions(true,false,{},{},{})
                 BridgeSicTabs("SIC-17A"){}
             }
         }}}}
-        ui.onNodeWithText("EXPORTAR SIC").assertIsDisplayed();ui.onNodeWithText("EXPORTAR SCAP").assertIsDisplayed()
+        ui.onNodeWithText("Ver documentos").assertIsDisplayed();ui.onNodeWithText("Exportar SCAP").assertIsDisplayed()
         capture("03-telefono-fuente-grande-compose")
     }
     @Test fun visibleExportRequestQueuesDurablePackageContainingRealWorkbookWithoutClaimingPublication()=runBlocking {

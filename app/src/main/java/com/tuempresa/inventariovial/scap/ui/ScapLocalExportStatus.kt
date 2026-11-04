@@ -67,12 +67,7 @@ import kotlinx.coroutines.*
                         }catch(e:CancellationException){throw e}catch(e:android.content.ActivityNotFoundException){detail="No hay una aplicación compatible para abrir ZIP. El archivo guardado se conserva."}
                         catch(e:Exception){detail=LocalCopyDrain.publicError(e)}
                     }}){Text("ABRIR ZIP DE RESPALDO")}
-                    TextButton(modifier=Modifier.testTag("scap-open-location"),onClick={
-                        val uri=Uri.parse(file.uri);val target=SharedFileActions.location(uri)
-                        detail=if(uri.authority=="media")"Busca el archivo en la ruta de Descargas indicada. Android puede abrir solo la lista de Descargas, no la carpeta exacta."
-                            else "Se intenta abrir la carpeta autorizada. Si Android no lo permite, abre Archivos y sigue la ruta indicada desde esa carpeta."
-                        runCatching{context.startActivity(target ?: SharedFileActions.view(uri,file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))}.onFailure{detail="Android no permite abrir esa carpeta. Usa ABRIR ARCHIVO o Archivos → Descargas; la copia se conserva."}
-                    }){Text("ABRIR UBICACIÓN DISPONIBLE")}
+
                 }
             }
             detail?.let{Text(it)}

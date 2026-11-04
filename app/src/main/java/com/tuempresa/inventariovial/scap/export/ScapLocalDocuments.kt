@@ -22,7 +22,7 @@ object ScapDocumentNames {
     }
     fun bridge(s:ScapInspectionSnapshot)=confirmedName(s) ?: "Puente sin nombre"
     fun excel(s:ScapInspectionSnapshot)=PublicLocalFolderNames.component("SCAP - ${route(s)} - ${bridge(s)}")+".xlsx"
-    fun folder(s:ScapInspectionSnapshot)=PublicLocalFolderNames.component("Puente (${requireNotNull(confirmedName(s)){"Asigna y guarda el nombre del puente antes de crear su carpeta pública. El borrador se conserva en GBO."}})")
+    fun folder(s:ScapInspectionSnapshot)=PublicLocalFolderNames.component("Puente ${requireNotNull(confirmedName(s)){"Asigna y guarda el nombre del puente antes de crear su carpeta pública. El borrador se conserva en GBO."}}")
 
 }
 

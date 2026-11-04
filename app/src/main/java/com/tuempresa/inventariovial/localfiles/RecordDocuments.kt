@@ -20,10 +20,13 @@ object RecordDocuments {
     suspend fun openTarget(c:Context,db:InventoryDatabase,kind:String,id:String,file:LocalSharedFile,history:Boolean=false,
         storage:SharedDocumentStore=AndroidSharedDocumentStore(c)):LocalSharedFile {
         val primary=file.id.startsWith("SIC_PRIMARY/")
+        require(primary||file.recordKey=="$kind/$id"){"El documento no pertenece a la ficha actual."}
+        val currentFile=if(!primary&&kind=="SCAP")db.localFilesDao().filesForRecord("$kind/$id").singleOrNull{it.id==file.id&&it.state=="READY"}
+            ?: error("El documento cambió; vuelve a abrir los documentos de este puente.") else file
         val target=if((!history||primary)&&sicFormat(file)!=null)
             LocalSicConsolidates.principals(c,db,kind,id,storage).firstOrNull{sicFormat(it)==sicFormat(file)}
                 ?: file.also{require(!primary){"El consolidado actual no está verificado; conserva los originales y reintenta la copia local."}}
-        else file
+        else currentFile
         require(target.uri!=null&&storage.digest(Uri.parse(target.uri))==(target.size to target.sha256)){"El documento no está verificado; los originales se conservan."}
         return target
     }

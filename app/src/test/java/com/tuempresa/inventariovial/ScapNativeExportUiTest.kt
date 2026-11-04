@@ -36,6 +36,7 @@ class ScapNativeExportUiTest {
             ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){
                 ScapExportPanel(before,true,controller,onStatus={_,m->message=m})
             }}}
+            ui.onNodeWithText("Opciones de exportación y diagnóstico").performScrollTo().performClick()
             ui.onNodeWithTag("scap-save-excel").performScrollTo().performClick()
             ui.waitUntil(20000){shadowOf(ui.activity).peekNextStartedActivityForResult()!=null}
             val request=shadowOf(ui.activity).nextStartedActivityForResult
@@ -59,7 +60,10 @@ class ScapNativeExportUiTest {
             ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){
                 ScapExportPanel(before,true,controller,onStatus={_,m->message=m})
             }}}
-            ui.onNodeWithTag("scap-save-folder").performScrollTo().performClick()
+            ui.onNodeWithTag("scap-export-direct").performScrollTo().performClick()
+            ui.waitUntil(10000){ui.onAllNodesWithText("Nombre del archivo SCAP").fetchSemanticsNodes().isNotEmpty()}
+            ui.onNodeWithText("Guardar",useUnmergedTree=true).performScrollTo().performClick()
+            ui.waitUntil(10000){shadowOf(ui.activity).peekNextStartedActivityForResult()!=null}
             val request=shadowOf(ui.activity).nextStartedActivityForResult
             assertEquals(Intent.ACTION_OPEN_DOCUMENT_TREE,request.intent.action)
             ui.runOnIdle{ui.activity.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)}
@@ -80,6 +84,7 @@ class ScapNativeExportUiTest {
             val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val controller=ScapController(c,db,scope)
             val snapshot=repo.dao.snapshot(id)!!
             ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(snapshot,true,controller)}}}
+            ui.onNodeWithText("Opciones de exportación y diagnóstico").performScrollTo().performClick()
             ui.onNodeWithTag("scap-save-excel").performScrollTo().performClick()
             ui.waitUntil(20000){shadowOf(c).peekNextStartedActivityForResult()!=null}
             val request=shadowOf(c).nextStartedActivityForResult
@@ -101,19 +106,20 @@ class ScapNativeExportUiTest {
             val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val controller=ScapController(c,db,scope);var message:String?=null
             ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(before,true,controller,onStatus={_,m->message=m})}}}
             ui.onNodeWithTag("scap-export-direct").performScrollTo().performClick()
-            ui.waitUntil(10000){ui.onAllNodesWithText("Guardar en carpeta del puente").fetchSemanticsNodes().isNotEmpty()}
-            ui.onNodeWithText("Guardar en carpeta del puente").assertExists()
+            ui.waitUntil(10000){ui.onAllNodesWithText("Nombre del archivo SCAP").fetchSemanticsNodes().isNotEmpty()}
+            ui.onNodeWithText("Nombre del archivo SCAP").assertExists()
             assertNull(shadowOf(c).peekNextStartedActivityForResult())
             ui.onNodeWithText("Guardar",useUnmergedTree=true).performScrollTo().performClick()
             ui.waitUntil(20000){message?.startsWith("ARCHIVO GUARDADO")==true}
             assertNull(shadowOf(c).peekNextStartedActivityForResult())
-            assertTrue(message!!.contains("PE-3NG/PUENTES/Puente (PRUEBA 2)/SCAP - PE-3NG - PRUEBA 2.xlsx"));assertTrue(message!!.contains("BORRADOR"))
+            assertTrue(message!!.contains("PE-3NG/PUENTES/Puente PRUEBA 2/SCAP - PE-3NG - PRUEBA 2.xlsx"));assertTrue(message!!.contains("BORRADOR"))
             val file=db.localFilesDao().filesForRecord("SCAP/$id").single{it.name=="SCAP - PE-3NG - PRUEBA 2.xlsx"}
             val store=com.tuempresa.inventariovial.localfiles.AndroidSharedDocumentStore(c,tree);assertEquals(file.size to file.sha256,store.digest(android.net.Uri.parse(file.uri)))
             val wb=com.tuempresa.inventariovial.scap.export.TemplateWorkbook(java.io.File(file.source).inputStream())
             assertTrue(wb.cell(1,"C4").textContent.contains("PRUEBA 2"))
             assertFalse(db.localFilesDao().filesForRecord("SCAP/$id").any{it.relativePath.contains("PE-22A")||it.name.contains("PROVISIONAL")})
             val publicCount=provider.docs.size
+            ui.onNodeWithText("Opciones de exportación y diagnóstico").performScrollTo().performClick()
             ui.onNodeWithTag("scap-save-excel").performScrollTo().performClick();ui.waitUntil(20000){shadowOf(c).peekNextStartedActivityForResult()!=null}
             val request=shadowOf(c).nextStartedActivityForResult;assertEquals(Intent.ACTION_CREATE_DOCUMENT,request.intent.action)
             ui.runOnIdle{c.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)}
@@ -132,8 +138,8 @@ class ScapNativeExportUiTest {
             var requestAction by mutableStateOf<String?>(null)
             ui.setContent{MaterialTheme{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){ScapExportPanel(before,true,controller,requestedAction=requestAction,onHandled={requestAction=null})}}}
             ui.runOnIdle{requestAction="SCAP:HEADER"}
-            ui.waitUntil(10000){ui.onAllNodesWithText("Guardar en carpeta del puente").fetchSemanticsNodes().isNotEmpty()}
-            ui.onNodeWithText("Guardar en carpeta del puente").assertExists();ui.onNodeWithText("Guardar",useUnmergedTree=true).performScrollTo().performClick()
+            ui.waitUntil(10000){ui.onAllNodesWithText("Nombre del archivo SCAP").fetchSemanticsNodes().isNotEmpty()}
+            ui.onNodeWithText("Nombre del archivo SCAP").assertExists();ui.onNodeWithText("Guardar",useUnmergedTree=true).performScrollTo().performClick()
             ui.waitUntil(10000){shadowOf(c).peekNextStartedActivityForResult()!=null};val request=shadowOf(c).nextStartedActivityForResult
             assertEquals(Intent.ACTION_OPEN_DOCUMENT_TREE,request.intent.action)
             ui.runOnIdle{c.activityResultRegistry.dispatchResult(request.requestCode,Activity.RESULT_CANCELED,null)}

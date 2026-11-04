@@ -31,17 +31,20 @@ object BridgeDocuments {
 }
 
 @Composable internal fun BridgeDocumentsScreen(s:ScapInspectionSnapshot,c:ScapController,onBack:()->Unit) {
+    key(s.inspection.id){BridgeDocumentsForIdentity(s,c,onBack)}
+}
+@Composable private fun BridgeDocumentsForIdentity(s:ScapInspectionSnapshot,c:ScapController,onBack:()->Unit) {
     val key="SCAP/${s.inspection.id}";val db=c.localDatabase
     val jobs by remember(key,db){db.localFilesDao().observeJobsFor(key)}.collectAsState(emptyList())
     val files by remember(key,db){db.localFilesDao().observeFilesFor(key)}.collectAsState(emptyList())
-    val principals=rememberRecordPrincipals("SCAP",s.inspection.id,s.inspection.updatedAt)
-    BridgeDocumentsContent(ScapDocumentNames.bridge(s),s.roadRecord?.routeCode.orEmpty(),
-        s.values()["progressive"].orEmpty(),s.inspection.updatedAt,jobs,files,
-        currentProvisional=s.inspection.status!="COMPLETE" || s.values("completion")["status"]=="INCOMPLETE",onBack=onBack,principals=principals)
+    val principals=rememberRecordPrincipals("SCAP",s.inspection.id,s.inspection.updatedAt,db)
+    BridgeDocumentsContent(ScapDocumentNames.bridge(s),ScapDocumentNames.route(s),
+        s.values()["progressive"].orEmpty(),s.inspection.updatedAt,jobs.filter{it.recordKey==key},files.filter{it.recordKey==key},
+        currentProvisional=s.inspection.status!="COMPLETE" || s.values("completion")["status"]=="INCOMPLETE",onBack=onBack,principals=principals,ownerKey=key,database=db)
 }
 
 @Composable internal fun BridgeDocumentsContent(name:String,route:String,progressive:String,revision:Long,
-    jobs:List<LocalExportJob>,files:List<LocalSharedFile>,currentProvisional:Boolean=false,principals:List<LocalSharedFile> = emptyList(),onBack:()->Unit) {
+    jobs:List<LocalExportJob>,files:List<LocalSharedFile>,currentProvisional:Boolean=false,principals:List<LocalSharedFile> = emptyList(),ownerKey:String?=null,database:com.tuempresa.inventariovial.data.database.InventoryDatabase?=null,onBack:()->Unit) {
     var history by rememberSaveable(name){mutableStateOf(false)}
     val current=BridgeDocuments.visible(jobs,files,false,principals)
     val older=BridgeDocuments.visible(jobs,files,true,principals).any{f->current.none{it.id==f.id}}
@@ -71,8 +74,7 @@ object BridgeDocuments {
                     Text("Revisión ${job?.revision ?: "no identificada"}${if(job!=null&&job.revision!=revision)" · anterior a la ficha"else""}")
                     Text(BridgeDocuments.label(file,currentProvisional && job?.revision==revision))
                     Text("Ubicación: ${file.relativePath}",style=MaterialTheme.typography.bodySmall)
-                    Text("Android puede abrir solo Descargas o el árbol autorizado, sin seleccionar esta carpeta. Usa ABRIR ARCHIVO para el documento exacto.",style=MaterialTheme.typography.bodySmall)
-                    SavedFileActions(file,ownerKey=file.recordKey,history=history)
+                    SavedFileActions(file,ownerKey=ownerKey ?: file.recordKey,history=history,database=database)
                 }
             }
         }

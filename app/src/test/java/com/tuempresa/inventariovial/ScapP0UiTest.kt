@@ -46,8 +46,8 @@ class ScapP0UiTest {
             val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val controller=ScapController(c,db,scope)
             val show=mutableStateOf(true);val action=mutableStateOf<String?>(null);var status:String?=null;var busy by mutableStateOf(false)
             ui.setContent{MaterialTheme{Surface{Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())){
-                ScapExportActions(true,busy,{},{action.value="SCAP:${System.nanoTime()}"})
-                if(show.value)ScapExportPanel(s,true,controller,requestedAction=action.value,onHandled={action.value=null},onStatus={b,m->busy=b;status=m})
+                ScapExportActions(true,busy,{action.value="SCAP:${System.nanoTime()}"},{},{})
+                if(show.value)ScapExportPanel(s,true,controller,showPrimaryActions=false,requestedAction=action.value,onHandled={action.value=null},onStatus={b,m->busy=b;status=m})
             }}}}
             ui.onNodeWithText("Opciones de exportación y diagnóstico").performScrollTo().performClick()
             ui.onNodeWithText("Guardar paquete ZIP de respaldo (opcional)").performScrollTo().performClick()
@@ -75,9 +75,7 @@ class ScapP0UiTest {
             val entry=provider.entries.getValue(ContentUris.parseId(opened!!.data!!))
             assertTrue(entry.values.getAsString(MediaStore.MediaColumns.RELATIVE_PATH).startsWith("Download/"))
             ZipFile(entry.file).use{z->assertEquals(54,z.entries().asSequence().count{"FOTOGRAFIAS" in it.name.split('/')})}
-            ui.onNodeWithTag("scap-open-location").performScrollTo().performClick()
-            val location=org.robolectric.Shadows.shadowOf(c).nextStartedActivity
-            assertEquals(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS,location.action)
+            ui.onNodeWithTag("scap-open-location").assertDoesNotExist()
             assertEquals(s,db.scapDao().snapshot(id));assertEquals(0,db.automaticSyncDao().get("SCAP/$id")!!.syncedRevision)
             scope.cancel()
         }
