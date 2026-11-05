@@ -29,73 +29,64 @@ object LocalSicConsolidates {
     /** Resolve the CURRENT verified route document, never a cached URI or an older retained row. */
     suspend fun principals(context:Context,db:InventoryDatabase,kind:String,id:String,
         storage:SharedDocumentStore=AndroidSharedDocumentStore(context)):List<LocalSharedFile> {
-        if(kind!="SIC")return emptyList()
-        val snapshot=db.inventoryDao().snapshot(id) ?: return emptyList();val r=snapshot.record
-        if(r.status!="ACTIVE"||r.sicCode=="SIC-17"||r.routeCode.isBlank())return emptyList()
-        val formats=listOf(r.sicCode)+if(r.sicCode=="SIC-18"&&snapshot.sic18a!=null)listOf("SIC-18A")else emptyList()
+        val route:String;val revision:Long;val identities:Set<String>;val formats:List<String>
+        when(kind){
+            "SCAP"->{
+                val s=db.scapDao().snapshot(id) ?: return emptyList()
+                if(!LocalBridgeDocument.located(s))return emptyList()
+                route=s.roadRecord!!.routeCode;revision=s.inspection.updatedAt
+                identities=setOf(s.inspection.roadRecordId);formats=listOf("SIC-17","SIC-17A","SIC-17B")
+            }
+            "SIC"->{
+                val s=db.inventoryDao().snapshot(id) ?: return emptyList();val r=s.record
+                if(r.status!="ACTIVE"&&r.sicCode!="SIC-17" || r.routeCode.isBlank())return emptyList()
+                route=r.routeCode;revision=r.updatedAt;identities=setOf(id)
+                formats=if(r.sicCode=="SIC-17")listOf("SIC-17","SIC-17A","SIC-17B")else
+                    listOf(r.sicCode)+if(r.sicCode=="SIC-18"&&s.sic18a!=null)listOf("SIC-18A")else emptyList()
+            }
+            "PAVEMENT"->{
+                val s=db.pavementDao().sample(id) ?: return emptyList()
+                if(s.status=="DISCARDED_LOCAL")return emptyList()
+                route=s.ruta;revision=s.updatedAt;identities=db.pavementDao().damages(id).map{it.id}.toSet()
+                if(identities.isEmpty())return emptyList()
+                formats=com.tuempresa.inventariovial.pavement.PavementSicFormat.entries.filter{it.surface==s.surface}.map{it.label}
+            }
+            else->return emptyList()
+        }
         val verified=mutex.withLock {formats.mapNotNull{format->
             try {
-                val dir=File(context.filesDir,"sic_consolidated/"+key(r.routeCode,format))
+                val dir=File(context.filesDir,"sic_consolidated/"+key(route,format))
                 if(read(File(dir,"journal.json"))?.optString("phase")!="DONE")return@mapNotNull null
                 val meta=read(File(dir,"current.json")) ?: return@mapNotNull null
-                require(meta.getString("route")==r.routeCode&&meta.getString("format")==format)
+                require(meta.getString("route")==route&&meta.getString("format")==format)
                 val rows=meta.getJSONArray("rows")
-                if((0 until rows.length()).none{n->val row=rows.getJSONObject(n);row.getString("id")==id&&row.getLong("revision")==r.updatedAt})return@mapNotNull null
-                val f=descriptor(meta).copy(id="SIC_PRIMARY/$id/$format",recordKey="SIC/$id",uri=meta.getString("uri"),state="READY")
+                if(!identities.all{identity->(0 until rows.length()).any{n->val row=rows.getJSONObject(n);row.getString("id")==identity&&row.getLong("revision")==revision}})return@mapNotNull null
+                val f=descriptor(meta).copy(id="SIC_PRIMARY/$id/$format",recordKey="$kind/$id",uri=meta.getString("uri"),state="READY")
                 require(fileDigest(File(f.source))==(f.size to f.sha256))
                 storage.checkSlot(SharedDocumentStore.Slot(Uri.parse(f.uri),true),f)
                 require(storage.digest(Uri.parse(f.uri))==(f.size to f.sha256))
                 f
             }catch(e:CancellationException){throw e}catch(e:Exception){null}
         }}
-        val current=db.inventoryDao().recordById(id)
-        return if(current?.updatedAt==r.updatedAt&&current.status=="ACTIVE"&&current.routeCode==r.routeCode)verified else emptyList()
+        return if(DeliveryDestination.revision(db,kind,id)==revision)verified else emptyList()
     }
-    /** Public visibility only: the builder's individual XLSX and frozen row remain private.
-     * Never suppress a draft, missing/stale row, failed publication, explicit ZIP or special family.
-     * Existing frozen manifests are intentionally not passed through this policy by the drain.
-     */
+    /** Suppress only documents accredited by a current row and verified public bytes. */
     suspend fun preferConsolidates(context:Context,db:InventoryDatabase,job:LocalExportJob,plan:LocalPlan,
         storage:SharedDocumentStore):LocalPlan {
-        if(job.kind!="SIC"||!job.scope.startsWith("FULL")||plan.publicNamingVersion!=5)return plan
-        val record=db.inventoryDao().recordById(job.recordId) ?: return plan
-        if(record.status!="ACTIVE"||record.sicCode=="SIC-17"||record.routeCode.isBlank())return plan
-        return mutex.withLock {
-            val privateRows=mutableListOf<LocalSharedFile>();val publicPaths=mutableListOf<String>()
-            val visible=plan.files.filterNot{file->
-                val format=Regex("(SIC-[0-9]+[A-Z]?)(?:_PROVISIONAL)?\\.xlsx").matchEntire(file.name)?.groupValues?.get(1)
-                if(format!=record.sicCode && !(record.sicCode=="SIC-18"&&format=="SIC-18A"))false
-                else try {
-                    val dir=File(context.filesDir,"sic_consolidated/"+key(record.routeCode,requireNotNull(format)))
-                    val meta=read(File(dir,"current.json"))
-                    val rows=meta?.optJSONArray("rows")
-                    val covered=rows!=null && (0 until rows.length()).any{n->val row=rows.getJSONObject(n)
-                        row.getString("id")==record.id&&row.getLong("revision")==job.revision}
-                    if(!covered || read(File(dir,"journal.json"))?.optString("phase")!="DONE")false
-                    else {
-                        require(meta!!.getString("route")==record.routeCode && meta.getString("format")==format)
-                        val consolidated=descriptor(requireNotNull(meta))
-                        require(fileDigest(File(consolidated.source))==(consolidated.size to consolidated.sha256))
-                        val slot=SharedDocumentStore.Slot(Uri.parse(meta.getString("uri")),true)
-                        storage.checkSlot(slot,consolidated)
-                        (storage.digest(slot.uri)==(consolidated.size to consolidated.sha256)).also{verified->
-                            if(verified){privateRows+=file;publicPaths+=consolidated.relativePath+consolidated.name}
-                        }
-                    }
-                }catch(e:CancellationException){throw e}catch(e:Exception){false} // Fail open for visibility, never lose the fallback document.
-            }
-            if(privateRows.isEmpty())return@withLock plan
-            // The public manifest must not claim that a private per-record workbook was published.
-            val files=visible.map{file->if(file.name!="MANIFIESTO_LOCAL.json")file else {
-                val manifest=JSONObject(File(file.source).readText()).put("localFilesExpected",visible.size)
-                    .put("privateSicWorkbooks",JSONArray(privateRows.map{JSONObject().put("name",it.name).put("sha256",it.sha256).put("size",it.size)}))
-                    .put("publicSicConsolidates",JSONArray(publicPaths.distinct()))
-                    .put("files",JSONArray(visible.filter{it.id!=file.id}.map{JSONObject().put("path",it.relativePath+it.name).put("sha256",it.sha256).put("size",it.size)}))
-                atomic(File(file.source),manifest.toString(2).toByteArray())
-                val digest=fileDigest(File(file.source));file.copy(size=digest.first,sha256=digest.second)
-            }}
-            plan.copy(files=files)
-        }
+        if(job.kind !in setOf("SIC","SCAP","PAVEMENT")||!job.scope.startsWith("FULL")||plan.publicNamingVersion !in 5..6)return plan
+        val covered=principals(context,db,job.kind,job.recordId,storage).mapNotNull(RecordDocuments::sicFormat).toSet()
+        if(covered.isEmpty())return plan
+        val visible=plan.files.filterNot{RecordDocuments.sicFormat(it) in covered}
+        if(visible.size==plan.files.size)return plan
+        val result=visible.map {file->if(file.name!="MANIFIESTO_LOCAL.json")file else {
+            val manifest=JSONObject(File(file.source).readText()).put("localFilesExpected",visible.size)
+                .put("publicSicConsolidates",JSONArray(covered.sorted()))
+                .put("files",JSONArray(visible.filter{it.id!=file.id}.map{JSONObject().put("path",it.relativePath+it.name).put("sha256",it.sha256).put("size",it.size)}))
+            atomic(File(file.source),manifest.toString(2).toByteArray())
+            val digest=fileDigest(File(file.source));file.copy(size=digest.first,sha256=digest.second)
+        }}
+        if(plan.publicNamingVersion>=6)LocalExportBuilder.publicProjection(context,job,result,plan.files.filter{it !in visible&&RecordDocuments.sicFormat(it)!=null},covered)
+        return plan.copy(files=result)
     }
     private fun key(route:String,format:String)=com.tuempresa.inventariovial.delivery.sha256("$route\u0000$format".toByteArray())
     private fun atomic(file:File,bytes:ByteArray) {
@@ -221,18 +212,8 @@ object LocalSicConsolidates {
         journal.put("phase","DONE").put("finalUri",final.uri.toString());save(journalFile,journal)
         return next
     }
-    suspend fun update(context:Context,db:InventoryDatabase,route:String,format:String,
-        storage:SharedDocumentStore=AndroidSharedDocumentStore(context),selectedInspection:String?=null):LocalSicResult = withContext(Dispatchers.IO){mutex.withLock {
-        require(route.matches(Regex("[A-Za-z0-9][A-Za-z0-9_-]{0,63}"))){"Completa una ruta válida antes de exportar."}
-        require(format in SicExportFormat.entries.map{it.code}+listOf("SIC-17A","SIC-17B","SIC-14","SIC-14A","SIC-15","SIC-16"))
-        val dir=File(context.filesDir,"sic_consolidated/"+key(route,format)).apply{check(isDirectory||mkdirs())}
-        RandomAccessFile(File(dir,"publication.lock"),"rw").use{lockFile->lockFile.channel.lock().use {
-            val previous=recover(dir,storage)
-            val inputs=collect(db,route,format)
-            if(selectedInspection!=null) {
-                val selected=requireNotNull(db.scapDao().snapshot(selectedInspection))
-                require(inputs.any{r->r.id==selected.inspection.roadRecordId && r.bytes!=null}){"La ficha no se incorporó al consolidado de esta ruta."}
-            }
+    private data class Projection(val ordered:List<JSONObject>,val bytes:ByteArray,val pending:Int,val retained:Int)
+    private suspend fun project(db:InventoryDatabase,dir:File,route:String,format:String,inputs:List<Input>,previous:JSONObject?):Projection {
             val entries=linkedMapOf<String,JSONObject>()
             previous?.getJSONArray("rows")?.let{array->for(n in 0 until array.length()){val row=array.getJSONObject(n);entries[row.getString("id")]=row}}
             if(com.tuempresa.inventariovial.pavement.PavementSicFormat.entries.any{it.label==format})
@@ -267,11 +248,43 @@ object LocalSicConsolidates {
                 if(format=="SIC-17")LocalSic17Workbook.normalize(original)else original
             },format)
             val bytes=LocalSicWorkbookPolicy.status(merged,(pavementFormat||format in setOf("SIC-17","SIC-17A","SIC-17B"))&&pending+retained>0,pending+retained)
+        return Projection(ordered,bytes,pending,retained)
+    }
+    /** Manual save-as takes an immutable route snapshot and never renames/updates a public workbook. */
+    suspend fun prepareManual(context:Context,db:InventoryDatabase,route:String,format:String):ManualDocument=withContext(Dispatchers.IO){mutex.withLock {
+        require(route.matches(Regex("[A-Za-z0-9][A-Za-z0-9_-]{0,63}"))){"Completa la carretera antes de exportar el consolidado."}
+        require(format in SicExportFormat.entries.map{it.code}+listOf("SIC-17A","SIC-17B","SIC-14","SIC-14A","SIC-15","SIC-16"))
+        val dir=File(context.filesDir,"sic_consolidated/"+key(route,format)).apply{check(isDirectory||mkdirs())}
+        RandomAccessFile(File(dir,"publication.lock"),"rw").channel.use{channel->channel.lock().use {
+            val journal=read(File(dir,"journal.json"))
+            require(journal==null||journal.optString("phase")=="DONE"){"El consolidado tiene una publicación pendiente. Reintenta la copia local antes de Guardar como."}
+            val projection=project(db,dir,route,format,collect(db,route,format),read(File(dir,"current.json")))
+            val target=File(dir,"manual/${java.util.UUID.randomUUID()}/$format.xlsx")
+            atomic(target,projection.bytes)
+            val pending=projection.pending+projection.retained
+            ManualDocumentExport.freeze(context,target,"SIC",SicExcelWriter.XLSX_MIME,"$format.xlsx",notice=
+                (if(pending>0)"BORRADOR · $pending fichas/celdas pendientes o conservadas. "else"")+"${projection.ordered.size} filas locales de $route. No modifica el consolidado público ni confirma Drive.")
+        }}
+    }}
+    suspend fun update(context:Context,db:InventoryDatabase,route:String,format:String,
+        storage:SharedDocumentStore=AndroidSharedDocumentStore(context),selectedInspection:String?=null):LocalSicResult = withContext(Dispatchers.IO){mutex.withLock {
+        require(route.matches(Regex("[A-Za-z0-9][A-Za-z0-9_-]{0,63}"))){"Completa una ruta válida antes de exportar."}
+        require(format in SicExportFormat.entries.map{it.code}+listOf("SIC-17A","SIC-17B","SIC-14","SIC-14A","SIC-15","SIC-16"))
+        val dir=File(context.filesDir,"sic_consolidated/"+key(route,format)).apply{check(isDirectory||mkdirs())}
+        RandomAccessFile(File(dir,"publication.lock"),"rw").use{lockFile->lockFile.channel.lock().use {
+            val previous=recover(dir,storage)
+            val inputs=collect(db,route,format)
+            if(selectedInspection!=null) {
+                val selected=requireNotNull(db.scapDao().snapshot(selectedInspection))
+                require(inputs.any{r->r.id==selected.inspection.roadRecordId && r.bytes!=null}){"La ficha no se incorporó al consolidado de esta ruta."}
+            }
+            val projection=project(db,dir,route,format,inputs,previous)
+            val ordered=projection.ordered;val bytes=projection.bytes;val pending=projection.pending;val retained=projection.retained
             val hash=com.tuempresa.inventariovial.delivery.sha256(bytes)
             val oldSame=previous!=null && previous.optString("sha256")==hash && storage.digest(Uri.parse(previous.getString("uri")))==(previous.getLong("size") to hash)
             val next=if(oldSame)previous!!.put("rows",JSONArray(ordered)).put("pending",pending).put("retained",retained).also{save(File(dir,"current.json"),it)} else {
                 val generation=maxOf(System.currentTimeMillis(),(previous?.optLong("generation") ?: 0)+1)
-                val source=File(dir,"versions/$generation/$format.xlsx");atomic(source,bytes)
+                val source=File(dir,"versions/$generation/${if(pending+retained>0)"BORRADOR/"else""}$format.xlsx");atomic(source,bytes)
                 val meta=JSONObject().put("route",route).put("format",format).put("generation",generation).put("sha256",hash).put("size",bytes.size.toLong())
                     .put("file",source.path).put("rows",JSONArray(ordered)).put("pending",pending).put("retained",retained)
                 save(File(dir,"journal.json"),JSONObject().put("phase","PREPARED").put("next",meta).put("previous",previous ?: JSONObject.NULL))
@@ -291,7 +304,7 @@ object LocalSicConsolidates {
         val formats=when(kind){
             "SCAP"->listOf("SIC-17","SIC-17A","SIC-17B")
             "SIC"->db.inventoryDao().recordById(id)?.sicCode?.let{code->if(code=="SIC-17")listOf(code,"SIC-17A","SIC-17B")else if(code=="SIC-18")listOf(code,"SIC-18A")else listOf(code)}.orEmpty()
-            "PAVEMENT"->com.tuempresa.inventariovial.pavement.PavementSicFormat.entries.map{it.label}
+            "PAVEMENT"->db.pavementDao().sample(id)?.surface?.let{surface->com.tuempresa.inventariovial.pavement.PavementSicFormat.entries.filter{it.surface==surface}.map{it.label}}.orEmpty()
             else->emptyList()
         }
         val issues=mutableListOf<String>()

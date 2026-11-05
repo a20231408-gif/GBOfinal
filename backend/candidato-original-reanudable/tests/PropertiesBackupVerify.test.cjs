@@ -1,0 +1,9 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {canonical,compare}=require('../properties-backup-verify.cjs');
+function capture(){const properties=Object.fromEntries(Array.from({length:75},(_,i)=>['FICTICIO_'+i,'VALOR_'+i]));return {schema:1,scriptId:'FICTICIO',capturedAt:'2026-11-04T12:00:00Z',count:75,properties,sha256:crypto.createHash('sha256').update(canonical(properties)).digest('hex')};}
+function pair(){const a=capture(),b=capture();b.capturedAt='2026-11-04T12:01:00Z';return [a,b];}
+test('complete captures above UI limit match without disclosing values',()=>{const [a,b]=pair();assert.deepEqual(compare(a,b),{verified:true,count:75,remoteProvenanceVerified:false,clientPauseVerified:false});});
+test('truncation to 50 is rejected',()=>{const [a,b]=pair();b.properties=Object.fromEntries(Object.entries(b.properties).slice(0,50));assert.throws(()=>compare(a,b),/INCOMPLETE_PROPERTIES/);});
+test('altered values and digest are rejected',()=>{const [a,b]=pair();b.properties.FICTICIO_1='CHANGED';assert.throws(()=>compare(a,b),/PROPERTY_HASH_MISMATCH/);b.sha256=crypto.createHash('sha256').update(canonical(b.properties)).digest('hex');assert.throws(()=>compare(a,b),/PROPERTIES_CHANGED/);});
+test('different project and reused capture cannot establish stability',()=>{const [a,b]=pair();b.scriptId='OTHER';assert.throws(()=>compare(a,b),/DIFFERENT_SCRIPT/);assert.throws(()=>compare(a,a),/NOT_A_LATER_CAPTURE/);});
+test('string values including empty and unicode remain exact',()=>{const [a,b]=pair();for(const x of [a,b]){x.properties.FICTICIO_1='á\n';x.properties.FICTICIO_2='';x.sha256=crypto.createHash('sha256').update(canonical(x.properties)).digest('hex');}assert.equal(compare(a,b).count,75);});

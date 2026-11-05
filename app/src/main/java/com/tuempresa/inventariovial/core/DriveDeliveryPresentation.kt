@@ -24,6 +24,7 @@ object DriveDeliveryPresentation {
     suspend fun identity(db:InventoryDatabase,i:DriveSyncIntent,context:Context?=null):DriveDeliveryIdentity {
         var label=when(i.kind){"SCAP"->"Puente";"PAVEMENT"->"Pavimento";else->"Elemento SIC"}
         var location="Ubicación no disponible";var revision:Long?=null;var validated=false
+        var scapTitle:String?=null
         var issue:String?=null;var target:ScapFieldRoute?=null;var provisional=false
         val onlyDevice=com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(db,i.key)
         var format=when(i.kind){"SCAP"->"Ficha SCAP";"PAVEMENT"->"Pavimentos";else->"Ficha SIC"}
@@ -36,6 +37,8 @@ object DriveDeliveryPresentation {
                 revision=r.updatedAt;validated=r.status=="ACTIVE";format=r.sicCode
             }
             "SCAP"->db.scapDao().snapshot(i.recordId)?.let{s->
+                // A display label must not try to reserve a public folder for an unnamed draft.
+                scapTitle=com.tuempresa.inventariovial.scap.export.ScapDocumentNames.confirmedName(s)?.let{"Puente $it"} ?: "Puente sin nombre"
                 location=(s.roadRecord?.routeCode ?: s.values()["route"].orEmpty()).ifBlank{"Ruta pendiente"}
                 revision=s.inspection.updatedAt;validated=s.inspection.status=="COMPLETE"
                 provisional=s.values("completion")["status"]=="INCOMPLETE"
@@ -53,7 +56,7 @@ object DriveDeliveryPresentation {
             }
         }
         // describe is a read-only formatter; reserve and LocalDocumentLocation are never called.
-        val title=if(revision==null)label else PublicLocalFolderNames.describe(db,
+        val title=scapTitle ?: if(revision==null)label else PublicLocalFolderNames.describe(db,
             LocalExportJob("DISPLAY_ONLY",i.key,i.kind,i.recordId,i.revision),label)
         return DriveDeliveryIdentity(title,location,revision,validated,format,issue,target,provisional,onlyDevice)
     }

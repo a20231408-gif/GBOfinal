@@ -81,8 +81,9 @@ class ScapP0Test {
                 val photos=all.filter{"FOTOGRAFIAS" in it.name.split('/')};val sketches=all.filter{"CROQUIS" in it.name.split('/')}
                 assertEquals(54,photos.size);assertEquals(3,sketches.size)
                 assertTrue(all.any{it.name.endsWith("CONTINUACION_FOTOGRAFICA.html")});assertTrue(all.any{it.name.endsWith("INSPECCION.json")})
-                val xlsx=all.single{it.name.endsWith("SCAP_PROVISIONAL.xlsx")}
+                val xlsx=all.single{it.name.endsWith(ScapDocumentNames.excel(old))}
                 val book=TemplateWorkbook(z.getInputStream(xlsx));assertNotNull(book.parts["xl/workbook.xml"])
+                assertTrue(book.cell(1,"C4").textContent.contains("BORRADOR"))
                 assertTrue(book.parts.keys.any{it.startsWith("xl/worksheets/sheet4")})
                 val captions=(11..42).map{book.cell(4,"D$it").textContent}
                 assertEquals(32,captions.count{it.contains("TEST_FOTO_")})

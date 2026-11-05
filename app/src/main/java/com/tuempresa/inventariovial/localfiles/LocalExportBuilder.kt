@@ -43,11 +43,22 @@ object LocalExportNames {
 object LocalExportBuilder {
     fun work(context:Context,job:LocalExportJob)=File(context.filesDir,"local_exports/${job.id}").apply{check(isDirectory||mkdirs())}
     fun space(context:Context,bytes:Long){VerifiedZipArchive.checkedSpace(StatFs(context.filesDir.path).availableBytes,bytes)}
+    /** Private generation manifest only; it is never a public document in layout 6. */
+    fun publicProjection(context:Context,job:LocalExportJob,visible:List<LocalSharedFile>,
+        privateSic:List<LocalSharedFile> = emptyList(),consolidates:Collection<String> = emptyList()) {
+        val file=File(work(context,job),"MANIFIESTO_LOCAL.json")
+        if(!file.isFile)return
+        val manifest=JSONObject(file.readText()).put("localFilesExpected",visible.size)
+            .put("publicFiles",JSONArray(visible.map{JSONObject().put("path",it.relativePath+it.name).put("sha256",it.sha256).put("size",it.size)}))
+            .put("privateSicWorkbooks",JSONArray(privateSic.map{JSONObject().put("name",it.name).put("sha256",it.sha256).put("size",it.size)}))
+            .put("publicSicConsolidates",JSONArray(consolidates.sorted()))
+        atomic(file){it.write(manifest.toString(2).toByteArray())}
+    }
     private fun atomic(file:File,write:(OutputStream)->Unit){file.parentFile!!.mkdirs();val a=AtomicFile(file);val out=a.startWrite();try{write(object:java.io.FilterOutputStream(out){override fun write(b:ByteArray,o:Int,n:Int){out.write(b,o,n)};override fun write(b:Int){out.write(b)};override fun close(){flush()}});a.finishWrite(out)}catch(e:Exception){a.failWrite(out);throw e}}
     suspend fun build(context:Context,db:InventoryDatabase,job:LocalExportJob):LocalPlan {
         val dir=work(context,job);space(context,0)
         val files=mutableListOf<LocalSharedFile>();val problems=mutableListOf<String>();var root="";var location:LocalDocumentLocation?=null;var captureState="";val pendingFields=mutableListOf<String>()
-        val exportScope=job.scope.removeSuffix("_LAYOUT_V5").removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")
+        val exportScope=job.scope.removeSuffix("_LAYOUT_V6").removeSuffix("_LAYOUT_V5").removeSuffix("_LAYOUT_V4").removeSuffix("_LAYOUT_V3").removeSuffix("_READABLE_V2")
         val photosOnly=exportScope=="PHOTOS"
         fun add(file:File,relative:String,mime:String,officialPanel:Boolean=false){
             require(relative.split('/').all{it.isNotBlank()&&it!=".."&&it!="."})
@@ -122,22 +133,21 @@ object LocalExportBuilder {
             "SCAP"->{
                 val s=requireNotNull(db.scapDao().snapshot(job.recordId));captureState=s.inspection.status;pendingFields+=com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(s,ScapCatalog.load(context).forSnapshot(s)).pending.map{"${it.section}: ${it.field}"};require(s.inspection.updatedAt==job.revision){"La revisión SCAP cambió."}
                 
-                location=LocalDocumentLocation.resolve(db,job,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),"PUENTES","PUENTE")
+                location=LocalDocumentLocation.resolve(db,job,s.roadRecord?.routeCode?.takeIf{it.isNotBlank()} ?: s.values()["route"].orEmpty(),"PUENTES","PUENTE",context)
                 root=location.base
                 val videos=if(photosOnly)emptyList()else VideoDatabase.get(context).videos().all().filter{it.parentKey==job.recordKey&&!it.retired}
                 space(context,s.photos.sumOf{File(it.originalPath.ifBlank{it.localPath}).length()}+videos.sumOf{it.sizeBytes}+16L*1024*1024)
                 if(!photosOnly){
                     attempt("Excel SCAP"){
-                        val isFinal=s.inspection.status=="COMPLETE" && s.values("completion")["status"]=="COMPLETE"
-                        val raw=File(dir,"SCAP.generating.xlsx")
-                        val forTemplate=if(s.photos.size>32)s.copy(photos=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.ordered(s).take(32))else s
-                        val generated=try{ScapDelivery.writeExcel(context,forTemplate,raw);true}catch(e:CancellationException){throw e}catch(e:Exception){
-                            val reason=LocalCopyDrain.publicError(e);pendingFields+="Plantilla SCAP: $reason"
-                            document("SCAP_PROVISIONAL.xlsx",SicExcelWriter.XLSX_MIME){ProvisionalScapWorkbook.write(it,s,reason)};false
-                        }
-                        val name=if(isFinal)"SCAP.xlsx"else"SCAP_PROVISIONAL.xlsx"
-                        if(generated)document(name,SicExcelWriter.XLSX_MIME){out->if(isFinal)raw.inputStream().use{it.copyTo(out)}else ProvisionalSicExcel.decorate(out,raw.readBytes(),s.inspection.id,s.inspection.createdBy,job.revision,s.inspection.createdAt,
-                            com.tuempresa.inventariovial.scap.domain.ScapCompletion.assess(s,ScapCatalog.load(context).forSnapshot(s)).pending.map{ProvisionalSicExcel.Pending(it.field,it.section,"Dato pendiente de captura")},markerCell="C4")}
+                        val generated=ScapLocalDocuments.workbook(context,s,dir)
+                        generated.reason?.let{pendingFields+="Plantilla SCAP: $it"}
+                        val file=if(generated.draft)File(dir,"BORRADOR/${generated.file.name}").also {copy->
+                            check(copy.parentFile!!.isDirectory||copy.parentFile!!.mkdirs())
+                            if(!copy.exists())generated.file.copyTo(copy)
+                            require(fileDigest(copy)==fileDigest(generated.file))
+                        }else generated.file
+                        add(file,ScapDocumentNames.excel(s),SicExcelWriter.XLSX_MIME)
+
                     }
                     if(s.photos.size>32)document("CONTINUACION_FOTOGRAFICA.html","text/html"){it.write(ScapPhotoContinuation.html(s).toByteArray())}
                     for(p in ScapSicExporter.previews(s))attempt(p.format){
@@ -146,11 +156,11 @@ object LocalExportBuilder {
                         document("${p.format}${if(provisional)"_PROVISIONAL"else""}.xlsx",SicExcelWriter.XLSX_MIME){it.write(LocalSicWorkbookPolicy.status(body.toByteArray(),provisional,p.missingRequired.size))}
                     }
                     document("INSPECCION.json","application/json"){it.write(ScapFieldBackup.capture(s).toString(2).toByteArray())}
-                    for(sketch in s.sketches)attempt("Croquis ${sketch.id}"){
+                    for((index,sketch) in s.sketches.sortedBy{it.id}.withIndex())attempt("Croquis ${index+1}"){
                         val f=File(dir,"croquis_${LocalExportNames.safe(sketch.id)}.png")
                         atomic(f){out->if(sketch.localUri.startsWith("content:"))requireNotNull(context.contentResolver.openInputStream(Uri.parse(sketch.localUri))).use{it.copyTo(out)}else File(sketch.localUri.removePrefix("file://")).inputStream().use{it.copyTo(out)}}
                         val mime=LocalCopies.photoMime(f);val ext=when(mime){"image/jpeg"->"jpg";"image/png"->"png";"image/webp"->"webp";"image/heic"->"heic";else->"bin"}
-                        add(f,"CROQUIS/${LocalExportNames.safe(sketch.type)}_${LocalExportNames.safe(sketch.id)}.$ext",mime)
+                        add(f,"CROQUIS/${LocalExportNames.safe(sketch.type)}_${index+1}.$ext",mime,true)
                     }
                     val orderedVideos=videos.sortedWith(compareBy({com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.resolve(it.category,it.categoryLabel)?.order ?: 21},{it.createdAt},{it.id}))
                     for(v in orderedVideos){val f=File(v.localPath);val panel=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.resolve(v.category,v.categoryLabel)
@@ -164,7 +174,7 @@ object LocalExportBuilder {
                     original(p.id,p.originalPath.ifBlank{p.localPath},p.photoCategory ?: "GENERAL"){ext->
                         val projected=com.tuempresa.inventariovial.scap.domain.ScapPhotoPanel.photoPath(s,p,ext,"FOTOGRAFIAS")
                         val remoteName=if(ext=="jpg")runCatching{com.tuempresa.inventariovial.core.ReadablePhotoNames.name(context,p)}.getOrNull()else null
-                        projected.substringBeforeLast('/')+"/"+(remoteName ?: com.tuempresa.inventariovial.core.PublicDeliveryNames.localPhoto(db,job,p.id,p.photoCategory ?: "GENERAL",ext.takeIf{it in setOf("jpg","png","webp","heic")} ?: "bin"))
+                        projected.substringBeforeLast('/')+"/"+(remoteName ?: projected.substringAfterLast('/'))
                     }
                 }
                 document("datos_fotografias.json","application/json"){it.write(JSONObject().put("inspectionId",s.inspection.id).put("revision",job.revision).put("photos",JSONArray(s.photos.map{p->JSONObject().put("id",p.id).put("category",p.photoCategory).put("description",p.description).put("capturedAt",p.capturedAt).put("latitude",p.photoLatitude).put("longitude",p.photoLongitude).put("accuracyM",p.photoGpsAccuracyM)})).toString(2).toByteArray())}
@@ -211,6 +221,11 @@ object LocalExportBuilder {
             VerifiedZipArchive.write(zip,sources,cancel={execution.ensureActive()},progress={LocalArchiveProgress.record(job.id,it)})
             files.clear();add(zip,zip.name,"application/zip")
         }
-        return LocalPlan(files,problems.distinct(),5)
+        // Generation sources, SIC rows and manifests stay private; ZIP is an explicit backup option.
+        val visible=if(exportScope=="ZIP")files else files.filterNot {
+            it.mimeType=="application/json" || (job.kind=="SCAP" && RecordDocuments.sicFormat(it)!=null)
+        }.map{file->file.copy(name=file.name.replace(Regex("_PROVISIONAL(?=\\.xlsx$)"),""))}
+        if(exportScope!="ZIP")publicProjection(context,job,visible,files.filter{RecordDocuments.sicFormat(it)!=null&&it !in visible})
+        return LocalPlan(visible,problems.distinct(),6)
     }
 }

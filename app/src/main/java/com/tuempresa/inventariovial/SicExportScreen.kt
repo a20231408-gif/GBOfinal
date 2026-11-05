@@ -33,6 +33,7 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
     var road by rememberSaveable { mutableStateOf(exporter.savedHeading.road) }
     var section by rememberSaveable { mutableStateOf(exporter.savedHeading.section) }
     var picking by rememberSaveable { mutableStateOf(value = false) }
+    var chooseAfterPrepare by rememberSaveable {mutableStateOf(false)}
     var pickerMessage by rememberSaveable { mutableStateOf<String?>(null) }
     val format = SicExportFormat.entries.firstOrNull { it.code == formatCode }
     val active = history.asSequence().map { it.record }.filter {
@@ -61,6 +62,16 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
         picking = false
         if (uri != null) { pickerMessage = null; exporter.save(uri) }
         else pickerMessage = "Guardado cancelado. El archivo preparado sigue disponible."
+    }
+    LaunchedEffect(state.busy,state.prepared?.file?.path,chooseAfterPrepare) {
+        if(chooseAfterPrepare&&!state.busy) {
+            state.prepared?.let {document->
+                chooseAfterPrepare=false;picking=true
+                try{if(document.isZip)zipPicker.launch(document.displayName)else xlsxPicker.launch(document.displayName)}
+                catch(e:Exception){picking=false;pickerMessage="No se pudo abrir Guardar como de Android; la copia preparada se conserva."}
+            }
+            if(state.prepared==null&&state.message!=null)chooseAfterPrepare=false
+        }
     }
     BackHandler(onBack = onBack)
     Column(
@@ -104,6 +115,7 @@ fun SicExportScreen(viewModel: InventoryViewModel, onBack: () -> Unit) {
         }
         Button(enabled = !locked && count > 0 && review?.blocking?.isEmpty()==true, onClick = {
             pickerMessage = null
+            chooseAfterPrepare=true
             exporter.prepare(format, route, ExportHeading(project.trim(), road.trim(), section.trim()))
         }, modifier = Modifier.fillMaxWidth()) {
             Text(if (state.busy) "Procesando…" else if (format == null) "Generar ZIP de Excel" else "Generar Excel")

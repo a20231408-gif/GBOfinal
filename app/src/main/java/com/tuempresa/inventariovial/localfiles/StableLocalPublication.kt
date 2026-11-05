@@ -19,6 +19,7 @@ import java.io.File
  */
 object StableLocalPublication {
     private val mutex=Mutex()
+    suspend fun <T> folderOperation(block:suspend ()->T):T=mutex.withLock{block()}
     private fun read(file:File):JSONObject? = if(file.exists()||File(file.path+".bak").exists())
         JSONObject(AtomicFile(file).openRead().use{it.readBytes().toString(Charsets.UTF_8)}) else null
     private fun atomic(file:File,write:(java.io.OutputStream)->Unit) {
@@ -39,7 +40,7 @@ object StableLocalPublication {
     private fun freeze(dir:File,file:LocalSharedFile):LocalSharedFile {
         require(file.name.isNotBlank() && file.name !in setOf(".","..") && file.name.none{it=='/'||it=='\\'||it.code<32})
         require(file.sha256.matches(Regex("[a-f0-9]{64}")))
-        val frozen=File(dir,"versions/${file.sha256}/${file.name}")
+        val frozen=File(dir,"versions/${file.sha256}/${if(RecordDocuments.provisional(file))"BORRADOR/"else""}${file.name}")
         if(!frozen.isFile)atomic(frozen){out->File(file.source).inputStream().use{it.copyTo(out)}}
         require(fileDigest(frozen)==(file.size to file.sha256)){"El historial privado no coincide; se conserva la copia pública."}
         return file.copy(source=frozen.path)
@@ -113,12 +114,13 @@ object StableLocalPublication {
         db.localFilesDao().saveFile(target.copy(uri=final.uri.toString(),state="READY"))
         j.put("phase","DONE");save(journalFile,j)
     }
-    suspend fun publish(c:Context,db:InventoryDatabase,job:LocalExportJob,input:LocalSharedFile,storage:SharedDocumentStore):LocalSharedFile=mutex.withLock {
+    suspend fun publish(c:Context,db:InventoryDatabase,job:LocalExportJob,originalInput:LocalSharedFile,storage:SharedDocumentStore,namespace:String=""):LocalSharedFile=mutex.withLock {
+        val input=if(job.scope==DriveMirrorPlan.SCOPE)originalInput else ScapFolderRename.current(db,originalInput)
         require(input.recordKey==job.recordKey && input.jobId==job.id)
         // A completed document replaces its provisional/draft presentation in the SAME slot.
         // Its previous label and bytes remain in history instead of appearing as another current file.
         val documentName=input.name.replace(Regex("_(PROVISIONAL|BORRADOR)(?=\\.[^.]+$)"),"")
-        val dir=File(c.filesDir,"local_publications_v5/"+sha256((input.relativePath+"\u0000"+documentName).toByteArray()))
+        val dir=File(c.filesDir,"local_publications_v5/"+sha256(((if(namespace.isBlank())""else namespace+"\u0000")+input.relativePath+"\u0000"+documentName).toByteArray()))
         check(dir.isDirectory||dir.mkdirs())
         recover(dir,db,storage)
         val current=read(File(dir,"current.json"))

@@ -40,9 +40,6 @@ class LocalSicExport(private val context: Context, private val database: Invento
             val a=android.util.AtomicFile(cache);val out=a.startWrite()
             try{result.file.inputStream().use{it.copyTo(out,64*1024)};a.finishWrite(out)}catch(e:Exception){a.failWrite(out);throw e}
             require(com.tuempresa.inventariovial.localfiles.fileDigest(cache)==com.tuempresa.inventariovial.localfiles.fileDigest(result.file))
-            for(row in database.inventoryDao().localBridgeRecordsForExport(route))runCatching{
-                com.tuempresa.inventariovial.localfiles.LocalDeliveryScheduling.afterExport(context,database,"SIC",row.record.id)
-            }
             return@withContext requireNotNull(cachedRoute(format,route))
         }
         val rows = database.inventoryDao().recordsForExport(format.code, route).filter { format.appliesTo(it) }
@@ -82,19 +79,20 @@ class LocalSicExport(private val context: Context, private val database: Invento
         scope.launch {
             try {
                 val prepared = withContext(Dispatchers.IO) {
-                    previous?.file?.delete()
+                    // Keep prior prepared snapshots recoverable; choosing a destination never replaces them.
                     val records = database.inventoryDao().recordsForExport(format?.code, route)
                     require(records.isNotEmpty()) { "No hay registros activos para exportar con esta selección." }
                     val directory = File(context.cacheDir, "sic_exports")
                     check(directory.isDirectory || directory.mkdirs()) { "No se pudo preparar la carpeta de exportación." }
                     val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
-                    val file = File(directory, "${format?.code ?: "SIC_INVENTARIO"}_${timestamp}_${UUID.randomUUID().toString().take(8)}.${if (format == null) "zip" else "xlsx"}")
-                    try {
-                        file.outputStream().buffered().use { LocalSicWorkbookPolicy.selection(it,database,records,format,heading) }
-                    } catch (error: Throwable) { file.delete(); throw error }
+                    val file = if(format!=null&&route!=null)LocalSicConsolidates.prepareManual(context,database,route,format.code).let{File(it.source)} else {
+                        val target=File(directory,"${format?.code ?: "SIC_INVENTARIO"}_${timestamp}_${UUID.randomUUID().toString().take(8)}.${if(format==null)"zip"else"xlsx"}")
+                        target.outputStream().buffered().use{LocalSicWorkbookPolicy.selection(it,database,records,format,heading)}
+                        target
+                    }
                     preferences.edit().putString("project", heading.project).putString("road", heading.road)
                         .putString("section", heading.section).apply()
-                    PreparedSicExport(file, format == null, records.size, records.map { it.record.sicCode }.distinct().size,
+                    PreparedSicExport(file, format == null, if(format!=null&&route!=null)SicRouteWorkbook.inspect(file.readBytes(),format.code)else records.size, records.map { it.record.sicCode }.distinct().size,
                         com.tuempresa.inventariovial.localfiles.PublicLocalFolderNames.component("${format?.code ?: "Inventario SIC"} - ${route ?: "Todas las rutas"}")+(if(format==null)".zip"else".xlsx"),records.map{it.record.id})
                 }
                 mutableState.value = LocalExportState(prepared = prepared,
@@ -118,11 +116,9 @@ class LocalSicExport(private val context: Context, private val database: Invento
             try {
                 withContext(Dispatchers.IO) {
                     require(prepared.file.isFile) { "El archivo temporal ya no está disponible. Vuelve a generarlo." }
-                    val stream = context.contentResolver.openOutputStream(uri, "wt")
-                        ?: throw IllegalStateException("No se pudo abrir el destino seleccionado.")
-                    stream.use { out -> prepared.file.inputStream().use { it.copyTo(out) } }
-                    com.tuempresa.inventariovial.localfiles.LocalCopies.rememberSaf(context,database,prepared.file,"SIC",if(prepared.isZip)"application/zip"else SicExcelWriter.XLSX_MIME,uri)
-                    for(id in prepared.sourceRecordIds)runCatching{com.tuempresa.inventariovial.localfiles.LocalDeliveryScheduling.afterExport(context,database,"SIC",id)}
+                    val document=com.tuempresa.inventariovial.localfiles.ManualDocumentExport.freeze(context,prepared.file,"SIC",
+                        if(prepared.isZip)"application/zip"else SicExcelWriter.XLSX_MIME,prepared.displayName)
+                    com.tuempresa.inventariovial.localfiles.ManualDocumentExport.save(context,database,document,uri)
 
                 }
                 mutableState.value = LocalExportState(prepared = prepared,

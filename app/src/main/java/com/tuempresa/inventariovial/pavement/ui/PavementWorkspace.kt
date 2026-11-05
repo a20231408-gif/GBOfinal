@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -64,11 +65,11 @@ fun PavementWorkspace(initialSampleId:String?=null,onBack: () -> Unit) {
                     Text("Fallas en pavimentos",style=MaterialTheme.typography.headlineMedium)
                     Text("PCI / URCI · esquema X/Y · registro fotográfico",style=MaterialTheme.typography.bodyLarge)
                 }
-                Image(androidx.compose.ui.res.painterResource(com.tuempresa.inventariovial.R.mipmap.ic_launcher_foreground),"GBO Ingenieros Consultores",modifier=Modifier.size(92.dp))
+
             }
         }
         TextButton(onClick = onBack) { Text("← Inicio") }
-        Row(horizontalArrangement=Arrangement.spacedBy(8.dp),modifier=Modifier.fillMaxWidth()) {
+        FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),modifier=Modifier.fillMaxWidth()) {
             PavementSurface.entries.forEach { item ->
                 FilterChip(selected=surface==item,onClick={surface=item},label={Text(item.label)})
             }
@@ -231,17 +232,10 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
         }
     }
     Column(Modifier.fillMaxSize().padding(12.dp)) {
-        Surface(color=MaterialTheme.colorScheme.primary,contentColor=MaterialTheme.colorScheme.onPrimary,shape=androidx.compose.foundation.shape.RoundedCornerShape(16.dp)) {
-            Row(Modifier.fillMaxWidth().padding(horizontal=14.dp,vertical=10.dp),horizontalArrangement = Arrangement.spacedBy(8.dp),verticalAlignment=androidx.compose.ui.Alignment.CenterVertically) {
-                TextButton(onClick = onBack,colors=ButtonDefaults.textButtonColors(contentColor=MaterialTheme.colorScheme.onPrimary)) { Text("← Muestras") }
-                Column(Modifier.weight(1f)) {
-                    Text("Fallas en pavimentos",style=MaterialTheme.typography.titleLarge)
-                    Text("${surface.label} · ${sample.tramo} · muestra ${sample.muestra}",style=MaterialTheme.typography.bodyMedium)
-                }
-                if(sample.status=="CLOSED" && sample.inspectorUserId==userId) TextButton(onClick={scope.launch {runCatching {repo.reopenSample(sample.id)}.onFailure {message=it.message.orEmpty()}}}) {Text("Reabrir para corregir")}
-                if (editable) Button(onClick = { closeConfirm = true },colors=ButtonDefaults.buttonColors(containerColor=MaterialTheme.colorScheme.surface,contentColor=MaterialTheme.colorScheme.primary)) { Text("Revisar y finalizar") }
-            }
-        }
+        PavementEditorHeader(sample,editable,sample.status=="CLOSED"&&sample.inspectorUserId==userId,
+            onBack=onBack,onReview={closeConfirm=true},onReopen={scope.launch {
+                runCatching{repo.reopenSample(sample.id)}.onFailure{message=it.message.orEmpty()}
+            }})
         if (message.isNotBlank()) Text(message, color = MaterialTheme.colorScheme.primary)
         BoxWithConstraints(Modifier.weight(1f)) {
             val wide = maxWidth >= 800.dp
@@ -266,7 +260,7 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                 }
             }
             val panel: @Composable () -> Unit = {
-                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(Modifier.then(if(wide)Modifier.verticalScroll(rememberScrollState())else Modifier), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text("Inspector: ${sample.inspectorNombre} · Fecha de creación: ${PavementHistory.dateLabel(sample.fecha)}")
                     Text("Progresiva ${PavementChainage.display(sample.prInicial)} → ${PavementChainage.display(sample.prFinal)} · Carril ${sample.carril}")
                     Text("${sample.anchoM} × ${sample.largoM} m · Área ${sample.anchoM*sample.largoM} m²")
@@ -335,7 +329,10 @@ internal fun PavementEditor(sample: PavementSampleEntity, repo: PavementReposito
                 }
             }
             if (wide) Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) { Box(Modifier.weight(0.56f)) { scheme() }; Box(Modifier.weight(0.44f)) { panel() } }
-            else Column { Box(Modifier.height(420.dp)) { scheme() }; Box(Modifier.weight(1f)) { panel() } }
+            else Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).testTag("pavement-phone-workspace")) {
+                Box(Modifier.fillMaxWidth().height(360.dp)) { scheme() }
+                panel()
+            }
         }
     }
     if(mediaDialog) androidx.compose.ui.window.Dialog(onDismissRequest={mediaDialog=false},properties=androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth=false)) {

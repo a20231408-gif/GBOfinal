@@ -82,7 +82,11 @@ class ScapFinalP0UiTest {
             val cat=ScapCatalog.load(c);val r=ScapRepository(db,cat);val id=r.create("TEST","TEST",null,ScapBridgeType.SLAB)
             r.setField(id,"inspection","sidewalkWidthM","INVALIDO");r.saveDraft(id)
             val s=r.dao.snapshot(id)!!;val i=DriveSyncIntent("SCAP/$id","SCAP",id,s.inspection.updatedAt,state="PENDING_VALIDATION")
-            val identity=DriveDeliveryPresentation.identity(db,i,c);val v=DriveDeliveryPresentation.view(i,identity,false,true,true)
+            val identity=DriveDeliveryPresentation.identity(db,i,c)
+            assertEquals("Puente sin nombre",identity.title)
+            assertTrue(runCatching{com.tuempresa.inventariovial.scap.export.ScapDocumentNames.folder(s)}.isFailure)
+            assertTrue(db.localFilesDao().jobs().isEmpty())
+            val v=DriveDeliveryPresentation.view(i,identity,false,true,true)
             val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main);val ctl=ScapController(c,db,scope)
             val show=mutableStateOf(true)
             try {

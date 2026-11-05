@@ -1,0 +1,12 @@
+// Invocation-local Debug signing selection; no credentials or production changes.
+allprojects { p ->
+    p.plugins.withId('com.android.application') {
+        p.extensions.getByName('androidComponents').finalizeDsl { dsl ->
+            def path = System.getenv('GBO_DEBUG_KEYSTORE_PATH')
+            if (!path || !new File(path).isFile()) {
+                throw new GradleException('Indica un keystore Debug legitimo y existente mediante GBO_DEBUG_KEYSTORE_PATH.')
+            }
+            dsl.signingConfigs.getByName('debug').storeFile = new File(path)
+        }
+    }
+}

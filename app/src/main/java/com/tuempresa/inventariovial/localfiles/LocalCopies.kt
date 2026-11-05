@@ -33,9 +33,9 @@ object LocalCopies {
         val key="$kind/$id";val jobId=sha256((key+"/"+revision+"/"+scope).toByteArray())
         val dao=db.localFilesDao();val old=dao.job(jobId) ?: dao.jobForRevision(key,revision,scope)
         if(!automatic&&scope in setOf("FULL","PHOTOS","ZIP")&&old?.manifestJson!=null&&old.state !in setOf("QUEUED","RUNNING")&&
-            LocalPlan.parse(old.manifestJson).publicNamingVersion<5) {
+            LocalPlan.parse(old.manifestJson).publicNamingVersion<6) {
             // Explicit regeneration only: retain the historical job, URIs, bytes and frozen paths.
-            return@withTransaction request(c,db,kind,id,revision,scope+"_LAYOUT_V5",automatic=false)
+            return@withTransaction request(c,db,kind,id,revision,scope+"_LAYOUT_V6",automatic=false)
         }
         val job=old ?: LocalExportJob(jobId,key,kind,id,revision,scope,automatic=automatic)
         if(old==null)dao.saveJob(job)
@@ -52,6 +52,7 @@ object LocalCopies {
     }
     suspend fun retry(c:Context,db:InventoryDatabase,id:String)=db.withTransaction {
         db.localFilesDao().job(id)?.let{
+            require(it.scope!="SAF_TREE"){"Vuelve a Exportar carpeta del puente y elige el destino autorizado. No se cambia a Descargas."}
             if(it.state in setOf("QUEUED","RUNNING"))return@withTransaction
             val current=DeliveryDestination.revision(db,it.kind,it.recordId)
             if(it.manifestJson==null && current!=null && current!=it.revision)request(c,db,it.kind,it.recordId,current,it.scope)
@@ -92,13 +93,14 @@ object LocalCopies {
             else->when(file.extension.lowercase()){ "jpg","jpeg"->"image/jpeg";"png"->"image/png";"webp"->"image/webp";"heic","heif"->"image/heic";else->"application/octet-stream"}
         }
     }
-    suspend fun rememberSaf(c:Context,db:InventoryDatabase,source:File,kind:String,mime:String,uri:Uri)=withContext(Dispatchers.IO){
+    suspend fun rememberSaf(c:Context,db:InventoryDatabase,source:File,kind:String,mime:String,uri:Uri,ownerKey:String?=null,revision:Long?=null)=withContext(Dispatchers.IO){
         require(AndroidSharedDocumentStore(c).digest(uri)==fileDigest(source)){"No se verificó el archivo guardado; conserva el original y reintenta."}
         runCatching{c.contentResolver.takePersistableUriPermission(uri,android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION)}
-        val id=sha256(("SAF/"+uri).toByteArray());val job=LocalExportJob(id,"$kind/EXPORT_$id",kind,"EXPORT_$id",source.lastModified(),scope="SAF",state="READY",completed=1,total=1,message="Archivo verificado en la ubicación elegida con Android.")
-        LocalExportBuilder.space(c,source.length());val copy=File(LocalExportBuilder.work(c,job),LocalExportNames.safe(source.name))
+        val id=sha256(("SAF/"+uri).toByteArray());val job=LocalExportJob(id,ownerKey ?: "$kind/EXPORT_$id",kind,ownerKey?.substringAfter('/') ?: "EXPORT_$id",revision ?: source.lastModified(),scope="SAF",state="READY",completed=1,total=1,message="Archivo verificado en la ubicación elegida con Android.")
+        LocalExportBuilder.space(c,source.length());val copy=File(LocalExportBuilder.work(c,job),(if(source.path.replace('\\','/').contains("/BORRADOR/")||source.name.contains("_PROVISIONAL"))"BORRADOR/"else"")+LocalExportNames.safe(source.name))
+        check(copy.parentFile!!.isDirectory||copy.parentFile!!.mkdirs())
         val a=android.util.AtomicFile(copy);val out=a.startWrite();try{source.inputStream().use{it.copyTo(out)};a.finishWrite(out)}catch(e:Exception){a.failWrite(out);throw e}
-        val digest=fileDigest(copy);val display=runCatching{c.contentResolver.query(uri,arrayOf(android.provider.OpenableColumns.DISPLAY_NAME),null,null,null)?.use{if(it.moveToFirst())it.getString(0)else null}}.getOrNull() ?: source.name
+        val digest=fileDigest(copy);val display=runCatching{c.contentResolver.query(uri,arrayOf(android.provider.OpenableColumns.DISPLAY_NAME),android.os.Bundle.EMPTY,null)?.use{if(it.moveToFirst())it.getString(0)else null}}.getOrNull() ?: source.name
         db.withTransaction{db.localFilesDao().saveJob(job);db.localFilesDao().saveFile(LocalSharedFile(id,id,job.recordKey,"Ubicación elegida con Android/",display,mime,digest.first,digest.second,copy.path,uri.toString(),"READY"))}
     }
     /** Existing records are queued only after the explicit UI estimate/confirmation. */
@@ -125,6 +127,9 @@ object LocalCopyDrain {
         prepare:suspend (Context,InventoryDatabase,LocalExportJob)->LocalPlan=LocalExportBuilder::build)=withContext(Dispatchers.IO){mutex.withLock {
         val dao=db.localFilesDao();val pending=db.withTransaction {dao.pending(limit)}
         for(start in pending){var job=start
+            if(job.scope=="SAF_TREE") {
+                dao.saveJob(job.copy(state="PARTIAL",message="Exportación de carpeta interrumpida. Elige otra vez el destino desde Exportar carpeta del puente; no se modificó Descargas."));continue
+            }
             if(job.automatic&&job.kind=="PAVEMENT"&&db.pavementDao().sample(job.recordId)?.status!="CLOSED"){
                 dao.saveJob(job.copy(state="SUPERSEDED",message="El borrador se conserva en GBO; el paquete se publica al finalizar la unidad."));continue
             }
@@ -132,34 +137,46 @@ object LocalCopyDrain {
             if(job.automatic && job.manifestJson==null && DeliveryDestination.revision(db,job.kind,job.recordId)!=job.revision){dao.saveJob(job.copy(state="SUPERSEDED",message="Agrupada en la revisión actual"));continue}
             try {
                 job=job.copy(state="RUNNING",message="Preparando copia local…");dao.saveJob(job)
-                val ordinaryManual=job.kind=="SIC" && job.manifestJson==null &&
-                    db.inventoryDao().recordById(job.recordId)?.sicCode?.let{it!="SIC-17"}==true
-                val consolidationIssues=if((job.automatic||ordinaryManual) && job.scope.startsWith("FULL"))
+                val generated=job.manifestJson?.let(LocalPlan::parse) ?: prepare(c,db,job).also {
+                    require(DeliveryDestination.revision(db,job.kind,job.recordId)==job.revision){"La ficha cambió durante la preparación. Reintenta la revisión actual."}
+                }
+                val ordinaryManual=job.kind in setOf("SIC","SCAP","PAVEMENT") && job.manifestJson==null
+                // Extend road consolidation to the new SCAP/pavement layout only.
+                // Resuming an old frozen plan must not create a new public projection.
+                val currentProjection=job.kind=="SIC"||generated.publicNamingVersion>=6
+                val consolidationIssues=if(currentProjection&&(job.automatic||ordinaryManual) && job.scope.startsWith("FULL"))
                     com.tuempresa.inventariovial.export.LocalSicConsolidates.refreshRecord(c,db,job.kind,job.recordId,storage) else emptyList()
-                val plan=job.manifestJson?.let(LocalPlan::parse) ?: prepare(c,db,job).let{
+                val plan=job.manifestJson?.let{generated} ?: generated.let{
                     com.tuempresa.inventariovial.export.LocalSicConsolidates.preferConsolidates(c,db,job,it,storage)
                 }.also{
                     // The producer and consumer both enforce the revision before freezing a plan.
                     require(DeliveryDestination.revision(db,job.kind,job.recordId)==job.revision){"La ficha cambió durante la preparación. Reintenta la revisión actual."}
                     job=job.copy(manifestJson=it.json(),total=it.files.size);dao.saveJob(job)
                 }
-                require(plan.files.isNotEmpty()){"No hay archivos válidos para exportar."}
+                val consolidatedOnly=plan.files.isEmpty()&&com.tuempresa.inventariovial.export.LocalSicConsolidates
+                    .principals(c,db,job.kind,job.recordId,storage).isNotEmpty()
+                require(plan.files.isNotEmpty()||consolidatedOnly){"No hay archivos válidos para exportar."}
                 LocalExportBuilder.space(c,plan.files.sumOf{it.size})
                 var done=0;val failures=(plan.problems+consolidationIssues).toMutableList()
                 val priorFiles=dao.files(job.id).associateBy{it.id}
-                for(source in plan.files){
+                for(originalSource in plan.files){
+                    val source=if(job.scope==DriveMirrorPlan.SCOPE)originalSource else ScapFolderRename.current(db,originalSource)
                     try {
                         require(fileDigest(File(source.source))==(source.size to source.sha256)){"El archivo privado cambió. No se sobrescribió la revisión exportada."}
+                        if(job.scope.startsWith("FULL")&&job.scope!=DriveMirrorPlan.SCOPE&&
+                            (source.mimeType=="application/json"||job.kind=="SCAP"&&RecordDocuments.sicFormat(source)!=null)) {
+                            done++;continue // Original/frozen descriptor remains private, unchanged.
+                        }
                         // A frozen plan may predate an asynchronously verified route workbook.
                         // Reconcile visibility now without rewriting that plan or deleting old copies.
-                        if(job.kind=="SIC"&&job.scope.startsWith("FULL")&&RecordDocuments.sicFormat(source)!=null&&
+                        if(job.kind in setOf("SIC","SCAP","PAVEMENT")&&job.scope.startsWith("FULL")&&RecordDocuments.sicFormat(source)!=null&&
                             com.tuempresa.inventariovial.export.LocalSicConsolidates.principals(c,db,job.kind,job.recordId,storage)
                                 .any{RecordDocuments.sicFormat(it)==RecordDocuments.sicFormat(source)}) {
                             done++
                             dao.saveJob(job.copy(completed=done,total=plan.files.size,message="Excel SIC disponible en EXCEL_SIC; fuente individual conservada privada."))
                             continue
                         }
-                        if(plan.publicNamingVersion==5 && job.scope!=DriveMirrorPlan.SCOPE) {
+                        if(plan.publicNamingVersion in 5..6 && job.scope!=DriveMirrorPlan.SCOPE) {
                             val published=StableLocalPublication.publish(c,db,job,source,storage)
                             dao.saveFile(published);done++
                             dao.saveJob(job.copy(completed=done,total=plan.files.size,message="Copia local: $done/${plan.files.size} archivos verificados"))
@@ -178,7 +195,7 @@ object LocalCopyDrain {
                     dao.saveJob(job.copy(completed=done,total=plan.files.size,message="Copia local: $done/${plan.files.size} archivos verificados"))
                 }
                 dao.saveJob(job.copy(state=if(failures.isEmpty())"READY"else"PARTIAL",completed=done,total=plan.files.size,
-                    message=if(failures.isEmpty())"Copia local completada: $done archivos verificados en Descargas."else "Copia local parcial ($done/${plan.files.size}). "+failures.distinct().joinToString(" · ")))
+                    message=if(failures.isEmpty()&&consolidatedOnly)"Excel SIC verificado en EXCEL_SIC; filas individuales conservadas privadas."else if(failures.isEmpty())"Copia local completada: $done archivos verificados en Descargas."else "Copia local parcial ($done/${plan.files.size}). "+failures.distinct().joinToString(" · ")))
                 // Publication is local. Its success does not acknowledge Drive or upload the
                 // generated route workbook: the durable original-record outbox owns that work.
                 if(job.automatic&&job.scope!=DriveMirrorPlan.SCOPE)runCatching{LocalDeliveryScheduling.afterExport(c,db,job.kind,job.recordId)}

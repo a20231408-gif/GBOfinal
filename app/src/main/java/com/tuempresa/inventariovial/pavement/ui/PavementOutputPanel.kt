@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.tuempresa.inventariovial.pavement.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -35,7 +36,7 @@ import kotlinx.coroutines.flow.first
     }
     val excel=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")){uri->
         if(uri!=null)scope.launch{busy=true;runCatching{
-            val samples=repo.samples().first().filter{it.surface==s.surface}
+            val samples=repo.samples().first().filter{it.surface==s.surface&&it.ruta==s.ruta}
             val data=samples.map{sample->val rows=repo.damages(sample.id).first();PavementExportSample(sample,rows,calculator.calculate(sample,rows))}
             val configs=repo.sections().first()
             withContext(Dispatchers.IO){PavementGeneratedFiles.export(context,uri,s,"GROUP_DATA","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","xlsx") { PavementExcel.write(it,data,configs) }}
@@ -53,7 +54,10 @@ import kotlinx.coroutines.flow.first
         TextButton(onClick={technicalDetails=!technicalDetails}) { Text(if(technicalDetails)"Ocultar detalle técnico"else"Ver detalle técnico") }
         if(technicalDetails)result.pending.forEach{Text(it,style=MaterialTheme.typography.bodySmall)}
     }
-    Row{TextButton(enabled=!busy,onClick={pdf.launch("Pavimentos-${s.muestra}.pdf")}){Text("Reporte PDF")};TextButton(enabled=!busy,onClick={excel.launch("Pavimentos-${s.surface}.xlsx")}){Text("Excel de superficie")}}
+    FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+        TextButton(enabled=!busy,onClick={pdf.launch(com.tuempresa.inventariovial.localfiles.PublicLocalFolderNames.component("Pavimentos - ${s.ruta} - Muestra ${s.muestra}")+".pdf")}){Text("Reporte PDF")}
+        TextButton(enabled=!busy,onClick={excel.launch(com.tuempresa.inventariovial.localfiles.PublicLocalFolderNames.component("Pavimentos - ${s.ruta} - ${s.surface}")+".xlsx")}){Text("Excel de ruta y superficie")}
+    }
     Button(enabled=!busy && s.status=="CLOSED" && !onlyDevice, onClick={scope.launch {
         busy=true; message="Sincronizando pavimentos con Drive…"
         runCatching { com.tuempresa.inventariovial.core.AutomaticSync.manual(context,"PAVEMENT",s.id) }

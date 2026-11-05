@@ -51,7 +51,7 @@ class SicPrimaryPublicationTest {
             }
             assertTrue(File(LocalExportBuilder.work(c,j),"SIC-18.xlsx").isFile)
             assertTrue(File(LocalExportBuilder.work(c,j),"SIC-18A.xlsx").isFile)
-            val manifest=JSONObject(File(public.files.single{it.name=="MANIFIESTO_LOCAL.json"}.source).readText())
+            val manifest=JSONObject(File(LocalExportBuilder.work(c,j),"MANIFIESTO_LOCAL.json").readText())
             assertEquals(2,manifest.getJSONArray("privateSicWorkbooks").length())
             assertEquals(2,manifest.getJSONArray("publicSicConsolidates").length())
             assertEquals(public.files.size,manifest.getInt("localFilesExpected"))
@@ -90,8 +90,8 @@ class SicPrimaryPublicationTest {
         val storage=SicTestStorage();culvert(d,"TEST_DRAFT",status="DRAFT")
         val j=job("TEST_DRAFT");d.localFilesDao().saveJob(j);LocalCopyDrain.run(c,d,storage,20)
         val saved=d.localFilesDao().job(j.id)!!;assertEquals("PARTIAL",saved.state)
-        assertTrue(d.localFilesDao().files(j.id).any{it.name=="SIC-18_PROVISIONAL.xlsx"&&it.state=="READY"})
-        assertTrue(storage.entries.values.none{it.name=="SIC-18.xlsx"})
+        assertTrue(d.localFilesDao().files(j.id).any{it.name=="SIC-18.xlsx"&&it.state=="READY"&&RecordDocuments.provisional(it)})
+        assertTrue(storage.entries.values.none{it.name=="SIC-18.xlsx"&&it.parent.endsWith("/EXCEL_SIC/")})
     }}
     @Test fun publicEditCannotCauseSuppressionOfAnUnverifiedWorkbook()=runBlocking {db().use{d->
         val storage=SicTestStorage();culvert(d,"TEST_A")

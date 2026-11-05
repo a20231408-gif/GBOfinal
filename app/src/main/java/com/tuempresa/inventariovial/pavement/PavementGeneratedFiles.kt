@@ -49,13 +49,14 @@ object PavementGeneratedFiles {
             // Register the durable local artifact even if copying to the chosen destination fails.
             register(context,s,category,mimeType,file)
             registered=true
-            context.contentResolver.openOutputStream(uri)?.use { out -> file.inputStream().use { it.copyTo(out) } } ?: error("No se pudo abrir el destino")
-            val record=register(context,s,category,mimeType,file,uri.toString())
-            kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {com.tuempresa.inventariovial.localfiles.LocalCopies.rememberSaf(context,com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),file,"PAVEMENT",mimeType,uri)}
-            if(s.status=="CLOSED" && !kotlinx.coroutines.runBlocking {com.tuempresa.inventariovial.localfiles.DeliveryDestination.deviceOnly(com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),"PAVEMENT/${s.id}")}) {
-                com.tuempresa.inventariovial.core.DriveReceiptStore.sample(context,s,"PENDING")
-                if(com.tuempresa.inventariovial.DriveUploadPolicy.configurationError()==null) com.tuempresa.inventariovial.core.PavementSyncAdapter.enqueue(context,s)
+            kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {
+                val prepared=com.tuempresa.inventariovial.localfiles.ManualDocumentExport.freeze(context,file,"PAVEMENT",mimeType,
+                    "Pavimentos - ${s.ruta} - Muestra ${s.muestra}.$extension",s.updatedAt,
+                    if(s.status!="CLOSED")"BORRADOR · muestra abierta; no confirma Drive."else"Copia local; no confirma Drive.")
+                com.tuempresa.inventariovial.localfiles.ManualDocumentExport.save(context,
+                    com.tuempresa.inventariovial.data.database.InventoryDatabase.getInstance(context),prepared,uri)
             }
+            val record=register(context,s,category,mimeType,file,uri.toString())
             return record
         } catch(e:Exception) {
             if(!registered)file.delete()

@@ -36,11 +36,11 @@ class SicProvisionalOpeningTest {
         val store=SicTestStorage();val id="TEST_200"
         d.inventoryDao().insertRecord(testRecord(id,"0010",200.0,created=1,status="DRAFT",route="PE-22A",sic="SIC-18"))
         d.localFilesDao().saveJob(job(id,1));LocalCopyDrain.run(c,d,store,30)
-        assertTrue(d.localFilesDao().files(job(id,1).id).any{it.name=="SIC-18_PROVISIONAL.xlsx"})
+        assertTrue(d.localFilesDao().files(job(id,1).id).any{it.name=="SIC-18.xlsx"&&RecordDocuments.provisional(it)})
         complete(d,"TEST_120",120.0);complete(d,id,200.0)
         val fresh=LocalExportBuilder.build(c,d,job(id,2))
         assertTrue(fresh.files.any{it.name=="SIC-18.xlsx"})
-        assertFalse(fresh.files.any{it.name=="SIC-18_PROVISIONAL.xlsx"})
+        assertFalse(fresh.files.any{it.name=="SIC-18.xlsx"&&RecordDocuments.provisional(it)})
         d.localFilesDao().saveJob(job(id,2));LocalCopyDrain.run(c,d,store,30)
         assertEquals(2,LocalSicConsolidates.current(c,"PE-22A","SIC-18",store).rows)
         val docs=d.localFilesDao().filesForRecord("SIC/$id").filter{it.state=="READY"&&it.mimeType==SicExcelWriter.XLSX_MIME}
@@ -52,16 +52,19 @@ class SicProvisionalOpeningTest {
             assertEquals(setOf("SIC-18.xlsx","SIC-18A.xlsx"),files.map{it.name}.toSet())
             for(f in files)assertEquals(f.uri,RecordDocuments.openTarget(c,d,"SIC",element,f,storage=store).uri)
         }
-        val previous=docs.single{it.name=="SIC-18_PROVISIONAL.xlsx"}
+        val previous=docs.single{it.name=="SIC-18.xlsx"&&RecordDocuments.provisional(it)}
         assertEquals("SIC-18.xlsx",RecordDocuments.openTarget(c,d,"SIC",id,previous,storage=store).name)
         assertEquals(previous.uri,RecordDocuments.openTarget(c,d,"SIC",id,previous,history=true,storage=store).uri)
         assertTrue(RecordDocuments.provisional(previous))
-        assertTrue(RecordDocuments.current(d.localFilesDao().jobs(),docs,principal,history=true).any{it.id==previous.id})
+        assertFalse(RecordDocuments.current(d.localFilesDao().jobs(),docs,principal,history=true).any{it.id==previous.id})
+        assertTrue(File(previous.source).isFile) // Recovery bytes remain private; not a useful visible historical document.
     }}
     @Test fun frozenPlanIsRecheckedWithoutRewritingItsPrivateRevision()=runBlocking {db().use{d->
         val store=SicTestStorage();val id="TEST_FROZEN"
         d.inventoryDao().insertRecord(testRecord(id,"0010",200.0,created=1,status="DRAFT",route="PE-22A",sic="SIC-18"))
-        val old=job(id,1);val raw=LocalExportBuilder.build(c,d,old);val frozen=raw.json()
+        val old=job(id,1);val generated=LocalExportBuilder.build(c,d,old)
+        val raw=generated.copy(publicNamingVersion=5,files=generated.files.map{if(RecordDocuments.provisional(it))it.copy(name=it.name.removeSuffix(".xlsx")+"_PROVISIONAL.xlsx")else it})
+        val frozen=raw.json()
         val individual=raw.files.single{it.name=="SIC-18_PROVISIONAL.xlsx"};val original=File(individual.source).readBytes()
         complete(d,id,200.0);complete(d,"TEST_OTHER",120.0)
         for(format in listOf("SIC-18","SIC-18A"))LocalSicConsolidates.update(c,d,"PE-22A",format,store)
@@ -90,7 +93,7 @@ class SicProvisionalOpeningTest {
         val store=SicTestStorage();val id="TEST_FAILURE"
         d.inventoryDao().insertRecord(testRecord(id,"0010",200.0,created=1,status="DRAFT",route="PE-22A",sic="SIC-18"))
         d.localFilesDao().saveJob(job(id,1));LocalCopyDrain.run(c,d,store,30)
-        val old=d.localFilesDao().files(job(id,1).id).single{it.name=="SIC-18_PROVISIONAL.xlsx"}
+        val old=d.localFilesDao().files(job(id,1).id).single{it.name=="SIC-18.xlsx"&&RecordDocuments.provisional(it)}
         complete(d,id,200.0);val result=LocalSicConsolidates.update(c,d,"PE-22A","SIC-18",store)
         store.find(result.uri).bytes="MODIFICACION EXTERNA FICTICIA".toByteArray()
         val principals=LocalSicConsolidates.principals(c,d,"SIC",id,store);assertTrue(principals.isEmpty())

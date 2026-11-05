@@ -47,6 +47,14 @@ function setup(){
  const config={version:1,oldRootId:ROOT,newRoot:{id:next.id,parentId:guard.parent.id,name:next.name,parentName:guard.parent.name,ancestorIds:[guard.parent.id]},
    inventoryReviewed:true,inventorySha256:'a'.repeat(64),mode:'OPEN',admission:{version:1,epoch:'e'.repeat(32),activatedAt:1,executorEmail:'institutional@example.invalid'}};
  e.context.Drive.About={get:()=>({user:{emailAddress:'institutional@example.invalid'}})};
+ const cache=new Map();e.context.CacheService={getScriptCache:()=>({get:k=>cache.get(k)||null,put:(k,v)=>cache.set(k,v)})};
+ e.context.Drive.Files.list=a=>{
+   const id=/^'([^']+)' in parents and trashed=false$/.exec(a.q)?.[1];assert.ok(id);
+   const files=[...e.objects.get(id).files].sort((a,b)=>a.name.localeCompare(b.name)||a.id.localeCompare(b.id));
+   const offset=+(a.pageToken||0),limit=a.pageSize;
+   return {files:files.slice(offset,offset+limit).map(f=>({id:f.id,name:f.name,modifiedTime:sha(f.name+f.b.getDataAsString())})),
+     nextPageToken:offset+limit<files.length?String(offset+limit):undefined};
+ };
  let seq=0;e.context.Drive.Files.generateIds=({count=1}={})=>({ids:Array.from({length:count},()=> 'FICTITIOUS_ALLOCATED_'+(++seq))});
  e.context.Drive.Files.update=(m,id,b,options={})=>{const f=e.objects.get(id);assert.ok(f);if(b)f.b=b;if(m.name!==undefined)f.setName(m.name);if(m.description!==undefined)f.setDescription(m.description);
    if(options.addParents&&f.parent.id!==options.addParents)f.moveTo(e.objects.get(options.addParents));return {id};};
@@ -62,7 +70,7 @@ function setup(){
  const commit=p=>plain(e.context.commitRecordV3(clone(p)));
  function rootOf(id){let f=e.objects.get(id);assert.ok(f);while(f.parent)f=f.parent;return f.id;}
  function journal(root,p){const it=root.getFoldersByName('._GBO_SYNC_V3');if(!it.hasNext())return null;const files=it.next().getFilesByName('journal_'+sha(p.key)+'.json');return files.hasNext()?JSON.parse(files.next().getBlob().getDataAsString()):null;}
- return {e,next,config,configure,reserve,stage,prepare,commit,rootOf,journal,guard};
+ return {e,next,config,configure,reserve,stage,prepare,commit,rootOf,journal,guard,cache};
 }
 function strict(s,a,p,root){assert.equal(a.ok,true,JSON.stringify(a));assert.equal(a.key,p.key);assert.equal(a.revision,p.revision);assert.equal(a.contentHash,p.contentHash);
  assert.equal(s.rootOf(a.folderId),root);assert.equal(a.files.length,1);const f=a.files[0];assert.equal(s.rootOf(f.fileId),root);
@@ -291,4 +299,70 @@ test('duplicate metadata names stop unrelated new deliveries before any write',(
 
 test('dual-root writer contention returns BUSY without changing any root, journal, stage or activation',()=>{
  const s=setup();s.configure();s.e.hold(true);const before=s.e.writes.length;const a=s.reserve(request());assert.equal(a.code,'BUSY');assert.equal(s.e.writes.length,before);assert.equal(s.e.props.GBO_ROOT_ROUTING_ACTIVATED,undefined);
+});
+
+test('large historical registry: bounded read retries advance without Drive writes and keep historical identities',()=>{
+ const s=setup(),registry=s.e.root.createFolder('._GBO_SYNC_V3'),p=request();
+ for(let n=0;n<634;n++){
+  const key=n===633?p.key:'SIC/FICTITIOUS_CACHE_'+n;
+  registry.createFile(s.e.blob(JSON.stringify({key,identityId:n===633?p.identityId:'FICTITIOUS_CACHE_'+n,revision:1}),
+   'application/json','record_'+sha(key)+'.json'));
+ }
+ s.configure();let now=Date.now(),reads=0;
+ s.e.context.Date=class extends Date{static now(){return now;}};
+ const get=s.e.context.DriveApp.getFileById;
+ s.e.context.DriveApp.getFileById=id=>{now+=1100;reads++;return get(id);};
+ const writes=s.e.writes.length;let route,yields=0;
+ for(let attempt=0;attempt<20&&!route;attempt++){
+  const started=now;
+  try{route=s.e.context.gboDeliveryRoute(p,'commit');}
+  catch(e){assert.equal(e.code,'ROOT_ROUTING_READ_IN_PROGRESS');assert.equal(e.retryable,true);yields++;}
+  assert.ok(now-started<=86100,'Each request remains bounded');assert.equal(s.e.writes.length,writes);
+ }
+ assert.ok(yields>0&&yields<20);assert.equal(route.root.getId(),ROOT);assert.equal(reads,634);
+ const cachedReads=reads;assert.equal(s.e.context.gboDeliveryRoute(p,'commit').root.getId(),ROOT);assert.equal(reads,cachedReads);
+ assert.equal(s.e.props.GBO_ROOT_ROUTING_ACTIVATED,undefined);
+});
+
+test('read cache: changed historical content invalidates the generation and preserves bridge conflict rejection',()=>{
+ const s=setup(),registry=s.e.root.createFolder('._GBO_SYNC_V3'),p=request(),key='SCAP/FICTITIOUS_OTHER';
+ const value={key,identityId:'FICTITIOUS_OTHER_PARENT',bridgeCode:'DIFFERENT',revision:1};
+ const file=registry.createFile(s.e.blob(JSON.stringify(value),'application/json','record_'+sha(key)+'.json'));
+ s.configure();assert.equal(s.e.context.gboDeliveryRoute(p,'commit').root.getId(),s.next.id);
+ file.setContent(JSON.stringify({...value,bridgeCode:p.bridgeCode}));const writes=s.e.writes.length;
+ assert.throws(()=>s.e.context.gboDeliveryRoute(p,'commit'),e=>e.code==='BRIDGE_IDENTITY_CONFLICT');
+ assert.equal(s.e.writes.length,writes);
+});
+
+test('read cache: mutation between metadata snapshots blocks selection without creating a pin',()=>{
+ const s=setup(),registry=s.e.root.createFolder('._GBO_SYNC_V3'),key='SIC/FICTITIOUS_CONCURRENT';
+ registry.createFile(s.e.blob(JSON.stringify({key,identityId:'FICTITIOUS_CONCURRENT'}),'application/json','record_'+sha(key)+'.json'));
+ const list=s.e.context.Drive.Files.list;let calls=0;
+ s.e.context.Drive.Files.list=a=>{const r=list(a);if(++calls===2)r.files[0].modifiedTime='CHANGED';return r;};
+ s.configure();const writes=s.e.writes.length;
+ assert.throws(()=>s.e.context.gboDeliveryRoute(request(),'commit'),e=>e.code==='ROOT_REGISTRY_CHANGED_RETRY'&&e.retryable);
+ assert.equal(s.e.writes.length,writes);assert.equal(s.e.props.GBO_ROOT_ROUTING_ACTIVATED,undefined);
+});
+
+test('read cache: eviction and corrupt cache cause real rereads; unreadable authority never permits a new root',()=>{
+ const s=setup(),registry=s.e.root.createFolder('._GBO_SYNC_V3'),p=request();
+ const file=registry.createFile(s.e.blob(JSON.stringify({key:p.key,identityId:p.identityId,revision:1}),'application/json','record_'+sha(p.key)+'.json'));
+ s.configure();assert.equal(s.e.context.gboDeliveryRoute(p,'commit').root.getId(),ROOT);
+ s.cache.clear();assert.equal(s.e.context.gboDeliveryRoute(p,'commit').root.getId(),ROOT);
+ for(const k of s.cache.keys())s.cache.set(k,'NOT_JSON');
+ assert.equal(s.e.context.gboDeliveryRoute(p,'commit').root.getId(),ROOT);
+ file.setContent('BROKEN_AUTHORITY');const writes=s.e.writes.length;
+ assert.throws(()=>s.e.context.gboDeliveryRoute(p,'commit'),e=>e.code==='ROOT_REGISTRY_REQUIRES_REVIEW');
+ assert.equal(s.e.writes.length,writes);
+});
+
+test('editor warmup: works with routing disabled, verifies executor, never changes properties or Drive',()=>{
+ const s=setup(),registry=s.e.root.createFolder('._GBO_SYNC_V3'),p=request();
+ registry.createFile(s.e.blob(JSON.stringify({key:p.key,identityId:p.identityId}),'application/json','record_'+sha(p.key)+'.json'));
+ s.configure();s.e.props.GBO_ROOT_ROUTING_ENABLED='false';const frozen=JSON.stringify(s.e.props),writes=s.e.writes.length;
+ const result=s.e.context.gboWarmRootRegistryReadCache();assert.equal(result.complete,true);assert.deepEqual([...result.counts],[1,0]);
+ assert.ok(s.cache.size>0);assert.equal(s.e.writes.length,writes);assert.equal(JSON.stringify(s.e.props),frozen);
+ s.e.context.Drive.About.get=()=>({user:{emailAddress:'other@example.invalid'}});
+ assert.throws(()=>s.e.context.gboWarmRootRegistryReadCache(),e=>e.code==='ROOT_EXECUTOR_MISMATCH');
+ assert.equal(s.e.writes.length,writes);assert.equal(JSON.stringify(s.e.props),frozen);
 });

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tuempresa.inventariovial.pavement.*
@@ -25,7 +26,12 @@ import com.tuempresa.inventariovial.pavement.*
         Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant).padding(6.dp)) {
             TableCell("Ítem",0.55f); TableCell("X",0.7f); TableCell("Y",0.7f); TableCell("Falla",2.2f); TableCell("Severidad",1.1f); TableCell("Cantidad",1f)
         }
-        LazyColumn(Modifier.fillMaxWidth().heightIn(max=280.dp).height((damages.size*(if(onViewPhotos!=null)104 else 52)).coerceIn(1,280).dp)) {
+        // The former 104dp slot clipped photo actions once the row wrapped at phone
+        // widths or accessibility font sizes. Keep a bounded, scrollable list with
+        // room for the actual two action lines; no fixed item height is imposed.
+        val fontScale=LocalDensity.current.fontScale.coerceAtLeast(1f)
+        LazyColumn(Modifier.fillMaxWidth().testTag("pavement-damage-list")
+            .height((damages.size*(if(onViewPhotos!=null)160 else 64)*fontScale).coerceIn(1f,280f).dp)) {
             itemsIndexed(damages,key={_,d->d.id}) { index,d ->
                 Row(Modifier.fillMaxWidth().heightIn(min=52.dp).testTag("damage-row-${d.id}")
                     .semantics { selected=d.id==selectedId }.clickable { onSelect(d.id) }
@@ -36,7 +42,7 @@ import com.tuempresa.inventariovial.pavement.*
                     Text(PavementSeverity.label(d.severity),Modifier.weight(1.1f).background(androidx.compose.ui.graphics.Color(PavementSeverity.color(d.severity))).padding(3.dp),color=androidx.compose.ui.graphics.Color.Black,style=MaterialTheme.typography.bodySmall)
                     TableCell(if(d.code==26)if(d.x1!=null && d.lengthM!=null)"${PavementDisplay.number(d.lengthM)} m ref."else"Global"else PavementDisplay.number(PavementRules.quantity(d)),1f)
                 }
-                if(onViewPhotos!=null) Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                if(onViewPhotos!=null) FlowRow(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                     if(onCamera!=null) TextButton(onClick={onCamera(d.id)},modifier=Modifier.heightIn(min=48.dp).testTag("damage-camera-${d.id}")) {Text("Tomar foto")}
                     TextButton(onClick={onViewPhotos(d.id)},modifier=Modifier.heightIn(min=48.dp).testTag("damage-photos-${d.id}")) {Text("Ver fotos (${photoCounts[d.id] ?: 0})")}
                 }

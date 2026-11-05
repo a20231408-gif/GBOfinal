@@ -41,9 +41,23 @@ class BridgeDocuments38Test {
         ui.onNodeWithText("Fallo sintético de espacio").assertExists()
     }
     @Test fun provisionalAndVerifiedDoNotClaimRemoteFinalAck() {
-        assertTrue(BridgeDocuments.label(file(name="BORRADOR.xlsx")).startsWith("PROVISIONAL"))
-        assertTrue(BridgeDocuments.label(file(name="paquete.zip"),true).startsWith("PROVISIONAL"))
+        assertTrue(BridgeDocuments.label(file(name="BORRADOR.xlsx")).startsWith("BORRADOR"))
+        assertTrue(BridgeDocuments.label(file(name="paquete.zip"),true).startsWith("BORRADOR"))
         assertEquals("Verificado localmente · no acredita ACK remoto",BridgeDocuments.label(file()))
+    }
+    @Test fun technicalHistoricalProvisionalsStayPreservedButOutsideUsefulDocuments() {
+        val jobs=listOf(job());val technical=file(name="SCAP_PROVISIONAL.xlsx").copy(source="private/SCAP_PROVISIONAL.xlsx")
+        val working=file("working","SCAP - PE-3NG - PRUEBA 2.xlsx").copy(jobId="old",source="private/BORRADOR/SCAP.xlsx",uri="content://media/external/downloads/125")
+        val sic=file("sic","SIC-17.xlsx").copy(jobId="old",uri="content://media/external/downloads/126")
+        val inputs=listOf(technical,working,sic)
+        assertEquals(listOf(working),BridgeDocuments.visible(jobs,inputs,false))
+        assertTrue(BridgeDocuments.visible(jobs,inputs,true).isEmpty())
+        assertEquals("BORRADOR · copia de trabajo",BridgeDocuments.label(working))
+        assertEquals(3,inputs.size);assertTrue(inputs.contains(technical)) // Projection never deletes sources or references.
+        ui.setContent{MaterialTheme{BridgeDocumentsContent("PRUEBA 2","PE-3NG","10+100",1,jobs,inputs){}}}
+        ui.onNodeWithText("SCAP_PROVISIONAL.xlsx",substring=true).assertDoesNotExist()
+        ui.onNodeWithTag("bridge-documents").performScrollToNode(hasText("BORRADOR · copia de trabajo"))
+        ui.onNodeWithText("BORRADOR · copia de trabajo").assertExists()
     }
     @Test fun categoriesSeparateSketchesFromPhotographsAndDocuments() {
         val cases=listOf("Excel" to file(),"PDF" to file(name="f.pdf",mime="application/pdf"),"ZIP" to file(name="f.zip",mime="application/zip"),"Fotografías" to file(name="f.jpg",mime="image/jpeg"),"Croquis" to file(name="croquis.png",mime="image/png"))

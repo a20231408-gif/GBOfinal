@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -82,7 +83,7 @@ import java.io.File
     (if(history)filtered else latest).take(if(history)filtered.size else 6).forEach{j->
         Text(LocalCopyPresentation.context(j,if(key!=null)currentRevision else null,j.id in latestIds),style=MaterialTheme.typography.bodySmall)
         Text(LocalCopyPresentation.result(j),style=MaterialTheme.typography.titleSmall)
-        if(j.state in setOf("FAILED","PARTIAL")&&j.scope!="SAF")TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
+        if(j.state in setOf("FAILED","PARTIAL")&&!j.scope.startsWith("SAF"))TextButton(onClick={scope.launch{LocalCopies.retry(c,db,j.id)}}){Text("Reintentar copia local")}
     }
     if(filtered.size>latest.size||latest.size>6||files.any{f->f.state=="READY"&&principals.any{RecordDocuments.sicFormat(it)==RecordDocuments.sicFormat(f)}})TextButton(onClick={history=!history}){Text(if(history)"Ocultar copias anteriores"else"Ver historial y todas las copias (${filtered.size})")}
     val visibleJobs=filtered.map{it.id}.toSet()
@@ -99,35 +100,42 @@ import java.io.File
     files.firstOrNull{it.uri==uri&&it.state=="READY"}?.let{SavedFileActions(it)}
 }
 
-@Composable internal fun rememberRecordPrincipals(kind:String,id:String,revision:Long?):List<LocalSharedFile> {
-    val c=LocalContext.current;val db=remember(c){InventoryDatabase.getInstance(c)};val scope=rememberCoroutineScope()
+@Composable internal fun rememberRecordPrincipals(kind:String,id:String,revision:Long?,database:InventoryDatabase?=null):List<LocalSharedFile> {
+    val c=LocalContext.current;val db=database ?: remember(c){InventoryDatabase.getInstance(c)};val scope=rememberCoroutineScope()
     var generation by remember(kind,id){mutableIntStateOf(0)}
     var documents by remember(kind,id){mutableStateOf<List<LocalSharedFile>>(emptyList())}
     DisposableEffect(db,kind,id){
-        val observer=object:androidx.room.InvalidationTracker.Observer("local_shared_files","local_export_jobs","inventory_records","sic18a_details"){
+        val observer=object:androidx.room.InvalidationTracker.Observer("local_shared_files","local_export_jobs","inventory_records","sic18a_details","scap_inspections","scap_values","pavement_samples","pavement_damages"){
             override fun onInvalidated(tables:Set<String>){scope.launch{generation++}}
         }
-        if(kind=="SIC")db.invalidationTracker.addObserver(observer)
-        onDispose{if(kind=="SIC")db.invalidationTracker.removeObserver(observer)}
+        if(kind in setOf("SIC","SCAP","PAVEMENT"))db.invalidationTracker.addObserver(observer)
+        onDispose{if(kind in setOf("SIC","SCAP","PAVEMENT"))db.invalidationTracker.removeObserver(observer)}
     }
     LaunchedEffect(kind,id,revision,generation){documents=withContext(Dispatchers.IO){com.tuempresa.inventariovial.export.LocalSicConsolidates.principals(c,db,kind,id)}}
     return documents
 }
 
-@Composable fun SavedFileActions(file:LocalSharedFile,ownerKey:String?=null,history:Boolean=false){
+@Composable fun SavedFileActions(file:LocalSharedFile,ownerKey:String?=null,history:Boolean=false,database:InventoryDatabase?=null){
     val c=LocalContext.current;val scope=rememberCoroutineScope();var message by remember{mutableStateOf<String?>(null)}
+    val actionDb=database ?: remember(c){InventoryDatabase.getInstance(c)}
+    val bridge=file.recordKey.startsWith("SCAP/")
     val publicRoot=file.relativePath.removePrefix("Download/").substringBefore('/')
     var missing by remember(file.id,file.uri){mutableStateOf(false)}
     val saveAs=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(file.mimeType)){uri->if(uri!=null)scope.launch{
-        message=runCatching{withContext(Dispatchers.IO){val source=File(file.source);require(fileDigest(source)==(file.size to file.sha256)){"El original preparado cambió."};requireNotNull(c.contentResolver.openOutputStream(uri,"wt")).use{out->source.inputStream().use{it.copyTo(out)}};LocalCopies.rememberSaf(c,InventoryDatabase.getInstance(c),source,file.recordKey.substringBefore('/'),file.mimeType,uri)};"Archivo exportado y verificado en la ubicación elegida."}.getOrElse{LocalCopyDrain.publicError(it as? Exception ?: Exception())}
+        message=runCatching{
+            val prepared=ManualDocument(file.source,file.name,file.mimeType,file.recordKey.substringBefore('/'),file.size,file.sha256,0,
+                if(RecordDocuments.provisional(file))"BORRADOR · datos pendientes; original conservado."else"")
+            ManualDocumentExport.save(c,InventoryDatabase.getInstance(c),prepared,uri)
+            "Archivo exportado y verificado en la ubicación elegida."
+        }.getOrElse{LocalCopyDrain.publicError(it as? Exception ?: Exception())}
     }}
-    Column(Modifier.fillMaxWidth().padding(vertical=4.dp)){
+    Column(Modifier.fillMaxWidth().padding(vertical=4.dp).testTag("saved-file-${file.id}")){
         Text("ARCHIVO GUARDADO · ${file.name}")
-        if(RecordDocuments.provisional(file))Text("PROVISIONAL · datos pendientes; no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
-        Text(if(Build.VERSION.SDK_INT<29&&file.relativePath.startsWith("Download/"))"Carpeta autorizada / "+file.relativePath.removePrefix("Download/")else file.relativePath.replace("Download/","Descargas/"),style=MaterialTheme.typography.bodySmall)
+        if(RecordDocuments.provisional(file))Text("BORRADOR · datos pendientes; no es una entrega definitiva.",style=MaterialTheme.typography.bodySmall)
+        Text(if(file.uri?.let{android.provider.DocumentsContract.isTreeUri(Uri.parse(it))}==true || (Build.VERSION.SDK_INT<29&&file.relativePath.startsWith("Download/")))"Carpeta autorizada / "+file.relativePath.removePrefix("Download/")else file.relativePath.replace("Download/","Descargas/"),style=MaterialTheme.typography.bodySmall)
         fun open(share:Boolean){scope.launch{
             val target=withContext(Dispatchers.IO){runCatching{
-                if(ownerKey!=null)RecordDocuments.openTarget(c,InventoryDatabase.getInstance(c),ownerKey.substringBefore('/'),ownerKey.substringAfter('/'),file,history)
+                if(ownerKey!=null)RecordDocuments.openTarget(c,actionDb,ownerKey.substringBefore('/'),ownerKey.substringAfter('/'),file,history)
                 else file.also{require(AndroidSharedDocumentStore(c).digest(Uri.parse(it.uri))==(it.size to it.sha256))}
             }.getOrNull()}
             if(target==null){missing=true;message="El archivo fue movido, eliminado o perdió acceso. Puedes guardar otra copia desde el original conservado.";return@launch}
@@ -135,12 +143,12 @@ import java.io.File
             message=runCatching{c.startActivity(if(share)SharedFileActions.share(Uri.parse(target.uri),target.mimeType)else SharedFileActions.view(Uri.parse(target.uri),target.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));null}.getOrElse{if(share)"No se pudo abrir el menú de compartir."else"No hay una aplicación compatible para abrir este archivo."}
         }}
         Row {TextButton(onClick={open(false)}){Text("ABRIR ARCHIVO")};TextButton(onClick={open(true)}){Text("Compartir")}}
-        TextButton(onClick={
+        if(!bridge)TextButton(onClick={
             val uri=Uri.parse(file.uri)
             message=runCatching{c.startActivity(SharedFileActions.location(uri) ?: SharedFileActions.view(uri,file.mimeType).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));"Android puede abrir la ubicación accesible más cercana. Busca $publicRoot; ABRIR ARCHIVO permite acceder directamente al documento."}
                 .getOrElse{"Usa ABRIR ARCHIVO o Compartir, o entra a Archivos → Descargas → $publicRoot."}
         }){Text("ABRIR UBICACIÓN DISPONIBLE")}
-        TextButton(onClick={(c.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("Ubicación local GBO",file.relativePath));message="Ubicación copiada. Android puede limitar el acceso directo a la carpeta."}){Text("Copiar ubicación")}
+        if(!bridge)TextButton(onClick={(c.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager).setPrimaryClip(android.content.ClipData.newPlainText("Ubicación local GBO",file.relativePath));message="Ubicación copiada. Android puede limitar el acceso directo a la carpeta."}){Text("Copiar ubicación")}
         TextButton(onClick={runCatching{saveAs.launch(file.name)}.onFailure{message="No se pudo abrir el selector de Android."}}){Text("Guardar como…")}
         if(missing)TextButton(onClick={scope.launch{message=runCatching{val d=InventoryDatabase.getInstance(c);val job=d.localFilesDao().job(file.jobId);if(job?.scope=="SAF")LocalCopies.document(c,d,File(file.source),file.recordKey.substringBefore('/'),file.mimeType)else LocalCopies.retry(c,d,file.jobId);"Recuperación programada desde el original conservado."}.getOrElse{it.message}}}){Text("Recuperar copia en Descargas")}
         message?.let{Text(it,style=MaterialTheme.typography.bodySmall)}
