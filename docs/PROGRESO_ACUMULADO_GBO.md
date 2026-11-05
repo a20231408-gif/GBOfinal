@@ -1,3 +1,20 @@
+## Aceptación física 1.4.33 rechazada — 04/11/2026 (Lima)
+
+El propietario declara FALLIDA la aceptación en OPPO de 1.4.33 (47). No convertir los 73 casos automatizados ni el arranque/conservación técnica en aprobación física. La instalación conservó 746 archivos y las dos QUEUED; ese resultado técnico no acredita el flujo de exportación.
+
+Nuevo contrato solicitado: borradores exclusivamente privados; exportación después de revisión/cierre local explícito, snapshot de la revisión finalizada; cerrada con pendientes se distingue de borrador y de finalización contractual. Selector de archivo en la carpeta del UUID actual, con validación de destino antes de escribir, o un único guardado determinista si el proveedor real no cumple. No confundir OpenDocumentTree con CreateDocument.
+
+Lectura del código en eb26472e05dcfa1d6d19eb332eeee696ae4d51b4:
+- ScapExportPanel exporta sin exigir COMPLETE. La acción principal actual usa OpenDocumentTree para autorizar base y un formulario dentro de GBO; no implementa el nuevo recorrido solicitado de CreateDocument como acción principal.
+- ScapLocalDocuments marca BORRADOR tanto una edición como un cierre con pendientes. Hay que separar esos estados sin relajar validaciones bloqueantes.
+- BridgeDocumentsScreen incluye principales SIC y mensajes/rutas/revisiones técnicas. LocalCopyPresentation selecciona la última copia disponible por tipo, no necesariamente la revisión finalizada actual. Esto permite mostrar una copia anterior, pero todavía NO demuestra la causa exacta del Excel desactualizado de PRUEBA 5.
+- ScapFolderExport comprueba snapshot persistido y revisión antes de generar; folderUri usa archivos previamente publicados y puede no ofrecer directorio en una primera exportación. No atribuir el salto real a PRUEBA 2 exclusivamente a esta lectura: hace falta correlacionar la acción y el selector observados.
+- Revisar también LocalExportBuilder, LocalCopyDrain (en LocalCopies.kt) y ManualDocumentExport: una guarda solo visual no impide publicar borradores desde trabajos o manifiestos ya preparados.
+
+El único archivo accesible del nuevo adjunto es Texto pegado.txt; las fotografías mencionadas NO estaban incluidas. Pendiente recibirlas para contrastar la pantalla real y el proveedor OPPO, sin inventar observaciones. No se modificó código funcional, no se compiló otra APK ni se tocó el OPPO, Xiaomi, Google o backend durante esta revisión. No se ejecutaron nuevas pruebas. Próximo hito: implementar y probar el contrato completo de cierre/revisión/publicación y navegación, contrastar las capturas; no instalar ni declarar PASS del proveedor sin autorización y comprobación física. NO-GO Android/productivo.
+
+---
+
 ## Continuación SCAP desde f9f6f84 — 04/11/2026 (Lima)
 
 Rama independiente `handoff/scap-cierre-final-20261104`, base exacta `f9f6f84402907d4e85a556c01a24f65b602439bb`. La corrección de producción de ese checkpoint separa el nombre visible de la validación de carpeta definitiva: la ficha sin nombre puede abrirse y guardarse como borrador; la exportación sigue exigiendo un nombre confirmado. La prueba focal `ScapFinalP0UiTest.actualFormShowsZeroAllowsEditingAndReopeningAndItsCloseDialogDoesNotRejectZero` pasó **1/1** antes de cualquier edición de esta continuación.
